@@ -1,0 +1,51 @@
+\documentclass[a4paper,12pt]{article}
+\usepackage{fullpage}
+\usepackage[british]{babel}
+\usepackage[nodayofweek]{datetime}
+\usepackage[none]{hyphenat} 
+\usepackage{hyperref}
+\begin{document}
+
+\title{Inferring Class Structures of Duck-Typed Variables Through Static Code Analysis}
+\author{In-Ho Yi\\
+iyi@student.unimelb.edu.au
+}
+\date{\today}
+\maketitle
+\section{Introduction}
+Contemporary dynamic-typing languages such as Python and ECMAScript utilise `duck-typing' as a way of allowing users to define classes on-the-fly. By allowing a programmer to dynamically create properties of variables, these languages allow a programmer to rapidly prototype models.\\
+The aim of the proposed project is to apply static code analysis to infer class structures from the use of duck-typed variables. 
+\section{Toy Language}
+We will define a toy language that we name Simple Duck-Typing Language (SDTL). The design goal is to come up with a largely subset of ECMAScript expressive enough to cover the topic without losing generality of the argument. The language features dynamic declaration of functions, primitive variables (int, bool) and objects (through \textit{new} keyword), to which a programmer can dynamically assign variables or functions to their properties.\\
+SDTL does not allow explicit class definition, as in Python, or prototyping, as in ECMAScript. However, it is argued here that class definitions and prototypes can be normalised as a series of dynamic declaration.\\
+
+\subsection{Program}
+In SDTL, as in other script languages, a program is a list of statements. Formally,\\
+$P \rightarrow S$\\
+
+\subsection{Statement}
+In SDTL, statements are the essential elements of the program. First of all, a statement can be an empty string, making an empty input a valid program.\\
+$S \rightarrow \epsilon$\\
+Statement can also be a concatenation of statements.\\
+$S \rightarrow S S$\\
+Now we turn to non-trivial definitions. We define an assignment statement.\\
+$S \rightarrow lexpr = expr$\\
+Here we make a distinction between left expression($lexpr$) and expression($expr$). A left expression is an expression that is capable of designating a memory location, such as a symbol or a member of an object. Naturally, a left expression is a subset of an expression.\\
+
+
+\section{Static Analysis}
+The analysis technique will generally be built up on the analysis of monotone framework. A powerset of a set of properties associated with a variable can be thought of as a finite Lattice. By performing dataflow analysis over such Lattice, we will be able to tell what properties are assigned to a variable.\\
+\subsection{Single Variable Analysis}
+A forward analysis of the assignment of properties will give what properties are declared at a given point, hence it will tell what kind of duck is at the point. A backward analysis of the use of properties will give an implied class structure of a variable.\\
+\subsection{Multi-Variable Analysis}
+Aforementioned analysis can be extended to multi-variable scenario, by creating a mapping from variables to the superset of all properties that are used in all variables.
+\subsubsection{Class Relations}
+By comparing the properties set of two different variables, we will be able to tell whether two variables are the same kind of ducks (if they share the exact same set of properties), or if one variable is a base class of another (if one sits up in the lattice). If they are siblings, we will be able to infer the base class structure by calculating the upper bound of two sets of properties in the lattice.
+\subsubsection{Inheritance}
+Given multiple variables, if we calculate an upper bound of list of properties that encompasses all variables will give a base class definition analogous to object class in Java language. A more useful result would be to calculate several upper elements that encompasses a sizeable number of elements. If a variable is under multiple upper elements, this relationship can be thought of as a multiple inheritance. Possible heuristics for deciding the granularity of such an analysis will be thought of and experimented with. Such a problem can be hard (hardness will be argued if necessary), and possible algorithmic approach will also be discussed.\\
+Modern OOP languages such as Java introduced a concept of interface, so as to avoid multiple inheritance from classes. An upper element with a relatively fewer properties and large number of inheriting variables can be thought of as exhibiting an interface-like feature. We will devise a way to numericise such a feature to produce an index of interface-likeness. Such an analysis will help a programmer decide a proper class structure should they decide to move on to a more serious programming language from a rapid prototype.
+\section{Conclusion}
+Performing static code analysis on duck-typing programs will provide useful informations in the context of error-proofing and rapid prototyping. The result of such an analysis will be useful in two ways.\\ 
+Firstly, it will allow IDEs to be able to guard against potential mistakes, by suggesting what kind of ducks certain parameters can be in a certain context. Thus, it will help prevent bugs resulting from mistyped names.\\
+Secondly, it will allow RAD tools to suggest possible class definitions and their hierarchies by analysing the use of certain variables. The result of such an analysis will particularly be useful in the context of test-driven development paradigm.\\
+\end{document}
