@@ -29,9 +29,11 @@ $S \rightarrow \epsilon$\\
 Statement can also be a concatenation of statements.\\
 $S \rightarrow S S$\\
 Now we turn to non-trivial definitions. We define an assignment statement.\\
-$S \rightarrow lexpr = expr$\\
-Here we make a distinction between left expression($lexpr$) and expression($expr$). A left expression is an expression that is capable of designating a memory location, such as a symbol or a member of an object. Naturally, a left expression is a subset of an expression.\\
-
+$S \rightarrow Lexpr = Expr$\\
+Here we make a distinction between left expression($Lexpr$) and expression($Expr$). A left expression is an expression that is capable of designating a memory location, such as a symbol or a member of an object. Naturally, a left expression is a subset of an expression.\\
+$S \rightarrow Expr$\\
+Statement can also be an expression. An evaluated value, if there is one, will be discard. If the programmer chose to use this construct, the intention of his or hers would be to use a side-effect of an expression evaluation, e.g. calling a database function to generate a side-effect.\\
+$S \rightarrow output Expr$\\
 
 \section{Static Analysis}
 The analysis technique will generally be built up on the analysis of monotone framework. A powerset of a set of properties associated with a variable can be thought of as a finite Lattice. By performing dataflow analysis over such Lattice, we will be able to tell what properties are assigned to a variable.\\
