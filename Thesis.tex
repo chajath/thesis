@@ -44,8 +44,43 @@ i.yi@student.unimelb.edu.au
 \date{\today}
 \maketitle
 \section{Introduction}
-Contemporary dynamic-typing languages such as Python and ECMAScript utilise `duck-typing' as a way of allowing users to define classes on-the-fly. By allowing a programmer to dynamically create properties of variables, these languages allow a programmer to rapidly prototype models.\\
-The aim of the proposed project is to apply static code analysis to infer class structures from the use of duck-typed variables. 
+Contemporary dynamic-typing languages such as Python and ECMAScript utilise `duck-typing' as a way of allowing users to define and use classes on-the-fly. By allowing a programmer to dynamically create properties of variables, these languages allow a programmer to rapidly prototype models.\\
+The aim of the proposed project is to apply static code analysis to infer class structures from the use of duck-typed variables.\\
+
+\subsection{Example: View Model Development in a Duck-Typing Language}
+In Model-View-ViewModel(MVVM) development methodology, developers sketch out a view model first, bearing in mind possible structures of models and views. Suppose such developer writes a code in the following manner:\\
+\begin{lstlisting}[caption=Controller written in a Duck-Typing language]
+controller = new Controller();
+controller.form = new Form();
+controller.db = new Db();
+
+function UpdateAge() {
+	age = this.form.age;
+	personId = this.form.personId;
+	this.db.UpdateAge();
+}
+controller.PerformUpdateAge = UpdateAge;
+
+function DisplayAge() {
+	age = this.db.GetAge(this.form.personId);
+	this.form.ShowAge(age);
+}
+controller.PerformDisplayAge = DisplayAge;
+
+# Testing
+
+controller.form.age = 20;
+controller.form.personId = 110;
+controller.PerformUpdateAge();
+if(controller.db.GetAge(110) != 20) {
+	output 1 # Test 1 failed
+}
+controller.PerformDisplayAge();
+if(controller.form.shownAge != this.db.GetAge(110)) {
+	output 2 # Test 2 failed
+}
+\end{lstlisting}
+
 \section{Toy Language}
 We will define a toy language that we name Simple Duck-Typing Language (SDTL). The design goal is to come up with a largely subset of ECMAScript expressive enough to cover the topic without losing generality of the argument. The language features dynamic declaration of functions, primitive variables (int, bool) and objects (through \textit{new} keyword), to which a programmer can dynamically assign variables or functions to their properties.\\
 SDTL does not allow explicit class definition, as in Python, or prototyping, as in ECMAScript. However, it is argued here that class definitions and prototypes can be normalised as a series of dynamic declaration.\\
