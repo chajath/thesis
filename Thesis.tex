@@ -6,6 +6,7 @@
 \usepackage{hyperref}
 \usepackage{listings}
 \usepackage{color}
+\usepackage{graphicx}
 \definecolor{lightgray}{rgb}{.9,.9,.9}
 \definecolor{darkgray}{rgb}{.4,.4,.4}
 \definecolor{purple}{rgb}{0.65, 0.12, 0.82}
@@ -81,6 +82,54 @@ if(controller.form.shownAge != this.db.GetAge(110)) {
 }
 \end{lstlisting}
 
+\subsection{The Challenge of the Task at Hand}
+In traditional OOP languages such as Java and C\#, the task of statically analysing class structure is almost trivial. Programmers define the types and hierarchies in advance, and the declarations themselves are readily understandable by machine. There are tools available for translating a design diagram such as UML to a code stub, and vice versa.\\
+Duck-typing languages, on the other hand, does not include a finite definition of a class structure. Consider the following declaration of class in Python:\\
+\begin{lstlisting}[caption=Python class creation, language=Python]
+from random import random
+class ExampleA:
+    def __init__(self):
+        self.someProperty = 'a'
+        if(random() > 0.5):
+            self.otherProperty = 'b'
+    def someMethod(self, a):
+        print(a)
+a = ExampleA()
+a.someMethod('Hello, world')
+a.myProperty = 2
+def newMethod(b):
+    print(b)
+a.newMethod = newMethod
+a.newMethod('Hello, world')
+\end{lstlisting}
+There are several difficulties of statically analysing this code. First, declarations of members are dynamic, and the type itself can even depend on a control flow. In case of class ExampleA, instances have 50\% chance of having `otherProperty' as a member.\\
+Second, after the initial creation of an instance, a programmer can liberally extend the class by declaring a new members dynamically.
+\subsection{Examples of the Proposed Solution}
+Suppose we have the following code fragments written in a duck-typing language:\\
+\begin{lstlisting}[caption=Example: Fruits]
+function Fruit(name) {
+	this.name = name;
+}
+
+function juiceMe() {
+	# juicing me
+}
+
+apple = new Fruit('apple');
+apple.juice = juiceMe;
+
+grape = new Fruit('grape');
+grape.juice = juiceMe;
+
+banana = new Fruit('banana');
+
+watermelon = new Fruit('watermelon');
+\end{lstlisting}
+We construct a graph of all known properties and methods.\\
+\begin{figure}
+	\includegraphics{lattice1.eps}
+	\caption{A graph of all known properties and methods}
+\end{figure}
 \section{Toy Language}
 We will define a toy language that we name Simple Duck-Typing Language (SDTL). The design goal is to come up with a largely subset of ECMAScript expressive enough to cover the topic without losing generality of the argument. The language features dynamic declaration of functions, primitive variables (int, bool) and objects (through \textit{new} keyword), to which a programmer can dynamically assign variables or functions to their properties.\\
 SDTL does not allow explicit class definition, as in Python, or prototyping, as in ECMAScript. However, it is argued here that class definitions and prototypes can be normalised as a series of dynamic declaration.\\
