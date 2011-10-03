@@ -6,7 +6,9 @@
 \usepackage{hyperref}
 \usepackage{listings}
 \usepackage{color}
-\usepackage{graphicx}
+\usepackage{float}
+\usepackage[pdftex]{graphicx}
+\usepackage{epstopdf}
 \definecolor{lightgray}{rgb}{.9,.9,.9}
 \definecolor{darkgray}{rgb}{.4,.4,.4}
 \definecolor{purple}{rgb}{0.65, 0.12, 0.82}
@@ -48,7 +50,71 @@ i.yi@student.unimelb.edu.au
 Contemporary dynamic-typing languages such as Python and ECMAScript utilise `duck-typing' as a way of allowing users to define and use classes on-the-fly. By allowing a programmer to dynamically create properties of variables, these languages allow a programmer to rapidly prototype models.\\
 The aim of the proposed project is to apply static code analysis to infer class structures from the use of duck-typed variables.\\
 
-\subsection{Example: View Model Development in a Duck-Typing Language}
+
+\subsection{The Challenge of Analysing Duck-Typing Programs}
+In traditional OOP languages such as Java and C\#, the task of statically analysing class structure is almost trivial. Programmers define the types and hierarchies in advance, and the declarations themselves are readily understandable by machine. There are tools available for translating a design diagram such as UML to a code stub, and vice versa.\\
+Duck-typing languages, on the other hand, does not include a finite definition of a class structure. Consider the following declaration of class in Python:\\
+\begin{lstlisting}[caption=Python class creation, language=Python]
+from random import random
+class ExampleA:
+    def __init__(self):
+        self.someProperty = 'a'
+        if(random() > 0.5):
+            self.otherProperty = 'b'
+    def someMethod(self, a):
+        print(a)
+a = ExampleA()
+a.someMethod('Hello, world')
+a.myProperty = 2
+def newMethod(b):
+    print(b)
+a.newMethod = newMethod
+a.newMethod('Hello, world')
+\end{lstlisting}
+There are several difficulties of statically analysing this code. First, declarations of members are dynamic, and the type itself can even depend on a control flow. In case of class ExampleA, instances have 50\% chance of having `otherProperty' as a member.\\
+Second, after the initial creation of an instance, a programmer can liberally extend the class by declaring a new members dynamically.
+\subsection{Examples of the Proposed Solution}
+\subsubsection{Fruits}
+Suppose we have the following code fragments written in a duck-typing language:\\
+\begin{lstlisting}[caption=Example: Fruits]
+function Fruit(name) {
+	this.name = name;
+}
+
+function juiceMe() {
+	# juicing me
+}
+
+apple = new Fruit('apple');
+apple.juice = juiceMe;
+
+grape = new Fruit('grape');
+grape.juice = juiceMe;
+
+banana = new Fruit('banana');
+
+watermelon = new Fruit('watermelon');
+\end{lstlisting}
+If we construct a finite lattice $L = (2^P, \supseteq)$, P being the set of all known properties and methods of all instances of classes, we obtain the following lattice:\\
+\begin{figure}[H]
+	\includegraphics{lattice1.eps}
+	\centering
+	\caption{Lattice of all known properties and methods}
+\end{figure}
+We now construct a similar lattice $M = (2^V, \supseteq)$for all know variables in a program:\\
+\begin{figure}[H]
+	\includegraphics{lattice2.eps}
+	\centering
+	\caption{Lattice of all variables}
+\end{figure}
+If we map elements of $M$ to $L$, $N = L \mapsto M$, we have a lattice sufficient to represent the class types of all variables at any given point in runtime. Our ambition is to devise a fixed point iteration, which can be performed over normalised set of instructions, to map a particular element of the lattice to each point of control flow.\\
+\begin{figure}[H]
+	\includegraphics{lattice3.png}
+	\centering
+	\caption{Mapping of two lattices}
+\end{figure}
+
+\subsubsection{View Model Development in a Duck-Typing Language}
 In Model-View-ViewModel(MVVM) development methodology, developers sketch out a view model first, bearing in mind possible structures of models and views. Suppose such developer writes a code in the following manner:\\
 \begin{lstlisting}[caption=Controller written in a Duck-Typing language]
 controller = new Controller();
@@ -82,54 +148,6 @@ if(controller.form.shownAge != this.db.GetAge(110)) {
 }
 \end{lstlisting}
 
-\subsection{The Challenge of the Task at Hand}
-In traditional OOP languages such as Java and C\#, the task of statically analysing class structure is almost trivial. Programmers define the types and hierarchies in advance, and the declarations themselves are readily understandable by machine. There are tools available for translating a design diagram such as UML to a code stub, and vice versa.\\
-Duck-typing languages, on the other hand, does not include a finite definition of a class structure. Consider the following declaration of class in Python:\\
-\begin{lstlisting}[caption=Python class creation, language=Python]
-from random import random
-class ExampleA:
-    def __init__(self):
-        self.someProperty = 'a'
-        if(random() > 0.5):
-            self.otherProperty = 'b'
-    def someMethod(self, a):
-        print(a)
-a = ExampleA()
-a.someMethod('Hello, world')
-a.myProperty = 2
-def newMethod(b):
-    print(b)
-a.newMethod = newMethod
-a.newMethod('Hello, world')
-\end{lstlisting}
-There are several difficulties of statically analysing this code. First, declarations of members are dynamic, and the type itself can even depend on a control flow. In case of class ExampleA, instances have 50\% chance of having `otherProperty' as a member.\\
-Second, after the initial creation of an instance, a programmer can liberally extend the class by declaring a new members dynamically.
-\subsection{Examples of the Proposed Solution}
-Suppose we have the following code fragments written in a duck-typing language:\\
-\begin{lstlisting}[caption=Example: Fruits]
-function Fruit(name) {
-	this.name = name;
-}
-
-function juiceMe() {
-	# juicing me
-}
-
-apple = new Fruit('apple');
-apple.juice = juiceMe;
-
-grape = new Fruit('grape');
-grape.juice = juiceMe;
-
-banana = new Fruit('banana');
-
-watermelon = new Fruit('watermelon');
-\end{lstlisting}
-We construct a graph of all known properties and methods.\\
-\begin{figure}
-	\includegraphics{lattice1.eps}
-	\caption{A graph of all known properties and methods}
-\end{figure}
 \section{Toy Language}
 We will define a toy language that we name Simple Duck-Typing Language (SDTL). The design goal is to come up with a largely subset of ECMAScript expressive enough to cover the topic without losing generality of the argument. The language features dynamic declaration of functions, primitive variables (int, bool) and objects (through \textit{new} keyword), to which a programmer can dynamically assign variables or functions to their properties.\\
 SDTL does not allow explicit class definition, as in Python, or prototyping, as in ECMAScript. However, it is argued here that class definitions and prototypes can be normalised as a series of dynamic declaration.\\
