@@ -184,6 +184,54 @@ universalanswer = theanswer;
 output universalanswer();
 \end{lstlisting}
 The outout of such program is `42'.
+\subsection{Left Expression}
+We define left expressions as those who can come in the left side of the assignment statements. Following is the list of possible left expressions in SDTL.\\
+$Lexpr \rightarrow ID$\\
+First, left expression can simply be an ID.\\
+$Lexpr \rightarrow Expr\ .\ ID$\\
+Left expression can be an expression (which resolves to be an object pointer), followed by dot and ID. Run-time error will be thrown if the expression is not resolved to be an object.\\
+$Lexpr \rightarrow (Lexpr)$\\
+Lastly, we allow left expression to be inside parentheses\\
+\subsection{Expression}
+$Expr \rightarrow this$\\
+When keyword $this$ is used, it denotes either an object whose method is currently called upon, or a new object that is being constructed (when the function is called with $new$ keyword). For example, in the following code pragment, $this$ keyword in methodone function is resolved to be variable $a$:\\
+\begin{lstlisting}[caption=this]
+function objectwithmethod() {
+	function methodone(abc) {
+		this.a = abc;
+	}
+	this.methodone = methodone;
+}
+a = new objectwithmethod();
+a.methodone = methodone;
+a.methodone(15);
+\end{lstlisting}
+$Expr \rightarrow input$\\
+$Expr \rightarrow true\ |\ false$\\
+$Expr \rightarrow number$\\
+$Expr \rightarrow new\  Expr$\\
+$Expr \rightarrow Lexpr ([Expr[,Expr]*]?)$\\
+
+
+\subsubsection{Binary operations}
+$Expr \rightarrow Expr + Expr$\\
+$Expr \rightarrow Expr - Expr$\\
+$Expr \rightarrow Expr * Expr$\\
+$Expr \rightarrow Expr / Expr$\\
+$Expr \rightarrow Expr > Expr$\\
+$Expr \rightarrow Expr < Expr$\\
+$Expr \rightarrow Expr == Expr$\\
+
+\section{Type System of SDTL}
+There are two categories of types in SDTL: Primitive types and Referentials types
+\subsection{Primitive types}
+As in languages like Java and C\#, primitive types are analogous to non-pointer C types. Variables are generally created through a new assignment statement. Assigning a value into another variable would cause the value to be copied into a new location. When used as arguments to a function call, they will be passed by value.
+\subsubsection{Boolean}
+Boolean values are either true or false. In addition to \textit{true} and \textit{false} keyword, resulting values of logical operations are also boolean.
+\subsubsection{Number}
+\subsection{Referential types}
+\subsubsection{Objects}
+\subsubsection{Function pointers}
 \section{Static Analysis}
 The analysis technique will generally be built up on the analysis of monotone framework. A powerset of a set of properties associated with a variable can be thought of as a finite Lattice. By performing dataflow analysis over such Lattice, we will be able to tell what properties are assigned to a variable.\\
 \subsection{Single Variable Analysis}
