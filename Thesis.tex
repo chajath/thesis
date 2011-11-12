@@ -194,7 +194,7 @@ $Lexpr \rightarrow (Lexpr)$\\
 We allow left expression to be inside parentheses\\
 \subsection{Expression}
 $Expr \rightarrow this$\\
-When keyword $this$ is used, it denotes either an object whose method is currently called upon, or a new object that is being constructed (when the function is called with $new$ keyword). For example, in the following code pragment, $this$ keyword in methodone function is resolved to be variable $a$:\\
+When keyword $this$ is used, it denotes either an object whose method is currently called upon, or a new object that is being constructed (when the function is called with $new$ keyword). For example, in the following code fragment, $this$ keyword in methodone function is resolved to be variable $a$:\\
 \begin{lstlisting}[caption=this]
 function objectwithmethod() {
 	function methodone(abc) {
@@ -207,38 +207,55 @@ a.methodone = methodone;
 a.methodone(15);
 \end{lstlisting}
 $Expr \rightarrow input$\\
-\textit{input} is a number from keyboard input.
+\textit{input} is a number from keyboard input.\\
 $Expr \rightarrow true\ |\ false$\\
-Expression can be boolean constants.
+Expression can be boolean constants.\\
 $Expr \rightarrow number$\\
-Expression can be integer number.
+Expression can be integer number.\\
 $Expr \rightarrow new\  Expr$\\
-When \textit{new} keyword is used, it is expected that the following expression resolves to be a function call. The newly created object will be based on what is constructed inside the constructor function, much in a same way as how objects are constructed in ECMAScript.
+When \textit{new} keyword is used, it is expected that the following expression resolves to be a function call. The newly created object will be based on what is constructed inside the constructor function, much in a same way as how objects are constructed in ECMAScript.\\
 $Expr \rightarrow Lexpr ([Expr[,Expr]*]?)$\\
-Expression can be a function call. Left expression is expected to be resolved to a function point.
+Expression can be a function call. Left expression is expected to be resolved to a function point.\\
 \subsubsection{Binary operations}
+SDTL provides following binary operations. For those operations, SDTL expects both sides of expressions to be numeric.\\
 $Expr \rightarrow Expr + Expr$\\
 $Expr \rightarrow Expr - Expr$\\
 $Expr \rightarrow Expr * Expr$\\
 $Expr \rightarrow Expr / Expr$\\
 $Expr \rightarrow Expr > Expr$\\
 $Expr \rightarrow Expr < Expr$\\
+\\
+In addition to those, SDTL also provides is-equal operator. In contrast to other operators, this operator can work as long as both sides of expressions are of same type.\\
 $Expr \rightarrow Expr == Expr$\\
-
 \section{Type System of SDTL}
-There are two categories of types in SDTL: Primitive types and Referentials types
+There are two categories of types in SDTL: Primitive types and Reference types
 \subsection{Primitive types}
 As in languages like Java and C\#, primitive types are analogous to non-pointer C types. Variables are generally created through a new assignment statement. Assigning a value into another variable would cause the value to be copied into a new location. When used as arguments to a function call, they will be passed by value.
 \subsubsection{Boolean}
 Boolean values are either true or false. In addition to \textit{true} and \textit{false} keyword, resulting values of logical operations are also boolean.
 \subsubsection{Number}
 Numbers are also primitive type. For numeric binary operators, it is expected that both expressions are in primitive number type. If either of them are not, then a run-time type error is thrown.
-\subsection{Referential types}
-Both objects and functions are referred to via referential types.
+\subsection{Reference types}
+Both objects and functions are referred to via reference types.
 \subsubsection{Objects}
 In SDTL, an object is consisted of a collection of members, which can be primitives, function points or objects. When a new object is created, the object is stored in a memory and a reference point to the memory is returned. Subsequent assignments of such value is all passed in as a reference. When used in a function call, such value is passed by reference.
 \subsubsection{Function pointers}
-Functions are stored as function pointers. When a new function is declared, the code pragment is stored in the memory and its reference is associated with the name of the function. The function pointer then can be used like any other variables. SDTL does not allow method overloading, so a function pointer can be associated with one function only.
+Functions are stored as function pointers. When a new function is declared, the code fragment is stored in the memory and its reference is associated with the name of the function. The function pointer then can be used like any other variables. SDTL does not allow method overloading, so a function pointer can be associated with one function only.
+\section{Scopes of Variables}
+SDTL is a dynamically scoping language. The language will maintain a stack of symbol tables. At each function calls, a new symbol table will be pushed into the stack. Such table will have parameters. It will also have \textit{this} symbol if called as a member of an object. At the returning of the function call, the table will be popped from the stack.\\
+New variables defined will always be local variables. That is, a new entry will always be made into the top-most table in the stack. When using global variables, the language will search the symbol from top to bottom.
+\section{Analytic Framework}
+Analysis will be performed in three steps\\
+
+\begin{enumerate}
+	\item{Control flow analysis}
+	\item{Backward analysis of variables and function calls}
+	\item{Forward analysis}
+\end{enumerate}
+\subsection{Control flow analysis}
+In this step, we draw a control flow graph for all statements in a program. We analyse all branching statements, but leave function calls to be resolved in the next step.
+\subsection{Backward analysis of variables and function calls}
+\subsection{Forward analysis}
 \section{Static Analysis}
 The analysis technique will generally be built up on the analysis of monotone framework. A powerset of a set of properties associated with a variable can be thought of as a finite Lattice. By performing dataflow analysis over such Lattice, we will be able to tell what properties are assigned to a variable.\\
 \subsection{Single Variable Analysis}
