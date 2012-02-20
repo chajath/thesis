@@ -96,15 +96,32 @@ Lexpr ::= ID | Expr .
 
 \begin_layout Labeling
 \labelwidthstring 00.00.0000
-Expr ::= con | global | Lexpr | this | input | new Lexpr([Expr[,Expr]*]?)
- | Lexpr([Expr[,Expr]*]?) | Expr binop Expr
+Expr ::= con | 
+\emph on
+global
+\emph default
+ | Lexpr | 
+\emph on
+this
+\emph default
+ | 
+\emph on
+input
+\emph default
+ | 
+\emph on
+new
+\emph default
+ Lexpr([Expr[,Expr]*]?) | Lexpr([Expr[,Expr]*]?) | Expr binop Expr
 \end_layout
 
+\begin_deeper
 \begin_layout Labeling
 \labelwidthstring 00.00.0000
 binop ::= + - * / > < ==
 \end_layout
 
+\end_deeper
 \begin_layout Subsection
 Statements
 \end_layout
@@ -150,7 +167,11 @@ Static semantics
 
 \begin_layout Labeling
 \labelwidthstring 00.00.0000
-Environment = Store = <Vars, ObjMemory, FunctionPoints, This, CallStacks>
+Environment = Store = 
+\begin_inset Formula $\left\langle Vars,ObjMemory,FunctionPoints,This,CallStacks\right\rangle $
+\end_inset
+
+
 \end_layout
 
 \begin_layout Labeling
@@ -159,64 +180,101 @@ Vars = ID
 \begin_inset Formula $\rightarrow$
 \end_inset
 
- Value Value = (N | T | <OBJ
-\begin_inset Formula $_{n}$
+ Value 
+\end_layout
+
+\begin_deeper
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+Value = 
+\begin_inset Formula $\left(N|T|\left\langle OBJ_{n}\right\rangle |\left\langle FP_{n},\left[ID,\ldots\right],ID\rightarrow Value\right\rangle \right)$
 \end_inset
 
-> | <FP
-\begin_inset Formula $_{n}$
-\end_inset
 
-, [ID, ...], ID
-\begin_inset Formula $\rightarrow$
-\end_inset
-
-Value>)
 \end_layout
 
 \begin_layout Labeling
 \labelwidthstring 00.00.0000
-ObjMemory = <OBJ
-\begin_inset Formula $_{n}$
-\end_inset
-
-> 
+V(ID) = Value where ID 
 \begin_inset Formula $\rightarrow$
 \end_inset
 
- ID
+ Value
+\end_layout
+
+\end_deeper
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+ObjMemory = 
+\begin_inset Formula $\left\langle OBJ_{n}\right\rangle \rightarrow ID\rightarrow Value,n=0,1,2,...$
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+OM(n) = 
+\begin_inset Formula $ID\rightarrow V$
+\end_inset
+
+ where 
+\begin_inset Formula $\left\langle OBJ_{n}\right\rangle \rightarrow ID\rightarrow V$
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+FunctionPoints = 
+\begin_inset Formula $\left\langle FP_{n}\right\rangle $
+\end_inset
+
+
 \begin_inset Formula $\rightarrow$
 \end_inset
 
-Value, n = 0, 1, 2, ...
- 
+
+\begin_inset Formula $\left\langle S,\left[ID,\ldots\right]\right\rangle ,n=0,1,2,\ldots$
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+FP(n) = 
+\begin_inset Formula $\left\langle S,\left[ID,...\right]\right\rangle $
+\end_inset
+
+where 
+\begin_inset Formula $\left\langle FP_{n}\right\rangle \rightarrow\left\langle S,\left[ID,\ldots\right]\right\rangle $
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+Configuration = 
+\begin_inset Formula $\left\langle S,Store\right\rangle $
+\end_inset
+
+
 \end_layout
 
 \begin_layout Labeling
 \labelwidthstring 00.00.0000
-FunctionPoints = <FP
-\begin_inset Formula $_{n}$
+This = 
+\begin_inset Formula $\left\langle OBJ_{n}\right\rangle $
 \end_inset
 
->
-\begin_inset Formula $\rightarrow$
-\end_inset
 
-<S, [ID, ...]>, n = 0, 1, 2, ...
-\end_layout
-
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
-Configuration = <S, Store>
-\end_layout
-
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
-This = <OBJ
-\begin_inset Formula $_{n}$
-\end_inset
-
->
 \end_layout
 
 \begin_layout Subsection
@@ -225,11 +283,11 @@ Program Invariant
 
 \begin_layout Labeling
 \labelwidthstring 00.00.0000
-Global = <OBJ
-\begin_inset Formula $_{0}$
+Global = 
+\begin_inset Formula $\left\langle OBJ_{0}\right\rangle $
 \end_inset
 
->
+
 \end_layout
 
 \begin_layout Section
@@ -241,7 +299,39 @@ Constant
 \end_layout
 
 \begin_layout Standard
-\begin_inset Formula $<con,s>$
+\begin_inset Formula $\left\langle con,s\right\rangle $
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Left Expressions
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\left\langle ID,\left\langle V,OM,FP,T,CS\right\rangle \right\rangle \rightarrow\left\langle V\left(ID\right),\left\langle V,OM,FP,T,CS\right\rangle \right\rangle $
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\left\langle \left\langle OBJ_{n}\right\rangle .ID,\left\langle V,OM,FP,T,CS\right\rangle \right\rangle \rightarrow\left\langle OM\left(n\right)\left(ID\right),\left\langle V,OM,FP,T,CS\right\rangle \right\rangle $
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\frac{\left\langle e,s\right\rangle \rightarrow\left\langle e',s'\right\rangle }{\left\langle e.ID,s\right\rangle \rightarrow\left\langle e'.ID,s'\right\rangle }$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\left\langle \left(e\right),s\right\rangle \rightarrow\left\langle e,s\right\rangle $
 \end_inset
 
 
@@ -252,7 +342,7 @@ Expressions
 \end_layout
 
 \begin_layout Itemize
-\begin_inset Formula $<con\, binop\, con,s>\rightarrow<con',s>$
+\begin_inset Formula $<con_{0}\, binop\, con_{1},s>\rightarrow<con',s>$
 \end_inset
 
 
@@ -260,21 +350,42 @@ Expressions
 
 \begin_layout Standard
 where 
-\begin_inset Formula $con'=con\,+|-|*|/|>|<|==\, con$
+\begin_inset Formula $con'=con_{0}\,+|-|*|/|>|<|==\, con_{1}$
 \end_inset
 
  
 \end_layout
 
 \begin_layout Itemize
-\begin_inset Formula $\frac{<e_{0},s>\rightarrow<e_{0}',s'>}{<e_{0}\, binop\, e,s>\rightarrow<e_{0}'\, binop\, e,s'>}$
+\begin_inset Formula $\frac{\left\langle e_{0},s\right\rangle \rightarrow\left\langle e_{0}',s'\right\rangle }{\left\langle e_{0}\, binop\, e,s\right\rangle \rightarrow\left\langle e_{0}'\, binop\, e,s'\right\rangle }$
 \end_inset
 
 
 \end_layout
 
 \begin_layout Itemize
-\begin_inset Formula $\frac{<e,s>\rightarrow<e',s'>}{<con\, binop\, e,s>\rightarrow<con\, binop\, e',s'>}$
+\begin_inset Formula $\frac{\left\langle e,s\right\rangle \rightarrow\left\langle e',s'\right\rangle }{\left\langle con\, binop\, e,s\right\rangle \rightarrow\left\langle con\, binop\, e',s'\right\rangle }$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\left\langle this,\left\langle V,OM,FP,T,CS\right\rangle \right\rangle \rightarrow\left\langle T,\left\langle V,OM,FP,T,CS\right\rangle \right\rangle $
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\left\langle global,s\right\rangle \rightarrow\left\langle \left\langle OBJ_{0}\right\rangle ,s\right\rangle $
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\left\langle \left\langle OBJ_{n}\right\rangle ,\left\langle V,OM,FP,T,CS\right\rangle \right\rangle \rightarrow\left\langle OM\left(n\right),\left\langle V,OM,FP,T,CS\right\rangle \right\rangle $
 \end_inset
 
 
