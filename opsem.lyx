@@ -148,6 +148,11 @@ S ::= output Expr
 
 \begin_layout Labeling
 \labelwidthstring 00.00.0000
+S ::= LExpr = Expr
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
 S ::= if(Expr) { S } else { S } 
 \end_layout
 
@@ -168,7 +173,7 @@ Static semantics
 \begin_layout Labeling
 \labelwidthstring 00.00.0000
 Environment = Store = 
-\begin_inset Formula $\left\langle Vars,ObjMemory,FunctionPoints,This,CallStacks\right\rangle $
+\begin_inset Formula $\left\langle Vars,ObjMemory,FunctionPoints,This\right\rangle $
 \end_inset
 
 
@@ -200,6 +205,14 @@ V(ID) = Value where ID
 \end_inset
 
  Value
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+\begin_inset Formula $V[\{ID=Value\}]=V\backslash\{ID\}\cup\{ID=Value\}$
+\end_inset
+
+
 \end_layout
 
 \end_deeper
@@ -258,6 +271,19 @@ where
 
 \end_layout
 
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+FS(FP,n) =
+\begin_inset Formula $S$
+\end_inset
+
+ where
+\begin_inset Formula $\left\langle FP_{n}\right\rangle \rightarrow\left\langle S,\left[ID,\ldots\right]\right\rangle $
+\end_inset
+
+
+\end_layout
+
 \end_deeper
 \begin_layout Labeling
 \labelwidthstring 00.00.0000
@@ -310,14 +336,14 @@ Left Expressions
 \end_layout
 
 \begin_layout Itemize
-\begin_inset Formula $\left\langle ID,\left\langle V,OM,FP,T,CS\right\rangle \right\rangle \rightarrow\left\langle V\left(ID\right),\left\langle V,OM,FP,T,CS\right\rangle \right\rangle $
+\begin_inset Formula $\left\langle ID,\left\langle V,OM,FP,T\right\rangle \right\rangle \rightarrow\left\langle V\left(ID\right),\left\langle V,OM,FP,T\right\rangle \right\rangle $
 \end_inset
 
 
 \end_layout
 
 \begin_layout Itemize
-\begin_inset Formula $\left\langle \left\langle OBJ_{n}\right\rangle .ID,\left\langle V,OM,FP,T,CS\right\rangle \right\rangle \rightarrow\left\langle OM\left(n\right)\left(ID\right),\left\langle V,OM,FP,T,CS\right\rangle \right\rangle $
+\begin_inset Formula $\left\langle \left\langle OBJ_{n}\right\rangle .ID,\left\langle V,OM,FP,T\right\rangle \right\rangle \rightarrow\left\langle OM\left(n\right)\left(ID\right),\left\langle V,OM,FP,T\right\rangle \right\rangle $
 \end_inset
 
 
@@ -331,7 +357,7 @@ Left Expressions
 \end_layout
 
 \begin_layout Itemize
-\begin_inset Formula $\left\langle \left(e\right),s\right\rangle \rightarrow\left\langle e,s\right\rangle $
+\begin_inset Formula $\left\langle \left(le\right),s\right\rangle \rightarrow\left\langle le,s\right\rangle $
 \end_inset
 
 
@@ -371,7 +397,7 @@ where
 \end_layout
 
 \begin_layout Itemize
-\begin_inset Formula $\left\langle this,\left\langle V,OM,FP,T,CS\right\rangle \right\rangle \rightarrow\left\langle T,\left\langle V,OM,FP,T,CS\right\rangle \right\rangle $
+\begin_inset Formula $\left\langle this,\left\langle V,OM,FP,T\right\rangle \right\rangle \rightarrow\left\langle T,\left\langle V,OM,FP,T\right\rangle \right\rangle $
 \end_inset
 
 
@@ -385,10 +411,213 @@ where
 \end_layout
 
 \begin_layout Itemize
-\begin_inset Formula $\left\langle \left\langle OBJ_{n}\right\rangle ,\left\langle V,OM,FP,T,CS\right\rangle \right\rangle \rightarrow\left\langle OM\left(n\right),\left\langle V,OM,FP,T,CS\right\rangle \right\rangle $
+\begin_inset Formula $\left\langle \left\langle OBJ_{n}\right\rangle ,\left\langle V,OM,FP,T\right\rangle \right\rangle \rightarrow\left\langle OM\left(n\right),\left\langle V,OM,FP,T\right\rangle \right\rangle $
 \end_inset
 
 
+\end_layout
+
+\begin_layout Subsubsection
+Function calls
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\left\langle \left\langle FP_{n},[ID_{0}|ID],C\right\rangle \left(\left[con|e\right]\right),s\right\rangle \rightarrow\left\langle \left\langle FP_{n},[ID],C\cup\left\{ ID_{0}=con\right\} \right\rangle \left(\left[e\right]\right),s\right\rangle $
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+where 
+\begin_inset Formula $C=ID\rightarrow Value$
+\end_inset
+
+ and 
+\begin_inset Formula $C\left(ID_{0}\right)$
+\end_inset
+
+is undefined
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+\begin_inset Formula $\frac{\left\langle e_{0},s\right\rangle \rightarrow\left\langle e_{0}',s'\right\rangle }{\left\langle \left\langle FP_{n},[ID_{0}|ID],C\right\rangle \left(\left[e_{0}|e\right]\right),s\right\rangle \rightarrow\left\langle \left\langle FP_{n},[ID],C\right\rangle \left(\left[e_{0}'\right]\right),s'\right\rangle }$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\frac{\left\langle FS\left(FP,n\right),\left\langle C,OM,FP,\phi\right\rangle \right\rangle \rightarrow^{*}\left\langle return\ con,\left\langle V',OM',FP',\phi\right\rangle \right\rangle }{\left\langle \left\langle FP_{n},\phi,C\right\rangle \left(\phi\right),\left\langle V,OM,FP,T\right\rangle \right\rangle \rightarrow\left\langle con,\left\langle V,OM',FP',T\right\rangle \right\rangle }$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\left\langle \left\langle FP_{n},[ID],C\right\rangle \left(\phi\right),s\right\rangle \rightarrow\left\langle \left\langle FP_{n},[ID],C\right\rangle ,s\right\rangle $
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+Method calls
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\frac{\left\langle le,s\right\rangle \rightarrow\left\langle le',s'\right\rangle }{\left\langle le(\left[e\right]),s\right\rangle \rightarrow\left\langle le'(\left[e\right]),s'\right\rangle }$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\left\langle \left\langle OBJ_{n}\right\rangle .\left\langle FP_{m},[ID_{0}|ID],C\right\rangle \left(\left[con|e\right]\right),s\right\rangle \rightarrow\left\langle \left\langle OBJ_{n}\right\rangle .\left\langle FP_{m},[ID],C\cup\left\{ ID_{0}=con\right\} \right\rangle \left(\left[e\right]\right),s\right\rangle $
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\frac{\left\langle e_{0},s\right\rangle \rightarrow\left\langle e_{0}',s'\right\rangle }{\left\langle \left\langle OBJ_{n}\right\rangle .\left\langle FP_{m},[ID_{0}|ID],C\right\rangle \left(\left[e_{0}|e\right]\right),s\right\rangle \rightarrow\left\langle \left\langle OBJ_{n}\right\rangle .\left\langle FP_{m},[ID],C\right\rangle \left(\left[e_{0}'|e\right]\right),s'\right\rangle }$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\frac{OM\left(n\right)\left(ID\right)=\left\langle FP_{m},[ID']\right\rangle }{\left\langle \left\langle OBJ_{n}\right\rangle .ID\left(\left[e\right]\right),\left\langle V,OM,FP,T\right\rangle \right\rangle \rightarrow\left\langle \left\langle OBJ_{n}\right\rangle .\dot{\left\langle FP_{m},[ID'],\phi\right\rangle \left(\left[e\right]\right),\left\langle V,OM,FP,T\right\rangle }\right\rangle }$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\frac{\left\langle FS\left(FP,m\right),\left\langle C,OM,FP,\left\langle OBJ_{n}\right\rangle \right\rangle \right\rangle \rightarrow^{*}\left\langle return\ con,\left\langle V',OM',FP',\left\langle OBJ_{n}\right\rangle \right\rangle \right\rangle }{\left\langle \left\langle OBJ_{n}\right\rangle .\left\langle FP_{m},\phi,C\right\rangle \left(\phi\right),\left\langle V,OM,FP,T\right\rangle \right\rangle \rightarrow\left\langle con,\left\langle V,OM',FP',T\right\rangle \right\rangle }$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Statements
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\left\langle nil,s\right\rangle $
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\left\langle return\ con,s\right\rangle $
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\left\langle con,s\right\rangle \rightarrow\left\langle nil,s\right\rangle $
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\left\langle e,s\right\rangle \rightarrow\left\langle e',s'\right\rangle $
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\left\langle con;S,s\right\rangle \rightarrow\left\langle S,s\right\rangle $
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\left\langle nil;S,s\right\rangle \rightarrow\left\langle S,s\right\rangle $
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\left\langle S_{0};S,s\right\rangle \rightarrow\left\langle S_{0}';S,s\right\rangle $
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\left\langle return\ con;S,s\right\rangle \rightarrow\left\langle return\ con,s\right\rangle $
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Assignments
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\left\langle ID=Value,\left\langle V,OM,FP,T\right\rangle \right\rangle \rightarrow\left\langle nil,\left\langle V[\{ID=Value\}],OM,FP,T]\right\rangle \right\rangle $
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\left\langle \left\langle OBJ_{n}\right\rangle .ID=Value,\left\langle V,OM,FP,T\right\rangle \right\rangle \rightarrow\left\langle nil,\left\langle V,OM[\{OM(n)(ID)=Value\}],FP,T\right\rangle \right\rangle $
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\frac{\left\langle le,s\right\rangle \rightarrow\left\langle le',s'\right\rangle }{\left\langle le=e,s\right\rangle \rightarrow\left\langle le'=e,s'\right\rangle }$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\frac{\left\langle e,s\right\rangle \rightarrow\left\langle e',s'\right\rangle }{\left\langle ID=e,s\right\rangle \rightarrow\left\langle ID=e',s'\right\rangle }$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+\lang english
+\begin_inset Formula $\frac{\left\langle e,s\right\rangle \rightarrow\left\langle e',s'\right\rangle }{\left\langle \left\langle OBJ_{n}\right\rangle .ID=e,s\right\rangle \rightarrow\left\langle \left\langle OBJ_{n}\right\rangle .ID=e',s'\right\rangle }$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+
+\lang english
+Flow controls
 \end_layout
 
 \end_body
