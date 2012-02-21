@@ -84,6 +84,18 @@ Constant
 con ::= number | boolean
 \end_layout
 
+\begin_deeper
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+number ::= Z
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+boolean ::= tt | ff
+\end_layout
+
+\end_deeper
 \begin_layout Subsection
 Expressions
 \end_layout
@@ -549,7 +561,7 @@ Statements
 \end_layout
 
 \begin_layout Itemize
-\begin_inset Formula $\left\langle S_{0};S,s\right\rangle \rightarrow\left\langle S_{0}';S,s\right\rangle $
+\begin_inset Formula $\frac{\left\langle S_{0},s\right\rangle \rightarrow\left\langle S_{0}',s'\right\rangle }{\left\langle S_{0};S,s\right\rangle \rightarrow\left\langle S_{0}';S,s'\right\rangle }$
 \end_inset
 
 
@@ -618,6 +630,95 @@ Assignments
 
 \lang english
 Flow controls
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\frac{\left\langle e,s\right\rangle \rightarrow\left\langle e',s'\right\rangle }{\left\langle if\ e\ then\ S,s\right\rangle \rightarrow\left\langle if\ e'\ then\ S,s'\right\rangle }$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\left\langle if\ tt\ then\ S,s\right\rangle \rightarrow\left\langle S,s\right\rangle $
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+\lang english
+\begin_inset Formula $\left\langle if\ ff\ then\ S,s\right\rangle \rightarrow\left\langle nil,s\right\rangle $
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\frac{\left\langle e,s\right\rangle \rightarrow\left\langle e',s'\right\rangle }{\left\langle if\ e\ then\ S\ else\ S_{0},s\right\rangle \rightarrow\left\langle if\ e'\ then\ S\ else\ S_{0},s'\right\rangle }$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\left\langle if\ tt\ then\ S\ else\ S_{0},s\right\rangle \rightarrow\left\langle S,s\right\rangle $
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+\lang english
+\begin_inset Formula $\left\langle if\ ff\ then\ S\ else\ S_{0},s\right\rangle \rightarrow\left\langle S_{0},s\right\rangle $
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\frac{\left\langle e,s\right\rangle \rightarrow\left\langle e',s'\right\rangle }{\left\langle while\ e\ S,s\right\rangle \rightarrow\left\langle while\ e'\ S,s'\right\rangle }$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\frac{\left\langle e,s\right\rangle \rightarrow^{*}\left\langle tt,s'\right\rangle }{\left\langle while\ e\ S,s\right\rangle \rightarrow\left\langle S;while\ e\ S,s'\right\rangle }$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\left\langle while\ ff\ S,s\right\rangle \rightarrow\left\langle nil,s\right\rangle $
+\end_inset
+
+
 \end_layout
 
 \end_body
