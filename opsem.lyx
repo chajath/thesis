@@ -71,6 +71,10 @@
 Simple Duck-Typing Language (SDTL)
 \end_layout
 
+\begin_layout Part
+Operation Semantics
+\end_layout
+
 \begin_layout Section
 Structure
 \end_layout
@@ -716,6 +720,250 @@ Flow controls
 
  where 
 \begin_inset Formula $S'=S;while\ e\ S$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Part
+Analysis
+\end_layout
+
+\begin_layout Section
+Control Flow Analysis
+\end_layout
+
+\begin_layout Subsection
+Numbering New Expressions and Function Declarations
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+Expr ::= 
+\emph on
+new
+\begin_inset Formula $_{n}$
+\end_inset
+
+
+\emph default
+ Lexpr([Expr[,Expr]*]?) 
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+S ::= 
+\emph on
+function
+\begin_inset Formula $_{n}$
+\end_inset
+
+
+\emph default
+ ID ([ID [, ID]*]?) { Ss }
+\end_layout
+
+\begin_layout Subsection
+Nodes and Edges
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+S ::= 
+\emph on
+if
+\emph default
+(Expr) { S' }
+\end_layout
+
+\begin_deeper
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+next(S) = {succ(S), first(S')}
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+next(last(S')) = {succ(S)} if S' not 
+\emph on
+return
+\emph default
+ 
+\end_layout
+
+\end_deeper
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+S ::= 
+\emph on
+if
+\emph default
+(Expr) { S' } 
+\emph on
+else
+\emph default
+ { S'' } 
+\end_layout
+
+\begin_deeper
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+next(S) = {first(S'), first(S'')}
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+next(last(S')) = succ(S) if S' not 
+\emph on
+return
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+next(last(S'')) = succ(S) if S'' not 
+\emph on
+return
+\end_layout
+
+\end_deeper
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+S ::= 
+\emph on
+while
+\emph default
+(Expr) { S' } 
+\end_layout
+
+\begin_deeper
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+next(S) = {first(S'}, succ(S)}
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+next(last(S')) = {S, succ(S)} if S' not 
+\emph on
+return
+\end_layout
+
+\end_deeper
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+S ::= 
+\emph on
+return
+\emph default
+ Expr
+\end_layout
+
+\begin_deeper
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+next(S) = 
+\begin_inset Formula $\phi$
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Section
+Object Analysis
+\end_layout
+
+\begin_layout Standard
+t = types = (number | boolean | object
+\begin_inset Formula $_{n}$
+\end_inset
+
+|function(n, n_curried))
+\end_layout
+
+\begin_layout Standard
+n_curried 
+\begin_inset Formula $\in$
+\end_inset
+
+ [0, 
+\begin_inset Formula $\propto$
+\end_inset
+
+)
+\end_layout
+
+\begin_layout Subsection
+Program Invariants
+\end_layout
+
+\begin_layout Itemize
+FunctionPointers = n
+\begin_inset Formula $\mapsto$
+\end_inset
+
+
+\begin_inset Formula $\left\langle S,Params,ReturnType,this\right\rangle $
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Params = 
+\begin_inset Formula $\left[arg_{0}\mapsto\left\{ t_{0},t_{1},\ldots\right\} ,\ldots\right]$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+ReturnType = 
+\begin_inset Formula $\left\{ t_{0},t_{1},\ldots\right\} $
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+this = 
+\begin_inset Formula $\left\{ t_{0},t_{1},\ldots\right\} $
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+ObjectMemory
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+n
+\begin_inset Formula $\mapsto$
+\end_inset
+
+ID
+\begin_inset Formula $\mapsto$
+\end_inset
+
+t
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+
+\emph on
+global
+\emph default
+ 
+\begin_inset Formula $\mapsto$
+\end_inset
+
+OBJ
+\begin_inset Formula $_{0}$
 \end_inset
 
 
