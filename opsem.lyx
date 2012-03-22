@@ -362,7 +362,7 @@ Left Expressions
 \end_layout
 
 \begin_layout Itemize
-\begin_inset Formula $\frac{\left\langle e,s\right\rangle \rightarrow\left\langle e',s'\right\rangle }{\left\langle e.ID,s\right\rangle \rightarrow\left\langle e'.ID,s'\right\rangle }$
+\begin_inset Formula ${\displaystyle \frac{\left\langle e,s\right\rangle \rightarrow\left\langle e',s'\right\rangle }{\left\langle e.ID,s\right\rangle \rightarrow\left\langle e'.ID,s'\right\rangle }}$
 \end_inset
 
 
@@ -395,14 +395,14 @@ where
 \end_layout
 
 \begin_layout Itemize
-\begin_inset Formula $\frac{\left\langle e_{0},s\right\rangle \rightarrow\left\langle e_{0}',s'\right\rangle }{\left\langle e_{0}\, binop\, e,s\right\rangle \rightarrow\left\langle e_{0}'\, binop\, e,s'\right\rangle }$
+\begin_inset Formula ${\displaystyle \frac{\left\langle e_{0},s\right\rangle \rightarrow\left\langle e_{0}',s'\right\rangle }{\left\langle e_{0}\, binop\, e,s\right\rangle \rightarrow\left\langle e_{0}'\, binop\, e,s'\right\rangle }}$
 \end_inset
 
 
 \end_layout
 
 \begin_layout Itemize
-\begin_inset Formula $\frac{\left\langle e,s\right\rangle \rightarrow\left\langle e',s'\right\rangle }{\left\langle con\, binop\, e,s\right\rangle \rightarrow\left\langle con\, binop\, e',s'\right\rangle }$
+\begin_inset Formula ${\displaystyle \frac{\left\langle e,s\right\rangle \rightarrow\left\langle e',s'\right\rangle }{\left\langle con\, binop\, e,s\right\rangle \rightarrow\left\langle con\, binop\, e',s'\right\rangle }}$
 \end_inset
 
 
@@ -607,14 +607,14 @@ Assignments
 \end_layout
 
 \begin_layout Itemize
-\begin_inset Formula $\frac{\left\langle le,s\right\rangle \rightarrow\left\langle le',s'\right\rangle }{\left\langle le=e,s\right\rangle \rightarrow\left\langle le'=e,s'\right\rangle }$
+\begin_inset Formula ${\displaystyle \frac{\left\langle le,s\right\rangle \rightarrow\left\langle le',s'\right\rangle }{\left\langle le=e,s\right\rangle \rightarrow\left\langle le'=e,s'\right\rangle }}$
 \end_inset
 
 
 \end_layout
 
 \begin_layout Itemize
-\begin_inset Formula $\frac{\left\langle e,s\right\rangle \rightarrow\left\langle e',s'\right\rangle }{\left\langle ID=e,s\right\rangle \rightarrow\left\langle ID=e',s'\right\rangle }$
+\begin_inset Formula ${\displaystyle \frac{\left\langle e,s\right\rangle \rightarrow\left\langle e',s'\right\rangle }{\left\langle ID=e,s\right\rangle \rightarrow\left\langle ID=e',s'\right\rangle }}$
 \end_inset
 
 
@@ -634,7 +634,7 @@ Assignments
 \noun off
 \color none
 \lang english
-\begin_inset Formula $\frac{\left\langle e,s\right\rangle \rightarrow\left\langle e',s'\right\rangle }{\left\langle \left\langle OBJ_{n}\right\rangle .ID=e,s\right\rangle \rightarrow\left\langle \left\langle OBJ_{n}\right\rangle .ID=e',s'\right\rangle }$
+\begin_inset Formula ${\displaystyle \frac{\left\langle e,s\right\rangle \rightarrow\left\langle e',s'\right\rangle }{\left\langle \left\langle OBJ_{n}\right\rangle .ID=e,s\right\rangle \rightarrow\left\langle \left\langle OBJ_{n}\right\rangle .ID=e',s'\right\rangle }}$
 \end_inset
 
 
@@ -647,7 +647,7 @@ Flow controls
 \end_layout
 
 \begin_layout Itemize
-\begin_inset Formula $\frac{\left\langle e,s\right\rangle \rightarrow\left\langle e',s'\right\rangle }{\left\langle if\ e\ then\ S,s\right\rangle \rightarrow\left\langle if\ e'\ then\ S,s'\right\rangle }$
+\begin_inset Formula ${\displaystyle \frac{\left\langle e,s\right\rangle \rightarrow\left\langle e',s'\right\rangle }{\left\langle if\ e\ then\ S,s\right\rangle \rightarrow\left\langle if\ e'\ then\ S,s'\right\rangle }}$
 \end_inset
 
 
@@ -681,7 +681,7 @@ Flow controls
 \end_layout
 
 \begin_layout Itemize
-\begin_inset Formula $\frac{\left\langle e,s\right\rangle \rightarrow\left\langle e',s'\right\rangle }{\left\langle if\ e\ then\ S\ else\ S_{0},s\right\rangle \rightarrow\left\langle if\ e'\ then\ S\ else\ S_{0},s'\right\rangle }$
+\begin_inset Formula ${\displaystyle \frac{\left\langle e,s\right\rangle \rightarrow\left\langle e',s'\right\rangle }{\left\langle if\ e\ then\ S\ else\ S_{0},s\right\rangle \rightarrow\left\langle if\ e'\ then\ S\ else\ S_{0},s'\right\rangle }}$
 \end_inset
 
 
@@ -912,7 +912,7 @@ FunctionPointers = n
 \begin_deeper
 \begin_layout Itemize
 Params = 
-\begin_inset Formula $\left[arg_{0}\mapsto\left\{ t_{0},t_{1},\ldots\right\} ,\ldots\right]$
+\begin_inset Formula $\left[arg_{0}\mapsto\wp\left(types\right),\ldots\right]$
 \end_inset
 
 
@@ -920,7 +920,7 @@ Params =
 
 \begin_layout Itemize
 ReturnType = 
-\begin_inset Formula $\left\{ t_{0},t_{1},\ldots\right\} $
+\begin_inset Formula $\wp\left(types\right)$
 \end_inset
 
 
@@ -928,7 +928,7 @@ ReturnType =
 
 \begin_layout Itemize
 this = 
-\begin_inset Formula $\left\{ t_{0},t_{1},\ldots\right\} $
+\begin_inset Formula $\wp\left(types\right)$
 \end_inset
 
 
@@ -945,11 +945,11 @@ n
 \begin_inset Formula $\mapsto$
 \end_inset
 
-ID
-\begin_inset Formula $\mapsto$
+
+\begin_inset Formula $Symmap$
 \end_inset
 
-t
+
 \end_layout
 
 \end_deeper
@@ -969,5 +969,180 @@ OBJ
 
 \end_layout
 
+\begin_layout Subsection
+Node Configuration
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+Symmap = 
+\begin_inset Formula $ID\mapsto\wp\left(types\right)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+Absmem = 
+\begin_inset Formula $OBJ_{n}\mapsto Symmap$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+\begin_inset Formula $Env=Symmap\times Absmem$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+\begin_inset Formula $S::Stmt\rightarrow Env\rightrightarrows Env$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+\begin_inset Formula $S\ nil\ \rho=\rho$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+\begin_inset Formula $S\ \left[S_{1};S_{2}\right]=S\ S_{2}\circ S\ S_{1}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+\begin_inset Formula $S\ \left[if\left(e\right)S_{1}else\ S_{2}\right]\rho=\rho_{1}\sqcup\rho_{2}$
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+Where 
+\end_layout
+
+\begin_deeper
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+\begin_inset Formula $\left\langle \rho',t\right\rangle =\mathcal{E}\ e\ \rho$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+\begin_inset Formula $\rho_{1}=S\ S_{1}\rho'$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+\begin_inset Formula $\rho_{2}=S\ S_{2}\rho'$
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\end_deeper
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+\begin_inset Formula $S\ \left[if\left(e\right)S_{1}\right]\rho=\rho'\sqcup\rho_{1}$
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+Where 
+\end_layout
+
+\begin_deeper
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+\begin_inset Formula $\left\langle \rho',t\right\rangle =\mathcal{E}\ e\ \rho$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+\begin_inset Formula $\rho_{1}=S\ S_{1}\rho'$
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\end_deeper
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+\begin_inset Formula $S\ \left[id=e\right]\ \rho=\left\langle symmap'[id\mapsto t],absmem'\right\rangle $
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+where
+\end_layout
+
+\begin_deeper
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+\begin_inset Formula $\left\langle \left\langle symmap',absmem'\right\rangle ,t\right\rangle =\mathcal{E}\ e\ \rho$
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\end_deeper
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+\begin_inset Formula $S\ \left[e_{1}.id=e_{2}\right]\ \rho=\left\langle symmap',absmem'\left[OBJ_{n}\left[id\mapsto t\right]\right]\right\rangle $
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+where
+\end_layout
+
+\begin_deeper
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+
+\end_layout
+
+\end_deeper
+\end_deeper
 \end_body
 \end_document
