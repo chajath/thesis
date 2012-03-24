@@ -977,8 +977,11 @@ OBJ
 Node Configuration
 \end_layout
 
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
+\begin_layout Subsubsection
+Definitions
+\end_layout
+
+\begin_layout Itemize
 Symmap = 
 \begin_inset Formula $ID\mapsto\wp\left(types\right)$
 \end_inset
@@ -986,8 +989,7 @@ Symmap =
 
 \end_layout
 
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
+\begin_layout Itemize
 Absmem = 
 \begin_inset Formula $OBJ_{n}\mapsto Symmap$
 \end_inset
@@ -995,28 +997,29 @@ Absmem =
 
 \end_layout
 
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
+\begin_layout Itemize
 \begin_inset Formula $Env=Symmap\times Absmem\times Functions\times CurrentFunction$
 \end_inset
 
 
 \end_layout
 
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
+\begin_layout Itemize
 \begin_inset Formula $S::Stmt\rightarrow Env\rightarrow Env$
 \end_inset
 
 
 \end_layout
 
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
+\begin_layout Itemize
 \begin_inset Formula $\mathcal{E}::Expr\rightarrow Env\rightarrow\left\langle Env,type\right\rangle $
 \end_inset
 
 
+\end_layout
+
+\begin_layout Subsubsection
+Statement analysis
 \end_layout
 
 \begin_layout Labeling
@@ -1027,12 +1030,19 @@ Absmem =
 
 \end_layout
 
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
+\begin_layout Standard
 \begin_inset Formula $S\ \left[S_{1};S_{2}\right]=S\ S_{2}\circ S\ S_{1}$
 \end_inset
 
+if 
+\begin_inset Formula $S_{1}$
+\end_inset
 
+is not a return statement, 
+\begin_inset Formula $S\ S_{1}$
+\end_inset
+
+ otherwise
 \end_layout
 
 \begin_layout Labeling
@@ -1049,7 +1059,6 @@ Absmem =
 Where
 \end_layout
 
-\begin_deeper
 \begin_layout Labeling
 \labelwidthstring 00.00.0000
 \begin_inset Formula $\left\langle s,params,returntype,this\right\rangle =fps(cf)$
@@ -1066,7 +1075,6 @@ Where
 
 \end_layout
 
-\end_deeper
 \end_deeper
 \begin_layout Labeling
 \labelwidthstring 00.00.0000
@@ -1260,11 +1268,112 @@ where
 \end_deeper
 \begin_layout Labeling
 \labelwidthstring 00.00.0000
-\begin_inset Formula $S\ \left[function_{n}\ id\left(\left[ids\right]\right)S_{1}\right]=\left\langle symmap\left[id\mapsto FUNC_{n,0}\right],absmem\right\rangle $
+\begin_inset Formula $S\ \left[function_{n}\ id\left(\left[ids\right]\right)S_{1}\right]\ \left\langle symmap,absmem,fps,cf\right\rangle =\left\langle symmap\left[id\mapsto FUNC_{n,0}\right],absmem,fps,cf\right\rangle $
 \end_inset
 
 
 \end_layout
 
+\begin_layout Subsubsection
+Expressions
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+\begin_inset Formula $\mathcal{E}\ con\ \rho=\left\langle \rho,type\right\rangle $
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+where
+\end_layout
+
+\begin_deeper
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+\begin_inset Formula $type=number\ \mbox{if}\ con\ \mbox{is a number}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+\begin_inset Formula $type=boolean\ \mbox{if}\ con\ \mbox{is a boolean}$
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\end_deeper
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+\begin_inset Formula $\mathcal{E}\ global\ \rho=\left\langle \rho,OBJ_{0}\right\rangle $
+\end_inset
+
+
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+\begin_inset Formula $\mathcal{E}\ Lexpr\ \rho=\mathcal{L}\ Lexpr\ \rho$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+\begin_inset Formula $\mathcal{E}\ this\ \left\langle symmap,absmem,fps,cf\right\rangle =\left\langle \left\langle symmap,absmem,fps,cf\right\rangle ,this\right\rangle $
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+where
+\end_layout
+
+\begin_deeper
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+\begin_inset Formula $\left\langle s,param,returntype,this\right\rangle =fps(cf)$
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\end_deeper
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+\begin_inset Formula $\mathcal{E}\ input\ \rho=\left\langle \rho,number\right\rangle $
+\end_inset
+
+
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+\begin_inset Formula $\mathcal{E}\ \left[new_{n}\ Lexpr\left(e_{1},e_{2},\cdots\right)\right]\ \left\langle symmap,absmem,fps,cf\right\rangle =\left\langle \left\langle symmap,absmem',fps',cf\right\rangle ,OBJ_{n}\right\rangle $
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+where
+\end_layout
+
+\end_deeper
 \end_body
 \end_document
