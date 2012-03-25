@@ -263,7 +263,7 @@ ObjMemory =
 
 \begin_layout Labeling
 \labelwidthstring 00.00.0000
-FunctionPoints = 
+FunctionPointers = 
 \begin_inset Formula $\left\langle FP_{n}\right\rangle $
 \end_inset
 
@@ -607,7 +607,7 @@ Assignments
 \end_layout
 
 \begin_layout Itemize
-\begin_inset Formula ${\displaystyle \frac{\left\langle le,s\right\rangle \rightarrow\left\langle le',s'\right\rangle }{\left\langle le=e,s\right\rangle \rightarrow\left\langle le'=e,s'\right\rangle }}$
+\begin_inset Formula ${\displaystyle {\displaystyle \frac{\left\langle le,s\right\rangle \rightarrow\left\langle le',s'\right\rangle }{\left\langle le=e,s\right\rangle \rightarrow\left\langle le'=e,s'\right\rangle }}}$
 \end_inset
 
 
@@ -647,7 +647,7 @@ Flow controls
 \end_layout
 
 \begin_layout Itemize
-\begin_inset Formula ${\displaystyle \frac{\left\langle e,s\right\rangle \rightarrow\left\langle e',s'\right\rangle }{\left\langle if\ e\ then\ S,s\right\rangle \rightarrow\left\langle if\ e'\ then\ S,s'\right\rangle }}$
+\begin_inset Formula ${\displaystyle {\displaystyle \frac{\left\langle e,s\right\rangle \rightarrow\left\langle e',s'\right\rangle }{\left\langle if\ e\ then\ S,s\right\rangle \rightarrow\left\langle if\ e'\ then\ S,s'\right\rangle }}}$
 \end_inset
 
 
@@ -907,7 +907,7 @@ Functions = n
 \end_inset
 
 
-\begin_inset Formula $\left\langle S,Params,ReturnType,this\right\rangle $
+\begin_inset Formula $\left\langle S,Params,Paramnames,ReturnType,this\right\rangle $
 \end_inset
 
 
@@ -917,6 +917,14 @@ Functions = n
 \begin_layout Itemize
 Params = 
 \begin_inset Formula $\left[arg_{0}\mapsto\wp\left(types\right),\ldots\right]$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Paramnames = 
+\begin_inset Formula $\left[ID\right]$
 \end_inset
 
 
@@ -974,7 +982,7 @@ OBJ
 \end_layout
 
 \begin_layout Subsection
-Node Configuration
+Node Analysis
 \end_layout
 
 \begin_layout Subsubsection
@@ -1011,8 +1019,13 @@ Absmem =
 
 \end_layout
 
+\begin_layout Standard
+Expression can alter abstract memory and functions (possible types of arguments
+ to functions, to be specific)
+\end_layout
+
 \begin_layout Itemize
-\begin_inset Formula $\mathcal{E}::Expr\rightarrow Env\rightarrow\left\langle Env,type\right\rangle $
+\begin_inset Formula $\mathcal{E}::Expr\rightarrow Env\rightarrow\left\langle \left\langle Absmem,Functions\right\rangle ,type\right\rangle $
 \end_inset
 
 
@@ -1177,7 +1190,7 @@ where
 \end_deeper
 \begin_layout Labeling
 \labelwidthstring 00.00.0000
-\begin_inset Formula $S\ \left[e_{1}.id=e_{2}\right]\ \rho=\left\langle symmap'',absmem''\left[OBJ_{n}=OBJ_{n}\left[id\mapsto type'\right]\right],fps,cf\right\rangle \mbox{for all}\ OBJ_{n}\in type$
+\begin_inset Formula $S\ \left[e_{1}.id=e_{2}\right]\ \left\langle symmap,absmem,fps,cf\right\rangle =\left\langle symmap'',absmem''\left[OBJ_{n}=OBJ_{n}\left[id\mapsto type'\right]\right],fps'',cf\right\rangle \mbox{for all}\ OBJ_{n}\in type$
 \end_inset
 
 
@@ -1192,7 +1205,7 @@ where
 \begin_deeper
 \begin_layout Labeling
 \labelwidthstring 00.00.0000
-\begin_inset Formula $\left\langle absmem',type\right\rangle =\mathcal{E}\ e_{1}\ \rho$
+\begin_inset Formula $\left\langle \left\langle absmem',fps'\right\rangle ,type\right\rangle =\mathcal{E}\ e_{1}\ \left\langle symmap,absmem,fps,cf\right\rangle $
 \end_inset
 
 
@@ -1200,7 +1213,7 @@ where
 
 \begin_layout Labeling
 \labelwidthstring 00.00.0000
-\begin_inset Formula $\left\langle absmem'',type'\right\rangle =\mathcal{E}\ e_{2}\ \left\langle symmap',absmem'\right\rangle $
+\begin_inset Formula $\left\langle \left\langle absmem'',fps''\right\rangle ,type'\right\rangle =\mathcal{E}\ e_{2}\ \left\langle symmap',absmem',fps',cf\right\rangle $
 \end_inset
 
 
@@ -1225,7 +1238,7 @@ whererec
 \begin_deeper
 \begin_layout Labeling
 \labelwidthstring 00.00.0000
-\begin_inset Formula $\left\langle \left\langle symmap,absmem',fps',cf\right\rangle ,type\right\rangle =\mathcal{E}\ e\ \left\langle symmap,absmem,fps,cf\right\rangle $
+\begin_inset Formula $\left\langle \left\langle absmem',fps'\right\rangle ,type\right\rangle =\mathcal{E}\ e\ \left\langle symmap,absmem,fps,cf\right\rangle $
 \end_inset
 
 
@@ -1268,7 +1281,7 @@ where
 \end_deeper
 \begin_layout Labeling
 \labelwidthstring 00.00.0000
-\begin_inset Formula $S\ \left[function_{n}\ id\left(\left[ids\right]\right)S_{1}\right]\ \left\langle symmap,absmem,fps,cf\right\rangle =\left\langle symmap\left[id\mapsto FUNC_{n,0}\right],absmem,fps,cf\right\rangle $
+\begin_inset Formula $S\ \left[function_{n}\ id\left(ID*\right)S_{1}\right]\ \left\langle symmap,absmem,fps,cf\right\rangle =\left\langle symmap\left[id\mapsto FUNC_{n,0}\right],absmem,fps,cf\right\rangle $
 \end_inset
 
 
@@ -1276,6 +1289,30 @@ where
 
 \begin_layout Subsubsection
 Expressions
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+\begin_inset Formula $\mathcal{L}\ ID\ \left\langle symmap,absmem,fps,cf\right\rangle =symmap(ID)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+\begin_inset Formula $\mathcal{L}\ \left(ID\right)=\mathcal{L}\ ID$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+\begin_inset Formula $\mathcal{L}\ e.ID\ \left\langle symmap,absmem,fps,cf\right\rangle =type$
+\end_inset
+
+
 \end_layout
 
 \begin_layout Labeling
@@ -1303,7 +1340,7 @@ where
 
 \begin_layout Labeling
 \labelwidthstring 00.00.0000
-\begin_inset Formula $type=boolean\ \mbox{if}\ con\ \mbox{is a boolean}$
+\begin_inset Formula $type=boolean\ \mbox{if}\ con\ \mbox{is a boolean value}$
 \end_inset
 
 
@@ -1362,7 +1399,7 @@ where
 
 \begin_layout Labeling
 \labelwidthstring 00.00.0000
-\begin_inset Formula $\mathcal{E}\ \left[new_{n}\ Lexpr\left(e_{1},e_{2},\cdots\right)\right]\ \left\langle symmap,absmem,fps,cf\right\rangle =\left\langle \left\langle symmap,absmem',fps',cf\right\rangle ,OBJ_{n}\right\rangle $
+\begin_inset Formula $\mathcal{E}\ \left[Lexpr\left(e_{1},e_{2},\cdots,e_{k}\right)\right]\ \left\langle symmap,absmem,fps,cf\right\rangle =\left\langle \left\langle symmap,absmem_{k},fps',cf\right\rangle ,returntypes\right\rangle \ \mbox{if}\ $
 \end_inset
 
 
@@ -1374,6 +1411,103 @@ where
 where
 \end_layout
 
+\begin_deeper
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+\begin_inset Formula $FP_{n,c}=\mathcal{L}\ Lexpr\ \left\langle symmap,absmem,fps,cf\right\rangle $
+\end_inset
+
+
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+\begin_inset Formula $\left\langle \left\langle absmem_{1},fps_{1}\right\rangle ,type_{1}\right\rangle =\mathcal{E}\ e_{1}\ \left\langle symmap,absmem,fps,cf\right\rangle $
+\end_inset
+
+
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+\begin_inset Formula $\left\langle \left\langle absmem_{i},fps_{i}\right\rangle ,type_{i}\right\rangle =\mathcal{E}\ e_{i-1}\ \left\langle symmap,absmem_{i-1},fps_{i-1},cf\right\rangle ,\ i\in\mathbb{N},1<i\leq k$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $\left\langle S_{k},params_{k},paramnames_{k},returntype_{k},this_{k}\right\rangle =fps_{k}\left(n\right)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+\begin_inset Formula $fps'=fps_{k}\left[FP_{n}=\left\langle S_{k},params_{k}\left[arg_{c+j}=arg_{c+j}\sqcup type_{j},j\in\mathbb{N},1\le j\le k\right],paramnames_{k},returntype_{k},this_{k}\right\rangle \right]$
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\end_deeper
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+\begin_inset Formula $\mathcal{E}\ \left[new_{n}\ Lexpr\left(e_{1},e_{2},\cdots,e_{k}\right)\right]\ \left\langle symmap,absmem,fps,cf\right\rangle =\left\langle \left\langle symmap,absmem_{k},fps',cf\right\rangle ,this_{k}\right\rangle $
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+where
+\end_layout
+
+\begin_deeper
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+\begin_inset Formula $FP_{n,c}=\mathcal{L}\ Lexpr\ \left\langle symmap,absmem,fps,cf\right\rangle $
+\end_inset
+
+
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+\begin_inset Formula $\left\langle \left\langle absmem_{1},fps_{1}\right\rangle ,type_{1}\right\rangle =\mathcal{E}\ e_{1}\ \left\langle symmap,absmem,fps,cf\right\rangle $
+\end_inset
+
+
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+\begin_inset Formula $\left\langle \left\langle absmem_{i},fps_{i}\right\rangle ,type_{i}\right\rangle =\mathcal{E}\ e_{i-1}\ \left\langle symmap,absmem_{i-1},fps_{i-1},cf\right\rangle ,\ i\in\mathbb{N},1<i\leq k$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $\left\langle S_{k},params_{k},paramnames_{k},returntype_{k},this_{k}\right\rangle =fps_{k}\left(n\right)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+\begin_inset Formula $fps'=fps_{k}\left[FP_{n}=\left\langle S_{k},params_{k}\left[arg_{c+j}=arg_{c+j}\sqcup type_{j},j\in\mathbb{N},1\le j\le k\right],paramnames_{k},returntype_{k},this_{k}\right\rangle \right]$
+\end_inset
+
+
+\end_layout
+
+\end_deeper
 \end_deeper
 \end_body
 \end_document
