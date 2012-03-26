@@ -107,7 +107,7 @@ Expressions
 \begin_layout Labeling
 \labelwidthstring 00.00.0000
 Lexpr ::= ID | Expr .
- ID | (Lexpr) 
+ ID
 \end_layout
 
 \begin_layout Labeling
@@ -128,7 +128,7 @@ input
 \emph on
 new
 \emph default
- Lexpr([Expr[,Expr]*]?) | Lexpr([Expr[,Expr]*]?) | Expr binop Expr
+ Lexpr([Expr[,Expr]*]?) | Lexpr([Expr[,Expr]*]?) | Expr binop Expr | (Expr)
 \end_layout
 
 \begin_deeper
@@ -368,15 +368,15 @@ Left Expressions
 
 \end_layout
 
+\begin_layout Subsection
+Expressions 
+\end_layout
+
 \begin_layout Itemize
-\begin_inset Formula $\left\langle \left(le\right),s\right\rangle \rightarrow\left\langle le,s\right\rangle $
+\begin_inset Formula $\left\langle \left(e\right),s\right\rangle \rightarrow\left\langle e,s\right\rangle $
 \end_inset
 
 
-\end_layout
-
-\begin_layout Subsection
-Expressions 
 \end_layout
 
 \begin_layout Itemize
@@ -907,13 +907,21 @@ Functions = n
 \end_inset
 
 
-\begin_inset Formula $\left\langle S,Params,Paramnames,ReturnType,this\right\rangle $
+\begin_inset Formula $\left\langle S,Params,Paramnames,EntryMemory,ReturnType,ReturnMemory,this\right\rangle $
 \end_inset
 
 
 \end_layout
 
 \begin_deeper
+\begin_layout Standard
+(nomenclature 
+\begin_inset Formula $\phi=n\mapsto\left\langle S,\pi,\nu,\eta,\tau,\mu,\theta\right\rangle $
+\end_inset
+
+)
+\end_layout
+
 \begin_layout Itemize
 Params = 
 \begin_inset Formula $\left[arg_{0}\mapsto\wp\left(types\right),\ldots\right]$
@@ -922,6 +930,12 @@ Params =
 
 \end_layout
 
+\begin_deeper
+\begin_layout Itemize
+Set of types for each arguments to a function
+\end_layout
+
+\end_deeper
 \begin_layout Itemize
 Paramnames = 
 \begin_inset Formula $\left[ID\right]$
@@ -930,6 +944,26 @@ Paramnames =
 
 \end_layout
 
+\begin_deeper
+\begin_layout Itemize
+List of parameter names (used for constructing initial symbol table)
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+EntryMemory = 
+\begin_inset Formula $n\mapsto Symmap$
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+State of abstract memory when entering the function
+\end_layout
+
+\end_deeper
 \begin_layout Itemize
 ReturnType = 
 \begin_inset Formula $\wp\left(types\right)$
@@ -938,6 +972,26 @@ ReturnType =
 
 \end_layout
 
+\begin_deeper
+\begin_layout Itemize
+Set of possible return types
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+ReturnMemory=
+\begin_inset Formula $n\mapsto Symmap$
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+State of abstract memory when returning from the function
+\end_layout
+
+\end_deeper
 \begin_layout Itemize
 this = 
 \begin_inset Formula $\wp\left(types\right)$
@@ -946,24 +1000,14 @@ this =
 
 \end_layout
 
-\end_deeper
-\begin_layout Itemize
-ObjectMemory
-\end_layout
-
 \begin_deeper
 \begin_layout Itemize
-n
-\begin_inset Formula $\mapsto$
-\end_inset
-
-
-\begin_inset Formula $Symmap$
-\end_inset
-
-
+Possible types of 
+\emph on
+this
 \end_layout
 
+\end_deeper
 \end_deeper
 \begin_layout Itemize
 
@@ -1006,19 +1050,36 @@ Absmem =
 \end_layout
 
 \begin_layout Itemize
-\begin_inset Formula $Env=Symmap\times Absmem\times Functions\times CurrentFunction$
+\begin_inset Formula $Env=\left\langle Symmap,Absmem,Functions,CurrentFunction\right\rangle $
 \end_inset
 
 
 \end_layout
 
+\begin_deeper
+\begin_layout Standard
+(nomenclature = 
+\begin_inset Formula $\left\langle \sigma,\alpha,\phi,\gamma\right\rangle $
+\end_inset
+
+
+\end_layout
+
+\end_deeper
 \begin_layout Itemize
-\begin_inset Formula $S::Stmt\rightarrow Env\rightarrow Env$
+\begin_inset Formula $S::Stmt\rightarrow Env\rightarrow\left\langle Env,Terminating\right\rangle $
 \end_inset
 
 
 \end_layout
 
+\begin_deeper
+\begin_layout Itemize
+Terminating is a boolean value.
+ Terminating is true if the next statement to Stmt is unreachable.
+\end_layout
+
+\end_deeper
 \begin_layout Standard
 Expression can alter abstract memory and functions (possible types of arguments
  to functions, to be specific)
@@ -1035,8 +1096,11 @@ Expression can alter abstract memory and functions (possible types of arguments
 Statement analysis
 \end_layout
 
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
+\begin_layout Standard
+An empty statement simply returns the environment given.
+\end_layout
+
+\begin_layout Itemize
 \begin_inset Formula $S\ nil\ \rho=\rho$
 \end_inset
 
@@ -1044,128 +1108,60 @@ Statement analysis
 \end_layout
 
 \begin_layout Standard
-\begin_inset Formula $S\ \left[S_{1};S_{2}\right]=S\ S_{2}\circ S\ S_{1}$
+When consecutive statements are given, evaluate the first statement and
+ pass on the resulting environment to the next statement if the statement
+ is not returning (thus we have a composed function).
+ Otherwise, we only evaluate the first statement.
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $S\ \left[S_{1};S_{2}\right]\rho=$
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+\begin_inset Formula $S\ S_{2}\ \rho'$
 \end_inset
 
 if 
-\begin_inset Formula $S_{1}$
+\begin_inset Formula $term$
 \end_inset
 
-is not a return statement, 
+ is not true
+\end_layout
+
+\begin_layout Standard
 \begin_inset Formula $S\ S_{1}$
 \end_inset
 
  otherwise
 \end_layout
 
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
-\begin_inset Formula $S\ \left[return\ e\right]\left\langle symmap,absmem,fps,cf\right\rangle =\left\langle \top,\top,fps\left[cf=\left\langle s,params,returntype\sqcup type,this\right\rangle \right],cf\right\rangle $
-\end_inset
-
-
+\begin_layout Standard
+where
 \end_layout
 
-\begin_deeper
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
-Where
-\end_layout
-
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
-\begin_inset Formula $\left\langle s,params,returntype,this\right\rangle =fps(cf)$
-\end_inset
-
-
-\end_layout
-
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
-\begin_inset Formula $\left\langle env',type\right\rangle =\mathcal{E}\ e\ \left\langle symmap,absmem,fps,cf\right\rangle $
+\begin_layout Standard
+\begin_inset Formula $\left\langle \rho',term\right\rangle =S\ S_{1}$
 \end_inset
 
 
 \end_layout
 
 \end_deeper
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
-\begin_inset Formula $S\ \left[if\left(e\right)S_{1}else\ S_{2}\right]\rho=\rho_{1}\sqcup\rho_{2}$
-\end_inset
-
-
+\begin_layout Standard
+When returning, we first evaluate expression being returned, and manipulate
+ function pointers accordingly, by adding possible return types and return
+ memory states to a current function.
+ For abstract memory and symbols, we return a bottom set, so that when this
+ branch is being merged, 
 \end_layout
 
-\begin_deeper
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
-Where 
-\end_layout
-
-\begin_deeper
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
-\begin_inset Formula $\left\langle \rho',t\right\rangle =\mathcal{E}\ e\ \rho$
-\end_inset
-
-
-\end_layout
-
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
-\begin_inset Formula $\rho_{1}=S\ S_{1}\rho'$
-\end_inset
-
-
-\end_layout
-
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
-\begin_inset Formula $\rho_{2}=S\ S_{2}\rho'$
-\end_inset
-
-
-\end_layout
-
-\end_deeper
-\end_deeper
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
-\begin_inset Formula $S\ \left[if\left(e\right)S_{1}\right]\rho=\rho'\sqcup\rho_{1}$
-\end_inset
-
-
-\end_layout
-
-\begin_deeper
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
-Where 
-\end_layout
-
-\begin_deeper
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
-\begin_inset Formula $\left\langle \rho',t\right\rangle =\mathcal{E}\ e\ \rho$
-\end_inset
-
-
-\end_layout
-
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
-\begin_inset Formula $\rho_{1}=S\ S_{1}\rho'$
-\end_inset
-
-
-\end_layout
-
-\end_deeper
-\end_deeper
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
-\begin_inset Formula $S\ \left[id=e\right]\ \rho=\left\langle symmap'[id\mapsto t],absmem'\right\rangle $
+\begin_layout Itemize
+\begin_inset Formula $S\ \left[return\ e\right]\left\langle \sigma,\alpha,\phi,\gamma\right\rangle =\left\langle \left\langle \bot,\bot,\phi\left[\gamma=\left\langle s,\pi,\nu,\eta,\tau\sqcup type,\mu\sqcup env',\theta\right\rangle \right],\gamma\right\rangle ,true\right\rangle $
 \end_inset
 
 
@@ -1177,20 +1173,35 @@ Where
 where
 \end_layout
 
-\begin_deeper
 \begin_layout Labeling
 \labelwidthstring 00.00.0000
-\begin_inset Formula $\left\langle absmem',t\right\rangle =\mathcal{E}\ e\ \rho$
+\begin_inset Formula $\left\langle s,\pi,\nu,\eta,\tau,\mu,\theta\right\rangle =\phi(\gamma)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+\begin_inset Formula $\left\langle env',type\right\rangle =\mathcal{E}\ e\ \left\langle \sigma,\alpha,\phi,\gamma\right\rangle $
 \end_inset
 
 
 \end_layout
 
 \end_deeper
-\end_deeper
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
-\begin_inset Formula $S\ \left[e_{1}.id=e_{2}\right]\ \left\langle symmap,absmem,fps,cf\right\rangle =\left\langle symmap'',absmem''\left[OBJ_{n}=OBJ_{n}\left[id\mapsto type'\right]\right],fps'',cf\right\rangle \mbox{for all}\ OBJ_{n}\in type$
+\begin_layout Standard
+In an 
+\emph on
+if-else
+\emph default
+ statement, we first evaluate the expression and pass on a modified environment
+ to each of statements, then unify resulting environments.
+ This statement is deemed terminating only when both branches are terminating.
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $S\ \left[if\left(e\right)S_{1}else\ S_{2}\right]\rho=\left\langle \rho_{1}\sqcup\rho_{2},term_{1}\wedge term_{2}\right\rangle $
 \end_inset
 
 
@@ -1202,10 +1213,56 @@ where
 where
 \end_layout
 
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+\begin_inset Formula $\left\langle \rho',t\right\rangle =\mathcal{E}\ e\ \rho$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+\begin_inset Formula $\left\langle \rho_{1},term_{1}\right\rangle =S\ S_{1}\rho'$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+\begin_inset Formula $\left\langle \rho_{2},term_{2}\right\rangle =S\ S_{2}\rho'$
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Standard
+
+\emph on
+if
+\emph default
+ statement is similar except the fact that we unify the resulting environment
+ with the initial environment.
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $S\ \left[if\left(e\right)S_{1}\right]\rho=\left\langle \rho'\sqcup\rho_{1},false\right\rangle $
+\end_inset
+
+
+\end_layout
+
 \begin_deeper
 \begin_layout Labeling
 \labelwidthstring 00.00.0000
-\begin_inset Formula $\left\langle \left\langle absmem',fps'\right\rangle ,type\right\rangle =\mathcal{E}\ e_{1}\ \left\langle symmap,absmem,fps,cf\right\rangle $
+where
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+\begin_inset Formula $\left\langle \rho',t\right\rangle =\mathcal{E}\ e\ \rho$
 \end_inset
 
 
@@ -1213,17 +1270,89 @@ where
 
 \begin_layout Labeling
 \labelwidthstring 00.00.0000
-\begin_inset Formula $\left\langle \left\langle absmem'',fps''\right\rangle ,type'\right\rangle =\mathcal{E}\ e_{2}\ \left\langle symmap',absmem',fps',cf\right\rangle $
+\begin_inset Formula $\left\langle \rho_{1},term\right\rangle =S\ S_{1}\rho'$
 \end_inset
 
 
 \end_layout
 
 \end_deeper
-\end_deeper
+\begin_layout Standard
+In a simple assignment statement, we first evaluate the expression and take
+ its updated environment, we then assign an id to possible set of types
+ that a right expression can have.
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $S\ \left[id=e\right]\ \left\langle \sigma,\alpha,\phi,\gamma\right\rangle =\left\langle \left\langle \sigma[id\mapsto t],\alpha',\phi',\gamma\right\rangle ,false\right\rangle $
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
 \begin_layout Labeling
 \labelwidthstring 00.00.0000
-\begin_inset Formula $S\ \left[while(e)S_{1}\right]\ \left\langle symmap,absmem,fps,cf\right\rangle =\left\langle symmap\sqcup symmap'',absmem'\sqcup absmem'',fps,cf\right\rangle $
+where
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+\begin_inset Formula $\left\langle \left\langle \alpha',\phi'\right\rangle ,t\right\rangle =\mathcal{E}\ e\ \left\langle \sigma,\alpha,\phi,\gamma\right\rangle $
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Standard
+In a member assignment statement, we first evaluate the referred expression,
+ then we evaluate right expression with updated environment, finally we
+ add id pointing to possible types of right expression, to abstract memory
+ entry of possible referred objects.
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $S\ \left[e_{1}.id=e_{2}\right]\ \left\langle \sigma,\alpha,\phi,\gamma\right\rangle =\left\langle \left\langle \sigma'',\alpha''\left[OBJ_{n}=OBJ_{n}\left[id\mapsto type'\right]\right]\mbox{for all}\ OBJ_{n}\in type,\phi'',\gamma\right\rangle ,false\right\rangle $
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+where
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+\begin_inset Formula $\left\langle \left\langle \alpha',\phi'\right\rangle ,type\right\rangle =\mathcal{E}\ e_{1}\ \left\langle \sigma,\alpha,\phi,\gamma\right\rangle $
+\end_inset
+
+
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+\begin_inset Formula $\left\langle \left\langle \alpha'',\phi''\right\rangle ,type'\right\rangle =\mathcal{E}\ e_{2}\ \left\langle \sigma',\alpha',\phi',\gamma\right\rangle $
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Standard
+In a while statement, we first evaluate the expression, take the updated
+ environment, then we recursively evaluate inner statement block with environmen
+ts from its own evaluation.
+ Then, we unify the resulting environment with the initial environment after
+ expression evaluation, to cater for the scenario where the statement never
+ runs.
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $S\ \left[while(e)S_{1}\right]\ \left\langle \sigma,\alpha,\phi,\gamma\right\rangle =\left\langle \left\langle \sigma\sqcup\sigma'',\alpha'\sqcup\alpha'',\phi,\gamma\right\rangle ,false\right\rangle $
 \end_inset
 
 
@@ -1235,10 +1364,9 @@ where
 whererec
 \end_layout
 
-\begin_deeper
 \begin_layout Labeling
 \labelwidthstring 00.00.0000
-\begin_inset Formula $\left\langle \left\langle absmem',fps'\right\rangle ,type\right\rangle =\mathcal{E}\ e\ \left\langle symmap,absmem,fps,cf\right\rangle $
+\begin_inset Formula $\left\langle \left\langle \alpha',\phi'\right\rangle ,type\right\rangle =\mathcal{E}\ e\ \left\langle \sigma,\alpha,\phi,\gamma\right\rangle $
 \end_inset
 
 
@@ -1246,17 +1374,19 @@ whererec
 
 \begin_layout Labeling
 \labelwidthstring 00.00.0000
-\begin_inset Formula $\left\langle symmap'',absmem'',fps'',cf\right\rangle =S\ S_{1}\ \left\langle symmap\sqcup symmap'',absmem'\sqcup absmem'',fps',cf\right\rangle $
+\begin_inset Formula $\left\langle \sigma'',\alpha'',\phi'',\gamma\right\rangle =S\ S_{1}\ \left\langle \sigma\sqcup\sigma'',\alpha'\sqcup\alpha'',\phi',\gamma\right\rangle $
 \end_inset
 
 
 \end_layout
 
 \end_deeper
-\end_deeper
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
-\begin_inset Formula $S\ \left[output\ e\right]\ \left\langle symmap,absmem,fps,cf\right\rangle =\left\langle symmap,absmem',fps,cf\right\rangle $
+\begin_layout Standard
+In an output statement, we evaluate expression and take the updated environment
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $S\ \left[output\ e\right]\ \left\langle \sigma,\alpha,\phi,\gamma\right\rangle =\left\langle \left\langle \sigma,\alpha',\phi',\gamma\right\rangle ,false\right\rangle $
 \end_inset
 
 
@@ -1268,20 +1398,22 @@ whererec
 where
 \end_layout
 
-\begin_deeper
 \begin_layout Labeling
 \labelwidthstring 00.00.0000
-\begin_inset Formula $\left\langle \rho',type\right\rangle =\mathcal{E}\ e\ \left\langle symmap,absmem,fps,cf\right\rangle $
+\begin_inset Formula $\left\langle \left\langle \alpha',\phi'\right\rangle ,type\right\rangle =\mathcal{E}\ e\ \left\langle \sigma,\alpha,\phi,\gamma\right\rangle $
 \end_inset
 
 
 \end_layout
 
 \end_deeper
-\end_deeper
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
-\begin_inset Formula $S\ \left[function_{n}\ id\left(ID*\right)S_{1}\right]\ \left\langle symmap,absmem,fps,cf\right\rangle =\left\langle symmap\left[id\mapsto FUNC_{n,0}\right],absmem,fps,cf\right\rangle $
+\begin_layout Standard
+When we declare a new function, we just map the function name to a corresponding
+ function number, with zero curried argument.
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $S\ \left[function_{n}\ id\left(ID*\right)S_{1}\right]\ \left\langle \sigma,\alpha,\phi,\gamma\right\rangle =\left\langle \left\langle \sigma\left[id\mapsto\left\{ FUNC_{n,0}\right\} \right],\alpha,\phi,\gamma\right\rangle ,false\right\rangle $
 \end_inset
 
 
@@ -1291,25 +1423,26 @@ where
 Expressions
 \end_layout
 
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
-\begin_inset Formula $\mathcal{L}\ ID\ \left\langle symmap,absmem,fps,cf\right\rangle =symmap(ID)$
+\begin_layout Standard
+Left expression analysis returns possible types
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $\mathcal{L}::Env\rightarrow\wp\left(type\right)$
 \end_inset
 
 
 \end_layout
 
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
-\begin_inset Formula $\mathcal{L}\ \left(ID\right)=\mathcal{L}\ ID$
+\begin_layout Itemize
+\begin_inset Formula $\mathcal{L}\ \left[ID\right]\ \left\langle \sigma,\alpha,\phi,\gamma\right\rangle =\sigma(ID)$
 \end_inset
 
 
 \end_layout
 
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
-\begin_inset Formula $\mathcal{L}\ e.ID\ \left\langle symmap,absmem,fps,cf\right\rangle =type$
+\begin_layout Itemize
+\begin_inset Formula $\mathcal{L}\ \left[e.ID\right]\ \left\langle \sigma,\alpha,\phi,\gamma\right\rangle =type$
 \end_inset
 
 
@@ -1399,7 +1532,79 @@ where
 
 \begin_layout Labeling
 \labelwidthstring 00.00.0000
-\begin_inset Formula $\mathcal{E}\ \left[Lexpr\left(e_{1},e_{2},\cdots,e_{k}\right)\right]\ \left\langle symmap,absmem,fps,cf\right\rangle =\left\langle \left\langle symmap,absmem_{k},fps',cf\right\rangle ,returntypes\right\rangle \ \mbox{if}\ $
+\begin_inset Formula $\mathcal{E}\ \left[Lexpr\left(e_{1},e_{2},\cdots,e_{k}\right)\right]\ \left\langle symmap,absmem,fps,cf\right\rangle =$
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+\begin_inset Formula $\left\langle \left\langle symmap,absmem_{k},fps',cf\right\rangle ,returntypes\right\rangle \ \mbox{if}\ k+c=N\left(params_{k,n}\right)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+\begin_inset Formula $\left\langle \left\langle symmap,absmem_{k},fps',cf\right\rangle ,FP_{n,c+k}\right\rangle \mbox{otherwise}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+where
+\end_layout
+
+\begin_deeper
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+\begin_inset Formula $FP_{n,c}=\mathcal{L}\ Lexpr\ \left\langle symmap,absmem,fps,cf\right\rangle $
+\end_inset
+
+
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+\begin_inset Formula $\left\langle \left\langle absmem_{1},fps_{1}\right\rangle ,type_{1}\right\rangle =\mathcal{E}\ e_{1}\ \left\langle symmap,absmem,fps,cf\right\rangle $
+\end_inset
+
+
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+\begin_inset Formula $\left\langle \left\langle absmem_{i},fps_{i}\right\rangle ,type_{i}\right\rangle =\mathcal{E}\ e_{i-1}\ \left\langle symmap,absmem_{i-1},fps_{i-1},cf\right\rangle ,\ i\in\mathbb{N},1<i\leq k$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $\left\langle S_{k},\pi{}_{k},\nu{}_{k},\tau_{k},\theta_{k}\right\rangle =fps_{k}\left(n\right)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+\begin_inset Formula $fps'=fps_{k}\left[FP_{n}=\left\langle S_{k},params_{k}\left[arg_{c+j}=arg_{c+j}\sqcup type_{j},j\in\mathbb{N},1\le j\le k\right],paramnames_{k},returntype_{k},this_{k}\right\rangle \right]$
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\end_deeper
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+\begin_inset Formula $\mathcal{E}\ \left[new_{n}\ Lexpr\left(e_{1},e_{2},\cdots,e_{k}\right)\right]\ \left\langle symmap,absmem,fps,cf\right\rangle =\left\langle \left\langle symmap,absmem_{k},fps',cf\right\rangle ,this_{k,n}\right\rangle $
 \end_inset
 
 
@@ -1437,7 +1642,7 @@ where
 \end_layout
 
 \begin_layout Standard
-\begin_inset Formula $\left\langle S_{k},params_{k},paramnames_{k},returntype_{k},this_{k}\right\rangle =fps_{k}\left(n\right)$
+\begin_inset Formula $\left\langle S_{k,n},params_{k,n},paramnames_{k,n},entrymemory_{k,n},returntype_{k,n},this_{k,n}\right\rangle =fps_{k}\left(n\right)$
 \end_inset
 
 
@@ -1445,32 +1650,7 @@ where
 
 \begin_layout Labeling
 \labelwidthstring 00.00.0000
-\begin_inset Formula $fps'=fps_{k}\left[FP_{n}=\left\langle S_{k},params_{k}\left[arg_{c+j}=arg_{c+j}\sqcup type_{j},j\in\mathbb{N},1\le j\le k\right],paramnames_{k},returntype_{k},this_{k}\right\rangle \right]$
-\end_inset
-
-
-\end_layout
-
-\end_deeper
-\end_deeper
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
-\begin_inset Formula $\mathcal{E}\ \left[new_{n}\ Lexpr\left(e_{1},e_{2},\cdots,e_{k}\right)\right]\ \left\langle symmap,absmem,fps,cf\right\rangle =\left\langle \left\langle symmap,absmem_{k},fps',cf\right\rangle ,this_{k}\right\rangle $
-\end_inset
-
-
-\end_layout
-
-\begin_deeper
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
-where
-\end_layout
-
-\begin_deeper
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
-\begin_inset Formula $FP_{n,c}=\mathcal{L}\ Lexpr\ \left\langle symmap,absmem,fps,cf\right\rangle $
+\begin_inset Formula $newparams=params_{k,n}\left[arg_{c+j}=arg_{c+j}\sqcup type_{j},j\in\mathbb{N},1\le j\le k\right]$
 \end_inset
 
 
@@ -1478,30 +1658,7 @@ where
 
 \begin_layout Labeling
 \labelwidthstring 00.00.0000
-\begin_inset Formula $\left\langle \left\langle absmem_{1},fps_{1}\right\rangle ,type_{1}\right\rangle =\mathcal{E}\ e_{1}\ \left\langle symmap,absmem,fps,cf\right\rangle $
-\end_inset
-
-
-\end_layout
-
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
-\begin_inset Formula $\left\langle \left\langle absmem_{i},fps_{i}\right\rangle ,type_{i}\right\rangle =\mathcal{E}\ e_{i-1}\ \left\langle symmap,absmem_{i-1},fps_{i-1},cf\right\rangle ,\ i\in\mathbb{N},1<i\leq k$
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula $\left\langle S_{k},params_{k},paramnames_{k},returntype_{k},this_{k}\right\rangle =fps_{k}\left(n\right)$
-\end_inset
-
-
-\end_layout
-
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
-\begin_inset Formula $fps'=fps_{k}\left[FP_{n}=\left\langle S_{k},params_{k}\left[arg_{c+j}=arg_{c+j}\sqcup type_{j},j\in\mathbb{N},1\le j\le k\right],paramnames_{k},returntype_{k},this_{k}\right\rangle \right]$
+\begin_inset Formula $fps'=fps_{k}\left[FP_{n}=\left\langle S_{k,n},newparams,paramnames_{k,n},returntype_{k,n},this_{k,n}\right\rangle \right]$
 \end_inset
 
 
