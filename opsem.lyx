@@ -3,6 +3,12 @@
 \begin_document
 \begin_header
 \textclass article
+\begin_preamble
+\usepackage{color}
+\definecolor{lightgray}{rgb}{.9,.9,.9}
+\definecolor{darkgray}{rgb}{.4,.4,.4}
+\definecolor{purple}{rgb}{0.65, 0.12, 0.82}
+\end_preamble
 \use_default_options true
 \maintain_unincluded_children false
 \language british
@@ -58,6 +64,7 @@
 \papercolumns 1
 \papersides 1
 \paperpagestyle default
+\listings_params "backgroundcolor={\color{lightgray}},basicstyle={\footnotesize\ttfamily},breaklines=true,captionpos=b,extendedchars=true,numbers=left,numbersep=9pt,numberstyle={\footnotesize},showspaces=false,showstringspaces=false,showtabs=false,tabsize=2"
 \tracking_changes false
 \output_changes false
 \html_math_output 0
@@ -69,6 +76,88 @@
 
 \begin_layout Title
 Simple Duck-Typing Language (SDTL)
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset toc
+LatexCommand tableofcontents
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+lstdefinelanguage{sdtl}{   
+\end_layout
+
+\begin_layout Plain Layout
+
+keywords={new, true, false, function, return, if, while, else, output, input},
+   
+\end_layout
+
+\begin_layout Plain Layout
+
+keywordstyle=
+\backslash
+color{blue}
+\backslash
+bfseries,   
+\end_layout
+
+\begin_layout Plain Layout
+
+ndkeywords={this},   
+\end_layout
+
+\begin_layout Plain Layout
+
+ndkeywordstyle=
+\backslash
+color{darkgray}
+\backslash
+bfseries,   
+\end_layout
+
+\begin_layout Plain Layout
+
+identifierstyle=
+\backslash
+color{black},   
+\end_layout
+
+\begin_layout Plain Layout
+
+sensitive=false,   
+\end_layout
+
+\begin_layout Plain Layout
+
+comment=[l]{
+\backslash
+#},   
+\end_layout
+
+\begin_layout Plain Layout
+
+commentstyle=
+\backslash
+color{purple}
+\backslash
+ttfamily, }
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Part
@@ -730,40 +819,6 @@ Analysis
 \end_layout
 
 \begin_layout Section
-Control Flow Analysis
-\end_layout
-
-\begin_layout Subsection
-Numbering New Expressions and Function Declarations
-\end_layout
-
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
-Expr ::= 
-\emph on
-new
-\begin_inset Formula $_{n}$
-\end_inset
-
-
-\emph default
- Lexpr([Expr[,Expr]*]?) 
-\end_layout
-
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
-S ::= 
-\emph on
-function
-\begin_inset Formula $_{n}$
-\end_inset
-
-
-\emph default
- ID ([ID [, ID]*]?) { Ss }
-\end_layout
-
-\begin_layout Subsection
 Nodes and Edges
 \end_layout
 
@@ -870,7 +925,11 @@ next(S) =
 
 \end_deeper
 \begin_layout Section
-Object Analysis
+Analysis
+\end_layout
+
+\begin_layout Standard
+We define type in this analytic framework as thus
 \end_layout
 
 \begin_layout Standard
@@ -878,7 +937,7 @@ t = types = (number | boolean | OBJ
 \begin_inset Formula $_{n}$
 \end_inset
 
-|FUNC
+|FP
 \begin_inset Formula $_{n,c}$
 \end_inset
 
@@ -946,7 +1005,8 @@ Paramnames =
 
 \begin_deeper
 \begin_layout Itemize
-List of parameter names (used for constructing initial symbol table)
+List of parameter names (used for constructing initial symbol tables for
+ function entry points)
 \end_layout
 
 \end_deeper
@@ -1025,6 +1085,133 @@ OBJ
 
 \end_layout
 
+\begin_layout Itemize
+\begin_inset Formula $\mbox{FP}_{0}\mapsto$
+\end_inset
+
+main function
+\end_layout
+
+\begin_layout Subsection
+Program analysis
+\end_layout
+
+\begin_layout Standard
+In analysing a program, first we traverse through the syntax tree and label
+ following things.
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+Expr ::= 
+\emph on
+new
+\begin_inset Formula $_{m}$
+\end_inset
+
+
+\emph default
+ Lexpr([Expr[,Expr]*]?) 
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+S ::= 
+\emph on
+function
+\begin_inset Formula $_{n}$
+\end_inset
+
+
+\emph default
+ ID ([ID [, ID]*]?) { Ss }
+\end_layout
+
+\begin_layout Standard
+We also mark the entire program as a main function (function number 0).
+\end_layout
+
+\begin_layout Standard
+Then, for each of the function declarations we encounter, we create an initial
+ hypothesis.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $\phi_{\bot}=n\mapsto\left\langle S_{n},\left\{ ID\mapsto\bot\right\} ,\left[ID\right],\left\{ OBJ_{m}\mapsto\bot\right\} ,\bot,\left\{ OBJ_{m}\mapsto\bot\right\} \bot,\bot\right\rangle $
+\end_inset
+
+where 
+\begin_inset Formula $S_{n}$
+\end_inset
+
+is a body of function
+\begin_inset Formula $_{n}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+We then perform a fixed point iteration over functions found in the program.
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\mathcal{P}\ \phi=_{\mbox{rec}}\phi\sqcup\phi_{0}\sqcup\phi_{1}\sqcup\phi_{2}\sqcup\cdots\sqcup\phi_{n}$
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+where
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $\phi_{i}=\mathcal{F}\ i\ \phi,i\in\mathbb{N},0\le i\le n$
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Subsection
+Function analysis
+\end_layout
+
+\begin_layout Standard
+For each of the functions, we pass in parameter mapping as an initial symbol
+ table, entry memory state as an initial abstract memory, current function
+ pointers and a function number to evaluate function body.
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\mathcal{F}\ \gamma\ \phi_{0}=_{\mbox{rec}}\phi_{0}\sqcup\phi$
+\end_inset
+
+ (is rec necessary here?)
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+where
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset Formula $\left\langle S_{0},\pi_{0},\nu_{0},\eta_{0},\tau_{0},\mu_{0},\theta_{0}\right\rangle =\phi_{0}\left(\gamma\right)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset Formula $\left\langle \sigma,\alpha,\phi,\gamma\right\rangle =\mathbb{S}\ S_{0}\ \left\langle \pi_{0},\eta_{0},\phi,\gamma\right\rangle $
+\end_inset
+
+
+\end_layout
+
+\end_deeper
 \begin_layout Subsection
 Node Analysis
 \end_layout
@@ -1058,11 +1245,11 @@ Absmem =
 
 \begin_deeper
 \begin_layout Standard
-(nomenclature = 
+(nomenclature 
 \begin_inset Formula $\left\langle \sigma,\alpha,\phi,\gamma\right\rangle $
 \end_inset
 
-
+)
 \end_layout
 
 \end_deeper
@@ -1101,7 +1288,7 @@ An empty statement simply returns the environment given.
 \end_layout
 
 \begin_layout Itemize
-\begin_inset Formula $S\ nil\ \rho=\rho$
+\begin_inset Formula $\mathbb{S}\ nil\ \rho=\rho$
 \end_inset
 
 
@@ -1115,7 +1302,7 @@ When consecutive statements are given, evaluate the first statement and
 \end_layout
 
 \begin_layout Itemize
-\begin_inset Formula $S\ \left[S_{1};S_{2}\right]\rho=$
+\begin_inset Formula $\mathbb{S}\ \left[S_{1};S_{2}\right]\rho=$
 \end_inset
 
 
@@ -1123,7 +1310,7 @@ When consecutive statements are given, evaluate the first statement and
 
 \begin_deeper
 \begin_layout Standard
-\begin_inset Formula $S\ S_{2}\ \rho'$
+\begin_inset Formula $\mathbb{S}\ S_{2}\ \rho'$
 \end_inset
 
 if 
@@ -1134,7 +1321,7 @@ if
 \end_layout
 
 \begin_layout Standard
-\begin_inset Formula $S\ S_{1}$
+\begin_inset Formula $\mathbb{S}\ S_{1}$
 \end_inset
 
  otherwise
@@ -1145,7 +1332,7 @@ where
 \end_layout
 
 \begin_layout Standard
-\begin_inset Formula $\left\langle \rho',term\right\rangle =S\ S_{1}$
+\begin_inset Formula $\left\langle \rho',term\right\rangle =\mathbb{S}\ S_{1}$
 \end_inset
 
 
@@ -1161,28 +1348,25 @@ When returning, we first evaluate expression being returned, and manipulate
 \end_layout
 
 \begin_layout Itemize
-\begin_inset Formula $S\ \left[return\ e\right]\left\langle \sigma,\alpha,\phi,\gamma\right\rangle =\left\langle \left\langle \bot,\bot,\phi\left[\gamma=\left\langle s,\pi,\nu,\eta,\tau\sqcup type,\mu\sqcup env',\theta\right\rangle \right],\gamma\right\rangle ,true\right\rangle $
+\begin_inset Formula $\mathbb{S}\ \left[return\ e\right]\left\langle \sigma,\alpha,\phi,\gamma\right\rangle =\left\langle \left\langle \bot,\bot,\phi\left[\gamma=\left\langle s,\pi,\nu,\eta,\tau\sqcup type,\mu\sqcup env',\theta\right\rangle \right],\gamma\right\rangle ,true\right\rangle $
 \end_inset
 
 
 \end_layout
 
 \begin_deeper
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
+\begin_layout Standard
 where
 \end_layout
 
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
+\begin_layout Standard
 \begin_inset Formula $\left\langle s,\pi,\nu,\eta,\tau,\mu,\theta\right\rangle =\phi(\gamma)$
 \end_inset
 
 
 \end_layout
 
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
+\begin_layout Standard
 \begin_inset Formula $\left\langle env',type\right\rangle =\mathcal{E}\ e\ \left\langle \sigma,\alpha,\phi,\gamma\right\rangle $
 \end_inset
 
@@ -1201,36 +1385,32 @@ if-else
 \end_layout
 
 \begin_layout Itemize
-\begin_inset Formula $S\ \left[if\left(e\right)S_{1}else\ S_{2}\right]\rho=\left\langle \rho_{1}\sqcup\rho_{2},term_{1}\wedge term_{2}\right\rangle $
+\begin_inset Formula $\mathbb{S}\ \left[if\left(e\right)S_{1}else\ S_{2}\right]\rho=\left\langle \rho_{1}\sqcup\rho_{2},term_{1}\wedge term_{2}\right\rangle $
 \end_inset
 
 
 \end_layout
 
 \begin_deeper
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
+\begin_layout Standard
 where
 \end_layout
 
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
+\begin_layout Standard
 \begin_inset Formula $\left\langle \rho',t\right\rangle =\mathcal{E}\ e\ \rho$
 \end_inset
 
 
 \end_layout
 
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
+\begin_layout Standard
 \begin_inset Formula $\left\langle \rho_{1},term_{1}\right\rangle =S\ S_{1}\rho'$
 \end_inset
 
 
 \end_layout
 
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
+\begin_layout Standard
 \begin_inset Formula $\left\langle \rho_{2},term_{2}\right\rangle =S\ S_{2}\rho'$
 \end_inset
 
@@ -1248,28 +1428,25 @@ if
 \end_layout
 
 \begin_layout Itemize
-\begin_inset Formula $S\ \left[if\left(e\right)S_{1}\right]\rho=\left\langle \rho'\sqcup\rho_{1},false\right\rangle $
+\begin_inset Formula $\mathbb{S}\ \left[if\left(e\right)S_{1}\right]\rho=\left\langle \rho'\sqcup\rho_{1},false\right\rangle $
 \end_inset
 
 
 \end_layout
 
 \begin_deeper
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
+\begin_layout Standard
 where
 \end_layout
 
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
+\begin_layout Standard
 \begin_inset Formula $\left\langle \rho',t\right\rangle =\mathcal{E}\ e\ \rho$
 \end_inset
 
 
 \end_layout
 
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
+\begin_layout Standard
 \begin_inset Formula $\left\langle \rho_{1},term\right\rangle =S\ S_{1}\rho'$
 \end_inset
 
@@ -1284,20 +1461,18 @@ In a simple assignment statement, we first evaluate the expression and take
 \end_layout
 
 \begin_layout Itemize
-\begin_inset Formula $S\ \left[id=e\right]\ \left\langle \sigma,\alpha,\phi,\gamma\right\rangle =\left\langle \left\langle \sigma[id\mapsto t],\alpha',\phi',\gamma\right\rangle ,false\right\rangle $
+\begin_inset Formula $\mathbb{S}\ \left[id=e\right]\ \left\langle \sigma,\alpha,\phi,\gamma\right\rangle =\left\langle \left\langle \sigma[id\mapsto t],\alpha',\phi',\gamma\right\rangle ,false\right\rangle $
 \end_inset
 
 
 \end_layout
 
 \begin_deeper
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
+\begin_layout Standard
 where
 \end_layout
 
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
+\begin_layout Standard
 \begin_inset Formula $\left\langle \left\langle \alpha',\phi'\right\rangle ,t\right\rangle =\mathcal{E}\ e\ \left\langle \sigma,\alpha,\phi,\gamma\right\rangle $
 \end_inset
 
@@ -1313,28 +1488,25 @@ In a member assignment statement, we first evaluate the referred expression,
 \end_layout
 
 \begin_layout Itemize
-\begin_inset Formula $S\ \left[e_{1}.id=e_{2}\right]\ \left\langle \sigma,\alpha,\phi,\gamma\right\rangle =\left\langle \left\langle \sigma'',\alpha''\left[OBJ_{n}=OBJ_{n}\left[id\mapsto type'\right]\right]\mbox{for all}\ OBJ_{n}\in type,\phi'',\gamma\right\rangle ,false\right\rangle $
+\begin_inset Formula $\mathbb{S}\ \left[e_{1}.id=e_{2}\right]\ \left\langle \sigma,\alpha,\phi,\gamma\right\rangle =\left\langle \left\langle \sigma'',\alpha''\left[OBJ_{n}=OBJ_{n}\left[id\mapsto type'\right]\right]\mbox{for all}\ OBJ_{n}\in type,\phi'',\gamma\right\rangle ,false\right\rangle $
 \end_inset
 
 
 \end_layout
 
 \begin_deeper
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
+\begin_layout Standard
 where
 \end_layout
 
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
+\begin_layout Standard
 \begin_inset Formula $\left\langle \left\langle \alpha',\phi'\right\rangle ,type\right\rangle =\mathcal{E}\ e_{1}\ \left\langle \sigma,\alpha,\phi,\gamma\right\rangle $
 \end_inset
 
 
 \end_layout
 
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
+\begin_layout Standard
 \begin_inset Formula $\left\langle \left\langle \alpha'',\phi''\right\rangle ,type'\right\rangle =\mathcal{E}\ e_{2}\ \left\langle \sigma',\alpha',\phi',\gamma\right\rangle $
 \end_inset
 
@@ -1352,28 +1524,25 @@ ts from its own evaluation.
 \end_layout
 
 \begin_layout Itemize
-\begin_inset Formula $S\ \left[while(e)S_{1}\right]\ \left\langle \sigma,\alpha,\phi,\gamma\right\rangle =\left\langle \left\langle \sigma\sqcup\sigma'',\alpha'\sqcup\alpha'',\phi,\gamma\right\rangle ,false\right\rangle $
+\begin_inset Formula $\mathbb{S}\ \left[while(e)S_{1}\right]\ \left\langle \sigma,\alpha,\phi,\gamma\right\rangle =\left\langle \left\langle \sigma\sqcup\sigma'',\alpha'\sqcup\alpha'',\phi,\gamma\right\rangle ,false\right\rangle $
 \end_inset
 
 
 \end_layout
 
 \begin_deeper
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
+\begin_layout Standard
 whererec
 \end_layout
 
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
+\begin_layout Standard
 \begin_inset Formula $\left\langle \left\langle \alpha',\phi'\right\rangle ,type\right\rangle =\mathcal{E}\ e\ \left\langle \sigma,\alpha,\phi,\gamma\right\rangle $
 \end_inset
 
 
 \end_layout
 
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
+\begin_layout Standard
 \begin_inset Formula $\left\langle \sigma'',\alpha'',\phi'',\gamma\right\rangle =S\ S_{1}\ \left\langle \sigma\sqcup\sigma'',\alpha'\sqcup\alpha'',\phi',\gamma\right\rangle $
 \end_inset
 
@@ -1386,20 +1555,18 @@ In an output statement, we evaluate expression and take the updated environment
 \end_layout
 
 \begin_layout Itemize
-\begin_inset Formula $S\ \left[output\ e\right]\ \left\langle \sigma,\alpha,\phi,\gamma\right\rangle =\left\langle \left\langle \sigma,\alpha',\phi',\gamma\right\rangle ,false\right\rangle $
+\begin_inset Formula $\mathbb{S}\ \left[output\ e\right]\ \left\langle \sigma,\alpha,\phi,\gamma\right\rangle =\left\langle \left\langle \sigma,\alpha',\phi',\gamma\right\rangle ,false\right\rangle $
 \end_inset
 
 
 \end_layout
 
 \begin_deeper
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
+\begin_layout Standard
 where
 \end_layout
 
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
+\begin_layout Standard
 \begin_inset Formula $\left\langle \left\langle \alpha',\phi'\right\rangle ,type\right\rangle =\mathcal{E}\ e\ \left\langle \sigma,\alpha,\phi,\gamma\right\rangle $
 \end_inset
 
@@ -1413,7 +1580,7 @@ When we declare a new function, we just map the function name to a corresponding
 \end_layout
 
 \begin_layout Itemize
-\begin_inset Formula $S\ \left[function_{n}\ id\left(ID*\right)S_{1}\right]\ \left\langle \sigma,\alpha,\phi,\gamma\right\rangle =\left\langle \left\langle \sigma\left[id\mapsto\left\{ FUNC_{n,0}\right\} \right],\alpha,\phi,\gamma\right\rangle ,false\right\rangle $
+\begin_inset Formula $\mathbb{S}\ \left[function_{n}\ id\left(ID*\right)S_{1}\right]\ \left\langle \sigma,\alpha,\phi,\gamma\right\rangle =\left\langle \left\langle \sigma\left[id\mapsto\left\{ FP_{n,0}\right\} \right],\alpha,\phi,\gamma\right\rangle ,false\right\rangle $
 \end_inset
 
 
@@ -1424,187 +1591,175 @@ Expressions
 \end_layout
 
 \begin_layout Standard
-Left expression analysis returns possible types
+Left expression analysis returns possible types and updated environments
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+\begin_inset Formula $\mathcal{L}::Env\rightarrow\left\langle \left\langle Absmem,Functions\right\rangle ,type\right\rangle $
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
-\begin_inset Formula $\mathcal{L}::Env\rightarrow\wp\left(type\right)$
-\end_inset
-
-
+When an id is given, we simply 'look up' the ID from symbol table
 \end_layout
 
 \begin_layout Itemize
-\begin_inset Formula $\mathcal{L}\ \left[ID\right]\ \left\langle \sigma,\alpha,\phi,\gamma\right\rangle =\sigma(ID)$
+\begin_inset Formula $\mathcal{L}\ \left[ID\right]\ \left\langle \sigma,\alpha,\phi,\gamma\right\rangle =\left\langle \left\langle \alpha,\phi\right\rangle \sigma(ID)\right\rangle $
 \end_inset
 
 
+\end_layout
+
+\begin_layout Standard
+When an expression is dereferenced, we first evaluate the expression, and
+ for each of possible object types, we find a possible types of a member
+ named ID
 \end_layout
 
 \begin_layout Itemize
-\begin_inset Formula $\mathcal{L}\ \left[e.ID\right]\ \left\langle \sigma,\alpha,\phi,\gamma\right\rangle =type$
-\end_inset
-
-
-\end_layout
-
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
-\begin_inset Formula $\mathcal{E}\ con\ \rho=\left\langle \rho,type\right\rangle $
+\begin_inset Formula $\mathcal{L}\ \left[e.ID\right]\ \left\langle \sigma,\alpha,\phi,\gamma\right\rangle =\left\langle \left\langle \alpha',\phi'\right\rangle ,\bigsqcup\alpha\left(n\right)\left(ID\right)\ \forall n\ \exists\alpha(n)(ID)\right\rangle $
 \end_inset
 
 
 \end_layout
 
 \begin_deeper
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
+\begin_layout Standard
 where
 \end_layout
 
-\begin_deeper
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
-\begin_inset Formula $type=number\ \mbox{if}\ con\ \mbox{is a number}$
+\begin_layout Standard
+\begin_inset Formula $\left\langle \left\langle \alpha',\phi'\right\rangle ,type\right\rangle =\mathcal{E}\ e\ \left\langle \sigma,\alpha,\phi,\gamma\right\rangle $
 \end_inset
 
 
 \end_layout
 
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
-\begin_inset Formula $type=boolean\ \mbox{if}\ con\ \mbox{is a boolean value}$
+\begin_layout Standard
+\begin_inset Formula $n\in\left\{ n|OBJ_{n}\in type\right\} $
 \end_inset
 
 
 \end_layout
 
 \end_deeper
-\end_deeper
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
-\begin_inset Formula $\mathcal{E}\ global\ \rho=\left\langle \rho,OBJ_{0}\right\rangle $
+\begin_layout Standard
+When a constant is given, we simply return a type of such constant
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\mathcal{E}\ number\ \rho=\left\langle \rho,\left\{ number\right\} \right\rangle $
 \end_inset
 
 
 \end_layout
 
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
+\begin_layout Itemize
+\begin_inset Formula $\mathcal{E}\ boolean\ \rho=\left\langle \rho,\left\{ boolean\right\} \right\rangle $
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Global is always 
+\begin_inset Formula $OBJ_{0}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\mathcal{E}\ global\ \rho=\left\langle \rho,\left\{ OBJ_{0}\right\} \right\rangle $
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+When left expression is given, we evaluate the expression
+\end_layout
+
+\begin_layout Itemize
 \begin_inset Formula $\mathcal{E}\ Lexpr\ \rho=\mathcal{L}\ Lexpr\ \rho$
 \end_inset
 
 
 \end_layout
 
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
-\begin_inset Formula $\mathcal{E}\ this\ \left\langle symmap,absmem,fps,cf\right\rangle =\left\langle \left\langle symmap,absmem,fps,cf\right\rangle ,this\right\rangle $
+\begin_layout Standard
+
+\emph on
+this
+\emph default
+ keyword refers to the 'this' type of the current function (
+\begin_inset Formula $\gamma$
+\end_inset
+
+)
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\mathcal{E}\ this\ \left\langle \sigma,\alpha,\phi,\gamma\right\rangle =\left\langle \left\langle \sigma,\alpha,\phi,\gamma\right\rangle ,\theta\right\rangle $
 \end_inset
 
 
 \end_layout
 
 \begin_deeper
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
+\begin_layout Standard
 where
 \end_layout
 
-\begin_deeper
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
-\begin_inset Formula $\left\langle s,param,returntype,this\right\rangle =fps(cf)$
+\begin_layout Standard
+\begin_inset Formula $\left\langle S,\pi,\nu,\eta,\tau,\mu,\theta\right\rangle =\phi(\gamma)$
 \end_inset
 
 
 \end_layout
 
 \end_deeper
-\end_deeper
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
-\begin_inset Formula $\mathcal{E}\ input\ \rho=\left\langle \rho,number\right\rangle $
-\end_inset
-
-
+\begin_layout Standard
+A result of 
+\emph on
+input
+\emph default
+ expression is always a number
 \end_layout
 
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
-\begin_inset Formula $\mathcal{E}\ \left[Lexpr\left(e_{1},e_{2},\cdots,e_{k}\right)\right]\ \left\langle symmap,absmem,fps,cf\right\rangle =$
-\end_inset
-
-
-\end_layout
-
-\begin_deeper
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
-\begin_inset Formula $\left\langle \left\langle symmap,absmem_{k},fps',cf\right\rangle ,returntypes\right\rangle \ \mbox{if}\ k+c=N\left(params_{k,n}\right)$
-\end_inset
-
-
-\end_layout
-
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
-\begin_inset Formula $\left\langle \left\langle symmap,absmem_{k},fps',cf\right\rangle ,FP_{n,c+k}\right\rangle \mbox{otherwise}$
-\end_inset
-
-
-\end_layout
-
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
-where
-\end_layout
-
-\begin_deeper
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
-\begin_inset Formula $FP_{n,c}=\mathcal{L}\ Lexpr\ \left\langle symmap,absmem,fps,cf\right\rangle $
-\end_inset
-
-
-\end_layout
-
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
-\begin_inset Formula $\left\langle \left\langle absmem_{1},fps_{1}\right\rangle ,type_{1}\right\rangle =\mathcal{E}\ e_{1}\ \left\langle symmap,absmem,fps,cf\right\rangle $
-\end_inset
-
-
-\end_layout
-
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
-\begin_inset Formula $\left\langle \left\langle absmem_{i},fps_{i}\right\rangle ,type_{i}\right\rangle =\mathcal{E}\ e_{i-1}\ \left\langle symmap,absmem_{i-1},fps_{i-1},cf\right\rangle ,\ i\in\mathbb{N},1<i\leq k$
+\begin_layout Itemize
+\begin_inset Formula $\mathcal{E}\ input\ \rho=\left\langle \rho,\left\{ number\right\} \right\rangle $
 \end_inset
 
 
 \end_layout
 
 \begin_layout Standard
-\begin_inset Formula $\left\langle S_{k},\pi{}_{k},\nu{}_{k},\tau_{k},\theta_{k}\right\rangle =fps_{k}\left(n\right)$
+For a function call, we first evaluate the left expression (1), then evaluate
+ each of the expressions given as parameters, successively updating environments
+ (2 and 3), then, for each of possible function types of the resulting types
+ of (1), we update possible argument types of 
+\begin_inset Formula $c+j^{\mbox{th}}$
+\end_inset
+
+argument in a function pointers (4 and 5).
+ Resulting types are the union of return types of functions that are being
+ called (i.e.
+ functions where we provide exact number of parameters for the remaining
+ non-curried parameter) and curried function pointers.
+ Finally, we join resulting memory states to calculate the memory state
+ after function call (6).
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\mathcal{E}\ \left[Lexpr\left(e_{1},e_{2},\cdots,e_{k}\right)\right]\ \left\langle \sigma,\alpha,\phi,\gamma\right\rangle =$
 \end_inset
 
 
-\end_layout
-
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
-\begin_inset Formula $fps'=fps_{k}\left[FP_{n}=\left\langle S_{k},params_{k}\left[arg_{c+j}=arg_{c+j}\sqcup type_{j},j\in\mathbb{N},1\le j\le k\right],paramnames_{k},returntype_{k},this_{k}\right\rangle \right]$
-\end_inset
-
-
-\end_layout
-
-\end_deeper
-\end_deeper
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
-\begin_inset Formula $\mathcal{E}\ \left[new_{n}\ Lexpr\left(e_{1},e_{2},\cdots,e_{k}\right)\right]\ \left\langle symmap,absmem,fps,cf\right\rangle =\left\langle \left\langle symmap,absmem_{k},fps',cf\right\rangle ,this_{k,n}\right\rangle $
+\begin_inset Formula $\left\langle \left\langle \sigma,\alpha'',\phi'',\gamma\right\rangle ,\left\{ \tau_{n}|k+c_{n}=N\left(\nu_{k,n}\right)\right\} \cup\left\{ FP_{n,c_{n}+k}|k+c_{n}<N\left(\nu_{k,n}\right)\right\} \right\rangle $
 \end_inset
 
 
@@ -1616,55 +1771,146 @@ where
 where
 \end_layout
 
+\begin_layout Enumerate
+\begin_inset Formula $\left\langle \left\langle \alpha',\phi'\right\rangle ,FPS\right\rangle =\mathcal{L}\ Lexpr\ \left\langle \sigma,\alpha,\phi,\gamma\right\rangle $
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset Formula $\left\langle \left\langle \alpha_{1},\phi_{1}\right\rangle ,type_{1}\right\rangle =\mathcal{E}\ e_{1}\ \left\langle \sigma,\alpha',\phi',\gamma\right\rangle $
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset Formula $\left\langle \left\langle \alpha_{i},\phi_{i}\right\rangle ,type_{i}\right\rangle =\mathcal{E}\ e_{i-1}\ \left\langle \sigma,\alpha_{i-1},\phi_{i-1},\gamma\right\rangle ,\ i\in\mathbb{N},1<i\leq k$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset Formula $\left\langle S_{k,n},\pi{}_{k,n},\nu{}_{k,n},\eta_{k,n},\tau_{k,n},\mu_{k,n},\theta_{k,n}\right\rangle =\phi_{k}\left(n\right),\left\langle n,c_{n}\right\rangle \in\left\{ \left\langle n,c_{n}\right\rangle |FP_{n,c}\in FPS\right\} $
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset Formula $\phi''=\phi_{k}\left[n\mapsto\left\langle S_{k,n},\pi_{k,n}\left[arg_{c_{n}+j}\mapsto arg_{k_{c_{n}+j}}\sqcup type_{j},j\in\mathbb{N},1\le j\le k\right],\nu_{k,n},\eta_{k,n}\sqcup\alpha_{k,n},\tau_{k,n},\mu_{k,n},\theta_{k,n}\right\rangle \right]$
+\end_inset
+
+
+\end_layout
+
 \begin_deeper
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
-\begin_inset Formula $FP_{n,c}=\mathcal{L}\ Lexpr\ \left\langle symmap,absmem,fps,cf\right\rangle $
-\end_inset
-
-
-\end_layout
-
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
-\begin_inset Formula $\left\langle \left\langle absmem_{1},fps_{1}\right\rangle ,type_{1}\right\rangle =\mathcal{E}\ e_{1}\ \left\langle symmap,absmem,fps,cf\right\rangle $
-\end_inset
-
-
-\end_layout
-
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
-\begin_inset Formula $\left\langle \left\langle absmem_{i},fps_{i}\right\rangle ,type_{i}\right\rangle =\mathcal{E}\ e_{i-1}\ \left\langle symmap,absmem_{i-1},fps_{i-1},cf\right\rangle ,\ i\in\mathbb{N},1<i\leq k$
-\end_inset
-
-
-\end_layout
-
 \begin_layout Standard
-\begin_inset Formula $\left\langle S_{k,n},params_{k,n},paramnames_{k,n},entrymemory_{k,n},returntype_{k,n},this_{k,n}\right\rangle =fps_{k}\left(n\right)$
-\end_inset
-
-
-\end_layout
-
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
-\begin_inset Formula $newparams=params_{k,n}\left[arg_{c+j}=arg_{c+j}\sqcup type_{j},j\in\mathbb{N},1\le j\le k\right]$
-\end_inset
-
-
-\end_layout
-
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
-\begin_inset Formula $fps'=fps_{k}\left[FP_{n}=\left\langle S_{k,n},newparams,paramnames_{k,n},returntype_{k,n},this_{k,n}\right\rangle \right]$
+\begin_inset Formula $\mbox{for all}\ n$
 \end_inset
 
 
 \end_layout
 
 \end_deeper
+\begin_layout Enumerate
+\begin_inset Formula $\alpha''=\alpha_{k}\sqcup\mu_{k,n}\mbox{ for all }n\in\left\{ n|k+c_{n}=N\left(\nu_{k,n}\right)\right\} $
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Standard
+Instantiation of an object is largely similar to the function call handling.
+ Key differences are that we take the union of all possible 
+\emph on
+this
+\emph default
+ types of the function called, and we only take a function with all the
+ parameters bound as a legitimate type of Lexpression.
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\mathcal{E}\ \left[new_{n}\ Lexpr\left(e_{1},e_{2},\cdots,e_{k}\right)\right]\ \left\langle \sigma,\alpha,\phi,\gamma\right\rangle =\left\langle \left\langle \sigma,\alpha_{k}'',\phi'',\gamma\right\rangle ,\bigcup\theta_{k,n}\right\rangle $
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+where
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset Formula $\left\langle \left\langle \alpha',\phi'\right\rangle ,FPS\right\rangle =\mathcal{L}\ Lexpr\ \left\langle \sigma,\alpha,\phi,\gamma\right\rangle $
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset Formula $\left\langle \left\langle \alpha_{1},\phi_{1}\right\rangle ,type_{1}\right\rangle =\mathcal{E}\ e_{1}\ \left\langle \sigma,\alpha',\phi',\gamma\right\rangle $
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset Formula $\left\langle \left\langle \alpha_{i},\phi_{i}\right\rangle ,type_{i}\right\rangle =\mathcal{E}\ e_{i-1}\ \left\langle \sigma,\alpha_{i-1},\phi_{i-1},\gamma\right\rangle ,\ i\in\mathbb{N},1<i\leq k$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset Formula $\left\langle S_{k,n},\pi{}_{k,n},\nu{}_{k,n},\eta_{k,n},\tau_{k,n},\mu_{k,n},\theta_{k,n}\right\rangle =\phi_{k}\left(n\right),n\in\left\{ n|FP_{n,c}\in FPS,k+c=N\left(\tau_{k,n}\right)\right\} $
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset Formula $\phi''=\phi_{k}\left[n\mapsto\left\langle S_{k,n},\pi_{k,n}\left[arg_{c_{n}+j}\mapsto arg_{k_{c_{n}+j}}\sqcup type_{j},j\in\mathbb{N},1\le j\le k\right],\nu_{k,n},\eta_{k,n}\sqcup\alpha_{k,n},\tau_{k,n},\mu_{k,n},\theta_{k,n}\right\rangle \right]$
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+\lang english
+\begin_inset Formula $\mbox{for all}\ n$
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Enumerate
+\begin_inset Formula $\alpha''=\alpha_{k}\sqcup\mu_{k,n}\mbox{ for all }n\in\left\{ n|k+c_{n}=N\left(\nu_{k,n}\right)\right\} $
+\end_inset
+
+
+\end_layout
+
 \end_deeper
 \end_body
 \end_document
