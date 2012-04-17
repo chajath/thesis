@@ -75,7 +75,31 @@
 \begin_body
 
 \begin_layout Title
-Simple Duck-Typing Language (SDTL)
+Inferring Class Structures of Duck-Typed Variables Through Static Code Analysis
+\end_layout
+
+\begin_layout Author
+In-Ho Yi
+\begin_inset Newline newline
+\end_inset
+
+ i.yi@student.unimelb.edu.au 
+\end_layout
+
+\begin_layout Date
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+today
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -160,8 +184,304 @@ ttfamily, }
 
 \end_layout
 
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+lstset{    language=sdtl,    backgroundcolor=
+\backslash
+color{lightgray},    extendedchars=true,    basicstyle=
+\backslash
+footnotesize
+\backslash
+ttfamily,    showstringspaces=false,    showspaces=false,    numbers=left,
+    numberstyle=
+\backslash
+footnotesize,    numbersep=9pt,    tabsize=2,    breaklines=true,    showtabs=fa
+lse,    captionpos=b }
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Introduction
+\end_layout
+
+\begin_layout Standard
+Contemporary dynamic-typing languages such as Python and ECMAScript utilise
+ `duck-typing' as a way of allowing users to define and use classes on-the-fly.
+ By allowing a programmer to dynamically create properties of variables,
+ these languages allow a programmer to rapidly prototype models.
+\end_layout
+
+\begin_layout Standard
+The aim of the proposed project is to apply static code analysis to infer
+ class structures from the use of duck-typed variables.
+\end_layout
+
+\begin_layout Subsection
+The Challenge of Analysing Duck-Typing Programs
+\end_layout
+
+\begin_layout Standard
+In traditional OOP languages such as Java and C#, the task of statically
+ analysing class structure is almost trivial.
+ Programmers define the types and hierarchies in advance, and the declarations
+ themselves are readily understandable by machine.
+ There are tools available for translating a design diagram such as UML
+ to a code stub, and vice versa.
+\end_layout
+
+\begin_layout Standard
+Duck-typing languages, on the other hand, does not include a finite definition
+ of a class structure.
+ Consider the following declaration of class in Python:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+lstparams "language=Python"
+inline false
+status open
+
+\begin_layout Plain Layout
+
+from random import random 
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+class ExampleA:
+\end_layout
+
+\begin_layout Plain Layout
+
+	def __init__(self):
+\end_layout
+
+\begin_layout Plain Layout
+
+		self.someProperty = 'a'
+\end_layout
+
+\begin_layout Plain Layout
+
+		if(random() > 0.5):             
+\end_layout
+
+\begin_layout Plain Layout
+
+			self.otherProperty = 'b'     
+\end_layout
+
+\begin_layout Plain Layout
+
+	def someMethod(self, a):
+\end_layout
+
+\begin_layout Plain Layout
+
+		print(a) 
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+a = ExampleA() 
+\end_layout
+
+\begin_layout Plain Layout
+
+a.someMethod('Hello, world') 
+\end_layout
+
+\begin_layout Plain Layout
+
+a.myProperty = 2 
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+def newMethod(b):
+\end_layout
+
+\begin_layout Plain Layout
+
+	print(b)
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+a.newMethod = newMethod 
+\end_layout
+
+\begin_layout Plain Layout
+
+a.newMethod('Hello, world')
+\end_layout
+
+\begin_layout Plain Layout
+
+\begin_inset Caption
+
+\begin_layout Plain Layout
+Python class creation
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+There are several difficulties of statically analysing the present code.
+ First, declarations of members are dynamic, and the type itself can even
+ depend on a control flow.
+ In case of class ExampleA, instances have 50% chance of having `otherProperty'
+ as a member.
+ 
+\end_layout
+
+\begin_layout Standard
+Second, after the initial creation of an instance, programmer can extend
+ the class by declaring new members dynamically.
+ `myProperty' and `newMethod' are declared in such manner.
+\end_layout
+
 \begin_layout Part
-Operation Semantics
+Simple Duck-Typing Language (SDTL)
+\end_layout
+
+\begin_layout Standard
+We will define a toy language that we name Simple Duck-Typing Language (SDTL).
+ The design goal is to come up with a largely subset of ECMAScript expressive
+ enough to cover the topic without losing generality of the argument.
+ The language features dynamic declaration of functions, primitive variables
+ (int, bool) and objects (through 
+\shape italic
+new
+\shape default
+ keyword), to which a programmer can dynamically assign variables or functions
+ to their properties.
+\begin_inset Newline newline
+\end_inset
+
+SDTL does not allow explicit class definition, as in Python, or prototyping,
+ as in ECMAScript.
+ However, it is argued here that class definitions and prototypes can be
+ normalised as a series of dynamic declaration.
+\end_layout
+
+\begin_layout Section
+Type System of SDTL
+\end_layout
+
+\begin_layout Standard
+There are two categories of types in SDTL: Primitive types and Reference
+ types 
+\end_layout
+
+\begin_layout Subsection
+Primitive types
+\end_layout
+
+\begin_layout Standard
+As in languages like Java and C#, primitive types are analogous to non-pointer
+ C types.
+ Variables are generally created through a new assignment statement.
+ Assigning a value into another variable would cause the value to be copied
+ into a new location.
+ When used as arguments to a function call, they will be passed by value.
+ 
+\end_layout
+
+\begin_layout Subsubsection
+Boolean
+\end_layout
+
+\begin_layout Standard
+Boolean values are either true or false.
+ In addition to 
+\shape italic
+true
+\shape default
+ and 
+\shape italic
+false
+\shape default
+ keyword, resulting values of logical operations are also boolean.
+ 
+\end_layout
+
+\begin_layout Subsubsection
+Number
+\end_layout
+
+\begin_layout Standard
+Numbers are also primitive type.
+ For numeric binary operators, it is expected that both expressions are
+ in primitive number type.
+ If either of them are not, then a run-time type error is thrown.
+ 
+\end_layout
+
+\begin_layout Subsection
+Reference types
+\end_layout
+
+\begin_layout Standard
+Both objects and functions are referred to via reference types.
+ 
+\end_layout
+
+\begin_layout Subsubsection
+Objects
+\end_layout
+
+\begin_layout Standard
+In SDTL, an object is consisted of a collection of members, which can be
+ primitives, function points or objects.
+ When a new object is created, the object is stored in a memory and a reference
+ point to the memory is returned.
+ Subsequent assignments of such value is all passed in as a reference.
+ When used in a function call, such value is passed by reference.
+ 
+\end_layout
+
+\begin_layout Subsubsection
+Function pointers
+\end_layout
+
+\begin_layout Standard
+Functions are stored as function pointers.
+ When a new function is declared, the code fragment is stored in the memory
+ and its reference is associated with the name of the function.
+ The function pointer then can be used like any other variables.
+ SDTL does not allow method overloading, so a function pointer can be associated
+ with one function only.
 \end_layout
 
 \begin_layout Section
@@ -172,20 +492,24 @@ Structure
 Constant 
 \end_layout
 
+\begin_layout Standard
+A constant can either be a number or a boolean value.
+\end_layout
+
 \begin_layout Labeling
 \labelwidthstring 00.00.0000
-con ::= number | boolean
+con ::= Number | Boolean
 \end_layout
 
 \begin_deeper
 \begin_layout Labeling
 \labelwidthstring 00.00.0000
-number ::= Z
+Number ::= Z
 \end_layout
 
 \begin_layout Labeling
 \labelwidthstring 00.00.0000
-boolean ::= tt | ff
+Boolean ::= tt | ff
 \end_layout
 
 \end_deeper
@@ -231,38 +555,96 @@ binop ::= + - * / > < ==
 Statements
 \end_layout
 
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
-S ::= nil 
+\begin_layout Standard
+Statements are the essential elements of the program.
+ First of all, a statement can be an empty string, making an empty input
+ a valid program.
 \end_layout
 
 \begin_layout Labeling
 \labelwidthstring 00.00.0000
-S ::= S; S 
+Stmt ::= nil 
+\end_layout
+
+\begin_layout Standard
+Statement can also be a concatenation of statements.
 \end_layout
 
 \begin_layout Labeling
 \labelwidthstring 00.00.0000
-S ::= Expr 
+Stmt ::= S; S 
+\end_layout
+
+\begin_layout Standard
+Statement can be an expression.
+ An evaluated value, if there is one, will be discard.
+ If a programmer chose to use this construct, the intention would be to
+ use a side-effect of an expression evaluation, e.g.
+ calling a database function to generate a side-effect.
 \end_layout
 
 \begin_layout Labeling
 \labelwidthstring 00.00.0000
-S ::= 
+Stmt ::= Expr
+\end_layout
+
+\begin_layout Standard
+We define 
+\shape italic
+output
+\shape default
+ statement, with which a programmer can print out result of numeric evaluation
+ to console.
+ For the purpose of simplicity, we assume that only numeric expressions
+ are printed.
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+Stmt ::= 
 \emph on
 output
 \emph default
  Expr 
 \end_layout
 
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
-S ::= LExpr = Expr
+\begin_layout Standard
+We define an assignment statement.
+ Here we make a distinction between left expression(LExpr) and expression(Expr).
+ A left expression is an expression that is capable of designating a memory
+ location, such as a symbol or a member of an object.
+ Naturally, a left expression is a subset of an expression.
 \end_layout
 
 \begin_layout Labeling
 \labelwidthstring 00.00.0000
-S ::= 
+Stmt ::= LExpr = Expr
+\end_layout
+
+\begin_layout Standard
+We introduce 
+\shape italic
+if
+\shape default
+ statement here.
+ If the Expr evaluates to be a boolean TRUE, the first statement is executed,
+ otherwise, else statement is executed (if given).
+ Any Expr that does not evaluate to be a boolean value will give rise to
+ a runtime error.
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+Stmt ::= 
+\emph on
+if
+\emph default
+(Expr) { S }
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+Stmt ::= 
 \emph on
 if
 \emph default
@@ -273,9 +655,21 @@ else
  { S } 
 \end_layout
 
+\begin_layout Standard
+
+\shape italic
+while
+\shape default
+ statement is also a standard one present in most C-like languages.
+ If Expr evaluates to be a boolean TRUE, it will execute S and repeat from
+ evaluating Expr again.
+ An Expr that does not evaluate to be a boolean value will give rise to
+ a runtime error.
+\end_layout
+
 \begin_layout Labeling
 \labelwidthstring 00.00.0000
-S ::= 
+Stmt ::= 
 \emph on
 while
 \emph default
@@ -284,7 +678,7 @@ while
 
 \begin_layout Labeling
 \labelwidthstring 00.00.0000
-S ::= 
+Stmt ::= 
 \emph on
 function
 \emph default
@@ -293,11 +687,29 @@ function
 
 \begin_layout Labeling
 \labelwidthstring 00.00.0000
-S ::= 
+Stmt ::= 
 \emph on
 return
 \emph default
  Expr
+\end_layout
+
+\begin_layout Subsection
+Program
+\end_layout
+
+\begin_layout Standard
+In SDTL, as in other scripting languages, a program is a list of statements.
+ Formally,
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+Program ::= Stmt
+\end_layout
+
+\begin_layout Part
+Operation Semantics
 \end_layout
 
 \begin_layout Section
@@ -650,13 +1062,6 @@ Statements
 \end_layout
 
 \begin_layout Itemize
-\begin_inset Formula $\left\langle con;S,s\right\rangle \rightarrow\left\langle S,s\right\rangle $
-\end_inset
-
-
-\end_layout
-
-\begin_layout Itemize
 \begin_inset Formula $\left\langle nil;S,s\right\rangle \rightarrow\left\langle S,s\right\rangle $
 \end_inset
 
@@ -665,6 +1070,13 @@ Statements
 
 \begin_layout Itemize
 \begin_inset Formula ${\displaystyle \frac{\left\langle S_{0},s\right\rangle \rightarrow\left\langle S_{0}',s'\right\rangle }{\left\langle S_{0};S,s\right\rangle \rightarrow\left\langle S_{0}';S,s'\right\rangle }}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula ${\displaystyle \frac{\left\langle e,s\right\rangle \rightarrow\left\langle e',s'\right\rangle }{\left\langle return\ e;S,s\right\rangle \rightarrow\left\langle return\ e';S,s'\right\rangle }}$
 \end_inset
 
 
@@ -1186,10 +1598,10 @@ For each of the functions, we pass in parameter mapping as an initial symbol
 \end_layout
 
 \begin_layout Itemize
-\begin_inset Formula $\mathcal{F}\ \gamma\ \phi_{0}=_{\mbox{rec}}\phi_{0}\sqcup\phi$
+\begin_inset Formula $\mathcal{F}\ \gamma\ \phi_{0}=\phi$
 \end_inset
 
- (is rec necessary here?)
+
 \end_layout
 
 \begin_deeper
@@ -1205,7 +1617,7 @@ where
 \end_layout
 
 \begin_layout Enumerate
-\begin_inset Formula $\left\langle \sigma,\alpha,\phi,\gamma\right\rangle =\mathbb{S}\ S_{0}\ \left\langle \pi_{0},\eta_{0},\phi,\gamma\right\rangle $
+\begin_inset Formula $\left\langle \sigma,\alpha,\phi,\gamma\right\rangle =\mathbb{S}\ S_{0}\ \left\langle \pi_{0},\eta_{0},\phi_{0},\gamma\right\rangle $
 \end_inset
 
 
@@ -1348,7 +1760,7 @@ When returning, we first evaluate expression being returned, and manipulate
 \end_layout
 
 \begin_layout Itemize
-\begin_inset Formula $\mathbb{S}\ \left[return\ e\right]\left\langle \sigma,\alpha,\phi,\gamma\right\rangle =\left\langle \left\langle \bot,\bot,\phi\left[\gamma=\left\langle s,\pi,\nu,\eta,\tau\sqcup type,\mu\sqcup env',\theta\right\rangle \right],\gamma\right\rangle ,true\right\rangle $
+\begin_inset Formula $\mathbb{S}\ \left[\mathtt{return}\ e\right]\left\langle \sigma,\alpha,\phi,\gamma\right\rangle =\left\langle \left\langle \bot,\bot,\phi\left[\gamma=\left\langle s,\pi,\nu,\eta,\tau\sqcup type,\mu\sqcup env',\theta\right\rangle \right],\gamma\right\rangle ,true\right\rangle $
 \end_inset
 
 
@@ -1488,7 +1900,7 @@ In a member assignment statement, we first evaluate the referred expression,
 \end_layout
 
 \begin_layout Itemize
-\begin_inset Formula $\mathbb{S}\ \left[e_{1}.id=e_{2}\right]\ \left\langle \sigma,\alpha,\phi,\gamma\right\rangle =\left\langle \left\langle \sigma'',\alpha''\left[OBJ_{n}=OBJ_{n}\left[id\mapsto type'\right]\right]\mbox{for all}\ OBJ_{n}\in type,\phi'',\gamma\right\rangle ,false\right\rangle $
+\begin_inset Formula $\mathbb{S}\ \left[e_{1}.id=e_{2}\right]\ \left\langle \sigma,\alpha,\phi,\gamma\right\rangle =\left\langle \left\langle \sigma,\alpha''\left[OBJ_{n}=OBJ_{n}\left[id\mapsto type'\right]|OBJ_{n}\in type\right],\phi'',\gamma\right\rangle ,false\right\rangle $
 \end_inset
 
 
@@ -1507,7 +1919,7 @@ where
 \end_layout
 
 \begin_layout Standard
-\begin_inset Formula $\left\langle \left\langle \alpha'',\phi''\right\rangle ,type'\right\rangle =\mathcal{E}\ e_{2}\ \left\langle \sigma',\alpha',\phi',\gamma\right\rangle $
+\begin_inset Formula $\left\langle \left\langle \alpha'',\phi''\right\rangle ,type'\right\rangle =\mathcal{E}\ e_{2}\ \left\langle \sigma,\alpha',\phi',\gamma\right\rangle $
 \end_inset
 
 
@@ -1524,7 +1936,7 @@ ts from its own evaluation.
 \end_layout
 
 \begin_layout Itemize
-\begin_inset Formula $\mathbb{S}\ \left[while(e)S_{1}\right]\ \left\langle \sigma,\alpha,\phi,\gamma\right\rangle =\left\langle \left\langle \sigma\sqcup\sigma'',\alpha'\sqcup\alpha'',\phi,\gamma\right\rangle ,false\right\rangle $
+\begin_inset Formula $\mathbb{S}\ \left[\mathtt{while}(e)S_{1}\right]\ \left\langle \sigma,\alpha,\phi,\gamma\right\rangle =\left\langle \left\langle \sigma\sqcup\sigma'',\alpha'\sqcup\alpha'',\phi'',\gamma\right\rangle ,false\right\rangle $
 \end_inset
 
 
@@ -1543,7 +1955,7 @@ whererec
 \end_layout
 
 \begin_layout Standard
-\begin_inset Formula $\left\langle \sigma'',\alpha'',\phi'',\gamma\right\rangle =S\ S_{1}\ \left\langle \sigma\sqcup\sigma'',\alpha'\sqcup\alpha'',\phi',\gamma\right\rangle $
+\begin_inset Formula $\left\langle \sigma'',\alpha'',\phi'',\gamma\right\rangle =\mathbb{S}\ S_{1}\ \left\langle \sigma\sqcup\sigma'',\alpha'\sqcup\alpha'',\phi'\sqcup\phi'',\gamma\right\rangle $
 \end_inset
 
 
@@ -1555,7 +1967,7 @@ In an output statement, we evaluate expression and take the updated environment
 \end_layout
 
 \begin_layout Itemize
-\begin_inset Formula $\mathbb{S}\ \left[output\ e\right]\ \left\langle \sigma,\alpha,\phi,\gamma\right\rangle =\left\langle \left\langle \sigma,\alpha',\phi',\gamma\right\rangle ,false\right\rangle $
+\begin_inset Formula $\mathbb{S}\ \left[\mathtt{output}\ e\right]\ \left\langle \sigma,\alpha,\phi,\gamma\right\rangle =\left\langle \left\langle \sigma,\alpha',\phi',\gamma\right\rangle ,false\right\rangle $
 \end_inset
 
 
@@ -1580,7 +1992,7 @@ When we declare a new function, we just map the function name to a corresponding
 \end_layout
 
 \begin_layout Itemize
-\begin_inset Formula $\mathbb{S}\ \left[function_{n}\ id\left(ID*\right)S_{1}\right]\ \left\langle \sigma,\alpha,\phi,\gamma\right\rangle =\left\langle \left\langle \sigma\left[id\mapsto\left\{ FP_{n,0}\right\} \right],\alpha,\phi,\gamma\right\rangle ,false\right\rangle $
+\begin_inset Formula $\mathbb{S}\ \left[\mathtt{function}_{n}\ id\left(ID*\right)S_{1}\right]\ \left\langle \sigma,\alpha,\phi,\gamma\right\rangle =\left\langle \left\langle \sigma\left[id\mapsto\left\{ FP_{n,0}\right\} \right],\alpha,\phi,\gamma\right\rangle ,false\right\rangle $
 \end_inset
 
 
@@ -1620,7 +2032,7 @@ When an expression is dereferenced, we first evaluate the expression, and
 \end_layout
 
 \begin_layout Itemize
-\begin_inset Formula $\mathcal{L}\ \left[e.ID\right]\ \left\langle \sigma,\alpha,\phi,\gamma\right\rangle =\left\langle \left\langle \alpha',\phi'\right\rangle ,\bigsqcup\alpha\left(n\right)\left(ID\right)\ \forall n\ \exists\alpha(n)(ID)\right\rangle $
+\begin_inset Formula $\mathcal{L}\ \left[e.ID\right]\ \left\langle \sigma,\alpha,\phi,\gamma\right\rangle =\left\langle \left\langle \alpha',\phi'\right\rangle ,\bigsqcup\left\{ \alpha'\left(n\right)\left(ID\right)|OBJ_{n}\in type\right\} \sqcup\bot\right\rangle $
 \end_inset
 
 
@@ -1651,14 +2063,14 @@ When a constant is given, we simply return a type of such constant
 \end_layout
 
 \begin_layout Itemize
-\begin_inset Formula $\mathcal{E}\ number\ \rho=\left\langle \rho,\left\{ number\right\} \right\rangle $
+\begin_inset Formula $\mathcal{E}\ number\ \rho=\left\langle \rho,\left\{ Number\right\} \right\rangle $
 \end_inset
 
 
 \end_layout
 
 \begin_layout Itemize
-\begin_inset Formula $\mathcal{E}\ boolean\ \rho=\left\langle \rho,\left\{ boolean\right\} \right\rangle $
+\begin_inset Formula $\mathcal{E}\ boolean\ \rho=\left\langle \rho,\left\{ Boolean\right\} \right\rangle $
 \end_inset
 
 
@@ -1673,7 +2085,7 @@ Global is always
 \end_layout
 
 \begin_layout Itemize
-\begin_inset Formula $\mathcal{E}\ global\ \rho=\left\langle \rho,\left\{ OBJ_{0}\right\} \right\rangle $
+\begin_inset Formula $\mathcal{E}\ \mathtt{global}\ \rho=\left\langle \rho,\left\{ OBJ_{0}\right\} \right\rangle $
 \end_inset
 
 
@@ -1684,7 +2096,7 @@ When left expression is given, we evaluate the expression
 \end_layout
 
 \begin_layout Itemize
-\begin_inset Formula $\mathcal{E}\ Lexpr\ \rho=\mathcal{L}\ Lexpr\ \rho$
+\begin_inset Formula $\mathcal{E}\ l\ \rho=\mathcal{L}\ l\ \rho$
 \end_inset
 
 
@@ -1703,7 +2115,7 @@ this
 \end_layout
 
 \begin_layout Itemize
-\begin_inset Formula $\mathcal{E}\ this\ \left\langle \sigma,\alpha,\phi,\gamma\right\rangle =\left\langle \left\langle \sigma,\alpha,\phi,\gamma\right\rangle ,\theta\right\rangle $
+\begin_inset Formula $\mathcal{E}\ \mathtt{this}\ \left\langle \sigma,\alpha,\phi,\gamma\right\rangle =\left\langle \left\langle \sigma,\alpha,\phi,\gamma\right\rangle ,\theta\right\rangle $
 \end_inset
 
 
@@ -1731,7 +2143,7 @@ input
 \end_layout
 
 \begin_layout Itemize
-\begin_inset Formula $\mathcal{E}\ input\ \rho=\left\langle \rho,\left\{ number\right\} \right\rangle $
+\begin_inset Formula $\mathcal{E}\ \mathtt{input}\ \rho=\left\langle \rho,\left\{ number\right\} \right\rangle $
 \end_inset
 
 
@@ -1755,11 +2167,11 @@ argument in a function pointers (4 and 5).
 \end_layout
 
 \begin_layout Itemize
-\begin_inset Formula $\mathcal{E}\ \left[Lexpr\left(e_{1},e_{2},\cdots,e_{k}\right)\right]\ \left\langle \sigma,\alpha,\phi,\gamma\right\rangle =$
+\begin_inset Formula $\mathcal{E}\ \left[l\left(e_{1},e_{2},\cdots,e_{k}\right)\right]\ \left\langle \sigma,\alpha,\phi,\gamma\right\rangle =$
 \end_inset
 
 
-\begin_inset Formula $\left\langle \left\langle \sigma,\alpha'',\phi'',\gamma\right\rangle ,\left\{ \tau_{n}|k+c_{n}=N\left(\nu_{k,n}\right)\right\} \cup\left\{ FP_{n,c_{n}+k}|k+c_{n}<N\left(\nu_{k,n}\right)\right\} \right\rangle $
+\begin_inset Formula $\left\langle \left\langle \sigma,\alpha'',\phi'',\gamma\right\rangle ,\left\{ \tau_{n}|k+c=N\left(\nu_{k,n}\right)\right\} \cup\left\{ FP_{n,c+k}|k+c<N\left(\nu_{k,n}\right)\right\} \right\rangle $
 \end_inset
 
 
@@ -1772,7 +2184,7 @@ where
 \end_layout
 
 \begin_layout Enumerate
-\begin_inset Formula $\left\langle \left\langle \alpha',\phi'\right\rangle ,FPS\right\rangle =\mathcal{L}\ Lexpr\ \left\langle \sigma,\alpha,\phi,\gamma\right\rangle $
+\begin_inset Formula $\left\langle \left\langle \alpha',\phi'\right\rangle ,FPS\right\rangle =\mathcal{L}\ l\ \left\langle \sigma,\alpha,\phi,\gamma\right\rangle $
 \end_inset
 
 
@@ -1793,14 +2205,14 @@ where
 \end_layout
 
 \begin_layout Enumerate
-\begin_inset Formula $\left\langle S_{k,n},\pi{}_{k,n},\nu{}_{k,n},\eta_{k,n},\tau_{k,n},\mu_{k,n},\theta_{k,n}\right\rangle =\phi_{k}\left(n\right),\left\langle n,c_{n}\right\rangle \in\left\{ \left\langle n,c_{n}\right\rangle |FP_{n,c}\in FPS\right\} $
+\begin_inset Formula $\left\langle S_{k,n},\pi{}_{k,n},\nu{}_{k,n},\eta_{k,n},\tau_{k,n},\mu_{k,n},\theta_{k,n}\right\rangle =\phi_{k}\left(n\right),\left\langle n,c\right\rangle \in\left\{ \left\langle n,c\right\rangle |FP_{n,c}\in FPS\right\} $
 \end_inset
 
 
 \end_layout
 
 \begin_layout Enumerate
-\begin_inset Formula $\phi''=\phi_{k}\left[n\mapsto\left\langle S_{k,n},\pi_{k,n}\left[arg_{c_{n}+j}\mapsto arg_{k_{c_{n}+j}}\sqcup type_{j},j\in\mathbb{N},1\le j\le k\right],\nu_{k,n},\eta_{k,n}\sqcup\alpha_{k,n},\tau_{k,n},\mu_{k,n},\theta_{k,n}\right\rangle \right]$
+\begin_inset Formula $\phi''=\phi_{k}\left[n\mapsto\left\langle S_{k,n},\pi_{k,n}\left[arg_{c+j}\mapsto arg_{k_{c+j}}\sqcup type_{j},j\in\mathbb{N},1\le j\le k\right],\nu_{k,n},\eta_{k,n}\sqcup\alpha_{k,n},\tau_{k,n},\mu_{k,n},\theta_{k,n}\right\rangle \right]$
 \end_inset
 
 
@@ -1834,7 +2246,7 @@ this
 \end_layout
 
 \begin_layout Itemize
-\begin_inset Formula $\mathcal{E}\ \left[new_{n}\ Lexpr\left(e_{1},e_{2},\cdots,e_{k}\right)\right]\ \left\langle \sigma,\alpha,\phi,\gamma\right\rangle =\left\langle \left\langle \sigma,\alpha_{k}'',\phi'',\gamma\right\rangle ,\bigcup\theta_{k,n}\right\rangle $
+\begin_inset Formula $\mathcal{E}\ \left[\mathtt{new}_{n}\ l\left(e_{1},e_{2},\cdots,e_{k}\right)\right]\ \left\langle \sigma,\alpha,\phi,\gamma\right\rangle =\left\langle \left\langle \sigma,\alpha_{k}'',\phi'',\gamma\right\rangle ,\bigsqcup\theta_{k,n}\right\rangle $
 \end_inset
 
 
@@ -1847,7 +2259,7 @@ where
 \end_layout
 
 \begin_layout Enumerate
-\begin_inset Formula $\left\langle \left\langle \alpha',\phi'\right\rangle ,FPS\right\rangle =\mathcal{L}\ Lexpr\ \left\langle \sigma,\alpha,\phi,\gamma\right\rangle $
+\begin_inset Formula $\left\langle \left\langle \alpha',\phi'\right\rangle ,FPS\right\rangle =\mathcal{L}\ l\ \left\langle \sigma,\alpha,\phi,\gamma\right\rangle $
 \end_inset
 
 
@@ -1912,5 +2324,180 @@ where
 \end_layout
 
 \end_deeper
+\begin_layout Part
+Correctness
+\end_layout
+
+\begin_layout Itemize
+Recall that Vars : 
+\begin_inset Formula $ID\rightarrow Value$
+\end_inset
+
+, Symmap : 
+\begin_inset Formula $ID\rightarrow\wp\left(types\right)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Given Object Memory 
+\begin_inset Formula $OM$
+\end_inset
+
+, Vars 
+\begin_inset Formula $V$
+\end_inset
+
+, Abstract Memory 
+\begin_inset Formula $\alpha$
+\end_inset
+
+ and Symmap 
+\begin_inset Formula $\sigma$
+\end_inset
+
+, 
+\begin_inset Formula $\left\langle V,OM\right\rangle \sqsubset\left\langle \sigma,\alpha,\phi\right\rangle $
+\end_inset
+
+ iff
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+\begin_inset Formula $\forall s\in V:$
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+\begin_inset Formula $number\in\sigma\left(s\right)$
+\end_inset
+
+when 
+\begin_inset Formula $V\left(s\right)$
+\end_inset
+
+ is a number
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset Formula $bool\in\sigma\left(s\right)$
+\end_inset
+
+when 
+\begin_inset Formula $V\left(s\right)$
+\end_inset
+
+ is a boolean value
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset Formula $\exists j\in\left\{ j|OBJ_{j}\in\sigma\left(s\right)\right\} :\left\langle V\left(s\right),OM\right\rangle \sqsubset\left\langle OBJ_{j},\alpha\right\rangle $
+\end_inset
+
+when 
+\begin_inset Formula $V\left(s\right)$
+\end_inset
+
+ is an object type (
+\begin_inset Formula $\exists j$
+\end_inset
+
+ or 
+\begin_inset Formula $\forall j$
+\end_inset
+
+?)
+\end_layout
+
+\begin_layout Enumerate
+when 
+\begin_inset Formula $V\left(s\right)$
+\end_inset
+
+ is a function type value 
+\begin_inset Formula $\left\langle FP_{n},Args,C\right\rangle $
+\end_inset
+
+, 
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+\begin_inset Formula $\exists\left\langle m,c\right\rangle \in\left\{ \left\langle n,c\right\rangle |FP_{n,c}\in\alpha\left(s\right)\right\} :N\left(C\right)=c\wedge m=n$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset Formula $\forall i\in\mathbb{N},1\leq i\leq N\left(Args\right):\nu_{c+i}=Args_{i}$
+\end_inset
+
+ where 
+\begin_inset Formula $\left\langle S,\pi,\nu,\eta,\tau,\mu,\theta\right\rangle =\phi\left(n\right)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset Formula $\left\langle C,OM\right\rangle \sqsubset\left\langle \pi,\alpha,\phi\right\rangle $
+\end_inset
+
+(may not necessarily be a desirable outcome)
+\end_layout
+
+\end_deeper
+\end_deeper
+\end_deeper
+\begin_layout Itemize
+\begin_inset Formula $\left\langle VM,OM,FP,T\right\rangle \sqsubset\left\langle \sigma,\alpha,\phi,\gamma\right\rangle $
+\end_inset
+
+ iff
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+\begin_inset Formula $\left\langle VM,OM\right\rangle \sqsubset\left\langle \sigma,\alpha,\phi\right\rangle $
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset Formula $\left\langle \left\{ \mathtt{this}\mapsto T\right\} ,OM\right\rangle \sqsubset\left\langle \left\{ \mathtt{this}\mapsto\theta\right\} ,OM\right\rangle $
+\end_inset
+
+ where 
+\begin_inset Formula $\left\langle S,\pi,\nu,\eta,\tau,\mu,\theta\right\rangle =\phi\left(\gamma\right)$
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Standard
+For all program state
+\begin_inset Formula $\left\langle S,\left\langle VM,OM,FP,T\right\rangle \right\rangle $
+\end_inset
+
+occurring in the course of execution of an SDTL program P, there is a correspond
+ing 
+\begin_inset Formula $\left\langle \sigma,\alpha,\phi,\gamma\right\rangle =\mathbb{S}\ S\ \left\langle \sigma_{0},\alpha_{0},\phi_{0},\gamma_{0}\right\rangle $
+\end_inset
+
+ such that 
+\begin_inset Formula $\left\langle VM,OM,FP,T\right\rangle \sqsubset\left\langle \sigma,\alpha,\phi,\gamma\right\rangle $
+\end_inset
+
+
+\end_layout
+
 \end_body
 \end_document
