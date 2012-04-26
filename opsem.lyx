@@ -984,6 +984,37 @@ is undefined
 \end_layout
 
 \begin_layout Subsubsection
+Object creation
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula ${\displaystyle \frac{\left\langle e_{0},s\right\rangle \rightarrow\left\langle e_{0}',s'\right\rangle }{\left\langle new\ \left\langle FP_{n},[ID_{0}|IDs],C\right\rangle \left(\left[e_{0}|es\right]\right),s\right\rangle \rightarrow\left\langle new\ \left\langle FP_{n},IDs,C\right\rangle \left(\left[e_{0}'|es\right]\right),s'\right\rangle }}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula ${\displaystyle \frac{\left\langle \left\langle FP_{n},IDs,C\right\rangle \left(\left[con|es\right]\right),s\right\rangle \rightarrow\left\langle \left\langle FP_{n},IDs',C'\right\rangle \left(es\right),s\right\rangle }{\left\langle new\ \left\langle FP_{n},IDs,C\right\rangle \left(\left[con|es\right]\right),s\right\rangle \rightarrow\left\langle new\ \left\langle FP_{n},IDs',C'\right\rangle \left(es\right),s'\right\rangle }}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula ${\displaystyle \frac{\left\langle FS\left(FP,\left\langle OBJ_{n}\right\rangle \right),\left\langle C,OM,FP,\phi\right\rangle \right\rangle \rightarrow^{*}\left\langle nil,\left\langle V',OM',FP',T'\right\rangle \right\rangle }{\left\langle new\ \left\langle FP_{n},\phi,C\right\rangle \left(\phi\right),\left\langle V,OM,FP,T\right\rangle \right\rangle \rightarrow\left\langle \left\langle OBJ_{n}\right\rangle ,\left\langle V,OM'\left[n\mapsto T'\right],FP',T\right\rangle \right\rangle }}$
+\end_inset
+
+, 
+\begin_inset Formula $n$
+\end_inset
+
+ is the next object number of 
+\emph on
+OM'
+\end_layout
+
+\begin_layout Subsubsection
 Method calls
 \end_layout
 
