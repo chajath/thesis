@@ -2356,7 +2356,7 @@ where
 
 \end_deeper
 \begin_layout Part
-Correctness
+Correctness based on Operation Semantics
 \end_layout
 
 \begin_layout Itemize
@@ -2530,5 +2530,111 @@ ing
 
 \end_layout
 
+\begin_layout Part
+Correctness (take 2)
+\end_layout
+
+\begin_layout Itemize
+Given 
+\begin_inset Formula $V=ID\rightarrow Value,OM=n\rightarrow\left(ID\rightarrow Value\right)$
+\end_inset
+
+, 
+\begin_inset Formula $\left\langle V_{1},OM_{1}\right\rangle \sqsubseteq\left\langle V_{2},OM_{2}\right\rangle $
+\end_inset
+
+ if
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+\begin_inset Formula $\forall ID\in\left\{ ID|V_{1}\left(ID\right)\in N\cup T\right\} ,V_{1}\left(ID\right)=V_{2}\left(ID\right)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+\lang english
+\begin_inset Formula $\forall ID\in\left\{ ID|V_{1}\left(ID\right)\in Object\right\} ,\left\langle OM_{1}\left(ID\right),OM_{1}\right\rangle \sqsubseteq\left\langle OM_{2}\left(ID\right),OM_{2}\right\rangle $
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\forall ID\in\left\{ ID|V_{1}\left(ID\right)\in FunctionPointer\right\} $
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+\begin_inset Formula $V_{2}\left(ID\right)\in FunctionPointer$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+\lang english
+\begin_inset Formula $n_{1}=n_{2}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\left\langle C_{1},OM_{1}\right\rangle \sqsubseteq\left\langle C_{2},OM_{2}\right\rangle $
+\end_inset
+
+ and 
+\begin_inset Formula $\left\langle C_{2},OM_{1}\right\rangle \sqsubseteq\left\langle C_{1},OM_{2}\right\rangle $
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+where 
+\begin_inset Formula $V_{1}\left(ID\right)=\left\langle FP_{n_{1}},C_{1}\right\rangle $
+\end_inset
+
+, 
+\begin_inset Formula $V_{2}\left(ID\right)=\left\langle FP_{n_{2}},C_{2}\right\rangle $
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\end_deeper
+\end_deeper
 \end_body
 \end_document
