@@ -2885,7 +2885,7 @@ Similarly,
 \end_layout
 
 \begin_layout Itemize
-\begin_inset Formula $P\left(D\right)=\left\{ a|d\in\left\langle \sigma,\alpha\right\rangle ,a\preceq_{p}d\right\} $
+\begin_inset Formula $P\left(D\right)=\left\{ a|a\in\left\langle \sigma,\alpha\right\rangle \forall d\in D,d\preceq_{p}a\right\} $
 \end_inset
 
 
@@ -2899,7 +2899,7 @@ Similarly,
 \end_layout
 
 \begin_layout Itemize
-\begin_inset Formula $Q\left(A\right)=\left\{ d|a\in\left\langle VM,OM\right\rangle ,a\preceq_{p}d\right\} $
+\begin_inset Formula $Q\left(A\right)=\left\{ d|d\in\left\langle VM,OM\right\rangle \forall a\in A,d\preceq_{p}a\right\} $
 \end_inset
 
 
