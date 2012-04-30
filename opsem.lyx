@@ -1648,7 +1648,7 @@ where
 \end_layout
 
 \begin_layout Enumerate
-\begin_inset Formula $\left\langle \sigma,\alpha,\phi,\gamma\right\rangle =\mathbb{S}\ S_{0}\ \left\langle \pi_{0},\eta_{0},\phi_{0},\gamma\right\rangle $
+\begin_inset Formula $\left\langle \sigma,\alpha,\phi,\gamma\right\rangle =\mathcal{S}\ S_{0}\ \left\langle \pi_{0},\eta_{0},\phi_{0},\gamma\right\rangle $
 \end_inset
 
 
@@ -1731,7 +1731,7 @@ An empty statement simply returns the environment given.
 \end_layout
 
 \begin_layout Itemize
-\begin_inset Formula $\mathbb{S}\ nil\ \rho=\rho$
+\begin_inset Formula $\mathcal{S}\ nil\ \rho=\rho$
 \end_inset
 
 
@@ -1745,7 +1745,7 @@ When consecutive statements are given, evaluate the first statement and
 \end_layout
 
 \begin_layout Itemize
-\begin_inset Formula $\mathbb{S}\ \left[S_{1};S_{2}\right]\rho=$
+\begin_inset Formula $\mathcal{S}\ \left[S_{1};S_{2}\right]\rho=$
 \end_inset
 
 
@@ -1753,7 +1753,7 @@ When consecutive statements are given, evaluate the first statement and
 
 \begin_deeper
 \begin_layout Standard
-\begin_inset Formula $\mathbb{S}\ S_{2}\ \rho'$
+\begin_inset Formula $\mathcal{S}\ S_{2}\ \rho'$
 \end_inset
 
 if 
@@ -1764,7 +1764,7 @@ if
 \end_layout
 
 \begin_layout Standard
-\begin_inset Formula $\mathbb{S}\ S_{1}$
+\begin_inset Formula $\mathcal{S}\ S_{1}$
 \end_inset
 
  otherwise
@@ -1775,7 +1775,7 @@ where
 \end_layout
 
 \begin_layout Standard
-\begin_inset Formula $\left\langle \rho',term\right\rangle =\mathbb{S}\ S_{1}$
+\begin_inset Formula $\left\langle \rho',term\right\rangle =\mathcal{S}\ S_{1}$
 \end_inset
 
 
@@ -1791,7 +1791,7 @@ When returning, we first evaluate expression being returned, and manipulate
 \end_layout
 
 \begin_layout Itemize
-\begin_inset Formula $\mathbb{S}\ \left[\mathtt{return}\ e\right]\left\langle \sigma,\alpha,\phi,\gamma\right\rangle =\left\langle \left\langle \bot,\bot,\phi\left[\gamma=\left\langle s,\pi,\nu,\eta,\tau\sqcup type,\mu\sqcup env',\theta\right\rangle \right],\gamma\right\rangle ,true\right\rangle $
+\begin_inset Formula $\mathcal{S}\ \left[\mathtt{return}\ e\right]\left\langle \sigma,\alpha,\phi,\gamma\right\rangle =\left\langle \left\langle \bot,\bot,\phi\left[\gamma=\left\langle s,\pi,\nu,\eta,\tau\sqcup type,\mu\sqcup env',\theta\right\rangle \right],\gamma\right\rangle ,true\right\rangle $
 \end_inset
 
 
@@ -1828,7 +1828,7 @@ if-else
 \end_layout
 
 \begin_layout Itemize
-\begin_inset Formula $\mathbb{S}\ \left[if\left(e\right)S_{1}else\ S_{2}\right]\rho=\left\langle \rho_{1}\sqcup\rho_{2},term_{1}\wedge term_{2}\right\rangle $
+\begin_inset Formula $\mathcal{S}\ \left[if\left(e\right)S_{1}else\ S_{2}\right]\rho=\left\langle \rho_{1}\sqcup\rho_{2},term_{1}\wedge term_{2}\right\rangle $
 \end_inset
 
 
@@ -1871,7 +1871,7 @@ if
 \end_layout
 
 \begin_layout Itemize
-\begin_inset Formula $\mathbb{S}\ \left[if\left(e\right)S_{1}\right]\rho=\left\langle \rho'\sqcup\rho_{1},false\right\rangle $
+\begin_inset Formula $\mathcal{S}\ \left[if\left(e\right)S_{1}\right]\rho=\left\langle \rho'\sqcup\rho_{1},false\right\rangle $
 \end_inset
 
 
@@ -1904,7 +1904,7 @@ In a simple assignment statement, we first evaluate the expression and take
 \end_layout
 
 \begin_layout Itemize
-\begin_inset Formula $\mathbb{S}\ \left[id=e\right]\ \left\langle \sigma,\alpha,\phi,\gamma\right\rangle =\left\langle \left\langle \sigma[id\mapsto t],\alpha',\phi',\gamma\right\rangle ,false\right\rangle $
+\begin_inset Formula $\mathcal{S}\ \left[id=e\right]\ \left\langle \sigma,\alpha,\phi,\gamma\right\rangle =\left\langle \left\langle \sigma[id\mapsto t],\alpha',\phi',\gamma\right\rangle ,false\right\rangle $
 \end_inset
 
 
@@ -1931,7 +1931,7 @@ In a member assignment statement, we first evaluate the referred expression,
 \end_layout
 
 \begin_layout Itemize
-\begin_inset Formula $\mathbb{S}\ \left[e_{1}.id=e_{2}\right]\ \left\langle \sigma,\alpha,\phi,\gamma\right\rangle =\left\langle \left\langle \sigma,\alpha''\left[OBJ_{n}=OBJ_{n}\left[id\mapsto type'\right]|OBJ_{n}\in type\right],\phi'',\gamma\right\rangle ,false\right\rangle $
+\begin_inset Formula $\mathcal{S}\ \left[e_{1}.id=e_{2}\right]\ \left\langle \sigma,\alpha,\phi,\gamma\right\rangle =\left\langle \left\langle \sigma,\alpha''\left[OBJ_{n}=OBJ_{n}\left[id\mapsto type'\right]|OBJ_{n}\in type\right],\phi'',\gamma\right\rangle ,false\right\rangle $
 \end_inset
 
 
@@ -1967,7 +1967,7 @@ ts from its own evaluation.
 \end_layout
 
 \begin_layout Itemize
-\begin_inset Formula $\mathbb{S}\ \left[\mathtt{while}(e)S_{1}\right]\ \left\langle \sigma,\alpha,\phi,\gamma\right\rangle =\left\langle \left\langle \sigma\sqcup\sigma'',\alpha'\sqcup\alpha'',\phi'',\gamma\right\rangle ,false\right\rangle $
+\begin_inset Formula $\mathcal{S}\ \left[\mathtt{while}(e)S_{1}\right]\ \left\langle \sigma,\alpha,\phi,\gamma\right\rangle =\left\langle \left\langle \sigma\sqcup\sigma'',\alpha'\sqcup\alpha'',\phi'',\gamma\right\rangle ,false\right\rangle $
 \end_inset
 
 
@@ -1986,7 +1986,7 @@ whererec
 \end_layout
 
 \begin_layout Standard
-\begin_inset Formula $\left\langle \sigma'',\alpha'',\phi'',\gamma\right\rangle =\mathbb{S}\ S_{1}\ \left\langle \sigma\sqcup\sigma'',\alpha'\sqcup\alpha'',\phi'\sqcup\phi'',\gamma\right\rangle $
+\begin_inset Formula $\left\langle \sigma'',\alpha'',\phi'',\gamma\right\rangle =\mathcal{S}\ S_{1}\ \left\langle \sigma\sqcup\sigma'',\alpha'\sqcup\alpha'',\phi'\sqcup\phi'',\gamma\right\rangle $
 \end_inset
 
 
@@ -1998,7 +1998,7 @@ In an output statement, we evaluate expression and take the updated environment
 \end_layout
 
 \begin_layout Itemize
-\begin_inset Formula $\mathbb{S}\ \left[\mathtt{output}\ e\right]\ \left\langle \sigma,\alpha,\phi,\gamma\right\rangle =\left\langle \left\langle \sigma,\alpha',\phi',\gamma\right\rangle ,false\right\rangle $
+\begin_inset Formula $\mathcal{S}\ \left[\mathtt{output}\ e\right]\ \left\langle \sigma,\alpha,\phi,\gamma\right\rangle =\left\langle \left\langle \sigma,\alpha',\phi',\gamma\right\rangle ,false\right\rangle $
 \end_inset
 
 
@@ -2023,7 +2023,7 @@ When we declare a new function, we just map the function name to a corresponding
 \end_layout
 
 \begin_layout Itemize
-\begin_inset Formula $\mathbb{S}\ \left[\mathtt{function}_{n}\ id\left(ID*\right)S_{1}\right]\ \left\langle \sigma,\alpha,\phi,\gamma\right\rangle =\left\langle \left\langle \sigma\left[id\mapsto\left\{ FP_{n,0}\right\} \right],\alpha,\phi,\gamma\right\rangle ,false\right\rangle $
+\begin_inset Formula $\mathcal{S}\ \left[\mathtt{function}_{n}\ id\left(ID*\right)S_{1}\right]\ \left\langle \sigma,\alpha,\phi,\gamma\right\rangle =\left\langle \left\langle \sigma\left[id\mapsto\left\{ FP_{n,0}\right\} \right],\alpha,\phi,\gamma\right\rangle ,false\right\rangle $
 \end_inset
 
 
@@ -2356,7 +2356,7 @@ where
 
 \end_deeper
 \begin_layout Part
-Correctness based on Operation Semantics
+Correctness based on Operation Semantics (fail ☹)
 \end_layout
 
 \begin_layout Itemize
@@ -2520,7 +2520,7 @@ For all program state
 
 occurring in the course of execution of an SDTL program P, there is a correspond
 ing 
-\begin_inset Formula $\left\langle \sigma,\alpha,\phi,\gamma\right\rangle =\mathbb{S}\ S\ \left\langle \sigma_{0},\alpha_{0},\phi_{0},\gamma_{0}\right\rangle $
+\begin_inset Formula $\left\langle \sigma,\alpha,\phi,\gamma\right\rangle =\mathcal{S}\ S\ \left\langle \sigma_{0},\alpha_{0},\phi_{0},\gamma_{0}\right\rangle $
 \end_inset
 
  such that 
@@ -2535,12 +2535,47 @@ Correctness (take 2)
 \end_layout
 
 \begin_layout Itemize
+Order among supersets of values
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+\begin_inset Formula $v_{1}\preceq v_{2}$
+\end_inset
+
+ if 
+\begin_inset Formula $v_{1}\subseteq v_{2}$
+\end_inset
+
+.
+ Assume atomic values to be singleton sets for simplicity.
+ E.g.
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+\begin_inset Formula $20\preceq Number$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $True\preceq Boolean$
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\end_deeper
+\begin_layout Itemize
 Given 
-\begin_inset Formula $V=ID\rightarrow Value,OM=n\rightarrow\left(ID\rightarrow Value\right)$
+\begin_inset Formula $V=ID\rightarrow\wp\left(Value\right),OM=n\rightarrow\left(ID\rightarrow\wp\left(Value\right)\right)$
 \end_inset
 
 , 
-\begin_inset Formula $\left\langle V_{1},OM_{1}\right\rangle \sqsubseteq\left\langle V_{2},OM_{2}\right\rangle $
+\begin_inset Formula $\left\langle V_{1},OM_{1}\right\rangle \sqsubseteq_{D}\left\langle V_{2},OM_{2}\right\rangle $
 \end_inset
 
  if
@@ -2548,34 +2583,29 @@ Given
 
 \begin_deeper
 \begin_layout Itemize
-\begin_inset Formula $\forall ID\in\left\{ ID|V_{1}\left(ID\right)\in N\cup T\right\} ,V_{1}\left(ID\right)=V_{2}\left(ID\right)$
+\begin_inset Formula $\forall ID\forall v\in V_{1}\left(ID\right)$
 \end_inset
 
 
 \end_layout
 
-\begin_layout Itemize
-
-\family roman
-\series medium
-\shape up
-\size normal
-\emph off
-\bar no
-\strikeout off
-\uuline off
-\uwave off
-\noun off
-\color none
-\lang english
-\begin_inset Formula $\forall ID\in\left\{ ID|V_{1}\left(ID\right)\in Object\right\} ,\left\langle OM_{1}\left(ID\right),OM_{1}\right\rangle \sqsubseteq\left\langle OM_{2}\left(ID\right),OM_{2}\right\rangle $
+\begin_deeper
+\begin_layout Enumerate
+\begin_inset Formula $v\in Number\vee v\in Boolean\rightarrow V_{1}\left(ID\right)\preceq V_{2}\left(ID\right)$
 \end_inset
 
 
 \end_layout
 
-\begin_layout Itemize
-\begin_inset Formula $\forall ID\in\left\{ ID|V_{1}\left(ID\right)\in FunctionPointer\right\} $
+\begin_layout Enumerate
+\begin_inset Formula $v\in Object\rightarrow\left\langle V_{1}\left(v\right),OM_{1}\right\rangle \sqsubseteq_{D}\left\langle V_{2}\left(v\right),OM_{2}\right\rangle $
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset Formula $v\in FunctionPointer\rightarrow$
 \end_inset
 
 
@@ -2583,38 +2613,156 @@ Given
 
 \begin_deeper
 \begin_layout Itemize
-\begin_inset Formula $V_{2}\left(ID\right)\in FunctionPointer$
+\begin_inset Formula $\left\langle FP_{n},C_{2}\right\rangle \in V_{2}\left(ID\right)\wedge$
+\end_inset
+
+
+\begin_inset Formula $\left\langle C_{1},OM_{1}\right\rangle \sqsubseteq_{D}\left\langle C_{2},OM_{2}\right\rangle \wedge\left\langle C_{2},OM_{1}\right\rangle \sqsubseteq_{D}\left\langle C_{1},OM_{2}\right\rangle $
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Itemize
+where
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+\begin_inset Formula $\left\langle FP_{n},C_{1}\right\rangle =v$
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\end_deeper
+\end_deeper
+\end_deeper
+\begin_layout Itemize
+This works for acyclic graphs, but what about cyclic graphs?
+\end_layout
+
+\begin_layout Itemize
+According to this definition, in the following programs, 
+\begin_inset Formula $\left\langle V,OM\right\rangle $
+\end_inset
+
+ can be said to be equal, although graphically it is different.
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+a = new Object();
+\end_layout
+
+\begin_layout Plain Layout
+
+a.self = a;
+\end_layout
+
+\begin_layout Plain Layout
+
+b = new Object();
+\end_layout
+
+\begin_layout Plain Layout
+
+b.self = b;
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Graphics
+	filename abobj1.dot
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+a = new Object();
+\end_layout
+
+\begin_layout Plain Layout
+
+b = new Object();
+\end_layout
+
+\begin_layout Plain Layout
+
+b.self = b;
+\end_layout
+
+\begin_layout Plain Layout
+
+a.self = b;
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Graphics
+	filename abobj2.dot
+
 \end_inset
 
 
 \end_layout
 
 \begin_layout Itemize
-
-\family roman
-\series medium
-\shape up
-\size normal
-\emph off
-\bar no
-\strikeout off
-\uuline off
-\uwave off
-\noun off
-\color none
-\lang english
-\begin_inset Formula $n_{1}=n_{2}$
+\begin_inset Formula $\left\langle V_{1},OM_{1}\right\rangle =_{D}\left\langle V_{2},OM_{2}\right\rangle \mbox{if}_{\mbox{def}}$
 \end_inset
 
 
-\end_layout
-
-\begin_layout Itemize
-\begin_inset Formula $\left\langle C_{1},OM_{1}\right\rangle \sqsubseteq\left\langle C_{2},OM_{2}\right\rangle $
+\begin_inset Formula $\left\langle V_{1},OM_{1}\right\rangle \sqsubseteq_{D}\left\langle V_{2},OM_{2}\right\rangle $
 \end_inset
 
  and 
-\begin_inset Formula $\left\langle C_{2},OM_{1}\right\rangle \sqsubseteq\left\langle C_{1},OM_{2}\right\rangle $
+\begin_inset Formula $\left\langle V_{1},OM_{1}\right\rangle \sqsupseteq_{D}\left\langle V_{2},OM_{2}\right\rangle $
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+\lang english
+\begin_inset Formula $\left\langle V_{1},OM_{1}\right\rangle \sqsubseteq_{D}\left\langle V_{2},OM_{2}\right\rangle $
+\end_inset
+
+ and 
+\begin_inset Formula $\left\langle V_{2},OM_{2}\right\rangle \sqsubseteq_{D}\left\langle V_{3},OM_{3}\right\rangle \implies\left\langle V_{1},OM_{1}\right\rangle \sqsubseteq_{D}\left\langle V_{3},OM_{3}\right\rangle $
 \end_inset
 
 
@@ -2622,12 +2770,84 @@ Given
 
 \begin_deeper
 \begin_layout Itemize
-where 
-\begin_inset Formula $V_{1}\left(ID\right)=\left\langle FP_{n_{1}},C_{1}\right\rangle $
+
+\lang english
+how?
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+\begin_inset Formula $\left(\left\langle V,OM\right\rangle ,\sqsubseteq_{D}\right)$
+\end_inset
+
+ is a poset.
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\left(\wp\left(\left\langle V,OM\right\rangle \right),\sqsubseteq_{PD}\right)$
+\end_inset
+
+ is also a poset
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+\begin_inset Formula $A\sqsubseteq_{PD}B$
+\end_inset
+
+ iff 
+\begin_inset Formula $\forall a\in A\forall b\in B,a\sqsubseteq_{D}b$
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Given 
+\begin_inset Formula $\sigma=ID\rightarrow\wp\left(types\right),\alpha=n\rightarrow\left(ID\rightarrow\wp\left(types\right)\right)$
 \end_inset
 
 , 
-\begin_inset Formula $V_{2}\left(ID\right)=\left\langle FP_{n_{2}},C_{2}\right\rangle $
+\begin_inset Formula $\left\langle \sigma_{1},\alpha_{1}\right\rangle \sqsubseteq_{A}\left\langle \sigma_{2},\alpha_{2}\right\rangle $
+\end_inset
+
+ if
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+\begin_inset Formula $\forall ID\forall t\in\sigma_{1}\left(ID\right)$
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+\begin_inset Formula $t=Number\vee t=Boolean\rightarrow t\in V_{2}\left(ID\right)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset Formula $t\in Object\rightarrow\left\langle \sigma_{1}\left(t\right),\alpha_{1}\right\rangle \sqsubseteq_{A}\left\langle \sigma_{2}\left(v\right),\alpha_{2}\right\rangle $
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset Formula $t\in FunctionPointer\rightarrow$
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+\begin_inset Formula $t\in\sigma_{2}\left(ID\right)$
 \end_inset
 
 
@@ -2636,5 +2856,144 @@ where
 \end_deeper
 \end_deeper
 \end_deeper
+\begin_layout Itemize
+Similarly, 
+\begin_inset Formula $\left(\wp\left(\left\langle \sigma,\alpha\right\rangle \right),\sqsubseteq_{PA}\right)$
+\end_inset
+
+ is a poset
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+\begin_inset Formula $A\sqsubseteq_{PA}B$
+\end_inset
+
+ iff 
+\begin_inset Formula $\forall a\in A\forall b\in B,a\sqsubseteq_{A}b$
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+\begin_inset Formula $P:\wp\left(\left\langle VM,OM\right\rangle \right)\rightarrow\wp\left(\left\langle \sigma,\alpha\right\rangle \right)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $P\left(D\right)=\left\{ a|d\in\left\langle \sigma,\alpha\right\rangle ,a\preceq_{p}d\right\} $
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $Q:\wp\left(\left\langle \sigma,\alpha\right\rangle \right)\rightarrow\wp\left(\left\langle VM,OM\right\rangle \right)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $Q\left(A\right)=\left\{ d|a\in\left\langle VM,OM\right\rangle ,a\preceq_{p}d\right\} $
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\left\langle VM,OM\right\rangle \preceq_{p}\left\langle \sigma,\alpha\right\rangle $
+\end_inset
+
+ if
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+\begin_inset Formula $\forall ID\forall v\in V_{1}\left(ID\right)$
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+\begin_inset Formula $v\in Number\rightarrow Number\in\sigma\left(ID\right)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+\lang english
+\begin_inset Formula $v\in Boolean\rightarrow Boolean\in\sigma\left(ID\right)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset Formula $v\in Object\rightarrow\left\langle V\left(v\right),OM\right\rangle \preceq_{p}\left\langle \sigma\left(v\right),\alpha\right\rangle $
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset Formula $v\in FunctionPointer\rightarrow\left\langle FP_{n},N\left(C\right)\right\rangle \in\sigma\left(ID\right)$
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+where
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+\begin_inset Formula $\left\langle FP_{n},C\right\rangle =v$
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\end_deeper
+\end_deeper
+\end_deeper
+\begin_layout Itemize
+Then 
+\begin_inset Formula $\left(P,Q\right)$
+\end_inset
+
+ forms a galois connection over 
+\begin_inset Formula $\left(\sqsubseteq_{PD},\sqsubseteq_{PA}\right)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+voilà
+\end_layout
+
 \end_body
 \end_document

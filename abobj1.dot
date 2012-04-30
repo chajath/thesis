@@ -1,0 +1,4 @@
+digraph ABDot1 {
+	a -> a [label="self"]
+	b -> b [label="self"]
+}
