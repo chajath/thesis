@@ -2651,84 +2651,6 @@ According to this definition, in the following programs,
  can be said to be equal, although graphically it is different.
 \end_layout
 
-\begin_layout Standard
-\begin_inset listings
-inline false
-status open
-
-\begin_layout Plain Layout
-
-a = new Object();
-\end_layout
-
-\begin_layout Plain Layout
-
-a.self = a;
-\end_layout
-
-\begin_layout Plain Layout
-
-b = new Object();
-\end_layout
-
-\begin_layout Plain Layout
-
-b.self = b;
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\begin_inset Graphics
-	filename abobj1.dot
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\begin_inset listings
-inline false
-status open
-
-\begin_layout Plain Layout
-
-a = new Object();
-\end_layout
-
-\begin_layout Plain Layout
-
-b = new Object();
-\end_layout
-
-\begin_layout Plain Layout
-
-b.self = b;
-\end_layout
-
-\begin_layout Plain Layout
-
-a.self = b;
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\begin_inset Graphics
-	filename abobj2.dot
-
-\end_inset
-
-
-\end_layout
-
 \begin_layout Itemize
 \begin_inset Formula $\left\langle V_{1},OM_{1}\right\rangle =_{D}\left\langle V_{2},OM_{2}\right\rangle \mbox{if}_{\mbox{def}}$
 \end_inset
@@ -2993,6 +2915,401 @@ Then
 
 \begin_layout Itemize
 voilà
+\end_layout
+
+\begin_layout Part
+Correctness final take
+\end_layout
+
+\begin_layout Itemize
+Define 
+\begin_inset Formula $Q:\left\langle \sigma,\alpha\right\rangle \rightarrow\wp\left(\left\langle V,OM\right\rangle \right)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $Q\ \left\langle \sigma,\alpha\right\rangle =\left\{ \left\langle V,OM\right\rangle |\left\langle V,OM\right\rangle \preceq\left\langle \sigma,\alpha\right\rangle \right\} $
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+First, naive attempt in recursively defining 
+\begin_inset Formula $\preceq$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\left\langle V,OM\right\rangle \preceq\left\langle \sigma,\alpha\right\rangle $
+\end_inset
+
+ if
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+\begin_inset Formula $\forall ID\forall v\in V\left(ID\right)$
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+\begin_inset Formula $v\in Number\rightarrow Number\in\sigma\left(ID\right)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+\lang english
+\begin_inset Formula $v\in Boolean\rightarrow Boolean\in\sigma\left(ID\right)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset Formula $v\in Object\rightarrow\left\langle V\left(v\right),OM\right\rangle \preceq\left\langle \sigma\left(v\right),\alpha\right\rangle $
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset Formula $v\in FunctionPointer\rightarrow\left\langle FP_{n},N\left(C\right)\right\rangle \in\sigma\left(ID\right)$
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+where
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+\begin_inset Formula $\left\langle FP_{n},C\right\rangle =v$
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\end_deeper
+\end_deeper
+\end_deeper
+\begin_layout Itemize
+Problem with this approach?
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+Infinite loop
+\end_layout
+
+\begin_layout Enumerate
+Some type differences are indistinguishable
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+a = new Object();
+\end_layout
+
+\begin_layout Plain Layout
+
+a.self = a;
+\end_layout
+
+\begin_layout Plain Layout
+
+b = new Object();
+\end_layout
+
+\begin_layout Plain Layout
+
+b.self = b;
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Graphics
+	filename abobj1.dot
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+a = new Object();
+\end_layout
+
+\begin_layout Plain Layout
+
+b = new Object();
+\end_layout
+
+\begin_layout Plain Layout
+
+b.self = b;
+\end_layout
+
+\begin_layout Plain Layout
+
+a.self = b;
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Graphics
+	filename abobj2.dot
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\end_deeper
+\begin_layout Itemize
+Solution: turn this problem into a colouring problem.
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Given the colouring from 
+\begin_inset Formula $\left\langle \sigma,\alpha\right\rangle $
+\end_inset
+
+, with abstract object number as a colour, can we colour 
+\begin_inset Formula $\left\langle V,OM\right\rangle $
+\end_inset
+
+ such that if a member from the abstract refers to another abstract object
+ with a colour, a member of a concrete object refers to the object with
+ the matching colour.
+\end_layout
+
+\end_deeper
+\begin_layout Section
+Denotational semantics of SDTL
+\end_layout
+
+\begin_layout Subsection
+Left Expression
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\mathcal{L}_{D}:LExpr\times\left\langle V,OM,FP,T\right\rangle \rightarrow Value\times\left\langle V,OM\right\rangle $
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\mathcal{L}_{D}\ \left[ID\right]\ \left\langle V,OM,FP,T\right\rangle =\left\langle V\left(ID\right),\left\langle V,OM\right\rangle \right\rangle $
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\mathcal{L}_{D}\ \left[e.ID\right]\ \left\langle V,OM,FP,T\right\rangle =\left\langle OM'\left(n\right)\left(ID\right),\left\langle V',OM'\right\rangle \right\rangle $
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+where
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\left\langle \left\langle OBJ_{n}\right\rangle ,\left\langle V',OM'\right\rangle \right\rangle =\mathcal{E}_{D}\ e\ \left\langle V,OM\right\rangle $
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Subsection
+Expression
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+Expr ::= con | 
+\emph on
+global
+\emph default
+ | Lexpr | 
+\emph on
+this
+\emph default
+ | 
+\emph on
+input
+\emph default
+ | 
+\emph on
+new
+\emph default
+ Lexpr([Expr[,Expr]*]?) | Lexpr([Expr[,Expr]*]?) | Expr binop Expr | (Expr)
+\end_layout
+
+\begin_deeper
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+binop ::= + - * / > < ==
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+\begin_inset Formula $\mathcal{E}_{D}:LExpr\times\left\langle V,OM,FP,T\right\rangle \rightarrow Value\times\left\langle V,OM\right\rangle $
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\mathcal{E}_{D}\ \left[\textrm{con}\right]\ \left\langle V,OM,FP,T\right\rangle =\left\langle \textrm{con},\left\langle V,OM\right\rangle \right\rangle $
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+\lang english
+\begin_inset Formula $\mathcal{E}_{D}\ \left[\mathtt{global}\right]\ \left\langle V,OM,FP,T\right\rangle =\left\langle \left\langle OBJ_{0}\right\rangle ,\left\langle V,OM\right\rangle \right\rangle $
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+
+\lang english
+\begin_inset Formula $\mathcal{E}_{D}\ \left[\textrm{LExpr}\right]=\mathcal{L}_{D}\ \left[\textrm{LExpr}\right]$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+
+\lang english
+\begin_inset Formula $\mathcal{E}_{D}\ \left[\mathtt{this}\right]\ \left\langle V,OM,FP,T\right\rangle =\left\langle T,\left\langle V,OM\right\rangle \right\rangle $
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+\lang english
+\begin_inset Formula $\mathcal{E}_{D}\ \left[\mathtt{input}\right]\ \left\langle V,OM,FP,T\right\rangle =\left\langle n,\left\langle V,OM\right\rangle \right\rangle $
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+
+\lang english
+where 
+\begin_inset Formula $n$
+\end_inset
+
+ is a user input.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+
+\lang english
+\begin_inset Formula $\mathcal{E}_{D}\ \left[\mathtt{new}\ Lexpr\left(e_{0},e_{1}.\ldots,e_{k}\right)\right]=$
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+
+\lang english
+where
+\end_layout
+
+\end_deeper
+\begin_layout Subsection
+Statements
 \end_layout
 
 \end_body
