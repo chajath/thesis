@@ -1,0 +1,6 @@
+digraph ABDot1 {
+	rankdir=LR;
+	a -> a [label="self"]
+	b -> b [label="self"]
+	b -> 10 [label="y"]
+}

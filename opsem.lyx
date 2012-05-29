@@ -10,6 +10,9 @@
 \definecolor{purple}{rgb}{0.65, 0.12, 0.82}
 \end_preamble
 \use_default_options true
+\begin_modules
+theorems-ams-bytype
+\end_modules
 \maintain_unincluded_children false
 \language british
 \language_package default
@@ -30,9 +33,19 @@
 \output_sync 0
 \bibtex_command default
 \index_command default
+\float_placement H
 \paperfontsize default
 \spacing single
-\use_hyperref false
+\use_hyperref true
+\pdf_bookmarks true
+\pdf_bookmarksnumbered false
+\pdf_bookmarksopen false
+\pdf_bookmarksopenlevel 1
+\pdf_breaklinks false
+\pdf_pdfborder false
+\pdf_colorlinks false
+\pdf_backref false
+\pdf_pdfusetitle true
 \papersize default
 \use_geometry true
 \use_amsmath 1
@@ -2921,6 +2934,525 @@ voilà
 Correctness final take
 \end_layout
 
+\begin_layout Section
+Definition of the problem
+\end_layout
+
+\begin_layout Subsection
+Abstract Store
+\end_layout
+
+\begin_layout Standard
+Recall that the program store of SDTL is given by 
+\begin_inset Formula $\left\langle Vars,ObjMemory,FunctionPointers,This\right\rangle $
+\end_inset
+
+.
+ We define abstract store for the purpose of defining the problem and proving
+ the solution to be thus:
+\end_layout
+
+\begin_layout Definition
+Abstract store
+\end_layout
+
+\begin_layout Definition
+\begin_inset Formula $\left\langle \sigma,\alpha\right\rangle $
+\end_inset
+
+
+\end_layout
+
+\begin_layout Definition
+where
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+\begin_inset Formula $\sigma=ID\rightarrow\wp\left(types\right)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\alpha=n\rightarrow\left(ID\rightarrow\wp\left(types\right)\right),n\in\mathbb{N}$
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Standard
+We shall now define what those 
+\begin_inset Quotes eld
+\end_inset
+
+types
+\begin_inset Quotes erd
+\end_inset
+
+ are.
+\end_layout
+
+\begin_layout Subsection
+Abstract types
+\end_layout
+
+\begin_layout Definition
+Abstract types
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+\begin_inset Formula $type\in\left\{ Number,Boolean\right\} \cup AbstractObjects\cup AbstractFunctions$
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Standard
+We define abstract type to be union of primitives, object and function.
+ Primitives are atomic, whereas objects and functions are types of their
+ own.
+\end_layout
+
+\begin_layout Subsubsection
+Objects
+\end_layout
+
+\begin_layout Standard
+Intuitively, an object is a mapping between identifiers and collections
+ of types.
+\end_layout
+
+\begin_layout Definition
+Functional model of abstract object
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $AbsObj=ID\mapsto\wp\left(types\right)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+References to another objects can be modelled as references to another mappings
+ between identifiers and collections of types.
+ This definition works well if we don't have any circular referencing.
+ A closer examination of the issue is necessary when we deal with objects
+ with circular references.
+\end_layout
+
+\begin_layout Example
+Self-referring object
+\end_layout
+
+\begin_layout Standard
+Consider the simplest case of circular reference - a case of self referring
+ object.
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+a = new Object();
+\end_layout
+
+\begin_layout Plain Layout
+
+a.self = a;
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+In functional model, such object can be abstracted as an infinitely recurring
+ relation between an identifier and collection of types
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $a=\left\{ self\mapsto\left\{ self\mapsto\left\{ \cdots\right\} \right\} \right\} $
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+We could use higher order function to represent this object more elegantly:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $a=Y\ \lambda x\left\{ self\mapsto x\right\} $
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+As far as this simple example is concerned, this functional model seems
+ to be working.
+ However, as we shall see in the following example, this model fails to
+ capture a crucial structural property that could very well be of high importanc
+e for the analysis.
+\end_layout
+
+\begin_layout Example
+Two self-referral objects
+\end_layout
+
+\begin_layout Example
+Consider the two program
+\end_layout
+
+\begin_layout Example
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+a = new Object();
+\end_layout
+
+\begin_layout Plain Layout
+
+a.self = a;
+\end_layout
+
+\begin_layout Plain Layout
+
+b = new Object();
+\end_layout
+
+\begin_layout Plain Layout
+
+b.self = b;
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename abobj1.dot
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+Two distinct self-referral objects
+\end_layout
+
+\end_inset
+
+
+\begin_inset CommandInset label
+LatexCommand label
+name "twoself"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Example
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+a = new Object();
+\end_layout
+
+\begin_layout Plain Layout
+
+b = new Object();
+\end_layout
+
+\begin_layout Plain Layout
+
+b.self = b;
+\end_layout
+
+\begin_layout Plain Layout
+
+a.self = b;
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename abobj2.dot
+
+\end_inset
+
+
+\begin_inset Caption
+
+\begin_layout Plain Layout
+Reference to self-referral object
+\end_layout
+
+\end_inset
+
+
+\begin_inset CommandInset label
+LatexCommand label
+name "refself"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+In functional model, 
+\begin_inset Formula $a$
+\end_inset
+
+ and 
+\begin_inset Formula $b$
+\end_inset
+
+ will be of the same type 
+\begin_inset Formula $Y\ \lambda x\left\{ self\mapsto x\right\} $
+\end_inset
+
+ for both of the programs.
+ It could be argued that both are of time, if we analyse purely from the
+ functional relations between identifiers and abstract types.
+\end_layout
+
+\begin_layout Standard
+However, if we append 
+\begin_inset Formula $\mathtt{b.y=10}$
+\end_inset
+
+ to both, variables 
+\begin_inset Formula $a$
+\end_inset
+
+ and 
+\begin_inset Formula $b$
+\end_inset
+
+ become a different type.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename aabobj1.dot
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename aabobj2.dot
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+Two objects after 
+\begin_inset Formula $\mathtt{b.y=10}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Solution: turn this problem into a colouring problem.
+\end_layout
+
+\begin_layout Definition
+Colour-graphical model
+\end_layout
+
+\begin_layout Itemize
+Given the colouring from 
+\begin_inset Formula $\left\langle \sigma,\alpha\right\rangle $
+\end_inset
+
+, with abstract object number as a colour, can we colour 
+\begin_inset Formula $\left\langle V,OM\right\rangle $
+\end_inset
+
+ such that if a member from the abstract refers to another abstract object
+ with a colour, a member of a concrete object refers to the object with
+ the matching colour.
+\end_layout
+
+\begin_layout Claim
+Functional model is a weaker form of analysis
+\end_layout
+
+\begin_deeper
+\begin_layout Claim
+What can be described in functional model can always find an equivalent
+ version in colour-graphical model.
+\end_layout
+
+\end_deeper
+\begin_layout Subsubsection
+Functions
+\end_layout
+
+\begin_layout Standard
+We define an abstract view of a function as a partial mapping from n+2 types
+ to n+3 types.
+ That is, we need to include in our analysis all the argument types (if
+ they are objects, their members could be altered throughout the execution),
+ the global environment and the object reference if its been invoked as
+ a method or a constructor function.
+ In addition, we need to analyse its return type if it does return a value.
+\end_layout
+
+\begin_layout Definition
+Abstract function type.
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $F:\tau_{arg_{0}}\times\cdots\times\tau_{arg_{n}}\times\tau_{global}\times\tau_{this}\hookrightarrow\tau_{arg_{0}}\times\cdots\times\tau_{arg_{n}}\times\tau_{global}\times\tau_{this}\times\left(\tau\cup\left\{ nil\right\} \right)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $F:\tau^{n+2}\hookrightarrow\tau^{n+2}\times\left(\tau\cup\left\{ nil\right\} \right)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Example
+Identity function
+\end_layout
+
+\begin_layout Example
+Consider this hard case:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+function ident(x) { return x; }
+\end_layout
+
+\begin_layout Plain Layout
+
+y=ident(ident(ident));
+\end_layout
+
+\begin_layout Plain Layout
+
+output y(5);
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\mathtt{ident}:\tau_{0}\times\tau^{2}\hookrightarrow\tau_{1}\times\tau^{3}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Concretization
+\end_layout
+
 \begin_layout Itemize
 Define 
 \begin_inset Formula $Q:\left\langle \sigma,\alpha\right\rangle \rightarrow\wp\left(\left\langle V,OM\right\rangle \right)$
@@ -2931,14 +3463,6 @@ Define
 
 \begin_layout Itemize
 \begin_inset Formula $Q\ \left\langle \sigma,\alpha\right\rangle =\left\{ \left\langle V,OM\right\rangle |\left\langle V,OM\right\rangle \preceq\left\langle \sigma,\alpha\right\rangle \right\} $
-\end_inset
-
-
-\end_layout
-
-\begin_layout Itemize
-First, naive attempt in recursively defining 
-\begin_inset Formula $\preceq$
 \end_inset
 
 
@@ -3018,283 +3542,30 @@ where
 \end_deeper
 \end_deeper
 \end_deeper
-\begin_layout Itemize
-Problem with this approach?
-\end_layout
-
-\begin_deeper
-\begin_layout Enumerate
-Infinite loop
-\end_layout
-
-\begin_layout Enumerate
-Some type differences are indistinguishable
-\end_layout
-
-\begin_deeper
-\begin_layout Standard
-\begin_inset listings
-inline false
-status open
-
-\begin_layout Plain Layout
-
-a = new Object();
-\end_layout
-
-\begin_layout Plain Layout
-
-a.self = a;
-\end_layout
-
-\begin_layout Plain Layout
-
-b = new Object();
-\end_layout
-
-\begin_layout Plain Layout
-
-b.self = b;
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\begin_inset Graphics
-	filename abobj1.dot
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\begin_inset listings
-inline false
-status open
-
-\begin_layout Plain Layout
-
-a = new Object();
-\end_layout
-
-\begin_layout Plain Layout
-
-b = new Object();
-\end_layout
-
-\begin_layout Plain Layout
-
-b.self = b;
-\end_layout
-
-\begin_layout Plain Layout
-
-a.self = b;
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\begin_inset Graphics
-	filename abobj2.dot
-
-\end_inset
-
-
-\end_layout
-
-\end_deeper
-\end_deeper
-\begin_layout Itemize
-Solution: turn this problem into a colouring problem.
-\end_layout
-
-\begin_deeper
-\begin_layout Itemize
-Given the colouring from 
-\begin_inset Formula $\left\langle \sigma,\alpha\right\rangle $
-\end_inset
-
-, with abstract object number as a colour, can we colour 
-\begin_inset Formula $\left\langle V,OM\right\rangle $
-\end_inset
-
- such that if a member from the abstract refers to another abstract object
- with a colour, a member of a concrete object refers to the object with
- the matching colour.
-\end_layout
-
-\end_deeper
 \begin_layout Section
 Denotational semantics of SDTL
 \end_layout
 
 \begin_layout Subsection
-Left Expression
+Statement analysis
 \end_layout
 
 \begin_layout Itemize
-\begin_inset Formula $\mathcal{L}_{D}:LExpr\times\left\langle V,OM,FP,T\right\rangle \rightarrow Value\times\left\langle V,OM\right\rangle $
+\begin_inset Formula $\mathcal{S}_{D}=Stmt\times\left\langle V,OM,FP,T\right\rangle \hookrightarrow\left\langle \left\langle V,OM,FP,T\right\rangle ,Value\cup\left\{ NotTerminating\right\} \right\rangle $
 \end_inset
 
 
 \end_layout
 
 \begin_layout Itemize
-\begin_inset Formula $\mathcal{L}_{D}\ \left[ID\right]\ \left\langle V,OM,FP,T\right\rangle =\left\langle V\left(ID\right),\left\langle V,OM\right\rangle \right\rangle $
+\begin_inset Formula $\mathcal{S}_{D}\ nil\ \rho=\left\langle \rho,null\right\rangle $
 \end_inset
 
 
 \end_layout
 
 \begin_layout Itemize
-\begin_inset Formula $\mathcal{L}_{D}\ \left[e.ID\right]\ \left\langle V,OM,FP,T\right\rangle =\left\langle OM'\left(n\right)\left(ID\right),\left\langle V',OM'\right\rangle \right\rangle $
-\end_inset
-
-
-\end_layout
-
-\begin_deeper
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
-where
-\end_layout
-
-\begin_layout Itemize
-\begin_inset Formula $\left\langle \left\langle OBJ_{n}\right\rangle ,\left\langle V',OM'\right\rangle \right\rangle =\mathcal{E}_{D}\ e\ \left\langle V,OM\right\rangle $
-\end_inset
-
-
-\end_layout
-
-\end_deeper
-\begin_layout Subsection
-Expression
-\end_layout
-
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
-Expr ::= con | 
-\emph on
-global
-\emph default
- | Lexpr | 
-\emph on
-this
-\emph default
- | 
-\emph on
-input
-\emph default
- | 
-\emph on
-new
-\emph default
- Lexpr([Expr[,Expr]*]?) | Lexpr([Expr[,Expr]*]?) | Expr binop Expr | (Expr)
-\end_layout
-
-\begin_deeper
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
-binop ::= + - * / > < ==
-\end_layout
-
-\end_deeper
-\begin_layout Itemize
-\begin_inset Formula $\mathcal{E}_{D}:LExpr\times\left\langle V,OM,FP,T\right\rangle \rightarrow Value\times\left\langle V,OM\right\rangle $
-\end_inset
-
-
-\end_layout
-
-\begin_layout Itemize
-\begin_inset Formula $\mathcal{E}_{D}\ \left[\textrm{con}\right]\ \left\langle V,OM,FP,T\right\rangle =\left\langle \textrm{con},\left\langle V,OM\right\rangle \right\rangle $
-\end_inset
-
-
-\end_layout
-
-\begin_layout Itemize
-
-\family roman
-\series medium
-\shape up
-\size normal
-\emph off
-\bar no
-\strikeout off
-\uuline off
-\uwave off
-\noun off
-\color none
-\lang english
-\begin_inset Formula $\mathcal{E}_{D}\ \left[\mathtt{global}\right]\ \left\langle V,OM,FP,T\right\rangle =\left\langle \left\langle OBJ_{0}\right\rangle ,\left\langle V,OM\right\rangle \right\rangle $
-\end_inset
-
-
-\end_layout
-
-\begin_layout Itemize
-
-\lang english
-\begin_inset Formula $\mathcal{E}_{D}\ \left[\textrm{LExpr}\right]=\mathcal{L}_{D}\ \left[\textrm{LExpr}\right]$
-\end_inset
-
-
-\end_layout
-
-\begin_layout Itemize
-
-\lang english
-\begin_inset Formula $\mathcal{E}_{D}\ \left[\mathtt{this}\right]\ \left\langle V,OM,FP,T\right\rangle =\left\langle T,\left\langle V,OM\right\rangle \right\rangle $
-\end_inset
-
-
-\end_layout
-
-\begin_layout Itemize
-
-\family roman
-\series medium
-\shape up
-\size normal
-\emph off
-\bar no
-\strikeout off
-\uuline off
-\uwave off
-\noun off
-\color none
-\lang english
-\begin_inset Formula $\mathcal{E}_{D}\ \left[\mathtt{input}\right]\ \left\langle V,OM,FP,T\right\rangle =\left\langle n,\left\langle V,OM\right\rangle \right\rangle $
-\end_inset
-
-
-\end_layout
-
-\begin_deeper
-\begin_layout Itemize
-
-\lang english
-where 
-\begin_inset Formula $n$
-\end_inset
-
- is a user input.
-\end_layout
-
-\end_deeper
-\begin_layout Itemize
-
-\lang english
-\begin_inset Formula $\mathcal{E}_{D}\ \left[\mathtt{new}\ Lexpr\left(e_{0},e_{1}.\ldots,e_{k}\right)\right]=$
+\begin_inset Formula $\mathcal{S}_{D}\ \left[S_{1};S_{2}\right]\rho=$
 \end_inset
 
 
@@ -3302,14 +3573,200 @@ where
 
 \begin_deeper
 \begin_layout Standard
+\begin_inset Formula $\mathcal{S}_{D}\ S_{2}\ \rho'$
+\end_inset
 
-\lang english
+if 
+\begin_inset Formula $term=NotTerminating$
+\end_inset
+
+ and 
+\begin_inset Formula $\exists\left\langle \rho',term\right\rangle $
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $\left\langle \rho',term\right\rangle $
+\end_inset
+
+ otherwise
+\end_layout
+
+\begin_layout Standard
 where
 \end_layout
 
+\begin_layout Standard
+\begin_inset Formula $\left\langle \rho',term\right\rangle =\mathcal{S}_{D}\ S_{1}\ \rho$
+\end_inset
+
+
+\end_layout
+
 \end_deeper
-\begin_layout Subsection
-Statements
+\begin_layout Itemize
+\begin_inset Formula $\mathcal{S}_{D}\ \left[\mathtt{return}\ e\right]\ \rho=\left\langle \rho',con\right\rangle $
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+where
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $\left\langle \rho',con\right\rangle =\mathcal{E}_{D}\ e\ \rho$
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+\begin_inset Formula $\mathcal{S}_{D}\ \left[if\left(e\right)S_{1}else\ S_{2}\right]\ \rho=cond\left(t,\mathcal{S}_{D}\ S_{1}\ \rho',\mathcal{S}_{D}\ S_{2}\ \rho'\right)$
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+where
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $\left\langle \rho',t\right\rangle =\mathcal{E}_{D}\ e\ \rho$
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+\begin_inset Formula $\mathcal{S}_{D}\ \left[if\left(e\right)S_{1}\right]\ \rho=cond\left(t,\mathcal{S}_{D}\ S_{1}\ \rho',\left\langle \rho',NotTerminating\right\rangle \right)$
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+where
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $\left\langle \rho',t\right\rangle =\mathcal{E}_{D}\ e\ \rho$
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+\begin_inset Formula $\mathcal{S}_{D}\ \left[id=e\right]\ \left\langle V,OM,FP,T\right\rangle =\left\langle \left\langle \sigma[id\mapsto con],OM',FP',T\right\rangle ,NotTerminating\right\rangle $
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+where
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $\left\langle \left\langle OM',FP'\right\rangle ,con\right\rangle =\mathcal{E}_{D}\ e\ \left\langle V,OM,FP,T\right\rangle $
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+\begin_inset Formula $\mathcal{S}_{D}\ \left[e_{1}.id=e_{2}\right]\ \left\langle V,OM,FP,T\right\rangle =\left\langle \left\langle V,OM\left[OBJ_{n}=OBJ_{n}\left[id\mapsto con\right]\right],FP'',T\right\rangle ,NotTerminating\right\rangle $
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+where
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $\left\langle \left\langle OM',FP'\right\rangle ,\left\langle OBJ_{n}\right\rangle \right\rangle =\mathcal{E}_{D}\ e_{1}\ \left\langle V,OM,FP,T\right\rangle $
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $\left\langle \left\langle OM'',FP''\right\rangle ,con\right\rangle =\mathcal{E}_{D}\ e_{2}\ \left\langle V,OM',FP',T\right\rangle $
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+\begin_inset Formula $\mathcal{S}_{D}\ \left[\mathtt{while}(e)S_{1}\right]\ \left\langle V,OM,FP,T\right\rangle =cond\left(con,S_{D}\ \left[S_{1};\mathtt{while}(e)S_{1}\right]\ \left\langle V,OM',FP',T\right\rangle ,\left\langle \left\langle V,OM',FP',T\right\rangle ,NotTerminating\right\rangle \right)$
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+where
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $\left\langle \left\langle OM',FP'\right\rangle ,con\right\rangle =\mathcal{E}_{D}\ e\ \left\langle V,OM,FP,T\right\rangle $
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Standard
+In an output statement, we evaluate expression and take the updated environment
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\mathcal{S}_{D}\ \left[\mathtt{output}\ e\right]\ \left\langle V,OM,FP,T\right\rangle =\left\langle \left\langle V,OM',FP',T\right\rangle ,NotTerminating\right\rangle $
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+where
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $\left\langle \left\langle OM',FP'\right\rangle ,con\right\rangle =\mathcal{E}_{D}\ e\ \left\langle V,OM,FP,T\right\rangle $
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Standard
+When we declare a new function, we just map the function name to a corresponding
+ function number, with zero curried argument.
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\mathcal{S_{D}}\ \left[\mathtt{function}_{n}\ id\left(ID*\right)S_{1}\right]\ \left\langle V,OM,FP,T\right\rangle =\left\langle \left\langle V\left[id\mapsto\left\{ FP_{n},ID*,\left\{ \right\} \right\} \right],OM,FP\left[\left\langle FP_{n}\right\rangle \mapsto\left\{ ID*,S_{1}\right\} \right],T\right\rangle ,NotTerminating\right\rangle $
+\end_inset
+
+
 \end_layout
 
 \end_body
