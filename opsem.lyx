@@ -3366,6 +3366,19 @@ Given the colouring from
  the matching colour.
 \end_layout
 
+\begin_layout Itemize
+Equivalently, it could be thought of as a named (numbered?) function model
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+\begin_inset Formula $AbsObj=A\models ID\mapsto\wp\left(\left\{ Number,Boolean\right\} \cup AbstractFunctions\cup A\right),A=\left\{ 0,1,2,3,...,k\right\} $
+\end_inset
+
+
+\end_layout
+
+\end_deeper
 \begin_layout Claim
 Functional model is a weaker form of analysis
 \end_layout
@@ -3551,14 +3564,14 @@ Statement analysis
 \end_layout
 
 \begin_layout Itemize
-\begin_inset Formula $\mathcal{S}_{D}=Stmt\times\left\langle V,OM,FP,T\right\rangle \hookrightarrow\left\langle \left\langle V,OM,FP,T\right\rangle ,Value\cup\left\{ NotTerminating\right\} \right\rangle $
+\begin_inset Formula $\mathcal{S}_{D}=Stmt\times\left\langle V,OM,FP,T\right\rangle \hookrightarrow\left\langle \left\langle V,OM,FP,T\right\rangle ,Value\cup\left\{ NoReturn\right\} \right\rangle $
 \end_inset
 
 
 \end_layout
 
 \begin_layout Itemize
-\begin_inset Formula $\mathcal{S}_{D}\ nil\ \rho=\left\langle \rho,null\right\rangle $
+\begin_inset Formula $\mathcal{S}_{D}\ nil\ \rho=\left\langle \rho,NoReturn\right\rangle $
 \end_inset
 
 
@@ -3577,7 +3590,7 @@ Statement analysis
 \end_inset
 
 if 
-\begin_inset Formula $term=NotTerminating$
+\begin_inset Formula $term=NoReturn$
 \end_inset
 
  and 
@@ -3647,7 +3660,7 @@ where
 
 \end_deeper
 \begin_layout Itemize
-\begin_inset Formula $\mathcal{S}_{D}\ \left[if\left(e\right)S_{1}\right]\ \rho=cond\left(t,\mathcal{S}_{D}\ S_{1}\ \rho',\left\langle \rho',NotTerminating\right\rangle \right)$
+\begin_inset Formula $\mathcal{S}_{D}\ \left[if\left(e\right)S_{1}\right]\ \rho=cond\left(t,\mathcal{S}_{D}\ S_{1}\ \rho',\left\langle \rho',NoReturn\right\rangle \right)$
 \end_inset
 
 
@@ -3667,7 +3680,7 @@ where
 
 \end_deeper
 \begin_layout Itemize
-\begin_inset Formula $\mathcal{S}_{D}\ \left[id=e\right]\ \left\langle V,OM,FP,T\right\rangle =\left\langle \left\langle \sigma[id\mapsto con],OM',FP',T\right\rangle ,NotTerminating\right\rangle $
+\begin_inset Formula $\mathcal{S}_{D}\ \left[id=e\right]\ \left\langle V,OM,FP,T\right\rangle =\left\langle \left\langle \sigma[id\mapsto con],OM',FP',T\right\rangle ,NoReturn\right\rangle $
 \end_inset
 
 
@@ -3687,7 +3700,7 @@ where
 
 \end_deeper
 \begin_layout Itemize
-\begin_inset Formula $\mathcal{S}_{D}\ \left[e_{1}.id=e_{2}\right]\ \left\langle V,OM,FP,T\right\rangle =\left\langle \left\langle V,OM\left[OBJ_{n}=OBJ_{n}\left[id\mapsto con\right]\right],FP'',T\right\rangle ,NotTerminating\right\rangle $
+\begin_inset Formula $\mathcal{S}_{D}\ \left[e_{1}.id=e_{2}\right]\ \left\langle V,OM,FP,T\right\rangle =\left\langle \left\langle V,OM\left[OBJ_{n}=OBJ_{n}\left[id\mapsto con\right]\right],FP'',T\right\rangle ,NoReturn\right\rangle $
 \end_inset
 
 
@@ -3714,13 +3727,68 @@ where
 
 \end_deeper
 \begin_layout Itemize
-\begin_inset Formula $\mathcal{S}_{D}\ \left[\mathtt{while}(e)S_{1}\right]\ \left\langle V,OM,FP,T\right\rangle =cond\left(con,S_{D}\ \left[S_{1};\mathtt{while}(e)S_{1}\right]\ \left\langle V,OM',FP',T\right\rangle ,\left\langle \left\langle V,OM',FP',T\right\rangle ,NotTerminating\right\rangle \right)$
+\begin_inset Formula $cond\left(con,e_{1},e_{2}\right)$
+\end_inset
+
+ is 
+\begin_inset Formula $e_{1}$
+\end_inset
+
+ when 
+\begin_inset Formula $con$
+\end_inset
+
+ is True, 
+\begin_inset Formula $e_{2}$
+\end_inset
+
+ when 
+\begin_inset Formula $con$
+\end_inset
+
+ is False
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $ret\left(con,e_{1},e_{2}\right)$
+\end_inset
+
+ is 
+\begin_inset Formula $e_{1}$
+\end_inset
+
+ when 
+\begin_inset Formula $con$
+\end_inset
+
+ is not 
+\begin_inset Formula $NoReturn$
+\end_inset
+
+, 
+\begin_inset Formula $e_{2}$
+\end_inset
+
+ otherwise
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\mathcal{S}_{D}\ \left[\mathtt{while}(e)S_{1}\right]=$
 \end_inset
 
 
 \end_layout
 
 \begin_deeper
+\begin_layout Standard
+
+\size footnotesize
+\begin_inset Formula $Y\ \lambda x.\lambda\left\langle V,OM,FP,T\right\rangle .cond\left(con,ret\left(term,term,x\ \left\langle V',OM'',FP'',T'\right\rangle \right),\left\langle \left\langle V,OM',FP',T\right\rangle ,NoReturn\right\rangle ,\left\langle \left\langle V,OM',FP',T\right\rangle ,con\right\rangle \right)$
+\end_inset
+
+
+\end_layout
+
 \begin_layout Standard
 where
 \end_layout
@@ -3732,13 +3800,20 @@ where
 
 \end_layout
 
+\begin_layout Standard
+\begin_inset Formula $\left\langle \left\langle V',OM'',FP'',T'\right\rangle ,term\right\rangle =S_{D}\ S_{1}\ \left\langle V,OM',FP',T\right\rangle $
+\end_inset
+
+
+\end_layout
+
 \end_deeper
 \begin_layout Standard
-In an output statement, we evaluate expression and take the updated environment
+In an output statement, we evaluate expression and take the updated environment.
 \end_layout
 
 \begin_layout Itemize
-\begin_inset Formula $\mathcal{S}_{D}\ \left[\mathtt{output}\ e\right]\ \left\langle V,OM,FP,T\right\rangle =\left\langle \left\langle V,OM',FP',T\right\rangle ,NotTerminating\right\rangle $
+\begin_inset Formula $\mathcal{S}_{D}\ \left[\mathtt{output}\ e\right]\ \left\langle V,OM,FP,T\right\rangle =\left\langle \left\langle V,OM',FP',T\right\rangle ,NoReturn\right\rangle $
 \end_inset
 
 
@@ -3763,11 +3838,262 @@ When we declare a new function, we just map the function name to a corresponding
 \end_layout
 
 \begin_layout Itemize
-\begin_inset Formula $\mathcal{S_{D}}\ \left[\mathtt{function}_{n}\ id\left(ID*\right)S_{1}\right]\ \left\langle V,OM,FP,T\right\rangle =\left\langle \left\langle V\left[id\mapsto\left\{ FP_{n},ID*,\left\{ \right\} \right\} \right],OM,FP\left[\left\langle FP_{n}\right\rangle \mapsto\left\{ ID*,S_{1}\right\} \right],T\right\rangle ,NotTerminating\right\rangle $
+\begin_inset Formula $\mathcal{S_{D}}\ \left[\mathtt{function}_{n}\ id\left(ID*\right)S_{1}\right]\ \left\langle V,OM,FP,T\right\rangle =\left\langle \left\langle V\left[id\mapsto\left\{ FP_{n},ID*,\left\{ \right\} \right\} \right],OM,FP\left[\left\langle FP_{n}\right\rangle \mapsto\left\{ ID*,S_{1}\right\} \right],T\right\rangle ,NoReturn\right\rangle $
 \end_inset
 
 
 \end_layout
 
+\begin_layout Subsection
+Expression analysis
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\mathcal{E}_{D}=Expr\times\left\langle V,OM,FP,T\right\rangle \hookrightarrow\left\langle \left\langle OM,FP\right\rangle ,Value\cup\left\{ NoReturn\right\} \right\rangle $
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+\begin_inset Quotes eld
+\end_inset
+
+No Return
+\begin_inset Quotes erd
+\end_inset
+
+ is returned when a function call is made and no value has been returned
+\end_layout
+
+\end_deeper
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+Lexpr ::= ID | Expr .
+ ID
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+Expr ::= con | 
+\emph on
+global
+\emph default
+ | Lexpr | 
+\emph on
+this
+\emph default
+ | 
+\emph on
+input
+\emph default
+ | 
+\emph on
+new
+\emph default
+ Lexpr([Expr[,Expr]*]?) | Lexpr([Expr[,Expr]*]?) | Expr binop Expr | (Expr)
+\end_layout
+
+\begin_deeper
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+binop ::= + - * / > < ==
+\end_layout
+
+\end_deeper
+\begin_layout Standard
+Constant - just return constant
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\mathcal{E}_{D}\ \left[con\right]\ \left\langle V,OM,FP,T\right\rangle =\left\langle \left\langle OM,FP\right\rangle ,con\right\rangle $
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Global - return global
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\mathcal{E}_{D}\ \left[\mathtt{global}\right]\ \left\langle V,OM,FP,T\right\rangle =\left\langle \left\langle OM,FP\right\rangle ,\left\langle OBJ_{0}\right\rangle \right\rangle $
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Lexpr - evaluate left expression
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\mathcal{E}_{D}\ \left[L\right]\ \left\langle V,OM,FP,T\right\rangle =\mathcal{L}_{D}\ L\ \left\langle V,OM,FP,T\right\rangle $
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $\mathtt{math}$
+\end_inset
+
+ and 
+\begin_inset Formula $\mathtt{input}$
+\end_inset
+
+ keywords
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\mathcal{E}_{D}\ \left[\mathtt{this}\right]\ \left\langle V,OM,FP,T\right\rangle =\left\langle \left\langle OM,FP\right\rangle ,T\right\rangle $
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\mathcal{E}_{D}\ \left[\mathtt{input}\right]\ \left\langle V,OM,FP,T\right\rangle =\left\langle \left\langle OM,FP\right\rangle ,in\right\rangle $
+\end_inset
+
+ where 
+\begin_inset Formula $in$
+\end_inset
+
+ is the next console input (number)
+\end_layout
+
+\begin_layout Standard
+New object - evaluate the left expression (it should be resolved to a function
+ pointer), iteratively evaluate all the expressions given for arguments,
+ then create an empty object and run it through the function.
+ Return the finally state and the new object.
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\mathcal{E}_{D}\ \left[new\ L\left(E*\right)\right]\ \left\langle V,OM,FP,T\right\rangle =\ \left\langle \left\langle OM_{4},FP_{3}\right\rangle ,\left\langle OBJ_{new}\right\rangle \right\rangle $
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+where
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+\begin_inset Formula $\left\langle \left\langle OM',FP'\right\rangle ,\left\langle FP_{n},IDs,C\right\rangle \right\rangle =\mathcal{L}_{D}\ L\ \left\langle V,OM,FP,T\right\rangle $
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\left\langle S,IDs\right\rangle =FP'\left(n\right)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\left\langle \left\langle OM'',FP''\right\rangle ,pmap\right\rangle =$
+\end_inset
+
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+\lang english
+
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Formula $Y\ \lambda x.\lambda\left\langle \left\langle OM,FP\right\rangle ,idlist,elist,pmap\right\rangle .$
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\family default
+\series default
+\shape default
+\size footnotesize
+\emph default
+\bar default
+\strikeout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+
+\begin_inset Formula $cond\left(elist\ is\ empty,\left\langle OM,FP,pmap\right\rangle ,x\ \left\langle \left\langle OM',FP'\right\rangle ,rest(idlist),elist',pmap'\right\rangle \right)\ \left\langle \left\langle OM',FP'\right\rangle ,rest\left(IDs,N\left(C\right)\right),E*,C\right\rangle $
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+where
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $e_{1}$
+\end_inset
+
+ is the first element of 
+\begin_inset Formula $elist$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\left\langle \left\langle OM',FP'\right\rangle ,con\right\rangle =\mathcal{E}_{D}\ e_{1}\ \left\langle V,OM,FP,T\right\rangle $
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $pmap'=pmap\left[first\left(idlist\right)\mapsto con\right]$
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+\begin_inset Formula $OM_{3}=OM''\cup\left\langle OBJ_{new}\right\rangle $
+\end_inset
+
+ where 
+\begin_inset Formula $\left\langle OBJ_{new}\right\rangle =\phi$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\left\langle pmap',OM_{4},FP_{3},T\right\rangle =S_{D}\ S\ \left\langle pmap,OM_{3},FP'',\left\langle OBJ_{new}\right\rangle \right\rangle $
+\end_inset
+
+
+\end_layout
+
+\end_deeper
 \end_body
 \end_document
