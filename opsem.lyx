@@ -2052,7 +2052,7 @@ Left expression analysis returns possible types and updated environments
 
 \begin_layout Labeling
 \labelwidthstring 00.00.0000
-\begin_inset Formula $\mathcal{L}::Env\rightarrow\left\langle \left\langle Absmem,Functions\right\rangle ,type\right\rangle $
+\begin_inset Formula $\mathcal{L}::Env\rightarrow\left\langle \left\langle Absmem,Functions\right\rangle ,\wp\left(type\right)\right\rangle $
 \end_inset
 
 
@@ -3965,6 +3965,56 @@ Lexpr - evaluate left expression
 \end_layout
 
 \begin_layout Standard
+For simplicity, we define an abstract function 
+\begin_inset Formula $\mathtt{\mathtt{evalParam}}$
+\end_inset
+
+.
+ It takes as an argument an environment, a list of IDs, a list of expressions
+ and a symbol map, and returns an updated environment and a symbol map represent
+ing parameter values.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $\mathtt{evalParam}=\left\langle V,OM,FP,T\right\rangle \times\left[ID\right]\times\left[Expr\right]\times\left(ID\rightarrow Value\right)\rightarrow\left\langle OM,FP\right\rangle \times\left(ID\rightarrow Value\right)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $\mathtt{evalParam}\ \left\langle V,OM,FP,T\right\rangle \ ids\ \phi\ pmap=\left\langle \left\langle OM,FP\right\rangle ,pmap\right\rangle $
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $\mathtt{evalParam}\ \left\langle V,OM,FP,T\right\rangle \ \left[ID|IDs\right]\ \left[E|Exprs\right]\ pmap=\mathtt{evalParam}\ \left\langle V,OM',FP',T\right\rangle \ IDs\ Exprs\ pmap1$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+where
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $\left\langle \left\langle OM',FP'\right\rangle ,con\right\rangle =\mathcal{E}_{D}\ E\ \left\langle V,OM,FP,T\right\rangle $
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $pmap1=pmap\left[ID\rightarrow con\right]$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
 New object - evaluate the left expression (it should be resolved to a function
  pointer), iteratively evaluate all the expressions given for arguments,
  then create an empty object and run it through the function.
@@ -3976,15 +4026,15 @@ New object - evaluate the left expression (it should be resolved to a function
 \end_inset
 
 
-\end_layout
+\begin_inset Newline newline
+\end_inset
 
-\begin_layout Itemize
 where
 \end_layout
 
 \begin_deeper
 \begin_layout Itemize
-\begin_inset Formula $\left\langle \left\langle OM',FP'\right\rangle ,\left\langle FP_{n},IDs,C\right\rangle \right\rangle =\mathcal{L}_{D}\ L\ \left\langle V,OM,FP,T\right\rangle $
+\begin_inset Formula $\left\langle \left\langle OM',FP'\right\rangle ,\left\langle FP_{n},C\right\rangle \right\rangle =\mathcal{L}_{D}\ L\ \left\langle V,OM,FP,T\right\rangle $
 \end_inset
 
 
@@ -3998,84 +4048,12 @@ where
 \end_layout
 
 \begin_layout Itemize
-\begin_inset Formula $\left\langle \left\langle OM'',FP''\right\rangle ,pmap\right\rangle =$
-\end_inset
-
-
-\family roman
-\series medium
-\shape up
-\size normal
-\emph off
-\bar no
-\strikeout off
-\uuline off
-\uwave off
-\noun off
-\color none
-\lang english
-
-\begin_inset Newline newline
-\end_inset
-
-
-\begin_inset Formula $Y\ \lambda x.\lambda\left\langle \left\langle OM,FP\right\rangle ,idlist,elist,pmap\right\rangle .$
-\end_inset
-
-
-\begin_inset Newline newline
-\end_inset
-
-
-\family default
-\series default
-\shape default
-\size footnotesize
-\emph default
-\bar default
-\strikeout default
-\uuline default
-\uwave default
-\noun default
-\color inherit
-
-\begin_inset Formula $cond\left(elist\ is\ empty,\left\langle OM,FP,pmap\right\rangle ,x\ \left\langle \left\langle OM',FP'\right\rangle ,rest(idlist),elist',pmap'\right\rangle \right)\ \left\langle \left\langle OM',FP'\right\rangle ,rest\left(IDs,N\left(C\right)\right),E*,C\right\rangle $
+\begin_inset Formula $\left\langle \left\langle OM'',FP''\right\rangle ,pmap\right\rangle =\mathtt{evalParam}\ \left\langle V,OM',FP',T\right\rangle \ IDs\ E*\ \phi$
 \end_inset
 
 
 \end_layout
 
-\begin_deeper
-\begin_layout Itemize
-where
-\end_layout
-
-\begin_layout Itemize
-\begin_inset Formula $e_{1}$
-\end_inset
-
- is the first element of 
-\begin_inset Formula $elist$
-\end_inset
-
-
-\end_layout
-
-\begin_layout Itemize
-\begin_inset Formula $\left\langle \left\langle OM',FP'\right\rangle ,con\right\rangle =\mathcal{E}_{D}\ e_{1}\ \left\langle V,OM,FP,T\right\rangle $
-\end_inset
-
-
-\end_layout
-
-\begin_layout Itemize
-\begin_inset Formula $pmap'=pmap\left[first\left(idlist\right)\mapsto con\right]$
-\end_inset
-
-
-\end_layout
-
-\end_deeper
 \begin_layout Itemize
 \begin_inset Formula $OM_{3}=OM''\cup\left\langle OBJ_{new}\right\rangle $
 \end_inset
@@ -4089,6 +4067,147 @@ where
 
 \begin_layout Itemize
 \begin_inset Formula $\left\langle pmap',OM_{4},FP_{3},T\right\rangle =S_{D}\ S\ \left\langle pmap,OM_{3},FP'',\left\langle OBJ_{new}\right\rangle \right\rangle $
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Standard
+We define another abstract function 
+\begin_inset Formula $\mathtt{drop}$
+\end_inset
+
+.
+ It takes a number and a list as an argument, and returns a list of elements
+ after the number of elements skipped.
+\end_layout
+
+\begin_layout Standard
+Function call
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\mathcal{E}_{D}\ \left[ID\left(E*\right)\right]\ \left\langle V,OM,FP,T\right\rangle =\left\langle \left\langle OM_{\omega},FP_{\omega}\right\rangle ,val\right\rangle $
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+where
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+\begin_inset Formula $\left\langle \left\langle OM',FP'\right\rangle ,\left\langle FP_{n},C\right\rangle \right\rangle =\mathcal{L}_{D}\ ID\ \left\langle V,OM,FP,T\right\rangle $
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\left\langle S,IDs\right\rangle =FP'\left(n\right)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\left\langle \left\langle OM'',FP''\right\rangle ,pmap\right\rangle =\mathtt{evalParam}\ \left\langle V,OM',FP',T\right\rangle \ \left(\mathtt{drop}\ N\left(C\right)\ IDs\right)\ E*\ C$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+if 
+\begin_inset Formula $N\left(pmap\right)$
+\end_inset
+
+is equal to 
+\begin_inset Formula $N\left(IDs\right)$
+\end_inset
+
+, then 
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+\begin_inset Formula $\left\langle \left\langle V',OM_{\omega},FP_{\omega},T'\right\rangle ,val\right\rangle =\mathcal{S}_{D}\ S\ \left\langle pmap,OM'',FP'',T\right\rangle $
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+else
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+\begin_inset Formula $\left\langle OM_{\omega},FP_{\omega}\right\rangle =\left\langle OM'',FP''\right\rangle $
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $val=\left\langle FP_{n},pmap\right\rangle $
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\end_deeper
+\begin_layout Standard
+Method call
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\mathcal{E}_{D}\ \left[E_{0}.ID\left(E*\right)\right]\ \left\langle V,OM,FP,T\right\rangle =\left\langle \left\langle OM_{\omega},FP_{\omega}\right\rangle ,val\right\rangle $
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+where
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+\begin_inset Formula $\left\langle \left\langle OM',FP'\right\rangle ,OBJ_{t}\right\rangle =\mathcal{E}_{D}\ E_{0}\ \left\langle V,OM,FP,T\right\rangle $
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\left\langle FP_{n},C\right\rangle =OM'\left(t\right)\left(ID\right)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\left\langle S,IDs\right\rangle =FP'\left(n\right)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\left\langle \left\langle OM'',FP''\right\rangle ,pmap\right\rangle =\mathtt{evalParam}\ \left\langle V,OM',FP',T\right\rangle \ \left(\mathtt{drop}\ N\left(C\right)\ IDs\right)\ E*\ C$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\left\langle \left\langle V',OM_{\omega},FP_{\omega},T'\right\rangle ,val\right\rangle =\mathcal{S}_{D}\ S\ \left\langle pmap,OM'',FP'',OBJ_{t}\right\rangle $
 \end_inset
 
 
