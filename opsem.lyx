@@ -3975,45 +3975,47 @@ For simplicity, we define an abstract function
 ing parameter values.
 \end_layout
 
-\begin_layout Standard
+\begin_layout Itemize
 \begin_inset Formula $\mathtt{evalParam}=\left\langle V,OM,FP,T\right\rangle \times\left[ID\right]\times\left[Expr\right]\times\left(ID\rightarrow Value\right)\rightarrow\left\langle OM,FP\right\rangle \times\left(ID\rightarrow Value\right)$
 \end_inset
 
 
 \end_layout
 
-\begin_layout Standard
+\begin_layout Itemize
 \begin_inset Formula $\mathtt{evalParam}\ \left\langle V,OM,FP,T\right\rangle \ ids\ \phi\ pmap=\left\langle \left\langle OM,FP\right\rangle ,pmap\right\rangle $
 \end_inset
 
 
 \end_layout
 
-\begin_layout Standard
+\begin_layout Itemize
 \begin_inset Formula $\mathtt{evalParam}\ \left\langle V,OM,FP,T\right\rangle \ \left[ID|IDs\right]\ \left[E|Exprs\right]\ pmap=\mathtt{evalParam}\ \left\langle V,OM',FP',T\right\rangle \ IDs\ Exprs\ pmap1$
 \end_inset
 
 
-\end_layout
+\begin_inset Newline newline
+\end_inset
 
-\begin_layout Standard
 where
 \end_layout
 
-\begin_layout Standard
+\begin_deeper
+\begin_layout Itemize
 \begin_inset Formula $\left\langle \left\langle OM',FP'\right\rangle ,con\right\rangle =\mathcal{E}_{D}\ E\ \left\langle V,OM,FP,T\right\rangle $
 \end_inset
 
 
 \end_layout
 
-\begin_layout Standard
+\begin_layout Itemize
 \begin_inset Formula $pmap1=pmap\left[ID\rightarrow con\right]$
 \end_inset
 
 
 \end_layout
 
+\end_deeper
 \begin_layout Standard
 New object - evaluate the left expression (it should be resolved to a function
  pointer), iteratively evaluate all the expressions given for arguments,
@@ -4208,6 +4210,65 @@ where
 
 \begin_layout Itemize
 \begin_inset Formula $\left\langle \left\langle V',OM_{\omega},FP_{\omega},T'\right\rangle ,val\right\rangle =\mathcal{S}_{D}\ S\ \left\langle pmap,OM'',FP'',OBJ_{t}\right\rangle $
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Subsection
+Left Expression analysis
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\mathcal{L}_{D}=LExpr\times\left\langle V,OM,FP,T\right\rangle \hookrightarrow\left\langle OM,FP\right\rangle \times Value\cup\left\{ NoReturn\right\} $
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\mathcal{L}_{D}\ \left[ID\right]\ \left\langle V,OM,FP,T\right\rangle =V\left(ID\right)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\mathcal{L}_{D}\ \left[\mathtt{this}\right]\ \left\langle V,OM,FP,T\right\rangle =T$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\mathcal{L}_{D}\ \left[\mathtt{global}\right]\ \left\langle V,OM,FP,T\right\rangle =OBJ_{0}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\mathcal{L}_{D}\ \left[e.ID\right]\ \left\langle V,OM,FP,T\right\rangle =\left\langle \left\langle OM',FP'\right\rangle ,val\right\rangle $
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+where
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+\begin_inset Formula $\left\langle \left\langle OM',FP'\right\rangle ,OBJ_{n}\right\rangle =\mathcal{E}_{D}\ e\ \left\langle V,OM,FP,T\right\rangle $
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $val=OM'\left(n\right)\left(ID\right)$
 \end_inset
 
 
