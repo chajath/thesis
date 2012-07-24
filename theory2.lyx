@@ -9,6 +9,11 @@
 \end_preamble
 \options fleqn
 \use_default_options true
+\begin_modules
+theorems-ams
+eqs-within-sections
+figs-within-sections
+\end_modules
 \maintain_unincluded_children false
 \language english
 \language_package default
@@ -33,7 +38,7 @@
 \spacing single
 \use_hyperref false
 \papersize default
-\use_geometry false
+\use_geometry true
 \use_amsmath 1
 \use_esint 1
 \use_mhchem 1
@@ -48,6 +53,13 @@
 \shortcut idx
 \color #008000
 \end_index
+\leftmargin 3cm
+\topmargin 3cm
+\rightmargin 3cm
+\bottommargin 3cm
+\headheight 3cm
+\headsep 3cm
+\footskip 3cm
 \secnumdepth 3
 \tocdepth 3
 \paragraph_separation indent
@@ -79,6 +91,10 @@ Branching (if-then-else vs.
 cond
 \end_layout
 
+\begin_layout Itemize
+isterm
+\end_layout
+
 \end_deeper
 \begin_layout Itemize
 Basic expressions (concrete value vs.
@@ -91,17 +107,103 @@ Assignment
 
 \begin_deeper
 \begin_layout Itemize
-\begin_inset Formula $\mathtt{asg}:\rho\rightarrow ID\rightarrow Value\rightarrow\rho$
+\begin_inset Formula $\mathtt{asg}:ID\rightarrow Value\rightarrow\rho\rightarrow\rho$
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+\begin_inset Formula $\mathtt{member}:OBJ\rightarrow ID\rightarrow Value\rightarrow\rho\rightarrow\rho$
 \end_inset
 
 
 \end_layout
 
 \begin_layout Itemize
+conval
+\end_layout
+
+\begin_layout Itemize
+obj
+\end_layout
+
+\begin_layout Itemize
+getthis
+\end_layout
+
+\begin_layout Itemize
+getinput
+\end_layout
+
+\begin_layout Standard
+Syntactic sugar: state transformer with free variable
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $M_{S}:\left[p\times\left(\beta\rightarrow\rho\rightarrow\left(\rho\times\alpha\right)\right)\right]\rightarrow\beta\rightarrow\rho\rightarrow\rho\times\alpha$
+\end_inset
+
 
 \end_layout
 
-\end_deeper
+\begin_layout Standard
+\begin_inset Formula $M_{S}\ \left[T_{0}\right]=T_{0}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $M_{S}\ \left[\left\langle p_{0},T_{0}\right\rangle |T_{rest}\right]\ b\ \rho=\left(\lambda p_{0}.M_{S}\ T_{rest}\ b\ \rho'\right)\ v_{0}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+where 
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\left\langle \rho',v_{0}\right\rangle =T_{0}\ \rho$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Pass 
+\begin_inset Formula $p_{0}$
+\end_inset
+
+ on as a free variable, i.e.
+ 
+\begin_inset Formula $p_{0}\in FV\left(T_{rest}\right)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Identity state transformer
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $I_{\rho}:\alpha\rightarrow\beta\rightarrow\rho\rightarrow\rho\times\alpha$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $I_{\rho}\ v\ \_\ \rho=\left\langle \rho,v\right\rangle $
+\end_inset
+
+
+\end_layout
+
 \begin_layout Standard
 We define following functions
 \end_layout
@@ -121,15 +223,46 @@ S & : & F\rightarrow\left(\rho\rightarrow\left(\rho\times Value\right)\right)
 \begin_layout Standard
 \begin_inset Formula 
 \begin{align*}
- & F & = & Y\lambda f.\lambda n.\mathcal{S}\dd{\mathtt{Stmt}_{n}}\ f\\
- & \mathcal{S}\dd{S_{1};S_{2}} & = & M_{S}\ \mathcal{S}\dd{S_{2}}\ \mathcal{S}\dd{S_{1}}\\
+ & F & = & Y\lambda f.\lambda n.p.\rho.\mathtt{update}\left(\rho,\mathcal{S}\dd{\mathtt{Stmt}_{n}}\ f\ \mathtt{newenv}\left(p,\rho\right)\right)\\
+ & \mathcal{S}\dd{S_{1};S_{2}} & = & \begin{aligned}M_{s} & \left\langle r,S\dd{S_{1}}\right\rangle \\
+ & \left\langle \_,\mathtt{isterm}\left(r,S\dd{S_{2}}\right)\right\rangle 
+\end{aligned}
+\\
  & \mathcal{S}\dd{\mathtt{return}\ e} & = & \mathcal{E}\dd{e}\\
  & \mathcal{S}\dd{\mathtt{if}\left(e\right)S_{1}}\ f\ \rho & = & \mathtt{cond}\left(v,S\dd{S_{1}}\ f\ \rho',\left\langle \rho',NoReturn\right\rangle \right)\\
  &  &  & \mbox{where}\ \left\langle \rho',v\right\rangle =\mathcal{E}\dd{e}\\
+ & \mathcal{S}\dd{\mathtt{if}\left(e\right)S_{1}}\ f & = & \begin{aligned}M_{S} & \left\langle v,E\dd{e}\right\rangle \\
+ & \left\langle \_,\mathtt{cond}\left(v,\mathcal{S}\dd{S_{1}}\ f,I_{\rho}\ NoReturn\right)\right\rangle 
+\end{aligned}
+\\
  & \mathcal{S}\dd{\mathtt{if}\left(e\right)S_{1}\mathtt{else}S_{2}} & = & \mathtt{cond}\left(v,\mathcal{S}\dd{S_{1}}\ f\ \rho',\mathcal{S}\dd{S_{2}}\ f\ \rho'\right)\\
  & \mathcal{S}\dd{id=e}\ f\ \rho & = & \left\langle \mathtt{asg}\left(\rho',id,v\right),NoReturn\right\rangle \\
  &  &  & \mbox{where}\ \left\langle \rho',v\right\rangle =\mathcal{E}\dd{e}\\
- & \mathcal{S}\dd{e_{1}.id=e_{2}}\ f\ \rho & =
+ & \mathcal{S}\dd{id=e} & = & \begin{aligned}M_{S} & \left\langle v,\mathcal{E}\dd{e}\right\rangle \\
+ & \left\langle \_,\mathtt{asg}\left(id,v\right)\right\rangle \\
+ & \left\langle \_,I_{\rho}\ NoReturn\right\rangle 
+\end{aligned}
+\\
+ & \mathcal{S}\dd{e_{1}.id=e_{2}} & = & \begin{aligned}M_{S} & \left\langle v,\mathcal{E}\dd{e_{2}}\right\rangle \\
+ & \left\langle r,\mathcal{E}\dd{e_{1}}\right\rangle \\
+ & \left\langle \_,\mathtt{member}\left(r,id,v\right)\right\rangle 
+\end{aligned}
+\\
+ & \mathcal{S}\dd{\mathtt{while}\left(e\right)S_{1}}\ f & = & Y\lambda x.\lambda r,\rho.\mathtt{isterm}\left(r,\begin{aligned}M_{S} & \left\langle \_,\mathcal{E}\dd{e}\right\rangle \\
+ & \left\langle \_,\mathtt{cond}\left(v,\lambda\rho'.x\ \left(\mathcal{S}\dd{S_{1}}\ f\ \rho'\right),I_{\rho}\ NoReturn\right)\right\rangle 
+\end{aligned}
+\right)\ NoReturn\\
+ & E\dd{con} & = & M_{S}\ \left\langle \_,I_{\rho}\ \mathtt{conval}\left(con\right)\right\rangle \\
+ & E\dd{\mathtt{global}}\ f\ \rho & = & M_{S}\ \left\langle \_,I_{\rho}\ \mathtt{obj}\left(0,\rho\right)\right\rangle \\
+ & E\dd{L} & = & L\dd{L}\\
+ & E\dd{\mathtt{this}}\ f\ \rho & = & M_{S}\ \left\langle \_,I_{\rho}\ \mathtt{getthis}\left(\rho\right)\right\rangle \\
+ & E\dd{\mathtt{input}}\ f\ \rho & = & M_{S}\ \left\langle \_,\mathtt{getinput}\left(\rho\right)\right\rangle \\
+ & E\dd{\mathtt{new}\ L\left(E*\right)}\ f & = & \begin{aligned}M_{s} & \left\langle \_,L\ \dd{L}\right\rangle \\
+ & \left\langle FP_{n},\mathtt{evalParams}\ E*\ \phi\right\rangle \\
+ & \left\langle p,\mathtt{evalParams}\ E*\ \phi\right\rangle \\
+ & \left\langle m,\mathtt{newobj}\right\rangle \\
+ & \left\langle \_,f\ m\ p\right\rangle 
+\end{aligned}
 \end{align*}
 
 \end_inset
