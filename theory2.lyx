@@ -53,13 +53,13 @@ figs-within-sections
 \shortcut idx
 \color #008000
 \end_index
-\leftmargin 3cm
-\topmargin 3cm
-\rightmargin 3cm
-\bottommargin 3cm
-\headheight 3cm
-\headsep 3cm
-\footskip 3cm
+\leftmargin 1cm
+\topmargin 1cm
+\rightmargin 1cm
+\bottommargin 1cm
+\headheight 1cm
+\headsep 1cm
+\footskip 1cm
 \secnumdepth 3
 \tocdepth 3
 \paragraph_separation indent
@@ -332,7 +332,69 @@ s_{2} & v=false
 \mathtt{getthis}\left(\left\langle V,OM,T\right\rangle \right) & = & T\\
 \mathtt{getinput\left(\rho\right)} & =\\
 \mathtt{newobj}\left(\left\langle V,OM,T\right\rangle \right) & = & \left\langle \left\langle V,OM\left[n\mapsto\phi\right],T\right\rangle ,OBJ_{n}\right\rangle \ \mbox{where}\ n=N\left(OM\right)\\
-call\left(n,p,t,f,\left\langle V,OM,T\right\rangle \right) & = & \left\langle \left\langle V,OM',T\right\rangle ,r\right\rangle \ \mbox{where}\ \left\langle \left\langle V',OM',T'\right\rangle ,r\right\rangle =f\ n\ \left\langle p,OM,t\right\rangle 
+\mathtt{call}\left(\left\langle FP_{n},C\right\rangle ,p,t,f,\left\langle V,OM,T\right\rangle \right) & = & \begin{cases}
+\left\langle \left\langle V,OM',T\right\rangle ,r\right\rangle \ \mbox{where}\ \left\langle \left\langle V',OM',T'\right\rangle ,r\right\rangle =f\ n\ \left\langle C\backslash p,OM,t\right\rangle  & N\left(C\right)+N\left(p\right)=arity_{n}\\
+\left\langle \left\langle V,OM,T\right\rangle ,\left\langle FP_{n},C\backslash p\right\rangle \right\rangle  & \mbox{otherwise}
+\end{cases}
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Abstract functions for Forward-may analysis 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $\rho=\left\langle \sigma,\alpha,\tau\right\rangle $
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+define 
+\begin_inset Formula $\rho_{1}\sqcup\rho_{2}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $\left\langle \rho_{1},r_{1}\right\rangle \sqcup\left\langle \rho_{2},r_{2}\right\rangle $
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\mathtt{isterm}\left(v,s\right) & = & \begin{cases}
+s & v=\left\{ NoReturn\right\} \\
+I_{\rho}\ v & \mbox{otherwise}
+\end{cases}\\
+\mathtt{cond}\left(v,s_{1},s_{2}\right) & = & s_{1}\sqcup s_{2}\\
+\mathtt{asg}\left(id,v\right) & = & \lambda\left\langle \sigma,\alpha,\tau\right\rangle .\left\langle \sigma\left[id=v\right],\alpha,\tau\right\rangle \\
+\mathtt{member}\left(n,id,v\right) & = & \lambda\left\langle \sigma,\alpha,\tau\right\rangle .\left\langle \sigma,\left\{ x|OBJ_{x}\in\alpha,x=\begin{cases}
+\alpha\left(x\right)\left[id\mapsto v\right] & OBJ_{x}\in n\\
+\alpha\left(x\right) & \mbox{otherwise}
+\end{cases}\right\} ,\tau\right\rangle \\
+\mathtt{conval}\left(con\right) & = & \begin{cases}
+Number & con\in\mathbb{N}\\
+Boolean & con\in\left\{ true,false\right\} 
+\end{cases}\\
+\mathtt{obj}\left(n,\left\langle \sigma,\alpha,\tau\right\rangle \right) & = & \alpha\left(n\right)\\
+\mathtt{getthis}\left(\left\langle \sigma,\alpha,\tau\right\rangle \right) & = & \tau\\
+\mathtt{getinput\left(\rho\right)} & = & \left\langle \rho,\left\{ Number\right\} \right\rangle \\
+\mathtt{newobj}\left(\left\langle \sigma,\alpha,\tau\right\rangle \right) & = & \left\langle \left\langle \sigma,\alpha\left[n\mapsto\phi\right],\tau\right\rangle ,OBJ_{n}\right\rangle \ \mbox{where}\ n=N\left(\alpha\right)\\
+\mathtt{call}\left(n,p,t,f,\left\langle \sigma,\alpha,\tau\right\rangle \right) & = & \underset{\left\langle FP_{x},C\right\rangle \in n}{\bigsqcup}\mathtt{scall}\left(\left\langle FP_{x},C\right\rangle ,p,t,f,\left\langle \sigma,\alpha,\tau\right\rangle \right)\\
+\mathtt{scall}\left(\left\langle FP_{n},C\right\rangle ,p,t,f,\left\langle \sigma,\alpha,\tau\right\rangle \right) & = & \begin{cases}
+\left\langle \left\langle \sigma,\alpha',\tau\right\rangle ,r\right\rangle \ \mbox{where}\ \left\langle \left\langle \sigma',\alpha',\tau'\right\rangle ,r\right\rangle =f\ n\ \left\langle C\backslash p,\alpha,\tau\right\rangle  & N\left(C\right)+N\left(p\right)=arity_{n}\\
+\left\langle \left\langle \sigma,\alpha,\tau\right\rangle ,\left\langle FP_{n},C\backslash p\right\rangle \right\rangle  & \mbox{otherwise}
+\end{cases}
 \end{eqnarray*}
 
 \end_inset
