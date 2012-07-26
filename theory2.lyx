@@ -141,12 +141,32 @@ getinput
 call: n,p,m,f,rho
 \end_layout
 
-\begin_layout Standard
-Syntactic sugar: state transformer with free variable
+\begin_layout Paragraph
+Statement to initial and final state mapping
 \end_layout
 
 \begin_layout Standard
-\begin_inset Formula $M_{S}:\left[p\times\left(\beta\rightarrow\rho\rightarrow\left(\rho\times\alpha\right)\right)\right]\rightarrow\beta\rightarrow\rho\rightarrow\rho\times\alpha$
+\begin_inset Formula $\sigma:s\rightarrow\rho\rightarrow\rho$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Paragraph
+Auxiliary functions
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $M_{S}$
+\end_inset
+
+ is a state transformer monad that takes a list of vectors (variable name,
+ lambda expressions) with free variables and produces a state transformer
+ with return value.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $M_{S}:\left[p\times\left(\beta\rightarrow\left(\rho\times\sigma\right)\rightarrow\left(\rho\times\sigma\times\alpha\right)\right)\right]\rightarrow\beta\rightarrow\left(\rho\times\sigma\right)\rightarrow\left(\rho\times\sigma\times\alpha\right)$
 \end_inset
 
 
@@ -160,7 +180,7 @@ Syntactic sugar: state transformer with free variable
 \end_layout
 
 \begin_layout Standard
-\begin_inset Formula $M_{S}\ \left[\left\langle p_{0},T_{0}\right\rangle |T_{rest}\right]\ b\ \rho=\left(\lambda p_{0}.M_{S}\ T_{rest}\ b\ \rho'\right)\ v_{0}$
+\begin_inset Formula $M_{S}\ \left[\left\langle p_{0},T_{0}\right\rangle |T_{rest}\right]\ b\ \rho\ \sigma=\left(\lambda p_{0}.M_{S}\ T_{rest}\ b\ \rho'\ \sigma'\right)\ v_{0}$
 \end_inset
 
 
@@ -171,7 +191,7 @@ where
 \end_layout
 
 \begin_layout Itemize
-\begin_inset Formula $\left\langle \rho',v_{0}\right\rangle =T_{0}\ \rho$
+\begin_inset Formula $\left\langle \rho',\sigma',v_{0}\right\rangle =T_{0}\ \rho\ \sigma$
 \end_inset
 
 
@@ -191,18 +211,37 @@ Pass
 \end_layout
 
 \begin_layout Standard
-Identity state transformer
+\begin_inset Formula $I_{\rho}$
+\end_inset
+
+ Identity state transformer takes a constant and lifts it to a identity
+ state transformer with the constant as a return value
 \end_layout
 
 \begin_layout Standard
-\begin_inset Formula $I_{\rho}:\alpha\rightarrow\beta\rightarrow\rho\rightarrow\rho\times\alpha$
+\begin_inset Formula $I_{\rho}:\alpha\rightarrow\beta\rightarrow\left(\rho\times\sigma\right)\rightarrow\left(\rho\times\sigma\times\alpha\right)$
 \end_inset
 
 
 \end_layout
 
 \begin_layout Standard
-\begin_inset Formula $I_{\rho}\ v\ \_\ \rho=\left\langle \rho,v\right\rangle $
+\begin_inset Formula $I_{\rho}\ v\ \_\ \rho\ \sigma=\left\langle \rho,\sigma,v\right\rangle $
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $I_{S}$
+\end_inset
+
+ lifts a state transformer to a state transformer with state collector passing
+ through
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $I_{S}:\left(\rho\rightarrow\rho\times\alpha\right)\rightarrow\left(\rho\times\sigma\right)\rightarrow\left(\rho\times\sigma\times\alpha\right)$
 \end_inset
 
 
@@ -214,9 +253,25 @@ We define following functions
 
 \begin_layout Standard
 \begin_inset Formula 
+\begin{alignat*}{2}
+ & T_{S} & : & s\rightarrow\left(\beta\rightarrow\rho\times\sigma\rightarrow\left(\rho\times\sigma\times\alpha\right)\right)\rightarrow\left(\beta\rightarrow\rho\times\sigma\rightarrow\left(\rho\times\sigma\times\alpha\right)\right)\\
+ & T_{S}\ X\ f\ \rho\ \sigma\ s & = & \left\langle \rho',\sigma'',\alpha'\right\rangle \\
+ &  &  & \begin{aligned}\mbox{where} & \left\langle \rho',\sigma',\alpha'\right\rangle =X\ f\ \rho\ \sigma\\
+ & \sigma''=\sigma'\left[s\times\rho\mapsto\rho'\right]
+\end{aligned}
+\end{alignat*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
 \begin{eqnarray*}
-F & : & number\rightarrow\left(\rho\rightarrow\left(\rho\times Value\right)\right)\\
-S & : & F\rightarrow\left(\rho\rightarrow\left(\rho\times Value\right)\right)
+\mathcal{F} & : & number\rightarrow\left(\rho\times\sigma\rightarrow\left(\rho\times\sigma\times Value\right)\right)\\
+\mathcal{S} & : & Stmt\rightarrow\mathcal{F}\rightarrow s\rightarrow\left(\rho\times\sigma\rightarrow\left(\rho\times\sigma\times Value\right)\right)\\
+\mathcal{E} & : & Expr\rightarrow\mathcal{F}\rightarrow\rho\rightarrow\rho\times Value
 \end{eqnarray*}
 
 \end_inset
@@ -227,57 +282,53 @@ S & : & F\rightarrow\left(\rho\rightarrow\left(\rho\times Value\right)\right)
 \begin_layout Standard
 \begin_inset Formula 
 \begin{align*}
- & F & = & Y\lambda f.\lambda n.\mathcal{S}\dd{\mathtt{Stmt}_{n}}\ f\\
- & \mathcal{S}\dd{S_{1};S_{2}} & = & M_{s}\left(\begin{aligned} & \left\langle r,S\dd{S_{1}}\right\rangle \\
- & \left\langle \_,\mathtt{isterm}\left(r,\lambda.S\dd{S_{2}}\right)\right\rangle 
+ & \mathcal{F} & = & Y\lambda f.\lambda n.\mathcal{S}\dd{\mathtt{Stmt}_{n}}\ \mathtt{sid}\left(\mathtt{Stmt}_{n}\right)\ f\\
+ & \mathcal{S}\dd{S_{1};S_{2}} & = & T_{S}\ M_{S}\left(\begin{aligned} & \left\langle r,S\dd{S_{1}}\ \mathtt{sid}\left(S_{1}\right)\right\rangle \\
+ & \left\langle \_,\mathtt{isterm}\left(r,\lambda.S\dd{S_{2}}\ \mathtt{sid}\left(S_{2}\right)\right)\right\rangle 
 \end{aligned}
 \right)\\
- & \mathcal{S}\dd{\mathtt{return}\ e} & = & \mathcal{E}\dd{e}\\
- & \mathcal{S}\dd{\mathtt{if}\left(e\right)S_{1}}\ f\ \rho & = & \mathtt{cond}\left(v,\lambda.S\dd{S_{1}}\ f\ \rho',\left\langle \rho',NoReturn\right\rangle \right)\\
- &  &  & \mbox{where}\ \left\langle \rho',v\right\rangle =\mathcal{E}\dd{e}\\
- & \mathcal{S}\dd{\mathtt{if}\left(e\right)S_{1}}\ f & = & M_{S}\left(\begin{aligned} & \left\langle v,E\dd{e}\right\rangle \\
+ & \mathcal{S}\dd{\mathtt{return}\ e} & = & T_{S}\ \mathcal{E}\dd{e}\\
+ & \mathcal{S}\dd{\mathtt{if}\left(e\right)S_{1}}\ f & = & T_{S}\ M_{S}\left(\begin{aligned} & \left\langle v,\mathcal{E}\dd{e}\right\rangle \\
  & \left\langle \_,\mathtt{cond}\left(v,\mathcal{S}\dd{S_{1}},I_{\rho}\ NoReturn\right)\right\rangle 
 \end{aligned}
 \right)\\
- & \mathcal{S}\dd{\mathtt{if}\left(e\right)S_{1}\mathtt{else}S_{2}}\ f & = & M_{S}\left(\begin{aligned} & \left\langle v,E\dd{e}\right\rangle \\
+ & \mathcal{S}\dd{\mathtt{if}\left(e\right)S_{1}\mathtt{else}S_{2}}\ f & = & T_{S}\ M_{S}\left(\begin{aligned} & \left\langle v,E\dd{e}\right\rangle \\
  & \left\langle \_,\mathtt{cond}\left(v,\mathcal{S}\dd{S_{1}},\mathcal{S}\dd{S_{2}}\right)\right\rangle 
 \end{aligned}
 \right)\\
- & \mathcal{S}\dd{id=e}\ f\ \rho & = & \left\langle \mathtt{asg}\left(\rho',id,v\right),NoReturn\right\rangle \\
- &  &  & \mbox{where}\ \left\langle \rho',v\right\rangle =\mathcal{E}\dd{e}\\
- & \mathcal{S}\dd{id=e} & = & M_{S}\left(\begin{aligned} & \left\langle v,\mathcal{E}\dd{e}\right\rangle \\
+ & \mathcal{S}\dd{id=e} & = & T_{S}\ M_{S}\left(\begin{aligned} & \left\langle v,\mathcal{E}\dd{e}\right\rangle \\
  & \left\langle \_,\mathtt{asg}\left(id,v\right)\right\rangle \\
  & \left\langle \_,I_{\rho}\ NoReturn\right\rangle 
 \end{aligned}
 \right)\\
- & \mathcal{S}\dd{e_{1}.id=e_{2}} & = & M_{S}\left(\begin{aligned} & \left\langle v,\mathcal{E}\dd{e_{2}}\right\rangle \\
+ & \mathcal{S}\dd{e_{1}.id=e_{2}} & = & T_{S}\ M_{S}\left(\begin{aligned} & \left\langle v,\mathcal{E}\dd{e_{2}}\right\rangle \\
  & \left\langle r,\mathcal{E}\dd{e_{1}}\right\rangle \\
  & \left\langle \_,\mathtt{member}\left(r,id,v\right)\right\rangle 
 \end{aligned}
 \right)\\
- & \mathcal{S}\dd{\mathtt{while}\left(e\right)S_{1}}\ f\ \rho & = & \left(Y\lambda x.\lambda\rho,r.\mathtt{isterm}\left(r,M_{S}\left(\begin{aligned} & \left\langle v,\mathcal{E}\dd{e}\right\rangle \\
- & \left\langle \_,\mathtt{cond}\left(v,\lambda f,\rho'.x\ \left(\mathcal{S}\dd{S_{1}}\ f\ \rho'\right),I_{\rho}\ NoReturn\right)\right\rangle 
+ & \mathcal{S}\dd{\mathtt{while}\left(e\right)S_{1}}\ f\ \rho & = & T_{S}\ \left(Y\lambda x.\lambda\rho,r.\mathtt{isterm}\left(r,M_{S}\left(\begin{aligned} & \left\langle v,\mathcal{E}\dd{e}\right\rangle \\
+ & \left\langle \_,\mathtt{cond}\left(v,\lambda f,\rho'.x\ \left(\mathcal{S}\dd{S_{1}}\ \mathtt{sid}\left(S_{1}\right)f\ \rho'\right),I_{\rho}\ NoRet\right)\right\rangle 
 \end{aligned}
-\right)\ f\right)\right)\ \rho\ NoReturn\\
- & E\dd{con} & = & M_{S}\ \left\langle \_,I_{\rho}\ \mathtt{conval}\left(con\right)\right\rangle \\
- & E\dd{\mathtt{global}} & = & M_{S}\ \left\langle \_,\lambda.f.\rho.I_{\rho}\ \mathtt{obj}\left(0,\rho\right)\right\rangle \\
- & E\dd{L} & = & L\dd{L}\\
- & E\dd{\mathtt{this}} & = & M_{S}\ \left\langle \_,\lambda.f.\rho.I_{\rho}\ \mathtt{getthis}\left(\rho\right)\right\rangle \\
- & E\dd{\mathtt{input}} & = & M_{S}\ \left\langle \_,\lambda f.\rho.\mathtt{getinput}\left(\rho\right)\right\rangle \\
- & E\dd{\mathtt{new}\ L\left(E*\right)} & = & M_{s}\left(\begin{aligned} & \left\langle n,L\ \dd{L}\right\rangle \\
+\right)\ f\right)\right)\ \rho\ NoRet\\
+ & \mathcal{E}\dd{con} & = & T_{S}\ M_{S}\ \left\langle \_,I_{\rho}\ \mathtt{conval}\left(con\right)\right\rangle \\
+ & \mathcal{E}\dd{\mathtt{global}} & = & T_{S}\ M_{S}\ \left\langle \_,\lambda f.\rho.\sigma.I_{\rho}\ \mathtt{obj}\left(0,\rho\right)\right\rangle \\
+ & \mathcal{E}\dd{L} & = & T_{S}\ \mathcal{L}\dd{L}\\
+ & \mathcal{E}\dd{\mathtt{this}} & = & T_{S}\ M_{S}\ \left\langle \_,\lambda f.\rho.\sigma.I_{\rho}\ \mathtt{getthis}\left(\rho\right)\right\rangle \\
+ & \mathcal{E}\dd{\mathtt{input}} & = & T_{S}\ M_{S}\ \left\langle \_,I_{S}\ \lambda f.\rho.\mathtt{getinput}\left(\rho\right)\right\rangle \\
+ & \mathcal{E}\dd{\mathtt{new}\ L\left(E*\right)} & = & T_{S}\ M_{s}\left(\begin{aligned} & \left\langle n,\mathcal{L}\ \dd{L}\right\rangle \\
  & \left\langle p,\mathtt{evalParams}\ E*\ \phi\right\rangle \\
  & \left\langle m,\lambda f.\rho.\mathtt{newobj}\left(\rho\right)\right\rangle \\
  & \left\langle \_,\lambda f.\rho.\mathtt{call}\left(n,p,m,f,\rho\right)\right\rangle \\
  & \left\langle \_,I_{\rho}\ m\right\rangle 
 \end{aligned}
 \right)\\
- & E\dd{L\left(E*\right)} & = & M_{S}\left(\begin{aligned} & \left\langle n,L\ \dd{L}\right\rangle \\
+ & \mathcal{E}\dd{L\left(E*\right)} & = & T_{S}\ M_{S}\left(\begin{aligned} & \left\langle n,\mathcal{L}\ \dd{L}\right\rangle \\
  & \left\langle p,\mathtt{evalParams}\ E*\ \phi\right\rangle \\
  & \left\langle \_,\lambda f,p.\mathtt{call}\left(n,p,\mathtt{obj}\left(0,\rho\right),f,\rho\right)\right\rangle 
 \end{aligned}
 \right)\\
- & E\dd{E_{0}.L\left(E*\right)} & = & M_{S}\left(\begin{aligned} & \left\langle t,E\ \dd{E_{0}}\right\rangle \\
- & \left\langle n,L\ \dd{L}\right\rangle \\
+ & \mathcal{E}\dd{E_{0}.L\left(E*\right)} & = & T_{S}\ M_{S}\left(\begin{aligned} & \left\langle t,\mathcal{E}\ \dd{E_{0}}\right\rangle \\
+ & \left\langle n,\mathcal{L}\ \dd{L}\right\rangle \\
  & \left\langle p,\mathtt{evalParams}\ E*\ \phi\right\rangle \\
  & \left\langle \_,\lambda f,p.\mathtt{call}\left(n,p,t,f,\rho\right)\right\rangle 
 \end{aligned}
@@ -333,9 +384,9 @@ s_{2} & v=false
 \mathtt{getthis}\left(\left\langle V,OM,T\right\rangle \right) & = & T\\
 \mathtt{getinput\left(\rho\right)} & =\\
 \mathtt{newobj}\left(\left\langle V,OM,T\right\rangle \right) & = & \left\langle \left\langle V,OM\left[n\mapsto\phi\right],T\right\rangle ,OBJ_{n}\right\rangle \ \mbox{where}\ n=N\left(OM\right)\\
-\mathtt{call}\left(\left\langle FP_{n},C\right\rangle ,p,t,f,\left\langle V,OM,T\right\rangle \right) & = & \begin{cases}
-\left\langle \left\langle V,OM',T\right\rangle ,r\right\rangle \ \mbox{where}\ \left\langle \left\langle V',OM',T'\right\rangle ,r\right\rangle =f\ n\ \left\langle C\backslash p,OM,t\right\rangle  & N\left(C\right)+N\left(p\right)=arity_{n}\\
-\left\langle \left\langle V,OM,T\right\rangle ,\left\langle FP_{n},C\backslash p\right\rangle \right\rangle  & \mbox{otherwise}
+\mathtt{call}\left(\left\langle FP_{n},C\right\rangle ,p,t,f,\left\langle V,OM,T\right\rangle ,s\right) & = & \begin{cases}
+\left\langle \left\langle V,OM',T\right\rangle ,s',r\right\rangle \ \mbox{where}\ \left\langle \left\langle V',OM',T'\right\rangle ,s',r\right\rangle =f\ n\ \left\langle C\backslash p,OM,t\right\rangle \ s & N\left(C\right)+N\left(p\right)=arity_{n}\\
+\left\langle \left\langle V,OM,T\right\rangle ,s,\left\langle FP_{n},C\backslash p\right\rangle \right\rangle  & \mbox{otherwise}
 \end{cases}
 \end{eqnarray*}
 
@@ -371,6 +422,13 @@ define
 \end_layout
 
 \begin_layout Standard
+\begin_inset Formula $\left\langle \rho_{1},\sigma_{1},r_{1}\right\rangle \sqcup\left\langle \rho_{2},\sigma_{2},r_{2}\right\rangle =\left\langle \rho_{1}\sqcup\rho_{2},\sigma_{1}\cup\sigma_{2},r_{1}\sqcup r_{2}\right\rangle $
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
 \mathtt{isterm}\left(v,s\right) & = & \begin{cases}
@@ -391,10 +449,10 @@ Boolean & con\in\left\{ true,false\right\}
 \mathtt{getthis}\left(\left\langle \sigma,\alpha,\tau\right\rangle \right) & = & \tau\\
 \mathtt{getinput\left(\rho\right)} & = & \left\langle \rho,\left\{ Number\right\} \right\rangle \\
 \mathtt{newobj}\left(\left\langle \sigma,\alpha,\tau\right\rangle \right) & = & \left\langle \left\langle \sigma,\alpha\left[n\mapsto\phi\right],\tau\right\rangle ,OBJ_{n}\right\rangle \ \mbox{where}\ n=N\left(\alpha\right)\\
-\mathtt{call}\left(n,p,t,f,\left\langle \sigma,\alpha,\tau\right\rangle \right) & = & \underset{\left\langle FP_{x},C\right\rangle \in n}{\bigsqcup}\mathtt{scall}\left(\left\langle FP_{x},C\right\rangle ,p,t,f,\left\langle \sigma,\alpha,\tau\right\rangle \right)\\
-\mathtt{scall}\left(\left\langle FP_{n},C\right\rangle ,p,t,f,\left\langle \sigma,\alpha,\tau\right\rangle \right) & = & \begin{cases}
-\left\langle \left\langle \sigma,\alpha',\tau\right\rangle ,r\right\rangle \ \mbox{where}\ \left\langle \left\langle \sigma',\alpha',\tau'\right\rangle ,r\right\rangle =f\ n\ \left\langle C\backslash p,\alpha,\tau\right\rangle  & N\left(C\right)+N\left(p\right)=arity_{n}\\
-\left\langle \left\langle \sigma,\alpha,\tau\right\rangle ,\left\langle FP_{n},C\backslash p\right\rangle \right\rangle  & \mbox{otherwise}
+\mathtt{call}\left(n,p,t,f,\left\langle \sigma,\alpha,\tau\right\rangle ,s\right) & = & \underset{\left\langle FP_{x},C\right\rangle \in n}{\bigsqcup}\mathtt{scall}\left(\left\langle FP_{x},C\right\rangle ,p,t,f,\left\langle \sigma,\alpha,\tau\right\rangle ,s\right)\\
+\mathtt{scall}\left(\left\langle FP_{n},C\right\rangle ,p,t,f,\left\langle \sigma,\alpha,\tau\right\rangle ,s\right) & = & \begin{cases}
+\left\langle \left\langle \sigma,\alpha',\tau\right\rangle ,s',r\right\rangle \ \mbox{where}\ \left\langle \left\langle \sigma',\alpha',\tau'\right\rangle ,s',r\right\rangle =f\ n\ \left\langle C\backslash p,\alpha,\tau\right\rangle \ s & N\left(C\right)+N\left(p\right)=arity_{n}\\
+\left\langle \left\langle \sigma,\alpha,\tau\right\rangle ,s,\left\langle FP_{n},C\backslash p\right\rangle \right\rangle  & \mbox{otherwise}
 \end{cases}
 \end{eqnarray*}
 
