@@ -208,14 +208,14 @@ Identity state transformer
 
 \end_layout
 
-\begin_layout Standard
+\begin_layout Paragraph
 We define following functions
 \end_layout
 
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-F & : & number\rightarrow\left(\rho\rightarrow\rho\right)\\
+F & : & number\rightarrow\left(\rho\rightarrow\left(\rho\times Value\right)\right)\\
 S & : & F\rightarrow\left(\rho\rightarrow\left(\rho\times Value\right)\right)
 \end{eqnarray*}
 
@@ -228,59 +228,60 @@ S & : & F\rightarrow\left(\rho\rightarrow\left(\rho\times Value\right)\right)
 \begin_inset Formula 
 \begin{align*}
  & F & = & Y\lambda f.\lambda n.\mathcal{S}\dd{\mathtt{Stmt}_{n}}\ f\\
- & \mathcal{S}\dd{S_{1};S_{2}} & = & \begin{aligned}M_{s} & \left\langle r,S\dd{S_{1}}\right\rangle \\
+ & \mathcal{S}\dd{S_{1};S_{2}} & = & M_{s}\left(\begin{aligned} & \left\langle r,S\dd{S_{1}}\right\rangle \\
  & \left\langle \_,\mathtt{isterm}\left(r,\lambda.S\dd{S_{2}}\right)\right\rangle 
 \end{aligned}
-\\
+\right)\\
  & \mathcal{S}\dd{\mathtt{return}\ e} & = & \mathcal{E}\dd{e}\\
  & \mathcal{S}\dd{\mathtt{if}\left(e\right)S_{1}}\ f\ \rho & = & \mathtt{cond}\left(v,\lambda.S\dd{S_{1}}\ f\ \rho',\left\langle \rho',NoReturn\right\rangle \right)\\
  &  &  & \mbox{where}\ \left\langle \rho',v\right\rangle =\mathcal{E}\dd{e}\\
- & \mathcal{S}\dd{\mathtt{if}\left(e\right)S_{1}}\ f & = & \begin{aligned}M_{S} & \left\langle v,E\dd{e}\right\rangle \\
- & \left\langle \_,\mathtt{cond}\left(v,\lambda.\mathcal{S}\dd{S_{1}}\ f,I_{\rho}\ NoReturn\right)\right\rangle 
+ & \mathcal{S}\dd{\mathtt{if}\left(e\right)S_{1}}\ f & = & M_{S}\left(\begin{aligned} & \left\langle v,E\dd{e}\right\rangle \\
+ & \left\langle \_,\mathtt{cond}\left(v,\mathcal{S}\dd{S_{1}},I_{\rho}\ NoReturn\right)\right\rangle 
 \end{aligned}
-\\
- & \mathcal{S}\dd{\mathtt{if}\left(e\right)S_{1}\mathtt{else}S_{2}}\ f & = & \begin{aligned}M_{S} & \left\langle v,E\dd{e}\right\rangle \\
- & \left\langle \_,\mathtt{cond}\left(v,\lambda.\mathcal{S}\dd{S_{1}}\ f,\lambda.\mathcal{S}\dd{S_{2}}\ f\right)\right\rangle 
+\right)\\
+ & \mathcal{S}\dd{\mathtt{if}\left(e\right)S_{1}\mathtt{else}S_{2}}\ f & = & M_{S}\left(\begin{aligned} & \left\langle v,E\dd{e}\right\rangle \\
+ & \left\langle \_,\mathtt{cond}\left(v,\mathcal{S}\dd{S_{1}},\mathcal{S}\dd{S_{2}}\right)\right\rangle 
 \end{aligned}
-\\
+\right)\\
  & \mathcal{S}\dd{id=e}\ f\ \rho & = & \left\langle \mathtt{asg}\left(\rho',id,v\right),NoReturn\right\rangle \\
  &  &  & \mbox{where}\ \left\langle \rho',v\right\rangle =\mathcal{E}\dd{e}\\
- & \mathcal{S}\dd{id=e} & = & \begin{aligned}M_{S} & \left\langle v,\mathcal{E}\dd{e}\right\rangle \\
+ & \mathcal{S}\dd{id=e} & = & M_{S}\left(\begin{aligned} & \left\langle v,\mathcal{E}\dd{e}\right\rangle \\
  & \left\langle \_,\mathtt{asg}\left(id,v\right)\right\rangle \\
  & \left\langle \_,I_{\rho}\ NoReturn\right\rangle 
 \end{aligned}
-\\
- & \mathcal{S}\dd{e_{1}.id=e_{2}} & = & \begin{aligned}M_{S} & \left\langle v,\mathcal{E}\dd{e_{2}}\right\rangle \\
+\right)\\
+ & \mathcal{S}\dd{e_{1}.id=e_{2}} & = & M_{S}\left(\begin{aligned} & \left\langle v,\mathcal{E}\dd{e_{2}}\right\rangle \\
  & \left\langle r,\mathcal{E}\dd{e_{1}}\right\rangle \\
  & \left\langle \_,\mathtt{member}\left(r,id,v\right)\right\rangle 
 \end{aligned}
-\\
- & \mathcal{S}\dd{\mathtt{while}\left(e\right)S_{1}} & = & Y\lambda x.\lambda r,\rho.\mathtt{isterm}\left(r,\begin{aligned}M_{S} & \left\langle \_,\mathcal{E}\dd{e}\right\rangle \\
+\right)\\
+ & \mathcal{S}\dd{\mathtt{while}\left(e\right)S_{1}}\ f\ \rho & = & \left(Y\lambda x.\lambda\rho,r.\mathtt{isterm}\left(r,M_{S}\left(\begin{aligned} & \left\langle v,\mathcal{E}\dd{e}\right\rangle \\
  & \left\langle \_,\mathtt{cond}\left(v,\lambda f,\rho'.x\ \left(\mathcal{S}\dd{S_{1}}\ f\ \rho'\right),I_{\rho}\ NoReturn\right)\right\rangle 
 \end{aligned}
-\right)\ NoReturn\\
+\right)\ f\right)\right)\ \rho\ NoReturn\\
  & E\dd{con} & = & M_{S}\ \left\langle \_,I_{\rho}\ \mathtt{conval}\left(con\right)\right\rangle \\
  & E\dd{\mathtt{global}} & = & M_{S}\ \left\langle \_,\lambda.f.\rho.I_{\rho}\ \mathtt{obj}\left(0,\rho\right)\right\rangle \\
  & E\dd{L} & = & L\dd{L}\\
  & E\dd{\mathtt{this}} & = & M_{S}\ \left\langle \_,\lambda.f.\rho.I_{\rho}\ \mathtt{getthis}\left(\rho\right)\right\rangle \\
  & E\dd{\mathtt{input}} & = & M_{S}\ \left\langle \_,\lambda f.\rho.\mathtt{getinput}\left(\rho\right)\right\rangle \\
- & E\dd{\mathtt{new}\ L\left(E*\right)} & = & \begin{aligned}M_{s} & \left\langle n,L\ \dd{L}\right\rangle \\
+ & E\dd{\mathtt{new}\ L\left(E*\right)} & = & M_{s}\left(\begin{aligned} & \left\langle n,L\ \dd{L}\right\rangle \\
  & \left\langle p,\mathtt{evalParams}\ E*\ \phi\right\rangle \\
  & \left\langle m,\lambda f.\rho.\mathtt{newobj}\left(\rho\right)\right\rangle \\
  & \left\langle \_,\lambda f.\rho.\mathtt{call}\left(n,p,m,f,\rho\right)\right\rangle \\
  & \left\langle \_,I_{\rho}\ m\right\rangle 
 \end{aligned}
-\\
- & E\dd{L\left(E*\right)} & = & \begin{aligned}M_{S} & \left\langle n,L\ \dd{L}\right\rangle \\
+\right)\\
+ & E\dd{L\left(E*\right)} & = & M_{S}\left(\begin{aligned} & \left\langle n,L\ \dd{L}\right\rangle \\
  & \left\langle p,\mathtt{evalParams}\ E*\ \phi\right\rangle \\
  & \left\langle \_,\lambda f,p.\mathtt{call}\left(n,p,\mathtt{obj}\left(0,\rho\right),f,\rho\right)\right\rangle 
 \end{aligned}
-\\
- & E\dd\left\{ E_{0}.L\left(E*\right)\right\}  & = & \begin{aligned}M_{S} & \left\langle t,E\ \dd{E_{0}}\right\rangle \\
+\right)\\
+ & E\dd{E_{0}.L\left(E*\right)} & = & M_{S}\left(\begin{aligned} & \left\langle t,E\ \dd{E_{0}}\right\rangle \\
  & \left\langle n,L\ \dd{L}\right\rangle \\
  & \left\langle p,\mathtt{evalParams}\ E*\ \phi\right\rangle \\
  & \left\langle \_,\lambda f,p.\mathtt{call}\left(n,p,t,f,\rho\right)\right\rangle 
 \end{aligned}
+\right)
 \end{align*}
 
 \end_inset
@@ -303,7 +304,7 @@ Where
 
 \end_layout
 
-\begin_layout Standard
+\begin_layout Paragraph
 Concrete functions
 \end_layout
 
@@ -325,8 +326,8 @@ I_{\rho}\ v & \mbox{otherwise}
 s_{1} & v=true\\
 s_{2} & v=false
 \end{cases}\\
-\mathtt{asg}\left(id,v\right) & = & \lambda\left\langle V,OM,T\right\rangle .\left\langle V\left[id=v\right],OM,T\right\rangle \\
-\mathtt{member}\left(OBJ_{n},id,v\right) & = & \lambda\left\langle V,OM,T\right\rangle .\left\langle V,OM\left[OBJ_{n}\left[id\mapsto v\right]\right],T\right\rangle \\
+\mathtt{asg}\left(id,v\right) & = & \lambda f,\left\langle V,OM,T\right\rangle .\left\langle V\left[id=v\right],OM,T\right\rangle \\
+\mathtt{member}\left(OBJ_{n},id,v\right) & = & \lambda f,\left\langle V,OM,T\right\rangle .\left\langle V,OM\left[OBJ_{n}\left[id\mapsto v\right]\right],T\right\rangle \\
 \mathtt{conval}\left(con\right) & = & con\\
 \mathtt{obj}\left(n,\left\langle V,OM,T\right\rangle \right) & = & OM\left(n\right)\\
 \mathtt{getthis}\left(\left\langle V,OM,T\right\rangle \right) & = & T\\
@@ -343,7 +344,7 @@ s_{2} & v=false
 
 \end_layout
 
-\begin_layout Standard
+\begin_layout Paragraph
 Abstract functions for Forward-may analysis 
 \end_layout
 
@@ -377,8 +378,8 @@ s & v=\left\{ NoReturn\right\} \\
 I_{\rho}\ v & \mbox{otherwise}
 \end{cases}\\
 \mathtt{cond}\left(v,s_{1},s_{2}\right) & = & s_{1}\sqcup s_{2}\\
-\mathtt{asg}\left(id,v\right) & = & \lambda\left\langle \sigma,\alpha,\tau\right\rangle .\left\langle \sigma\left[id=v\right],\alpha,\tau\right\rangle \\
-\mathtt{member}\left(n,id,v\right) & = & \lambda\left\langle \sigma,\alpha,\tau\right\rangle .\left\langle \sigma,\left\{ x|OBJ_{x}\in\alpha,x=\begin{cases}
+\mathtt{asg}\left(id,v\right) & = & \lambda f,\left\langle \sigma,\alpha,\tau\right\rangle .\left\langle \sigma\left[id=v\right],\alpha,\tau\right\rangle \\
+\mathtt{member}\left(n,id,v\right) & = & \lambda f,\left\langle \sigma,\alpha,\tau\right\rangle .\left\langle \sigma,\left\{ x|OBJ_{x}\in\alpha,x=\begin{cases}
 \alpha\left(x\right)\left[id\mapsto v\right] & OBJ_{x}\in n\\
 \alpha\left(x\right) & \mbox{otherwise}
 \end{cases}\right\} ,\tau\right\rangle \\
