@@ -269,8 +269,8 @@ We define following functions
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-\mathcal{F} & : & number\rightarrow\left(\rho\times\sigma\rightarrow\left(\rho\times\sigma\times Value\right)\right)\\
-\mathcal{S} & : & Stmt\rightarrow\mathcal{F}\rightarrow s\rightarrow\left(\rho\times\sigma\rightarrow\left(\rho\times\sigma\times Value\right)\right)\\
+\mathcal{F} & : & number\rightarrow\left(\rho\times\sigma\rightarrow\left(\rho\times\sigma\times\alpha\right)\right)\\
+\mathcal{S} & : & Stmt\rightarrow\mathcal{F}\rightarrow s\rightarrow\left(\rho\times\sigma\rightarrow\left(\rho\times\sigma\times\alpha\right)\right)\\
 \mathcal{E} & : & Expr\rightarrow\mathcal{F}\rightarrow\rho\rightarrow\rho\times Value
 \end{eqnarray*}
 
@@ -292,7 +292,7 @@ We define following functions
  & \left\langle \_,\mathtt{cond}\left(v,\mathcal{S}\dd{S_{1}},I_{\rho}\ NoReturn\right)\right\rangle 
 \end{aligned}
 \right)\\
- & \mathcal{S}\dd{\mathtt{if}\left(e\right)S_{1}\mathtt{else}S_{2}}\ f & = & T_{S}\ M_{S}\left(\begin{aligned} & \left\langle v,E\dd{e}\right\rangle \\
+ & \mathcal{S}\dd{\mathtt{if}\left(e\right)S_{1}\mathtt{else}S_{2}}\ f & = & T_{S}\ M_{S}\left(\begin{aligned} & \left\langle v,\mathcal{E}\dd{e}\right\rangle \\
  & \left\langle \_,\mathtt{cond}\left(v,\mathcal{S}\dd{S_{1}},\mathcal{S}\dd{S_{2}}\right)\right\rangle 
 \end{aligned}
 \right)\\
@@ -318,19 +318,19 @@ We define following functions
  & \mathcal{E}\dd{\mathtt{new}\ L\left(E*\right)} & = & T_{S}\ M_{s}\left(\begin{aligned} & \left\langle n,\mathcal{L}\ \dd{L}\right\rangle \\
  & \left\langle p,\mathtt{evalParams}\ E*\ \phi\right\rangle \\
  & \left\langle m,\lambda f.\rho.\mathtt{newobj}\left(\rho\right)\right\rangle \\
- & \left\langle \_,\lambda f.\rho.\mathtt{call}\left(n,p,m,f,\rho\right)\right\rangle \\
+ & \left\langle \_,\lambda f.\rho.\mathtt{call}\left(n,p,m,f,\rho,\mathtt{eid}\right)\right\rangle \\
  & \left\langle \_,I_{\rho}\ m\right\rangle 
 \end{aligned}
 \right)\\
  & \mathcal{E}\dd{L\left(E*\right)} & = & T_{S}\ M_{S}\left(\begin{aligned} & \left\langle n,\mathcal{L}\ \dd{L}\right\rangle \\
  & \left\langle p,\mathtt{evalParams}\ E*\ \phi\right\rangle \\
- & \left\langle \_,\lambda f,p.\mathtt{call}\left(n,p,\mathtt{obj}\left(0,\rho\right),f,\rho\right)\right\rangle 
+ & \left\langle \_,\lambda f,p.\mathtt{call}\left(n,p,\mathtt{obj}\left(0,\rho\right),f,\rho,\mathtt{eid}\right)\right\rangle 
 \end{aligned}
 \right)\\
  & \mathcal{E}\dd{E_{0}.L\left(E*\right)} & = & T_{S}\ M_{S}\left(\begin{aligned} & \left\langle t,\mathcal{E}\ \dd{E_{0}}\right\rangle \\
  & \left\langle n,\mathcal{L}\ \dd{L}\right\rangle \\
  & \left\langle p,\mathtt{evalParams}\ E*\ \phi\right\rangle \\
- & \left\langle \_,\lambda f,p.\mathtt{call}\left(n,p,t,f,\rho\right)\right\rangle 
+ & \left\langle \_,\lambda f,p.\mathtt{call}\left(n,p,t,f,\rho,\mathtt{eid}\right)\right\rangle 
 \end{aligned}
 \right)
 \end{align*}
@@ -360,7 +360,42 @@ Concrete functions
 \end_layout
 
 \begin_layout Standard
+\begin_inset Formula $Value=\mathbb{Z}\cup\left\{ T,F\right\} \cup Objects\cup FunctionPointers$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $Objects=\left\{ OBJ_{n}|n\in\left\{ 0\right\} \cup\mathbb{N}\right\} $
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $FunctionPointers=\left\langle FP_{n},id\rightarrow Value\right\rangle $
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
 \begin_inset Formula $\rho=\left\langle V,OM,T\right\rangle $
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $V=id\rightarrow Value$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $OM=n\rightarrow V$
 \end_inset
 
 
@@ -384,7 +419,7 @@ s_{2} & v=false
 \mathtt{getthis}\left(\left\langle V,OM,T\right\rangle \right) & = & T\\
 \mathtt{getinput\left(\rho\right)} & =\\
 \mathtt{newobj}\left(\left\langle V,OM,T\right\rangle \right) & = & \left\langle \left\langle V,OM\left[n\mapsto\phi\right],T\right\rangle ,OBJ_{n}\right\rangle \ \mbox{where}\ n=N\left(OM\right)\\
-\mathtt{call}\left(\left\langle FP_{n},C\right\rangle ,p,t,f,\left\langle V,OM,T\right\rangle ,s\right) & = & \begin{cases}
+\mathtt{call}\left(\left\langle FP_{n},C\right\rangle ,p,t,f,\left\langle V,OM,T\right\rangle ,s,\_\right) & = & \begin{cases}
 \left\langle \left\langle V,OM',T\right\rangle ,s',r\right\rangle \ \mbox{where}\ \left\langle \left\langle V',OM',T'\right\rangle ,s',r\right\rangle =f\ n\ \left\langle C\backslash p,OM,t\right\rangle \ s & N\left(C\right)+N\left(p\right)=arity_{n}\\
 \left\langle \left\langle V,OM,T\right\rangle ,s,\left\langle FP_{n},C\backslash p\right\rangle \right\rangle  & \mbox{otherwise}
 \end{cases}
@@ -400,10 +435,362 @@ Abstract functions for Forward-may analysis
 \end_layout
 
 \begin_layout Standard
-\begin_inset Formula $\rho=\left\langle \sigma,\alpha,\tau\right\rangle $
+problematic when we have an infinite loop of currying
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\rho & = & \left\langle \sigma,\alpha,\tau,\nu\right\rangle \\
+Pri & = & \left\{ Number,Boolean\right\} \\
+Obj & = & \left\{ OBJ_{n}|n\in\left\{ 0\right\} \cup\mathbb{N}\right\} \\
+FunctionPointers & = & \left\langle FP_{n},id\rightarrow\wp\left(Pri\cup Obj\cup\left\{ FP_{n}\right\} \cup\left\{ \left\langle FC,n,c,eid\right\rangle \right\} \right)\right\rangle \\
+AbsVal & = & Pri\cup Obj\cup FunctionPointers\\
+\sigma & = & id\rightarrow\wp\left(AbsVal\right)\\
+\alpha & = & n\rightarrow\sigma\\
+\tau & = & \wp\left(Obj\right)\\
+\nu & = & \left\langle n,c,eid\right\rangle \rightarrow\left(id\rightarrow\wp\left(Pri\cup Obj\cup\left\{ \left\langle FC,n,c,eid\right\rangle \right\} \right)\right)
+\end{eqnarray*}
+
 \end_inset
 
 
+\end_layout
+
+\begin_layout Standard
+In 
+\begin_inset Formula $OBJ_{n}$
+\end_inset
+
+:
+\end_layout
+
+\begin_layout Standard
+We number each of the 
+\begin_inset Quotes eld
+\end_inset
+
+new
+\begin_inset Quotes erd
+\end_inset
+
+ expressions as we parse the program.
+ The number n corresponds to the 
+\begin_inset Quotes eld
+\end_inset
+
+new
+\begin_inset Quotes erd
+\end_inset
+
+ expression number.
+\end_layout
+
+\begin_layout Standard
+In 
+\begin_inset Formula $\left\langle FC,n,c,eid\right\rangle $
+\end_inset
+
+:
+\end_layout
+
+\begin_layout Standard
+n = function number
+\end_layout
+
+\begin_layout Standard
+c = number of arguments curried
+\end_layout
+
+\begin_layout Standard
+eid = A uid of an expression from which this value has been produced
+\end_layout
+
+\begin_layout Example
+\begin_inset Argument
+status open
+
+\begin_layout Plain Layout
+Currying loop
+\end_layout
+
+\end_inset
+
+ Consider the following SDTL program.
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+lstparams "numbers=left"
+inline false
+status open
+
+\begin_layout Plain Layout
+
+function foo(a,b) {
+\end_layout
+
+\begin_layout Plain Layout
+
+	return a;
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+x = 0;
+\end_layout
+
+\begin_layout Plain Layout
+
+while(input < 30) {
+\end_layout
+
+\begin_layout Plain Layout
+
+	x = foo(x);
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+In this case, in line 7, x is associated with a value 
+\begin_inset Formula $\left\langle FP_{1},a\mapsto\left\{ Number,\left\langle FC,1,1,e_{1}\right\rangle \right\} \right\rangle $
+\end_inset
+
+ where 
+\begin_inset Formula $e_{1}$
+\end_inset
+
+ is the eid of 
+\begin_inset Formula $\mathtt{foo\left(x\right);}$
+\end_inset
+
+ in line 7.
+ 
+\begin_inset Formula $\nu$
+\end_inset
+
+ has one entry 
+\begin_inset Formula $\left\langle 1,1,e_{1}\right\rangle \mapsto\left\{ a\mapsto\left\{ 0,\left\langle FC,1,1,e_{1}\right\rangle \right\} \right\} $
+\end_inset
+
+
+\end_layout
+
+\begin_layout Fact
+\begin_inset Argument
+status open
+
+\begin_layout Plain Layout
+Finiteness of the abstract property
+\end_layout
+
+\end_inset
+
+Given an SDTL program,
+\begin_inset Formula $\left\langle \sigma,\alpha,\tau,\nu\right\rangle $
+\end_inset
+
+ has a finite domain
+\end_layout
+
+\begin_layout Proof
+We show that each of the component 
+\begin_inset Formula $\sigma,\alpha,\tau,\nu$
+\end_inset
+
+ has a finite domain
+\end_layout
+
+\begin_layout Enumerate
+First, we show that the number of possible
+\begin_inset Formula $AbsVal$
+\end_inset
+
+ is finite.
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+Trivially,
+\begin_inset Formula $Pri$
+\end_inset
+
+ is a set of two elements.
+\end_layout
+
+\begin_layout Enumerate
+There are finite number of 
+\emph on
+new
+\emph default
+ expressions in a program.
+ Therefore number of elements in 
+\begin_inset Formula $Obj$
+\end_inset
+
+ is finite.
+\end_layout
+
+\begin_layout Enumerate
+In case of 
+\emph on
+FunctionPointers
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+There are a finite number of function declarations.
+ Each function can only have a set number of parameters.
+ There are a finite number of expressions in a program.
+ Therefore, number of possible values of
+\begin_inset Formula $\left\langle FC,n,c,eid\right\rangle $
+\end_inset
+
+is finite.
+\end_layout
+
+\begin_layout Enumerate
+Each functions have a set number of argument names.
+ Therefore, the number of possible
+\begin_inset Formula $id$
+\end_inset
+
+ is finite.
+\end_layout
+
+\begin_layout Enumerate
+There are only a finite number of function declarations in a program.
+\end_layout
+
+\begin_layout Enumerate
+Hence, 
+\emph on
+FunctionPointers
+\emph default
+ has a finite domain
+\end_layout
+
+\end_deeper
+\begin_layout Enumerate
+Then, 
+\begin_inset Formula $AbsVal$
+\end_inset
+
+, a union of finite domains, also has a finite domain.
+\end_layout
+
+\end_deeper
+\begin_layout Enumerate
+\begin_inset Formula $\sigma$
+\end_inset
+
+ is a composite of two components: 
+\emph on
+id
+\emph default
+ and 
+\begin_inset Formula $\wp\left(AbsVal\right)$
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+There are only a finite number of identifiers appearing in a program
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset Formula $AbsVal$
+\end_inset
+
+ has a finite domain.
+ Therefore, a powerset of it also has a finite domain.
+\end_layout
+
+\end_deeper
+\begin_layout Enumerate
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+\begin_inset Formula $\alpha$
+\end_inset
+
+ has two components, finiteness of which are argued in 1 (b) and 2 respectively.
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset Formula $\tau$
+\end_inset
+
+ is a finite as it is a powerset of a finite domain (1 (b))
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset Formula $\nu$
+\end_inset
+
+ has two components: 
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+
+\begin_inset Formula $\left\langle n,c,eid\right\rangle $
+\end_inset
+
+ and 
+\begin_inset Formula $\left(id\rightarrow\wp\left(Pri\cup Obj\cup\left\{ \left\langle FC,n,c,eid\right\rangle \right\} \right)\right)$
+\end_inset
+
+.
+ Finiteness of both are argued in 1 (c).
 \end_layout
 
 \begin_layout Standard
@@ -445,14 +832,14 @@ I_{\rho}\ v & \mbox{otherwise}
 Number & con\in\mathbb{N}\\
 Boolean & con\in\left\{ true,false\right\} 
 \end{cases}\\
-\mathtt{obj}\left(n,\left\langle \sigma,\alpha,\tau\right\rangle \right) & = & \alpha\left(n\right)\\
-\mathtt{getthis}\left(\left\langle \sigma,\alpha,\tau\right\rangle \right) & = & \tau\\
+\mathtt{obj}\left(n,\left\langle \sigma,\alpha,\tau,\nu\right\rangle \right) & = & \alpha\left(n\right)\\
+\mathtt{getthis}\left(\left\langle \sigma,\alpha,\tau,\nu\right\rangle \right) & = & \tau\\
 \mathtt{getinput\left(\rho\right)} & = & \left\langle \rho,\left\{ Number\right\} \right\rangle \\
-\mathtt{newobj}\left(\left\langle \sigma,\alpha,\tau\right\rangle \right) & = & \left\langle \left\langle \sigma,\alpha\left[n\mapsto\phi\right],\tau\right\rangle ,OBJ_{n}\right\rangle \ \mbox{where}\ n=N\left(\alpha\right)\\
-\mathtt{call}\left(n,p,t,f,\left\langle \sigma,\alpha,\tau\right\rangle ,s\right) & = & \underset{\left\langle FP_{x},C\right\rangle \in n}{\bigsqcup}\mathtt{scall}\left(\left\langle FP_{x},C\right\rangle ,p,t,f,\left\langle \sigma,\alpha,\tau\right\rangle ,s\right)\\
-\mathtt{scall}\left(\left\langle FP_{n},C\right\rangle ,p,t,f,\left\langle \sigma,\alpha,\tau\right\rangle ,s\right) & = & \begin{cases}
-\left\langle \left\langle \sigma,\alpha',\tau\right\rangle ,s',r\right\rangle \ \mbox{where}\ \left\langle \left\langle \sigma',\alpha',\tau'\right\rangle ,s',r\right\rangle =f\ n\ \left\langle C\backslash p,\alpha,\tau\right\rangle \ s & N\left(C\right)+N\left(p\right)=arity_{n}\\
-\left\langle \left\langle \sigma,\alpha,\tau\right\rangle ,s,\left\langle FP_{n},C\backslash p\right\rangle \right\rangle  & \mbox{otherwise}
+\mathtt{newobj}\left(\left\langle \sigma,\alpha,\tau,\nu\right\rangle \right) & = & \left\langle \left\langle \sigma,\alpha\left[n\mapsto\phi\right],\tau\right\rangle ,OBJ_{n},\nu\right\rangle \ \mbox{where}\ n=N\left(\alpha\right)\\
+\mathtt{call}\left(n,p,t,f,\left\langle \sigma,\alpha,\tau,\nu\right\rangle ,s,e\right) & = & \underset{\left\langle FP_{x},C\right\rangle \in n}{\bigsqcup}\mathtt{scall}\left(\left\langle FP_{x},C\right\rangle ,p,t,f,\left\langle \sigma,\alpha,\tau,\nu\right\rangle ,s,e\right)\\
+\mathtt{scall}\left(\left\langle FP_{n},C\right\rangle ,p,t,f,\left\langle \sigma,\alpha,\tau,\nu\right\rangle ,s,e\right) & = & \begin{cases}
+\left\langle \left\langle \sigma,\alpha',\tau\right\rangle ,s',r,\nu'\right\rangle \ \mbox{where}\ \left\langle \left\langle \sigma',\alpha',\tau'\right\rangle ,s',r,\nu'\right\rangle =f\ n\ \left\langle C\backslash p,\alpha,\tau,\nu\right\rangle \ s & N\left(C\right)+N\left(p\right)=arity_{n}\\
+\left\langle \left\langle \sigma,\alpha,\tau\right\rangle ,s,\left\langle FP_{n},C\backslash p\right\rangle ,\nu\left[\left\langle e,n,N\left(C\right)+N\left(p\right)\right\rangle \mapsto C\backslash p\right]\right\rangle  & \mbox{otherwise}
 \end{cases}
 \end{eqnarray*}
 
