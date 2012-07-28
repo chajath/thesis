@@ -619,6 +619,7 @@ We show that each of the component
  has a finite domain
 \end_layout
 
+\begin_deeper
 \begin_layout Enumerate
 First, we show that the number of possible
 \begin_inset Formula $AbsVal$
@@ -791,6 +792,31 @@ There are only a finite number of identifiers appearing in a program
 
 .
  Finiteness of both are argued in 1 (c).
+\end_layout
+
+\end_deeper
+\begin_layout Definition
+\begin_inset Argument
+status open
+
+\begin_layout Plain Layout
+Partial ordering
+\end_layout
+
+\end_inset
+
+We define a partial ordering 
+\begin_inset Formula $\sqsubseteq$
+\end_inset
+
+ between abstract environments as thus:
+\end_layout
+
+\begin_layout Definition
+\begin_inset Formula $\left\langle \sigma_{1},\alpha_{1},\tau_{1},\nu_{1}\right\rangle \sqsubseteq\left\langle \sigma_{2},\alpha_{2},\tau_{2},\nu_{2}\right\rangle \ \mbox{iff}\ $
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
