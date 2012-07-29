@@ -416,6 +416,29 @@ where
  are monotonous functions given abstract functions are all monotonous.
 \end_layout
 
+\begin_deeper
+\begin_layout Theorem
+Given two sets of definitions of abstract functions and their domain, if
+ there is a relationship 
+\begin_inset Formula $\prec$
+\end_inset
+
+ between functional relations, then such relations are also found in 
+\begin_inset Formula $\mathcal{S}$
+\end_inset
+
+, 
+\begin_inset Formula $\mathcal{E}$
+\end_inset
+
+ and 
+\begin_inset Formula $\mathcal{L}$
+\end_inset
+
+.
+\end_layout
+
+\end_deeper
 \begin_layout Definition
 \begin_inset Argument
 status open
@@ -1021,6 +1044,20 @@ Trivial
  is a chain complete partial ordering.
 \end_layout
 
+\begin_layout Definition
+\begin_inset Argument
+status open
+
+\begin_layout Plain Layout
+Abstract functions
+\end_layout
+
+\end_inset
+
+ We define abstract functions
+\end_layout
+
+\begin_deeper
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
@@ -1056,5 +1093,40 @@ Boolean & con\in\left\{ true,false\right\}
 
 \end_layout
 
+\end_deeper
+\begin_layout Fact
+Abstract functions are monotonous
+\end_layout
+
+\begin_layout Definition
+\begin_inset Argument
+status open
+
+\begin_layout Plain Layout
+Abstraction and concretisation
+\end_layout
+
+\end_inset
+
+ We define abstraction function 
+\begin_inset Formula $P$
+\end_inset
+
+ and concretisation function 
+\begin_inset Formula $Q$
+\end_inset
+
+ as following: TODO
+\end_layout
+
+\begin_deeper
+\begin_layout Fact
+\begin_inset Formula $\left(P,Q\right)$
+\end_inset
+
+ forms a galois connection
+\end_layout
+
+\end_deeper
 \end_body
 \end_document
