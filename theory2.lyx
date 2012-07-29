@@ -441,7 +441,7 @@ problematic when we have an infinite loop of currying
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-\rho & = & \left\langle \sigma,\alpha,\tau,\nu\right\rangle \\
+\eta & = & \left\langle \sigma,\alpha,\tau,\nu\right\rangle \\
 Pri & = & \left\{ Number,Boolean\right\} \\
 Obj & = & \left\{ OBJ_{n}|n\in\left\{ 0\right\} \cup\mathbb{N}\right\} \\
 FunctionPointers & = & \left\langle FP_{n},id\rightarrow\wp\left(Pri\cup Obj\cup\left\{ FP_{n}\right\} \cup\left\{ \left\langle FC,n,c,eid\right\rangle \right\} \right)\right\rangle \\
@@ -812,30 +812,137 @@ We define a partial ordering
  between abstract environments as thus:
 \end_layout
 
+\begin_deeper
+\begin_layout Itemize
+\begin_inset Formula $\sigma_{1}\sqsubseteq\sigma_{2}$
+\end_inset
+
+ if 
+\begin_inset Formula $\forall id\in\mbox{domain}\left(\sigma_{1}\right),\sigma_{1}\left(id\right)\subseteq\sigma_{2}\left(id\right)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+\begin_inset Formula $\alpha_{1}\sqsubseteq\alpha_{2}$
+\end_inset
+
+ if 
+\begin_inset Formula $\forall n\in\mbox{domain}\left(\alpha_{1}\right),\alpha_{1}\left(n\right)\sqsubseteq\alpha_{2}\left(n\right)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\tau_{1}\sqsubseteq\tau_{2}$
+\end_inset
+
+ if 
+\begin_inset Formula $\tau_{1}\subseteq\tau_{2}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\nu_{1}\sqsubseteq\nu_{2}$
+\end_inset
+
+ if 
+\begin_inset Formula $\forall c\in\mbox{domain}\left(\nu_{1}\right)\forall id\in\mbox{domain}\left(c\right),\nu_{1}\left(c\right)\left(id\right)\subseteq\nu_{2}\left(c\right)\left(id\right)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+\begin_inset Formula $\left\langle \sigma_{1},\alpha_{1},\tau_{1},\nu_{1}\right\rangle \sqsubseteq\left\langle \sigma_{2},\alpha_{2},\tau_{2},\nu_{2}\right\rangle \equiv\sigma_{1}\sqsubseteq\sigma_{2}\wedge\alpha_{1}\sqsubseteq\alpha_{2}\wedge\tau_{1}\sqsubseteq\tau_{2}\wedge\nu_{1}\sqsubseteq\nu_{2}$
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Standard
+We define a union between two abstract environments.
+\end_layout
+
 \begin_layout Definition
-\begin_inset Formula $\left\langle \sigma_{1},\alpha_{1},\tau_{1},\nu_{1}\right\rangle \sqsubseteq\left\langle \sigma_{2},\alpha_{2},\tau_{2},\nu_{2}\right\rangle \ \mbox{iff}\ $
+We define 
+\begin_inset Formula $\sqcup$
+\end_inset
+
+, a union between two abstract environments as thus:
+\end_layout
+
+\begin_layout Itemize
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+\begin_inset Formula $\sigma_{1}\sqcup\sigma_{2}=id\mapsto\sigma_{1}\left(id\right)\cup\sigma_{2}\left(id\right)$
 \end_inset
 
 
 \end_layout
 
-\begin_layout Standard
-define 
-\begin_inset Formula $\rho_{1}\sqcup\rho_{2}$
+\begin_layout Itemize
+\begin_inset Formula $\sigma_{1}\sqcup\sigma_{2}=n\mapsto\sigma_{1}\left(n\right)\sqcup\sigma_{2}\left(n\right)$
 \end_inset
 
 
 \end_layout
 
-\begin_layout Standard
-\begin_inset Formula $\left\langle \rho_{1},r_{1}\right\rangle \sqcup\left\langle \rho_{2},r_{2}\right\rangle $
+\begin_layout Itemize
+\begin_inset Formula $\tau_{1}\sqcup\tau_{2}=\tau_{1}\cup\tau_{2}$
 \end_inset
 
 
 \end_layout
 
-\begin_layout Standard
-\begin_inset Formula $\left\langle \rho_{1},\sigma_{1},r_{1}\right\rangle \sqcup\left\langle \rho_{2},\sigma_{2},r_{2}\right\rangle =\left\langle \rho_{1}\sqcup\rho_{2},\sigma_{1}\cup\sigma_{2},r_{1}\sqcup r_{2}\right\rangle $
+\begin_layout Itemize
+\begin_inset Formula $\nu_{1}\sqcup\nu_{2}=c\mapsto id\mapsto\nu_{1}\left(c\right)\left(id\right)\cup\nu_{2}\left(c\right)\left(id\right)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\left\langle \sigma_{1},\alpha_{1},\tau_{1},\nu_{1}\right\rangle \sqcup\left\langle \sigma_{2},\alpha_{2},\tau_{2},\nu_{2}\right\rangle \equiv\left\langle \sigma_{1}\sqcup\sigma_{2},\alpha_{1}\sqcup\alpha_{2},\tau_{1}\sqcup\tau_{2},\nu_{1}\sqcup\nu_{2}\right\rangle $
 \end_inset
 
 
@@ -860,7 +967,7 @@ Boolean & con\in\left\{ true,false\right\}
 \end{cases}\\
 \mathtt{obj}\left(n,\left\langle \sigma,\alpha,\tau,\nu\right\rangle \right) & = & \alpha\left(n\right)\\
 \mathtt{getthis}\left(\left\langle \sigma,\alpha,\tau,\nu\right\rangle \right) & = & \tau\\
-\mathtt{getinput\left(\rho\right)} & = & \left\langle \rho,\left\{ Number\right\} \right\rangle \\
+\mathtt{getinput\left(\eta\right)} & = & \left\langle \eta,\left\{ Number\right\} \right\rangle \\
 \mathtt{newobj}\left(\left\langle \sigma,\alpha,\tau,\nu\right\rangle \right) & = & \left\langle \left\langle \sigma,\alpha\left[n\mapsto\phi\right],\tau\right\rangle ,OBJ_{n},\nu\right\rangle \ \mbox{where}\ n=N\left(\alpha\right)\\
 \mathtt{call}\left(n,p,t,f,\left\langle \sigma,\alpha,\tau,\nu\right\rangle ,s,e\right) & = & \underset{\left\langle FP_{x},C\right\rangle \in n}{\bigsqcup}\mathtt{scall}\left(\left\langle FP_{x},C\right\rangle ,p,t,f,\left\langle \sigma,\alpha,\tau,\nu\right\rangle ,s,e\right)\\
 \mathtt{scall}\left(\left\langle FP_{n},C\right\rangle ,p,t,f,\left\langle \sigma,\alpha,\tau,\nu\right\rangle ,s,e\right) & = & \begin{cases}
