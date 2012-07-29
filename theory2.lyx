@@ -220,10 +220,15 @@ State collector function
 
 \end_inset
 
+We define a state collection helper function 
+\begin_inset Formula $T_{S}$
+\end_inset
 
+, which takes a state transformation and appends to the transformation a
+ new association of state transformation from initial state to the final
+ state for a given statement.
 \end_layout
 
-\end_deeper
 \begin_layout Standard
 \begin_inset Formula 
 \begin{alignat*}{2}
@@ -237,6 +242,19 @@ State collector function
 \end_inset
 
 
+\end_layout
+
+\begin_layout Definition
+\begin_inset Argument
+status open
+
+\begin_layout Plain Layout
+Denotational semantics
+\end_layout
+
+\end_inset
+
+We now define a denotational semantics of the SDTL program
 \end_layout
 
 \begin_layout Standard
@@ -289,20 +307,20 @@ State collector function
  & \mathcal{E}\dd{\mathtt{this}} & = & T_{S}\ M_{S}\ \left\langle \_,\lambda f.\rho.\sigma.I_{\rho}\ \mathtt{getthis}\left(\rho\right)\right\rangle \\
  & \mathcal{E}\dd{\mathtt{input}} & = & T_{S}\ M_{S}\ \left\langle \_,I_{S}\ \lambda f.\rho.\mathtt{getinput}\left(\rho\right)\right\rangle \\
  & \mathcal{E}\dd{\mathtt{new}\ L\left(E*\right)} & = & T_{S}\ M_{s}\left(\begin{aligned} & \left\langle n,\mathcal{L}\ \dd{L}\right\rangle \\
- & \left\langle p,\mathtt{evalParams}\ E*\ \phi\right\rangle \\
+ & \left\langle p,\mathtt{evalParams}\ n\ E*\ \phi\right\rangle \\
  & \left\langle m,\left(\lambda f,\rho.\mathtt{newobj}\left(\rho\right)\right)\right\rangle \\
  & \left\langle \_,\left(\lambda f,\rho.\mathtt{call}\left(n,p,m,f,\rho,\mathtt{eid}\right)\right)\right\rangle \\
  & \left\langle \_,I_{\rho}\ m\right\rangle 
 \end{aligned}
 \right)\\
  & \mathcal{E}\dd{L\left(E*\right)} & = & T_{S}\ M_{S}\left(\begin{aligned} & \left\langle n,\mathcal{L}\ \dd{L}\right\rangle \\
- & \left\langle p,\mathtt{evalParams}\ E*\ \phi\right\rangle \\
+ & \left\langle p,\mathtt{evalParams}\ n\ E*\ \phi\right\rangle \\
  & \left\langle \_,\left(\lambda f,\rho.\mathtt{call}\left(n,p,\mathtt{obj}\left(0,\rho\right),f,\rho,\mathtt{eid}\right)\right)\right\rangle 
 \end{aligned}
 \right)\\
  & \mathcal{E}\dd{E_{0}.L\left(E*\right)} & = & T_{S}\ M_{S}\left(\begin{aligned} & \left\langle t,\mathcal{E}\ \dd{E_{0}}\right\rangle \\
  & \left\langle n,\mathcal{L}\ \dd{L}\right\rangle \\
- & \left\langle p,\mathtt{evalParams}\ E*\ \phi\right\rangle \\
+ & \left\langle p,\mathtt{evalParams}\ n\ E*\ \phi\right\rangle \\
  & \left\langle \_,\left(\lambda f,\rho.\mathtt{call}\left(n,p,t,f,\rho,\mathtt{eid}\right)\right)\right\rangle 
 \end{aligned}
 \right)\\
@@ -340,6 +358,49 @@ Where
 
 \end_layout
 
+\begin_layout Itemize
+
+\lang british
+\begin_inset Formula $\mathtt{evalParam}=\left[ID\right]\times\left[Expr\right]\times\left[Value\right]\times\mathcal{F}\times\rho\times\sigma\rightarrow\rho\times\sigma\times\left[Value\right]$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+
+\lang british
+\begin_inset Formula $\mathtt{evalParam}\ \phi\ ps\ f\ \rho\ \sigma=\left\langle \rho,\sigma,ps\right\rangle $
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+
+\lang british
+\begin_inset Formula $\mathtt{evalParam}\ \left[E|Exprs\right]\ ps\ f\ \rho\ \sigma=\mathtt{evalParam}\ Exprs\ \left[ps|con\right]\ f\ \rho_{1}\ \sigma_{1}$
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+where
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+
+\lang british
+\begin_inset Formula $\left\langle \rho_{1},\sigma_{1},con\right\rangle =\mathcal{E}\ \dd{E}\ f\ \rho\ \sigma$
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\end_deeper
 \begin_layout Theorem
 \begin_inset Formula $\mathcal{S}$
 \end_inset
@@ -374,7 +435,7 @@ We define a concrete domain as following:
 \begin{eqnarray*}
 Value & = & \mathbb{Z}\cup\left\{ T,F\right\} \cup Objects\cup FunctionPointers\\
 Objects & = & \left\{ OBJ_{n}|n\in\left\{ 0\right\} \cup\mathbb{N}\right\} \\
-FunctionPointers & = & \left\langle FP_{n},id\rightarrow Value\right\rangle \\
+FunctionPointers & = & \left\langle FP_{n},\left[Value\right]\right\rangle \\
 \rho & = & \left\langle V,OM,T\right\rangle \\
 V & = & id\rightarrow Value\\
 OM & = & n\rightarrow V\\
@@ -420,8 +481,8 @@ s_{2} & v=false
 \mathtt{getinput\left(\rho\right)} & = & \mbox{see note}\\
 \mathtt{newobj}\left(\left\langle V,OM,T\right\rangle \right) & = & \left\langle \left\langle V,OM\left[n\mapsto\phi\right],T\right\rangle ,OBJ_{n}\right\rangle \ \mbox{where}\ n=N\left(OM\right)\\
 \mathtt{call}\left(\left\langle FP_{n},C\right\rangle ,p,t,f,\left\langle V,OM,T\right\rangle ,s,\_\right) & = & \begin{cases}
-\left\langle \left\langle V,OM',T\right\rangle ,s',r\right\rangle \ \mbox{where}\ \left\langle \left\langle V',OM',T'\right\rangle ,s',r\right\rangle =f\ n\ \left\langle C\backslash p,OM,t\right\rangle \ s & N\left(C\right)+N\left(p\right)=arity_{n}\\
-\left\langle \left\langle V,OM,T\right\rangle ,s,\left\langle FP_{n},C\backslash p\right\rangle \right\rangle  & \mbox{otherwise}
+\left\langle \left\langle V,OM',T\right\rangle ,s',r\right\rangle \ \mbox{where}\ \left\langle \left\langle V',OM',T'\right\rangle ,s',r\right\rangle =f\ n\ \left\langle \left[param_{n,k}\mapsto\left[C|p\right]_{k}\right],OM,t\right\rangle \ s & N\left(C\right)+N\left(p\right)=arity_{n}\\
+\left\langle \left\langle V,OM,T\right\rangle ,s,\left\langle FP_{n},\left[C|p\right]\right\rangle \right\rangle  & \mbox{otherwise}
 \end{cases}
 \end{eqnarray*}
 
@@ -445,12 +506,12 @@ problematic when we have an infinite loop of currying
 \eta & = & \left\langle \sigma,\alpha,\tau,\nu\right\rangle \\
 Pri & = & \left\{ Number,Boolean\right\} \\
 Obj & = & \left\{ OBJ_{n}|n\in\left\{ 0\right\} \cup\mathbb{N}\right\} \\
-FunctionPointers & = & \left\langle FP_{n},id\rightarrow\wp\left(Pri\cup Obj\cup\left\{ FP_{n}\right\} \cup\left\{ \left\langle FC,n,c,eid\right\rangle \right\} \right)\right\rangle \\
+FunctionPointers & = & \left\langle FP_{n},\left[\wp\left(Pri\cup Obj\cup\left\{ FP_{n}\right\} \cup\left\{ \left\langle FC,n,c,eid\right\rangle \right\} \right)\right]\right\rangle \\
 AbsVal & = & Pri\cup Obj\cup FunctionPointers\\
 \sigma & = & id\rightarrow\wp\left(AbsVal\right)\\
 \alpha & = & n\rightarrow\sigma\\
 \tau & = & \wp\left(Obj\right)\\
-\nu & = & \left\langle n,c,eid\right\rangle \rightarrow\left(id\rightarrow\wp\left(Pri\cup Obj\cup\left\{ \left\langle FC,n,c,eid\right\rangle \right\} \right)\right)
+\nu & = & \left\langle n,c,eid\right\rangle \rightarrow\left[\wp\left(Pri\cup Obj\cup\left\{ \left\langle FC,n,c,eid\right\rangle \right\} \right)\right]
 \end{eqnarray*}
 
 \end_inset
@@ -682,12 +743,8 @@ is finite.
 \end_layout
 
 \begin_layout Enumerate
-Each functions have a set number of argument names.
- Therefore, the number of possible
-\begin_inset Formula $id$
-\end_inset
-
- is finite.
+Each functions have a set number of accepted parameters.
+ Therefore, the number of elements in the list is finite.
 \end_layout
 
 \begin_layout Enumerate
@@ -788,7 +845,7 @@ There are only a finite number of identifiers appearing in a program
 \end_inset
 
  and 
-\begin_inset Formula $\left(id\rightarrow\wp\left(Pri\cup Obj\cup\left\{ \left\langle FC,n,c,eid\right\rangle \right\} \right)\right)$
+\begin_inset Formula $\left[\wp\left(Pri\cup Obj\cup\left\{ \left\langle FC,n,c,eid\right\rangle \right\} \right)\right]$
 \end_inset
 
 .
@@ -864,7 +921,7 @@ We define a partial ordering
 \end_inset
 
  if 
-\begin_inset Formula $\forall c\in\mbox{domain}\left(\nu_{1}\right)\forall id\in\mbox{domain}\left(c\right),\nu_{1}\left(c\right)\left(id\right)\subseteq\nu_{2}\left(c\right)\left(id\right)$
+\begin_inset Formula $\forall\left\langle n,c,eid\right\rangle \in\mbox{domain}\left(\nu_{1}\right)\forall k\in\left\{ 1,2,3,\ldots,c\right\} ,\nu_{1}\left(\left\langle n,c,eid\right\rangle \right)_{k}\subseteq\nu_{2}\left(\left\langle n,c,eid\right\rangle \right)_{k}$
 \end_inset
 
 
@@ -940,7 +997,7 @@ We can find a least upper bound by finding the value of
 \end_layout
 
 \begin_layout Itemize
-\begin_inset Formula $\nu_{1}\sqcup\nu_{2}=c\mapsto id\mapsto\nu_{1}\left(c\right)\left(id\right)\cup\nu_{2}\left(c\right)\left(id\right)$
+\begin_inset Formula $\nu_{1}\sqcup\nu_{2}=c\mapsto\nu_{1}\left(c\right)\cup\nu_{2}\left(c\right)$
 \end_inset
 
 
@@ -954,7 +1011,7 @@ We can find a least upper bound by finding the value of
 \end_layout
 
 \begin_layout Proof
-TBD.
+Trivial
 \end_layout
 
 \begin_layout Corollary
@@ -989,8 +1046,8 @@ Boolean & con\in\left\{ true,false\right\}
 \mathtt{newobj}\left(\left\langle \sigma,\alpha,\tau,\nu\right\rangle \right) & = & \left\langle \left\langle \sigma,\alpha\left[n\mapsto\phi\right],\tau\right\rangle ,OBJ_{n},\nu\right\rangle \ \mbox{where}\ n=N\left(\alpha\right)\\
 \mathtt{call}\left(n,p,t,f,\left\langle \sigma,\alpha,\tau,\nu\right\rangle ,s,e\right) & = & \underset{\left\langle FP_{x},C\right\rangle \in n}{\bigsqcup}\mathtt{scall}\left(\left\langle FP_{x},C\right\rangle ,p,t,f,\left\langle \sigma,\alpha,\tau,\nu\right\rangle ,s,e\right)\\
 \mathtt{scall}\left(\left\langle FP_{n},C\right\rangle ,p,t,f,\left\langle \sigma,\alpha,\tau,\nu\right\rangle ,s,e\right) & = & \begin{cases}
-\left\langle \left\langle \sigma,\alpha',\tau\right\rangle ,s',r,\nu'\right\rangle \ \mbox{where}\ \left\langle \left\langle \sigma',\alpha',\tau'\right\rangle ,s',r,\nu'\right\rangle =f\ n\ \left\langle C\backslash p,\alpha,\tau,\nu\right\rangle \ s & N\left(C\right)+N\left(p\right)=arity_{n}\\
-\left\langle \left\langle \sigma,\alpha,\tau\right\rangle ,s,\left\langle FP_{n},C\backslash p\right\rangle ,\nu\left[\left\langle e,n,N\left(C\right)+N\left(p\right)\right\rangle \mapsto C\backslash p\right]\right\rangle  & \mbox{otherwise}
+\left\langle \left\langle \sigma,\alpha',\tau\right\rangle ,s',r,\nu'\right\rangle \ \mbox{where}\ \left\langle \left\langle \sigma',\alpha',\tau'\right\rangle ,s',r,\nu'\right\rangle =f\ n\ \left\langle \left\{ param_{n,k}\mapsto\left[C|p\right]_{k}\right\} ,\alpha,\tau,\nu\right\rangle \ s & N\left(C\right)+N\left(p\right)=arity_{n}\\
+\left\langle \left\langle \sigma,\alpha,\tau\right\rangle ,s,\left\langle FP_{n},C\backslash p\right\rangle ,\nu\left[\left\langle e,n,N\left(C\right)+N\left(p\right)\right\rangle \mapsto\left[C|p\right]\right]\right\rangle  & \mbox{otherwise}
 \end{cases}
 \end{eqnarray*}
 
