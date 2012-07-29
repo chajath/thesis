@@ -77,70 +77,6 @@ figs-within-sections
 
 \begin_body
 
-\begin_layout Standard
-Abstract functions
-\end_layout
-
-\begin_layout Itemize
-Branching (if-then-else vs.
- union)
-\end_layout
-
-\begin_deeper
-\begin_layout Itemize
-cond
-\end_layout
-
-\begin_layout Itemize
-isterm
-\end_layout
-
-\end_deeper
-\begin_layout Itemize
-Basic expressions (concrete value vs.
- singleton set)
-\end_layout
-
-\begin_layout Itemize
-Assignment
-\end_layout
-
-\begin_deeper
-\begin_layout Itemize
-\begin_inset Formula $\mathtt{asg}:ID\rightarrow Value\rightarrow\rho\rightarrow\rho$
-\end_inset
-
-
-\end_layout
-
-\end_deeper
-\begin_layout Itemize
-\begin_inset Formula $\mathtt{member}:OBJ\rightarrow ID\rightarrow Value\rightarrow\rho\rightarrow\rho$
-\end_inset
-
-
-\end_layout
-
-\begin_layout Itemize
-conval
-\end_layout
-
-\begin_layout Itemize
-obj
-\end_layout
-
-\begin_layout Itemize
-getthis
-\end_layout
-
-\begin_layout Itemize
-getinput
-\end_layout
-
-\begin_layout Itemize
-call: n,p,m,f,rho
-\end_layout
-
 \begin_layout Paragraph
 Statement to initial and final state mapping
 \end_layout
@@ -157,6 +93,22 @@ Auxiliary functions
 \end_layout
 
 \begin_layout Standard
+Given sheer complexity of the task of analysing SDTL language, we define
+ a series of auxiliary functions to help make formulation terse and more
+ expressive.
+\end_layout
+
+\begin_layout Definition
+\begin_inset Argument
+status open
+
+\begin_layout Plain Layout
+State transformer function
+\end_layout
+
+\end_inset
+
+
 \begin_inset Formula $M_{S}$
 \end_inset
 
@@ -165,6 +117,7 @@ Auxiliary functions
  with return value.
 \end_layout
 
+\begin_deeper
 \begin_layout Standard
 \begin_inset Formula $M_{S}:\left[p\times\left(\beta\rightarrow\left(\rho\times\sigma\right)\rightarrow\left(\rho\times\sigma\times\alpha\right)\right)\right]\rightarrow\beta\rightarrow\left(\rho\times\sigma\right)\rightarrow\left(\rho\times\sigma\times\alpha\right)$
 \end_inset
@@ -210,7 +163,17 @@ Pass
 
 \end_layout
 
-\begin_layout Standard
+\begin_layout Definition
+\begin_inset Argument
+status open
+
+\begin_layout Plain Layout
+Lift function
+\end_layout
+
+\end_inset
+
+
 \begin_inset Formula $I_{\rho}$
 \end_inset
 
@@ -247,10 +210,20 @@ Pass
 
 \end_layout
 
-\begin_layout Paragraph
-We define following functions
+\begin_layout Definition
+\begin_inset Argument
+status open
+
+\begin_layout Plain Layout
+State collector function
 \end_layout
 
+\end_inset
+
+
+\end_layout
+
+\end_deeper
 \begin_layout Standard
 \begin_inset Formula 
 \begin{alignat*}{2}
@@ -303,7 +276,7 @@ We define following functions
 \right)\\
  & \mathcal{S}\dd{e_{1}.id=e_{2}} & = & T_{S}\ M_{S}\left(\begin{aligned} & \left\langle v,\mathcal{E}\dd{e_{2}}\right\rangle \\
  & \left\langle r,\mathcal{E}\dd{e_{1}}\right\rangle \\
- & \left\langle \_,\mathtt{member}\left(r,id,v\right)\right\rangle 
+ & \left\langle \_,\mathtt{set}\left(r,id,v\right)\right\rangle 
 \end{aligned}
 \right)\\
  & \mathcal{S}\dd{\mathtt{while}\left(e\right)S_{1}}\ f\ \rho & = & T_{S}\ \left(Y\lambda x.\lambda\rho,r.\mathtt{isterm}\left(r,M_{S}\left(\begin{aligned} & \left\langle v,\mathcal{E}\dd{e}\right\rangle \\
@@ -317,20 +290,32 @@ We define following functions
  & \mathcal{E}\dd{\mathtt{input}} & = & T_{S}\ M_{S}\ \left\langle \_,I_{S}\ \lambda f.\rho.\mathtt{getinput}\left(\rho\right)\right\rangle \\
  & \mathcal{E}\dd{\mathtt{new}\ L\left(E*\right)} & = & T_{S}\ M_{s}\left(\begin{aligned} & \left\langle n,\mathcal{L}\ \dd{L}\right\rangle \\
  & \left\langle p,\mathtt{evalParams}\ E*\ \phi\right\rangle \\
- & \left\langle m,\lambda f.\rho.\mathtt{newobj}\left(\rho\right)\right\rangle \\
- & \left\langle \_,\lambda f.\rho.\mathtt{call}\left(n,p,m,f,\rho,\mathtt{eid}\right)\right\rangle \\
+ & \left\langle m,\left(\lambda f,\rho.\mathtt{newobj}\left(\rho\right)\right)\right\rangle \\
+ & \left\langle \_,\left(\lambda f,\rho.\mathtt{call}\left(n,p,m,f,\rho,\mathtt{eid}\right)\right)\right\rangle \\
  & \left\langle \_,I_{\rho}\ m\right\rangle 
 \end{aligned}
 \right)\\
  & \mathcal{E}\dd{L\left(E*\right)} & = & T_{S}\ M_{S}\left(\begin{aligned} & \left\langle n,\mathcal{L}\ \dd{L}\right\rangle \\
  & \left\langle p,\mathtt{evalParams}\ E*\ \phi\right\rangle \\
- & \left\langle \_,\lambda f,p.\mathtt{call}\left(n,p,\mathtt{obj}\left(0,\rho\right),f,\rho,\mathtt{eid}\right)\right\rangle 
+ & \left\langle \_,\left(\lambda f,\rho.\mathtt{call}\left(n,p,\mathtt{obj}\left(0,\rho\right),f,\rho,\mathtt{eid}\right)\right)\right\rangle 
 \end{aligned}
 \right)\\
  & \mathcal{E}\dd{E_{0}.L\left(E*\right)} & = & T_{S}\ M_{S}\left(\begin{aligned} & \left\langle t,\mathcal{E}\ \dd{E_{0}}\right\rangle \\
  & \left\langle n,\mathcal{L}\ \dd{L}\right\rangle \\
  & \left\langle p,\mathtt{evalParams}\ E*\ \phi\right\rangle \\
- & \left\langle \_,\lambda f,p.\mathtt{call}\left(n,p,t,f,\rho,\mathtt{eid}\right)\right\rangle 
+ & \left\langle \_,\left(\lambda f,\rho.\mathtt{call}\left(n,p,t,f,\rho,\mathtt{eid}\right)\right)\right\rangle 
+\end{aligned}
+\right)\\
+ & \mathcal{E}\dd{E_{0}\ binop\ E_{1}} & = & T_{S}\ M_{S}\left(\begin{aligned} & \left\langle c_{0},\mathcal{E}\ \dd{E_{0}}\right\rangle \\
+ & \left\langle c_{1},\mathcal{E}\ \dd{E_{1}}\right\rangle \\
+ & \left\langle \_,\left(\lambda f,\rho.I_{\rho}\ \mathtt{bin}\left(binop,c_{0},c_{1}\right)\right)\right\rangle 
+\end{aligned}
+\right)\\
+ & \mathcal{L}\dd{id} & = & T_{S}\ \left(I_{\rho}\ \mathtt{val}\left(id\right)\right)\\
+ & \mathcal{L}\dd{\mathtt{this}} & = & T_{S}\ \left(\lambda f,\rho.I_{\rho}\ \mathtt{getthis}\left(\rho\right)\right)\\
+ & \mathcal{L}\dd{\mathtt{global}} & = & T_{S}\ \left(\lambda f,\rho.I_{\rho}\ \mathtt{obj}\left(0,\rho\right)\right)\\
+ & \mathcal{L}\dd{E_{0}.id} & = & T_{S}\ M_{S}\left(\begin{aligned} & \left\langle v,\mathcal{E}\ \dd{E_{0}}\right\rangle \\
+ & \left\langle \_,\mathtt{get}\left(v,id\right)\right\rangle 
 \end{aligned}
 \right)
 \end{align*}
@@ -355,50 +340,63 @@ Where
 
 \end_layout
 
-\begin_layout Paragraph
+\begin_layout Theorem
+\begin_inset Formula $\mathcal{S}$
+\end_inset
+
+, 
+\begin_inset Formula $\mathcal{E}$
+\end_inset
+
+ and 
+\begin_inset Formula $\mathcal{L}$
+\end_inset
+
+ are monotonous functions given abstract functions are all monotonous.
+\end_layout
+
+\begin_layout Definition
+\begin_inset Argument
+status open
+
+\begin_layout Plain Layout
+Concrete domain
+\end_layout
+
+\end_inset
+
+We define a concrete domain as following:
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+Value & = & \mathbb{Z}\cup\left\{ T,F\right\} \cup Objects\cup FunctionPointers\\
+Objects & = & \left\{ OBJ_{n}|n\in\left\{ 0\right\} \cup\mathbb{N}\right\} \\
+FunctionPointers & = & \left\langle FP_{n},id\rightarrow Value\right\rangle \\
+\rho & = & \left\langle V,OM,T\right\rangle \\
+V & = & id\rightarrow Value\\
+OM & = & n\rightarrow V\\
+T & = & Objects
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Definition
+\begin_inset Argument
+status open
+
+\begin_layout Plain Layout
 Concrete functions
 \end_layout
 
-\begin_layout Standard
-\begin_inset Formula $Value=\mathbb{Z}\cup\left\{ T,F\right\} \cup Objects\cup FunctionPointers$
 \end_inset
 
-
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula $Objects=\left\{ OBJ_{n}|n\in\left\{ 0\right\} \cup\mathbb{N}\right\} $
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula $FunctionPointers=\left\langle FP_{n},id\rightarrow Value\right\rangle $
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula $\rho=\left\langle V,OM,T\right\rangle $
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula $V=id\rightarrow Value$
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula $OM=n\rightarrow V$
-\end_inset
-
-
+We define concrete functions as following:
 \end_layout
 
 \begin_layout Standard
@@ -413,11 +411,13 @@ s_{1} & v=true\\
 s_{2} & v=false
 \end{cases}\\
 \mathtt{asg}\left(id,v\right) & = & \lambda f,\left\langle V,OM,T\right\rangle .\left\langle V\left[id=v\right],OM,T\right\rangle \\
-\mathtt{member}\left(OBJ_{n},id,v\right) & = & \lambda f,\left\langle V,OM,T\right\rangle .\left\langle V,OM\left[OBJ_{n}\left[id\mapsto v\right]\right],T\right\rangle \\
+\mathtt{val}\left(id\right) & = & \lambda f,\left\langle V,OM,T\right\rangle .V\left(id\right)\\
+\mathtt{get}\left(OBJ_{n},id\right) & = & \lambda f,\left\langle V,OM,T\right\rangle .OM\left(n\right)\\
+\mathtt{set}\left(OBJ_{n},id,v\right) & = & \lambda f,\left\langle V,OM,T\right\rangle .\left\langle V,OM\left[OBJ_{n}\left[id\mapsto v\right]\right],T\right\rangle \\
 \mathtt{conval}\left(con\right) & = & con\\
 \mathtt{obj}\left(n,\left\langle V,OM,T\right\rangle \right) & = & OM\left(n\right)\\
 \mathtt{getthis}\left(\left\langle V,OM,T\right\rangle \right) & = & T\\
-\mathtt{getinput\left(\rho\right)} & =\\
+\mathtt{getinput\left(\rho\right)} & = & \mbox{see note}\\
 \mathtt{newobj}\left(\left\langle V,OM,T\right\rangle \right) & = & \left\langle \left\langle V,OM\left[n\mapsto\phi\right],T\right\rangle ,OBJ_{n}\right\rangle \ \mbox{where}\ n=N\left(OM\right)\\
 \mathtt{call}\left(\left\langle FP_{n},C\right\rangle ,p,t,f,\left\langle V,OM,T\right\rangle ,s,\_\right) & = & \begin{cases}
 \left\langle \left\langle V,OM',T\right\rangle ,s',r\right\rangle \ \mbox{where}\ \left\langle \left\langle V',OM',T'\right\rangle ,s',r\right\rangle =f\ n\ \left\langle C\backslash p,OM,t\right\rangle \ s & N\left(C\right)+N\left(p\right)=arity_{n}\\
@@ -430,6 +430,7 @@ s_{2} & v=false
 
 \end_layout
 
+\end_deeper
 \begin_layout Paragraph
 Abstract functions for Forward-may analysis 
 \end_layout
@@ -893,12 +894,16 @@ We define a partial ordering
 We define a union between two abstract environments.
 \end_layout
 
-\begin_layout Definition
-We define 
-\begin_inset Formula $\sqcup$
+\begin_layout Fact
+Given two abstract environments 
+\begin_inset Formula $\eta_{1}\ \mbox{and}\ \eta_{2}$
 \end_inset
 
-, a union between two abstract environments as thus:
+We can find a least upper bound by finding the value of 
+\begin_inset Formula $\eta_{1}\sqcup\eta_{2}$
+\end_inset
+
+
 \end_layout
 
 \begin_layout Itemize
@@ -921,7 +926,7 @@ We define
 \end_layout
 
 \begin_layout Itemize
-\begin_inset Formula $\sigma_{1}\sqcup\sigma_{2}=n\mapsto\sigma_{1}\left(n\right)\sqcup\sigma_{2}\left(n\right)$
+\begin_inset Formula $\alpha_{1}\sqcup\alpha_{2}=n\mapsto\sigma_{1}\left(n\right)\sqcup\sigma_{2}\left(n\right)$
 \end_inset
 
 
@@ -948,6 +953,17 @@ We define
 
 \end_layout
 
+\begin_layout Proof
+TBD.
+\end_layout
+
+\begin_layout Corollary
+\begin_inset Formula $\left(\eta,\sqsubseteq\right)$
+\end_inset
+
+ is a chain complete partial ordering.
+\end_layout
+
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
@@ -957,7 +973,9 @@ I_{\rho}\ v & \mbox{otherwise}
 \end{cases}\\
 \mathtt{cond}\left(v,s_{1},s_{2}\right) & = & s_{1}\sqcup s_{2}\\
 \mathtt{asg}\left(id,v\right) & = & \lambda f,\left\langle \sigma,\alpha,\tau\right\rangle .\left\langle \sigma\left[id=v\right],\alpha,\tau\right\rangle \\
-\mathtt{member}\left(n,id,v\right) & = & \lambda f,\left\langle \sigma,\alpha,\tau\right\rangle .\left\langle \sigma,\left\{ x|OBJ_{x}\in\alpha,x=\begin{cases}
+\mathtt{val}\left(id,v\right) & = & \lambda f,\left\langle \sigma,\alpha,\tau\right\rangle .\sigma\left(id\right)\\
+\mathtt{get}\left(n,id\right) & = & \lambda f,\left\langle \sigma,\alpha,\tau\right\rangle .\left\{ \alpha\left(x\right)|OBJ_{x}\in n\right\} \\
+\mathtt{set}\left(n,id,v\right) & = & \lambda f,\left\langle \sigma,\alpha,\tau\right\rangle .\left\langle \sigma,\left\{ x|OBJ_{x}\in\alpha,x=\begin{cases}
 \alpha\left(x\right)\left[id\mapsto v\right] & OBJ_{x}\in n\\
 \alpha\left(x\right) & \mbox{otherwise}
 \end{cases}\right\} ,\tau\right\rangle \\
