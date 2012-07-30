@@ -283,7 +283,7 @@ We now define a denotational semantics of the SDTL program
  & \left\langle \_,\mathtt{cond}\left(v,\mathcal{S}\dd{S_{1}},I_{\rho}\ NoReturn\right)\right\rangle 
 \end{aligned}
 \right)\\
- & \mathcal{S}\dd{\mathtt{if}\left(e\right)S_{1}\mathtt{else}S_{2}}\ f & = & T_{S}\ M_{S}\left(\begin{aligned} & \left\langle v,\mathcal{E}\dd{e}\right\rangle \\
+ & {\scriptstyle \mathcal{S}\dd{\mathtt{if}\left(e\right)S_{1}\mathtt{else}S_{2}}\ f} & = & T_{S}\ M_{S}\left(\begin{aligned} & \left\langle v,\mathcal{E}\dd{e}\right\rangle \\
  & \left\langle \_,\mathtt{cond}\left(v,\mathcal{S}\dd{S_{1}},\mathcal{S}\dd{S_{2}}\right)\right\rangle 
 \end{aligned}
 \right)\\
@@ -297,10 +297,13 @@ We now define a denotational semantics of the SDTL program
  & \left\langle \_,\mathtt{set}\left(r,id,v\right)\right\rangle 
 \end{aligned}
 \right)\\
- & \mathcal{S}\dd{\mathtt{while}\left(e\right)S_{1}}\ f\ \rho & = & T_{S}\ \left(Y\lambda x.\lambda\rho,r.\mathtt{isterm}\left(r,M_{S}\left(\begin{aligned} & \left\langle v,\mathcal{E}\dd{e}\right\rangle \\
- & \left\langle \_,\mathtt{cond}\left(v,\lambda f,\rho'.x\ \left(\mathcal{S}\dd{S_{1}}\ \mathtt{sid}\left(S_{1}\right)f\ \rho'\right),I_{\rho}\ NoRet\right)\right\rangle 
+ & {\scriptstyle \mathcal{S}\dd{\mathtt{while}\left(e\right)S_{1}}\ f\ \rho} & = & T_{S}\ \left(Y\lambda x.\lambda\rho,r.\mathtt{isterm}\left(r,M_{S}\left(\begin{aligned} & \left\langle v,\mathcal{E}\dd{e}\right\rangle \\
+ & \left\langle \_,{\scriptstyle \begin{gathered}\mathtt{cond}(v,\left(\lambda f,\rho'.x\ \left(\mathcal{S}\dd{S_{1}}\ \mathtt{sid}\left(S_{1}\right)f\ \rho'\right)\right)\\
+,\left(,I_{\rho}\ NoReturn\right))
+\end{gathered}
+}\right\rangle 
 \end{aligned}
-\right)\ f\right)\right)\ \rho\ NoRet\\
+\right)\ f\right)\right)\ \rho\ {\scriptstyle NoReturn}\\
  & \mathcal{E}\dd{con} & = & T_{S}\ M_{S}\ \left\langle \_,I_{\rho}\ \mathtt{conval}\left(con\right)\right\rangle \\
  & \mathcal{E}\dd{\mathtt{global}} & = & T_{S}\ M_{S}\ \left\langle \_,\lambda f.\rho.\sigma.I_{\rho}\ \mathtt{obj}\left(0,\rho\right)\right\rangle \\
  & \mathcal{E}\dd{L} & = & T_{S}\ \mathcal{L}\dd{L}\\
@@ -504,7 +507,10 @@ s_{2} & v=false
 \mathtt{getinput\left(\rho\right)} & = & \mbox{see note}\\
 \mathtt{newobj}\left(\left\langle V,OM,T\right\rangle \right) & = & \left\langle \left\langle V,OM\left[n\mapsto\phi\right],T\right\rangle ,OBJ_{n}\right\rangle \ \mbox{where}\ n=N\left(OM\right)\\
 \mathtt{call}\left(\left\langle FP_{n},C\right\rangle ,p,t,f,\left\langle V,OM,T\right\rangle ,s,\_\right) & = & \begin{cases}
-\left\langle \left\langle V,OM',T\right\rangle ,s',r\right\rangle \ \mbox{where}\ \left\langle \left\langle V',OM',T'\right\rangle ,s',r\right\rangle =f\ n\ \left\langle \left[param_{n,k}\mapsto\left[C|p\right]_{k}\right],OM,t\right\rangle \ s & N\left(C\right)+N\left(p\right)=arity_{n}\\
+\begin{gathered}\left\langle \left\langle V,OM',T\right\rangle ,s',r\right\rangle \ \mbox{where}\ \left\langle \left\langle V',OM',T'\right\rangle ,s',r\right\rangle =\\
+f\ n\ \left\langle \left[param_{n,k}\mapsto\left[C|p\right]_{k}\right],OM,t\right\rangle \ s
+\end{gathered}
+ & N\left(C\right)+N\left(p\right)=arity_{n}\\
 \left\langle \left\langle V,OM,T\right\rangle ,s,\left\langle FP_{n},\left[C|p\right]\right\rangle \right\rangle  & \mbox{otherwise}
 \end{cases}
 \end{eqnarray*}
@@ -894,76 +900,16 @@ We define a partial ordering
 \end_layout
 
 \begin_deeper
-\begin_layout Itemize
-\begin_inset Formula $\sigma_{1}\sqsubseteq\sigma_{2}$
-\end_inset
+\begin_layout Standard
+\begin_inset Formula 
+\begin{gather*}
+\sigma_{1}\sqsubseteq\sigma_{2}\ \mbox{if}\ \forall id\in\mbox{domain}\left(\sigma_{1}\right),\sigma_{1}\left(id\right)\subseteq\sigma_{2}\left(id\right)\\
+\alpha_{1}\sqsubseteq\alpha_{2}\ \mbox{if}\ \forall n\in\mbox{domain}\left(\alpha_{1}\right),\alpha_{1}\left(n\right)\sqsubseteq\alpha_{2}\left(n\right)\\
+\tau_{1}\sqsubseteq\tau_{2}\ \mbox{if}\ \tau_{1}\subseteq\tau_{2}\\
+\nu_{1}\sqsubseteq\nu_{2}\ \mbox{if}\ \forall\left\langle n,c,eid\right\rangle \in\mbox{domain}\left(\nu_{1}\right)\forall k\in\left\{ 1,2,3,\ldots,c\right\} ,\nu_{1}\left(\left\langle n,c,eid\right\rangle \right)_{k}\subseteq\nu_{2}\left(\left\langle n,c,eid\right\rangle \right)_{k}\\
+\left\langle \sigma_{1},\alpha_{1},\tau_{1},\nu_{1}\right\rangle \sqsubseteq\left\langle \sigma_{2},\alpha_{2},\tau_{2},\nu_{2}\right\rangle \equiv\sigma_{1}\sqsubseteq\sigma_{2}\wedge\alpha_{1}\sqsubseteq\alpha_{2}\wedge\tau_{1}\sqsubseteq\tau_{2}\wedge\nu_{1}\sqsubseteq\nu_{2}
+\end{gather*}
 
- if 
-\begin_inset Formula $\forall id\in\mbox{domain}\left(\sigma_{1}\right),\sigma_{1}\left(id\right)\subseteq\sigma_{2}\left(id\right)$
-\end_inset
-
-
-\end_layout
-
-\begin_layout Itemize
-
-\family roman
-\series medium
-\shape up
-\size normal
-\emph off
-\bar no
-\strikeout off
-\uuline off
-\uwave off
-\noun off
-\color none
-\begin_inset Formula $\alpha_{1}\sqsubseteq\alpha_{2}$
-\end_inset
-
- if 
-\begin_inset Formula $\forall n\in\mbox{domain}\left(\alpha_{1}\right),\alpha_{1}\left(n\right)\sqsubseteq\alpha_{2}\left(n\right)$
-\end_inset
-
-
-\end_layout
-
-\begin_layout Itemize
-\begin_inset Formula $\tau_{1}\sqsubseteq\tau_{2}$
-\end_inset
-
- if 
-\begin_inset Formula $\tau_{1}\subseteq\tau_{2}$
-\end_inset
-
-
-\end_layout
-
-\begin_layout Itemize
-\begin_inset Formula $\nu_{1}\sqsubseteq\nu_{2}$
-\end_inset
-
- if 
-\begin_inset Formula $\forall\left\langle n,c,eid\right\rangle \in\mbox{domain}\left(\nu_{1}\right)\forall k\in\left\{ 1,2,3,\ldots,c\right\} ,\nu_{1}\left(\left\langle n,c,eid\right\rangle \right)_{k}\subseteq\nu_{2}\left(\left\langle n,c,eid\right\rangle \right)_{k}$
-\end_inset
-
-
-\end_layout
-
-\begin_layout Itemize
-
-\family roman
-\series medium
-\shape up
-\size normal
-\emph off
-\bar no
-\strikeout off
-\uuline off
-\uwave off
-\noun off
-\color none
-\begin_inset Formula $\left\langle \sigma_{1},\alpha_{1},\tau_{1},\nu_{1}\right\rangle \sqsubseteq\left\langle \sigma_{2},\alpha_{2},\tau_{2},\nu_{2}\right\rangle \equiv\sigma_{1}\sqsubseteq\sigma_{2}\wedge\alpha_{1}\sqsubseteq\alpha_{2}\wedge\tau_{1}\sqsubseteq\tau_{2}\wedge\nu_{1}\sqsubseteq\nu_{2}$
 \end_inset
 
 
@@ -986,7 +932,7 @@ We can find a least upper bound by finding the value of
 
 \end_layout
 
-\begin_layout Itemize
+\begin_layout Standard
 
 \family roman
 \series medium
@@ -999,35 +945,15 @@ We can find a least upper bound by finding the value of
 \uwave off
 \noun off
 \color none
-\begin_inset Formula $\sigma_{1}\sqcup\sigma_{2}=id\mapsto\sigma_{1}\left(id\right)\cup\sigma_{2}\left(id\right)$
-\end_inset
+\begin_inset Formula 
+\begin{gather*}
+\sigma_{1}\sqcup\sigma_{2}=id\mapsto\sigma_{1}\left(id\right)\cup\sigma_{2}\left(id\right)\\
+\alpha_{1}\sqcup\alpha_{2}=n\mapsto\sigma_{1}\left(n\right)\sqcup\sigma_{2}\left(n\right)\\
+\tau_{1}\sqcup\tau_{2}=\tau_{1}\cup\tau_{2}\\
+\nu_{1}\sqcup\nu_{2}=c\mapsto\nu_{1}\left(c\right)\cup\nu_{2}\left(c\right)\\
+\left\langle \sigma_{1},\alpha_{1},\tau_{1},\nu_{1}\right\rangle \sqcup\left\langle \sigma_{2},\alpha_{2},\tau_{2},\nu_{2}\right\rangle \equiv\left\langle \sigma_{1}\sqcup\sigma_{2},\alpha_{1}\sqcup\alpha_{2},\tau_{1}\sqcup\tau_{2},\nu_{1}\sqcup\nu_{2}\right\rangle 
+\end{gather*}
 
-
-\end_layout
-
-\begin_layout Itemize
-\begin_inset Formula $\alpha_{1}\sqcup\alpha_{2}=n\mapsto\sigma_{1}\left(n\right)\sqcup\sigma_{2}\left(n\right)$
-\end_inset
-
-
-\end_layout
-
-\begin_layout Itemize
-\begin_inset Formula $\tau_{1}\sqcup\tau_{2}=\tau_{1}\cup\tau_{2}$
-\end_inset
-
-
-\end_layout
-
-\begin_layout Itemize
-\begin_inset Formula $\nu_{1}\sqcup\nu_{2}=c\mapsto\nu_{1}\left(c\right)\cup\nu_{2}\left(c\right)$
-\end_inset
-
-
-\end_layout
-
-\begin_layout Itemize
-\begin_inset Formula $\left\langle \sigma_{1},\alpha_{1},\tau_{1},\nu_{1}\right\rangle \sqcup\left\langle \sigma_{2},\alpha_{2},\tau_{2},\nu_{2}\right\rangle \equiv\left\langle \sigma_{1}\sqcup\sigma_{2},\alpha_{1}\sqcup\alpha_{2},\tau_{1}\sqcup\tau_{2},\nu_{1}\sqcup\nu_{2}\right\rangle $
 \end_inset
 
 
@@ -1066,10 +992,10 @@ s & v=\left\{ NoReturn\right\} \\
 I_{\rho}\ v & \mbox{otherwise}
 \end{cases}\\
 \mathtt{cond}\left(v,s_{1},s_{2}\right) & = & s_{1}\sqcup s_{2}\\
-\mathtt{asg}\left(id,v\right) & = & \lambda f,\left\langle \sigma,\alpha,\tau\right\rangle .\left\langle \sigma\left[id=v\right],\alpha,\tau\right\rangle \\
-\mathtt{val}\left(id,v\right) & = & \lambda f,\left\langle \sigma,\alpha,\tau\right\rangle .\sigma\left(id\right)\\
-\mathtt{get}\left(n,id\right) & = & \lambda f,\left\langle \sigma,\alpha,\tau\right\rangle .\left\{ \alpha\left(x\right)|OBJ_{x}\in n\right\} \\
-\mathtt{set}\left(n,id,v\right) & = & \lambda f,\left\langle \sigma,\alpha,\tau\right\rangle .\left\langle \sigma,\left\{ x|OBJ_{x}\in\alpha,x=\begin{cases}
+\mathtt{asg}\left(id,v\right) & = & \lambda f,\left\langle \sigma,\alpha,\tau,\nu\right\rangle .\left\langle \sigma\left[id=v\right],\alpha,\tau,\nu\right\rangle \\
+\mathtt{val}\left(id,v\right) & = & \lambda f,\left\langle \sigma,\alpha,\tau,\nu\right\rangle .\sigma\left(id\right)\\
+\mathtt{get}\left(n,id\right) & = & \lambda f,\left\langle \sigma,\alpha,\tau,\nu\right\rangle .\left\{ \alpha\left(x\right)|OBJ_{x}\in n\right\} \\
+\mathtt{set}\left(n,id,v\right) & = & \lambda f,\left\langle \sigma,\alpha,\tau,\nu\right\rangle .\left\langle \sigma,\left\{ x|OBJ_{x}\in\alpha,x=\begin{cases}
 \alpha\left(x\right)\left[id\mapsto v\right] & OBJ_{x}\in n\\
 \alpha\left(x\right) & \mbox{otherwise}
 \end{cases}\right\} ,\tau\right\rangle \\
@@ -1082,9 +1008,12 @@ Boolean & con\in\left\{ true,false\right\}
 \mathtt{getinput\left(\eta\right)} & = & \left\langle \eta,\left\{ Number\right\} \right\rangle \\
 \mathtt{newobj}\left(\left\langle \sigma,\alpha,\tau,\nu\right\rangle \right) & = & \left\langle \left\langle \sigma,\alpha\left[n\mapsto\phi\right],\tau\right\rangle ,OBJ_{n},\nu\right\rangle \ \mbox{where}\ n=N\left(\alpha\right)\\
 \mathtt{call}\left(n,p,t,f,\left\langle \sigma,\alpha,\tau,\nu\right\rangle ,s,e\right) & = & \underset{\left\langle FP_{x},C\right\rangle \in n}{\bigsqcup}\mathtt{scall}\left(\left\langle FP_{x},C\right\rangle ,p,t,f,\left\langle \sigma,\alpha,\tau,\nu\right\rangle ,s,e\right)\\
-\mathtt{scall}\left(\left\langle FP_{n},C\right\rangle ,p,t,f,\left\langle \sigma,\alpha,\tau,\nu\right\rangle ,s,e\right) & = & \begin{cases}
-\left\langle \left\langle \sigma,\alpha',\tau\right\rangle ,s',r,\nu'\right\rangle \ \mbox{where}\ \left\langle \left\langle \sigma',\alpha',\tau'\right\rangle ,s',r,\nu'\right\rangle =f\ n\ \left\langle \left\{ param_{n,k}\mapsto\left[C|p\right]_{k}\right\} ,\alpha,\tau,\nu\right\rangle \ s & N\left(C\right)+N\left(p\right)=arity_{n}\\
-\left\langle \left\langle \sigma,\alpha,\tau\right\rangle ,s,\left\langle FP_{n},C\backslash p\right\rangle ,\nu\left[\left\langle e,n,N\left(C\right)+N\left(p\right)\right\rangle \mapsto\left[C|p\right]\right]\right\rangle  & \mbox{otherwise}
+{\scriptstyle \mathtt{scall}\left(\left\langle FP_{n},C\right\rangle ,p,t,f,\left\langle \sigma,\alpha,\tau,\nu\right\rangle ,s,e\right)} & = & \begin{cases}
+\begin{gathered}\left\langle \left\langle \sigma,\alpha',\tau,\nu'\right\rangle ,s',r'\right\rangle \ \mbox{where}\ \left\langle \left\langle \sigma',\alpha',\tau'\right\rangle ,s',r,\nu'\right\rangle =\\
+f\ n\ \left\langle \left\{ param_{n,k}\mapsto\left[C|p\right]_{k}\right\} ,\alpha,\tau,\nu\right\rangle \ s
+\end{gathered}
+ & N\left(C\right)+N\left(p\right)=arity_{n}\\
+\left\langle \left\langle \sigma,\alpha,\tau,\nu\left[\left\langle e,n,N\left(C\right)+N\left(p\right)\right\rangle \mapsto\left[C|p\right]\right]\right\rangle ,s,\left\langle FP_{n},\left[C|p\right],e\right\rangle \right\rangle  & \mbox{otherwise}
 \end{cases}
 \end{eqnarray*}
 
@@ -1098,6 +1027,60 @@ Boolean & con\in\left\{ true,false\right\}
 Abstract functions are monotonous
 \end_layout
 
+\begin_deeper
+\begin_layout Definition
+\begin_inset Argument
+status open
+
+\begin_layout Plain Layout
+Abstraction
+\end_layout
+
+\end_inset
+
+ We define an abstraction relation between concrete and abstract environments,
+ 
+\begin_inset Formula $\eta\prec\rho$
+\end_inset
+
+ as following:
+\end_layout
+
+\begin_layout Definition
+\begin_inset Formula 
+\begin{gather*}
+\left\langle \sigma,\alpha,\tau,\nu\right\rangle \prec\left\langle V,OM,T\right\rangle \ \mbox{iff}\ \forall id\in V\exists a\in\sigma\left(id\right),a\prec V\left(id\right)\mbox{ and }\tau\prec T\\
+\forall z\in\mathbb{Z},\left\{ Number\right\} \prec z\\
+\forall b\in\left\{ True,False\right\} ,\left\{ Boolean\right\} \prec b\\
+OBJ_{m}\prec OBJ_{n}\ \mbox{if}\ \eta\models OBJ_{m}\prec OM\models OBJ_{n}\\
+\left\langle FP_{m},\left[c'\right],e\right\rangle \prec\left\langle FP_{n},\left[c\right]\right\rangle \ \mbox{if}\ m=n\ \\
+\ N\left(c\right)=N\left(c'\right)\ \mbox{and}\ \forall c_{k}\in c,\eta\models c'_{k}\prec c_{k}
+\end{gather*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Definition
+In turne, contextual definitions of abstract object and function pointer
+ values are defined as following:
+\end_layout
+
+\begin_layout Definition
+\begin_inset Formula 
+\begin{gather*}
+\left\langle \sigma,\alpha,\tau,\nu\right\rangle \models OBJ_{m}\prec OBJ_{n}\mbox{ if }\\
+\forall id\in OM\left(n\right),OM\left(n\right)\left(id\right)\in Z\cup\left\{ True,False\right\} ,\alpha\left(m\right)\left(id\right)\prec OM\left(n\right)\left(id\right)\\
+\forall id\in OM\left(n\right),OM\left(n\right)\left(id\right)=OBJ_{x},\alpha\left(m\right)=OBJ_{y},\alpha\left(y\right)\prec OBJ_{x}
+\end{gather*}
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
 \begin_layout Definition
 \begin_inset Argument
 status open
