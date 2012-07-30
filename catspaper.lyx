@@ -2,10 +2,16 @@
 \lyxformat 413
 \begin_document
 \begin_header
-\textclass CRPITstyle
+\textclass CRPITStyle
 \begin_preamble
 \newcommand\conferencenameandplace{First Australasian Web Conference (AWC2013), Adelaide, Australia, January 2013} \newcommand\volumenumber{xx} \newcommand\conferenceyear{2013} 
 \newcommand\editorname {Helen Ashman, Quan Z. Sheng and Andrew Trotman}
+
+\usepackage[auth-lg]{authblk}
+   \author{In-Ho Yi}
+   \author{Peter Schachte}
+   \author{Harald Søndergaard}
+   \affil{The University of Melbourne}
 \end_preamble
 \use_default_options true
 \maintain_unincluded_children false
@@ -65,37 +71,7 @@
 \begin_body
 
 \begin_layout Title
-Static Type Analysis of a Duck-Typing, Currying Language
-\end_layout
-
-\begin_layout Author
-In-Ho Yi 
-\begin_inset ERT
-status open
-
-\begin_layout Plain Layout
-
-
-\backslash
-and
-\end_layout
-
-\end_inset
-
- Peter Schachte 
-\begin_inset ERT
-status open
-
-\begin_layout Plain Layout
-
-
-\backslash
-and
-\end_layout
-
-\end_inset
-
- Harald Søndergaard
+Type Analysis of a Duck-Typing and Reflecting Language
 \end_layout
 
 \begin_layout Abstract
@@ -125,7 +101,7 @@ Introduction
 
 \begin_layout Standard
 Recent years have seen the growing interest on dynamic typing languages.
- Traditionally these languages were deemed 
+ Traditionally these languages were termed 
 \begin_inset Quotes eld
 \end_inset
 
@@ -133,7 +109,90 @@ scripting
 \begin_inset Quotes erd
 \end_inset
 
- languages.
+ languages, as they were mainly used for automating tasks and processing
+ strings.
+ However, with the advent of Web environment, languages such as Perl and
+ PHP gained popularity as languages for web application development.
+ On a client side, web pages make heavy use of JavaScript, a dynamic typing
+ language, to deliver dynamic contents to the browser.
+ Recent years have seen increasing use of JavaScript in server side environment,
+ as well.
+\end_layout
+
+\begin_layout Standard
+What these languages provide is an ability to rapidly prototype and validate
+ application models in a real time REPL environment.
+ Another strength comes from the fact that programmers do not need to have
+ a class structure defined upfront.
+ Rather, class structures and types of variables in general are dynamically
+ built.
+ This reduces an initial overhead of software design.
+\end_layout
+
+\begin_layout Standard
+However, these features come at a cost.
+ Lacking formal and static definition of type information makes dynamically
+ typing languages harder to analyse.
+ This difficulty causes several practical problems.
+ 
+\end_layout
+
+\begin_layout Standard
+First, it has been noted that as applications become more mature, more efforts
+ are devoted to program unit testing or assertions to make sure type safety
+ of systems.
+ These extra overheads can sometimes overshoot the benefit of having a dynamical
+ly typing language.
+\end_layout
+
+\begin_layout Standard
+Second, whereas programmers writing statically typed languages enjoy the
+ abundance of development tools, tools aiding development of dynamically
+ typed languages are lacking powers, largely due to the difficulty and sometimes
+ infeasibility of conduct a type analysis.
+\end_layout
+
+\begin_layout Standard
+Finally, not having a static type structure has a significant performance
+ implication.
+ There are ongoing development in the industry at large to overcome and
+ improve the performance of dynamically typing languages.
+\end_layout
+
+\begin_layout Standard
+With these problems in mind, the aim of this paper is to develop an analytic
+ framework for a type analysis of a dynamic typing language.
+ We design a toy language that showcases 
+\begin_inset Quotes eld
+\end_inset
+
+dynamism
+\begin_inset Quotes erd
+\end_inset
+
+ built in some of the aforementioned scripting languages, such as duck-typing,
+ reflection and function currying.
+ A notable omission is a closure scoping.
+ However, allowing function currying gives enough expressive power to the
+ toy language.
+\end_layout
+
+\begin_layout Standard
+We then develop a framework that, depending on definitions of abstract functions
+, can function as both denotational semantics and abstract interpretation.
+ The focus of this effort is to build a theoretical system where much of
+ the proof of correctness is 
+\emph on
+built in to the system
+\emph default
+, thereby allowing theoreticians to avoid reproducing large body of work
+ in both semantics and abstract interpretation, and focus at the core of
+ the problem, that is the definition of abstract domains and their correlation
+ with the concrete environment.
+\end_layout
+
+\begin_layout Section
+Related works
 \end_layout
 
 \end_body
