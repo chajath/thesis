@@ -59,7 +59,7 @@ figs-within-sections
 \bottommargin 1cm
 \headheight 1cm
 \headsep 1cm
-\footskip 1cm
+\footskip 0cm
 \secnumdepth 3
 \tocdepth 3
 \paragraph_separation indent
@@ -1049,11 +1049,36 @@ Given two abstract environments
 \end_layout
 
 \begin_layout Proof
-By contra-positive.
+Satisfying each lines of conditions gives an environment that can satisfy
+ conditions set for the partial ordering of both environments.
 \end_layout
 
-\begin_layout Standard
-This existence of an upper bound gives us the following useful result.
+\begin_layout Proof
+Observe that if there is an upper bound 
+\begin_inset Formula $\eta'=\left\langle \sigma',\alpha',\tau',\nu'\right\rangle $
+\end_inset
+
+ of two environments 
+\begin_inset Formula $\eta_{1}$
+\end_inset
+
+ and 
+\begin_inset Formula $\eta_{2}$
+\end_inset
+
+, if 
+\begin_inset Formula $\eta'\sqsubseteq\eta_{1}\sqcup\eta_{2}$
+\end_inset
+
+ then necessarily 
+\begin_inset Formula $\eta'=\eta_{1}\sqcup\eta_{2}$
+\end_inset
+
+, since any missing elements in keys and values of 
+\begin_inset Formula $\sigma',\alpha',\tau',\nu'$
+\end_inset
+
+ will violate the partial ordering condition.
 \end_layout
 
 \begin_layout Lemma
@@ -1096,10 +1121,10 @@ I_{\rho}\ v & \mbox{otherwise}
 Number & con\in\mathbb{N}\\
 Boolean & con\in\left\{ true,false\right\} 
 \end{cases}\\
-\mathtt{obj}\left(n\right) & = & \lambda\left\langle \sigma,\alpha,\tau,\nu\right\rangle .\alpha\left(n\right)\\
+\mathtt{obj}\left(j\right) & = & \lambda\left\langle \sigma,\alpha,\tau,\nu\right\rangle .\alpha\left(j\right)\\
 \mathtt{getthis} & = & \lambda\left\langle \sigma,\alpha,\tau,\nu\right\rangle .\tau\\
 \mathtt{getinput} & = & \lambda\eta.\left\langle \eta,\left\{ Number\right\} \right\rangle \\
-\mathtt{newobj} & = & \lambda\left\langle \sigma,\alpha,\tau,\nu\right\rangle .\left\langle \left\langle \sigma,\alpha\left[n\mapsto\phi\right],\tau\right\rangle ,OBJ_{n},\nu\right\rangle \ \mbox{where}\ n=N\left(\alpha\right)\\
+\mathtt{newobj} & = & \lambda\left\langle \sigma,\alpha,\tau,\nu\right\rangle .\left\langle \left\langle \sigma,\alpha\left[n\mapsto\phi\right],\tau,\nu\right\rangle ,OBJ_{n},\nu\right\rangle \ \mbox{where}\ n=N\left(\alpha\right)\\
 \mathtt{call}\left(n,p,t,e\right) & = & \lambda f,s,\left\langle \sigma,\alpha,\tau,\nu\right\rangle .\underset{\left\langle FP_{x},C\right\rangle \in n}{\bigsqcup}\mathtt{scall}\left(\left\langle FP_{x},C\right\rangle ,p,t,f,\left\langle \sigma,\alpha,\tau,\nu\right\rangle ,s,e\right)\\
 {\scriptstyle \mathtt{scall}\left(\left\langle FP_{n},C\right\rangle ,p,t,f,\left\langle \sigma,\alpha,\tau,\nu\right\rangle ,s,e\right)} & = & \begin{cases}
 \begin{gathered}\left\langle \left\langle \sigma,\alpha',\tau,\nu'\right\rangle ,s',r'\right\rangle \ \mbox{where}\ \left\langle \left\langle \sigma',\alpha',\tau'\right\rangle ,s',r,\nu'\right\rangle =\\
@@ -1110,6 +1135,60 @@ f\ n\ \left\langle \left\{ param_{n,k}\mapsto\left[C|p\right]_{k}\right\} ,\alph
 \end{cases}
 \end{eqnarray*}
 
+\end_inset
+
+
+\end_layout
+
+\begin_layout Theorem
+Abstract functions produce monotonic lambda functions
+\end_layout
+
+\begin_layout Proof
+Following list of arguments cover all the functions:
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+Observe that for the functions calculate values from given parameters and
+ an environment, an increase in the environment implies that the values
+ we obtain are also increased.
+ This is from the definition of the partial ordering.
+\end_layout
+
+\begin_layout Enumerate
+For the functions that are updating environment, observe that an increase
+ in the environment implies an increase in the updated environment.
+\end_layout
+
+\begin_layout Enumerate
+In case of 
+\begin_inset Formula $\mathtt{call}$
+\end_inset
+
+, its the least upper bound of results from 
+\begin_inset Formula $\mathtt{scall}$
+\end_inset
+
+, which falls into categories 1 and 2.
+ An increase in the results implies increase in the least upper bound of
+ them.
+\end_layout
+
+\end_deeper
+\end_deeper
+\begin_layout Lemma
+Abstract 
+\begin_inset Formula $\mathcal{S},\mathcal{E}\ \mbox{and}\ \mathcal{L}$
+\end_inset
+
+ are monotonic functions.
+\end_layout
+
+\begin_deeper
+\begin_layout Lemma
+Fixed points exist for an abstract 
+\begin_inset Formula $\mathcal{F}$
 \end_inset
 
 
@@ -1167,6 +1246,12 @@ In turn, contextual definitions of abstract object and function pointer
 
 \end_layout
 
+\end_deeper
+\begin_layout Definition
+We now define abstraction and concretisation relations between an abstract
+ domain and a powerset of concrete domain.
+\end_layout
+
 \begin_deeper
 \begin_layout Definition
 \begin_inset Argument
@@ -1189,6 +1274,7 @@ Abstraction and concretisation
  as following:
 \end_layout
 
+\end_deeper
 \begin_layout Definition
 \begin_inset Formula 
 \begin{gather*}
@@ -1203,8 +1289,6 @@ Q\left(\eta\right)=\left\{ r|r\in\rho,\eta\prec\rho\right\}
 
 \end_layout
 
-\end_deeper
-\end_deeper
 \begin_layout Theorem
 \begin_inset Argument
 status open
@@ -1219,7 +1303,7 @@ Galois connection
 \begin_inset Formula $\left(P,Q\right)$
 \end_inset
 
- forms a galois connection between 
+ forms a Galois connection between 
 \begin_inset Formula $\left(\eta,\sqsubseteq\right)$
 \end_inset
 
@@ -1232,11 +1316,35 @@ Galois connection
 
 \begin_deeper
 \begin_layout Theorem
-When abstract functions are plugged into, 
-\begin_inset Formula $\mathcal{S},\mathcal{E}\ \mbox{and}\ \mathcal{L}$
+For all abstract and concrete functions, the following holds true: when
+ 
+\begin_inset Formula $f_{0}\left(n_{c},id_{c},v_{c},p_{c},t_{c},e_{c},j_{c}\right)=f,f\left(\rho\right)=\left\langle \rho',V_{C}\right\rangle ,g_{0}\left(n_{a},id_{a},v_{a},p_{a},t_{a},e_{a},j_{a}\right)=g,g\left(\eta\right)=\left\langle \eta',V_{A}\right\rangle $
 \end_inset
 
- are monotonic functions.
+ 
+\end_layout
+
+\begin_layout Theorem
+\begin_inset Formula 
+\begin{alignat*}{1}
+\begin{array}{ccc}
+\eta\vdash n_{a} & \prec & \rho\vdash n_{c}\\
+id_{a} & = & id_{c}\\
+\eta\vdash v_{a} & \prec & \rho\vdash v_{c}\\
+\eta\vdash p_{a,k} & \prec & \rho\vdash p_{c,k}\mbox{ for all\ }k\\
+\eta\vdash t_{a} & \prec & \rho\vdash t_{c}\\
+e_{a} & = & \rho\vdash e_{c}\\
+\eta\vdash OBJ_{j_{a}} & \prec & \rho\vdash OBJ_{j_{c}}
+\end{array} & \implies\left(\eta\prec\rho\implies\left\langle \eta',V_{A}\right\rangle \prec\rho'\right)
+\end{alignat*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Theorem
+(ignoring conditions set for parameters that the function is not taking)
 \end_layout
 
 \begin_deeper
@@ -1248,6 +1356,33 @@ status open
 Correctness of the analysis
 \end_layout
 
+\end_inset
+
+ Given an SDTL program, 
+\end_layout
+
+\begin_layout Theorem
+If 
+\begin_inset Formula $\mathcal{F}\ 0\ \left\langle \phi,\left\{ 0\mapsto\phi\right\} ,OBJ_{0}\right\rangle \ \phi=\rho'\ S_{C}$
+\end_inset
+
+ and 
+\begin_inset Formula $\mathcal{F}\ 0\ \left\langle \phi,\left\{ 0\mapsto\phi\right\} ,\left\{ OBJ_{0}\right\} ,\phi\right\rangle \ \phi=\eta'\ S_{A}$
+\end_inset
+
+ then 
+\begin_inset Formula $S_{C}$
+\end_inset
+
+ and 
+\begin_inset Formula $S_{A}$
+\end_inset
+
+ are related in the following manner:
+\end_layout
+
+\begin_layout Theorem
+\begin_inset Formula $\forall sid\in P,\exists\rho_{0},\rho_{1},\rho_{0}\times\rho_{1}\in S_{A}\left(sid\right)\rightarrow\exists\eta_{0},\eta_{1},\eta_{0}\times\eta_{1}\in S_{A}\left(sid\right)\wedge\eta_{0}\prec\rho_{0}\wedge\eta_{1}\prec\rho_{1}$
 \end_inset
 
 
