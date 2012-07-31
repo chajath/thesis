@@ -168,34 +168,46 @@ Pass
 status open
 
 \begin_layout Plain Layout
-Lift function
+Lift functions
 \end_layout
 
 \end_inset
 
-
-\begin_inset Formula $I_{\rho}$
+We define following 
+\begin_inset Quotes eld
 \end_inset
 
- Identity state transformer takes a constant and lifts it to a identity
- state transformer with the constant as a return value
+lift functions
+\begin_inset Quotes erd
+\end_inset
+
+ to incorporate non-monadic functions as a part of monadic transformation:
 \end_layout
 
+\begin_deeper
+\begin_layout Itemize
+\begin_inset Formula $I_{\alpha}$
+\end_inset
+
+is an identity state transformer that takes a constant and lifts it to a
+ identity state transformer with the constant as a return value
+\end_layout
+
+\begin_deeper
 \begin_layout Standard
-\begin_inset Formula $I_{\rho}:\alpha\rightarrow\beta\rightarrow\left(\rho\times\sigma\right)\rightarrow\left(\rho\times\sigma\times\alpha\right)$
+\begin_inset Formula 
+\begin{gather*}
+I_{\alpha}:\alpha\rightarrow\beta\rightarrow\left(\rho\times\sigma\right)\rightarrow\left(\rho\times\sigma\times\alpha\right)\\
+I_{\alpha}\ v\ \_\ \rho\ \sigma=\left\langle \rho,\sigma,v\right\rangle 
+\end{gather*}
+
 \end_inset
 
 
 \end_layout
 
-\begin_layout Standard
-\begin_inset Formula $I_{\rho}\ v\ \_\ \rho\ \sigma=\left\langle \rho,\sigma,v\right\rangle $
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
+\end_deeper
+\begin_layout Itemize
 \begin_inset Formula $I_{S}$
 \end_inset
 
@@ -203,8 +215,113 @@ Lift function
  through
 \end_layout
 
+\begin_deeper
 \begin_layout Standard
-\begin_inset Formula $I_{S}:\left(\rho\rightarrow\rho\times\alpha\right)\rightarrow\left(\rho\times\sigma\right)\rightarrow\left(\rho\times\sigma\times\alpha\right)$
+\begin_inset Formula 
+\begin{gather*}
+I_{S}:\left(\rho\rightarrow\rho\times\alpha\right)\rightarrow\left(\rho\times\sigma\right)\rightarrow\left(\rho\times\sigma\times\alpha\right)\\
+I_{S}\ t=\lambda r,s.\left\langle r',s,a\right\rangle \ \mbox{where}\ \left\langle r',a\right\rangle =t\ r
+\end{gather*}
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+\begin_inset Formula $I_{\beta}$
+\end_inset
+
+ takes a state transformer that doesn't make reference to the constant input
+ part, and produces the transformer which takes the input and does nothing
+ with it
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+\begin_inset Formula 
+\begin{gather*}
+I_{\beta}:\left(\gamma\rightarrow\omega\right)\rightarrow\beta\rightarrow\gamma\rightarrow\omega\\
+I_{\beta}\ t=\lambda b.t
+\end{gather*}
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+\begin_inset Formula $I_{\rho}$
+\end_inset
+
+ lifts a function that takes a state and returns a value, to a state transformer
+ with the return value.
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+\begin_inset Formula 
+\begin{gather*}
+I_{\rho}:\left(\rho\rightarrow\alpha\right)\rightarrow\rho\rightarrow\rho\times\alpha\\
+I_{\rho}\ f=\lambda r.\left\langle r,f\ r\right\rangle 
+\end{gather*}
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+\begin_inset Formula $I_{0}$
+\end_inset
+
+ takes a state transformation and attached to it a meaningless return value
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+\begin_inset Formula 
+\begin{gather*}
+I_{0}:\left(\gamma\rightarrow\omega\right)\rightarrow\gamma\rightarrow\omega\times\alpha\\
+I_{0}\ t=\left\langle t,0\right\rangle 
+\end{gather*}
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+We note that 
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+
+\begin_inset Formula $I_{\beta}\circ I_{S}\circ I_{\rho}$
+\end_inset
+
+ and 
+\begin_inset Formula $I_{\beta}\circ I_{S}$
+\end_inset
+
+ are frequently appearing patterns, and we define shorthand notations 
+\begin_inset Formula $I_{V}=I_{\beta}\circ I_{S}\circ I_{\rho}$
+\end_inset
+
+ and 
+\begin_inset Formula $I_{T}=I_{\beta}\circ I_{S}$
 \end_inset
 
 
@@ -212,7 +329,7 @@ Lift function
 
 \begin_layout Definition
 \begin_inset Argument
-status open
+status collapsed
 
 \begin_layout Plain Layout
 State collector function
@@ -229,6 +346,7 @@ We define a state collection helper function
  state for a given statement.
 \end_layout
 
+\end_deeper
 \begin_layout Standard
 \begin_inset Formula 
 \begin{alignat*}{2}
@@ -260,9 +378,9 @@ We now define a denotational semantics of the SDTL program
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-\mathcal{F} & : & number\rightarrow\left(\rho\times\sigma\rightarrow\left(\rho\times\sigma\times\alpha\right)\right)\\
-\mathcal{S} & : & Stmt\rightarrow\mathcal{F}\rightarrow s\rightarrow\left(\rho\times\sigma\rightarrow\left(\rho\times\sigma\times\alpha\right)\right)\\
-\mathcal{E} & : & Expr\rightarrow\mathcal{F}\rightarrow\rho\rightarrow\rho\times Value
+\mathcal{F} & : & number\rightarrow\left(\rho\times\sigma\rightarrow\left(\rho\times\sigma\times\alpha\cup\left\{ NoReturn\right\} \right)\right)\\
+\mathcal{S} & : & Stmt\rightarrow\mathcal{F}\rightarrow s\rightarrow\left(\rho\times\sigma\rightarrow\left(\rho\times\sigma\times\alpha\cup\left\{ NoReturn\right\} \right)\right)\\
+\mathcal{E} & : & Expr\rightarrow\mathcal{F}\rightarrow\rho\rightarrow\rho\times\alpha
 \end{eqnarray*}
 
 \end_inset
@@ -275,12 +393,12 @@ We now define a denotational semantics of the SDTL program
 \begin{align*}
  & \mathcal{F} & = & Y\lambda f.\lambda n.\mathcal{S}\dd{\mathtt{Stmt}_{n}}\ \mathtt{sid}\left(\mathtt{Stmt}_{n}\right)\ f\\
  & \mathcal{S}\dd{S_{1};S_{2}} & = & T_{S}\ M_{S}\left(\begin{aligned} & \left\langle r,S\dd{S_{1}}\ \mathtt{sid}\left(S_{1}\right)\right\rangle \\
- & \left\langle \_,\mathtt{isterm}\left(r,\lambda.S\dd{S_{2}}\ \mathtt{sid}\left(S_{2}\right)\right)\right\rangle 
+ & \left\langle \_,\mathtt{isterm}\left(r,S\dd{S_{2}}\ \mathtt{sid}\left(S_{2}\right)\right)\right\rangle 
 \end{aligned}
 \right)\\
  & \mathcal{S}\dd{\mathtt{return}\ e} & = & T_{S}\ \mathcal{E}\dd{e}\\
  & \mathcal{S}\dd{\mathtt{if}\left(e\right)S_{1}}\ f & = & T_{S}\ M_{S}\left(\begin{aligned} & \left\langle v,\mathcal{E}\dd{e}\right\rangle \\
- & \left\langle \_,\mathtt{cond}\left(v,\mathcal{S}\dd{S_{1}},I_{\rho}\ NoReturn\right)\right\rangle 
+ & \left\langle \_,\mathtt{cond}\left(v,\mathcal{S}\dd{S_{1}},I_{\alpha}\ NoReturn\right)\right\rangle 
 \end{aligned}
 \right)\\
  & {\scriptstyle \mathcal{S}\dd{\mathtt{if}\left(e\right)S_{1}\mathtt{else}S_{2}}\ f} & = & T_{S}\ M_{S}\left(\begin{aligned} & \left\langle v,\mathcal{E}\dd{e}\right\rangle \\
@@ -289,12 +407,12 @@ We now define a denotational semantics of the SDTL program
 \right)\\
  & \mathcal{S}\dd{id=e} & = & T_{S}\ M_{S}\left(\begin{aligned} & \left\langle v,\mathcal{E}\dd{e}\right\rangle \\
  & \left\langle \_,\mathtt{asg}\left(id,v\right)\right\rangle \\
- & \left\langle \_,I_{\rho}\ NoReturn\right\rangle 
+ & \left\langle \_,I_{\alpha}\ NoReturn\right\rangle 
 \end{aligned}
 \right)\\
  & \mathcal{S}\dd{e_{1}.id=e_{2}} & = & T_{S}\ M_{S}\left(\begin{aligned} & \left\langle v,\mathcal{E}\dd{e_{2}}\right\rangle \\
  & \left\langle r,\mathcal{E}\dd{e_{1}}\right\rangle \\
- & \left\langle \_,\mathtt{set}\left(r,id,v\right)\right\rangle 
+ & \left\langle \_,I_{T}\ \mathtt{set}\left(r,id,v\right)\right\rangle 
 \end{aligned}
 \right)\\
  & {\scriptstyle \mathcal{S}\dd{\mathtt{while}\left(e\right)S_{1}}\ f\ \rho} & = & T_{S}\ \left(Y\lambda x.\lambda\rho,r.\mathtt{isterm}\left(r,M_{S}\left(\begin{aligned} & \left\langle v,\mathcal{E}\dd{e}\right\rangle \\
@@ -304,27 +422,27 @@ We now define a denotational semantics of the SDTL program
 }\right\rangle 
 \end{aligned}
 \right)\ f\right)\right)\ \rho\ {\scriptstyle NoReturn}\\
- & \mathcal{E}\dd{con} & = & T_{S}\ M_{S}\ \left\langle \_,I_{\rho}\ \mathtt{conval}\left(con\right)\right\rangle \\
- & \mathcal{E}\dd{\mathtt{global}} & = & T_{S}\ M_{S}\ \left\langle \_,\lambda f.\rho.\sigma.I_{\rho}\ \mathtt{obj}\left(0,\rho\right)\right\rangle \\
+ & \mathcal{E}\dd{con} & = & T_{S}\ M_{S}\ \left\langle \_,I_{\alpha}\ \mathtt{conval}\left(con\right)\right\rangle \\
+ & \mathcal{E}\dd{\mathtt{global}} & = & T_{S}\ M_{S}\ \left\langle \_,I_{V}\ \mathtt{obj}\left(0\right)\right\rangle \\
  & \mathcal{E}\dd{L} & = & T_{S}\ \mathcal{L}\dd{L}\\
- & \mathcal{E}\dd{\mathtt{this}} & = & T_{S}\ M_{S}\ \left\langle \_,\lambda f.\rho.\sigma.I_{\rho}\ \mathtt{getthis}\left(\rho\right)\right\rangle \\
- & \mathcal{E}\dd{\mathtt{input}} & = & T_{S}\ M_{S}\ \left\langle \_,I_{S}\ \lambda f.\rho.\mathtt{getinput}\left(\rho\right)\right\rangle \\
+ & \mathcal{E}\dd{\mathtt{this}} & = & T_{S}\ M_{S}\ \left\langle \_,I_{V}\ \mathtt{getthis}\left(\rho\right)\right\rangle \\
+ & \mathcal{E}\dd{\mathtt{input}} & = & T_{S}\ M_{S}\ \left\langle \_,I_{T}\ \mathtt{getinput}\left(\rho\right)\right\rangle \\
  & \mathcal{E}\dd{\mathtt{new}\ L\left(E*\right)} & = & T_{S}\ M_{s}\left(\begin{aligned} & \left\langle n,\mathcal{L}\ \dd{L}\right\rangle \\
  & \left\langle p,\mathtt{evalParams}\ n\ E*\ \phi\right\rangle \\
- & \left\langle m,\left(\lambda f,\rho.\mathtt{newobj}\left(\rho\right)\right)\right\rangle \\
- & \left\langle \_,\left(\lambda f,\rho.\mathtt{call}\left(n,p,m,f,\rho,\mathtt{eid}\right)\right)\right\rangle \\
- & \left\langle \_,I_{\rho}\ m\right\rangle 
+ & \left\langle m,I_{T}\ \mathtt{newobj}\right\rangle \\
+ & \left\langle \_,\mathtt{call}\left(n,p,m,\mathtt{eid}\right)\right\rangle \\
+ & \left\langle \_,I_{\alpha}\ m\right\rangle 
 \end{aligned}
 \right)\\
  & \mathcal{E}\dd{L\left(E*\right)} & = & T_{S}\ M_{S}\left(\begin{aligned} & \left\langle n,\mathcal{L}\ \dd{L}\right\rangle \\
  & \left\langle p,\mathtt{evalParams}\ n\ E*\ \phi\right\rangle \\
- & \left\langle \_,\left(\lambda f,\rho.\mathtt{call}\left(n,p,\mathtt{obj}\left(0,\rho\right),f,\rho,\mathtt{eid}\right)\right)\right\rangle 
+ & \left\langle \_,\mathtt{call}\left(n,p,\mathtt{obj}\left(0,\rho\right),\mathtt{eid}\right)\right\rangle 
 \end{aligned}
 \right)\\
  & \mathcal{E}\dd{E_{0}.L\left(E*\right)} & = & T_{S}\ M_{S}\left(\begin{aligned} & \left\langle t,\mathcal{E}\ \dd{E_{0}}\right\rangle \\
  & \left\langle n,\mathcal{L}\ \dd{L}\right\rangle \\
  & \left\langle p,\mathtt{evalParams}\ n\ E*\ \phi\right\rangle \\
- & \left\langle \_,\left(\lambda f,\rho.\mathtt{call}\left(n,p,t,f,\rho,\mathtt{eid}\right)\right)\right\rangle 
+ & \left\langle \_,\mathtt{call}\left(n,p,t,\mathtt{eid}\right)\right\rangle 
 \end{aligned}
 \right)\\
  & \mathcal{E}\dd{E_{0}\ binop\ E_{1}} & = & T_{S}\ M_{S}\left(\begin{aligned} & \left\langle c_{0},\mathcal{E}\ \dd{E_{0}}\right\rangle \\
@@ -332,11 +450,11 @@ We now define a denotational semantics of the SDTL program
  & \left\langle \_,\left(\lambda f,\rho.I_{\rho}\ \mathtt{bin}\left(binop,c_{0},c_{1}\right)\right)\right\rangle 
 \end{aligned}
 \right)\\
- & \mathcal{L}\dd{id} & = & T_{S}\ \left(I_{\rho}\ \mathtt{val}\left(id\right)\right)\\
- & \mathcal{L}\dd{\mathtt{this}} & = & T_{S}\ \left(\lambda f,\rho.I_{\rho}\ \mathtt{getthis}\left(\rho\right)\right)\\
- & \mathcal{L}\dd{\mathtt{global}} & = & T_{S}\ \left(\lambda f,\rho.I_{\rho}\ \mathtt{obj}\left(0,\rho\right)\right)\\
+ & \mathcal{L}\dd{id} & = & T_{S}\ \left(I_{V}\ \mathtt{val}\left(id\right)\right)\\
+ & \mathcal{L}\dd{\mathtt{this}} & = & T_{S}\ \left(.I_{V}\ \mathtt{getthis}\left(\rho\right)\right)\\
+ & \mathcal{L}\dd{\mathtt{global}} & = & T_{S}\ \left(I_{V}\ \mathtt{obj}\left(0\right)\right)\\
  & \mathcal{L}\dd{E_{0}.id} & = & T_{S}\ M_{S}\left(\begin{aligned} & \left\langle v,\mathcal{E}\ \dd{E_{0}}\right\rangle \\
- & \left\langle \_,\mathtt{get}\left(v,id\right)\right\rangle 
+ & \left\langle \_,I_{V}\ \mathtt{get}\left(v,id\right)\right\rangle 
 \end{aligned}
 \right)
 \end{align*}
@@ -489,24 +607,24 @@ We define concrete functions as following:
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-\mathtt{isterm}\left(v,s\right) & = & \begin{cases}
-s & v=NoReturn\\
+\mathtt{isterm}\left(v,s\right) & = & \lambda f,\rho.\begin{cases}
+s\ f\ \rho & v=NoReturn\\
 I_{\rho}\ v & \mbox{otherwise}
 \end{cases}\\
-\mathtt{cond}\left(v,s_{1},s_{2}\right) & = & \begin{cases}
-s_{1} & v=true\\
-s_{2} & v=false
+\mathtt{cond}\left(v,s_{1},s_{2}\right) & = & \lambda f,\rho.\begin{cases}
+s_{1}\ f\ \rho & v=true\\
+s_{2}\ f\ \rho & v=false
 \end{cases}\\
-\mathtt{asg}\left(id,v\right) & = & \lambda f,\left\langle V,OM,T\right\rangle .\left\langle V\left[id=v\right],OM,T\right\rangle \\
-\mathtt{val}\left(id\right) & = & \lambda f,\left\langle V,OM,T\right\rangle .V\left(id\right)\\
-\mathtt{get}\left(OBJ_{n},id\right) & = & \lambda f,\left\langle V,OM,T\right\rangle .OM\left(n\right)\\
-\mathtt{set}\left(OBJ_{n},id,v\right) & = & \lambda f,\left\langle V,OM,T\right\rangle .\left\langle V,OM\left[OBJ_{n}\left[id\mapsto v\right]\right],T\right\rangle \\
+\mathtt{asg}\left(id,v\right) & = & \lambda\left\langle V,OM,T\right\rangle .\left\langle V\left[id=v\right],OM,T\right\rangle \\
+\mathtt{val}\left(id\right) & = & \lambda\left\langle V,OM,T\right\rangle .V\left(id\right)\\
+\mathtt{get}\left(OBJ_{n},id\right) & = & \lambda\left\langle V,OM,T\right\rangle .OM\left(n\right)\\
+\mathtt{set}\left(OBJ_{n},id,v\right) & = & \lambda\left\langle V,OM,T\right\rangle .\left\langle V,OM\left[OBJ_{n}\left[id\mapsto v\right]\right],T\right\rangle \\
 \mathtt{conval}\left(con\right) & = & con\\
-\mathtt{obj}\left(n,\left\langle V,OM,T\right\rangle \right) & = & OM\left(n\right)\\
-\mathtt{getthis}\left(\left\langle V,OM,T\right\rangle \right) & = & T\\
+\mathtt{obj}\left(n\right) & = & \lambda\left\langle V,OM,T\right\rangle .OM\left(n\right)\\
+\mathtt{getthis} & = & \lambda\left\langle V,OM,T\right\rangle .T\\
 \mathtt{getinput\left(\rho\right)} & = & \mbox{see note}\\
-\mathtt{newobj}\left(\left\langle V,OM,T\right\rangle \right) & = & \left\langle \left\langle V,OM\left[n\mapsto\phi\right],T\right\rangle ,OBJ_{n}\right\rangle \ \mbox{where}\ n=N\left(OM\right)\\
-\mathtt{call}\left(\left\langle FP_{n},C\right\rangle ,p,t,f,\left\langle V,OM,T\right\rangle ,s,\_\right) & = & \begin{cases}
+\mathtt{newobj} & = & \lambda\left\langle V,OM,T\right\rangle .\left\langle \left\langle V,OM\left[n\mapsto\phi\right],T\right\rangle ,OBJ_{n}\right\rangle \ \mbox{where}\ n=N\left(OM\right)\\
+\mathtt{call}\left(\left\langle FP_{n},C\right\rangle ,p,t,\_\right) & = & \lambda f,s,\left\langle V,OM,T\right\rangle .\begin{cases}
 \begin{gathered}\left\langle \left\langle V,OM',T\right\rangle ,s',r\right\rangle \ \mbox{where}\ \left\langle \left\langle V',OM',T'\right\rangle ,s',r\right\rangle =\\
 f\ n\ \left\langle \left[param_{n,k}\mapsto\left[C|p\right]_{k}\right],OM,t\right\rangle \ s
 \end{gathered}
@@ -685,7 +803,7 @@ In this case, in line 7, x is associated with a value
 
 \end_layout
 
-\begin_layout Fact
+\begin_layout Theorem
 \begin_inset Argument
 status open
 
@@ -987,27 +1105,27 @@ Abstract functions
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-\mathtt{isterm}\left(v,s\right) & = & \begin{cases}
-s & v=\left\{ NoReturn\right\} \\
+\mathtt{isterm}\left(v,s\right) & = & \lambda f,\eta.\begin{cases}
+s\ f\ \eta & v=\left\{ NoReturn\right\} \\
 I_{\rho}\ v & \mbox{otherwise}
 \end{cases}\\
-\mathtt{cond}\left(v,s_{1},s_{2}\right) & = & s_{1}\sqcup s_{2}\\
-\mathtt{asg}\left(id,v\right) & = & \lambda f,\left\langle \sigma,\alpha,\tau,\nu\right\rangle .\left\langle \sigma\left[id=v\right],\alpha,\tau,\nu\right\rangle \\
-\mathtt{val}\left(id,v\right) & = & \lambda f,\left\langle \sigma,\alpha,\tau,\nu\right\rangle .\sigma\left(id\right)\\
-\mathtt{get}\left(n,id\right) & = & \lambda f,\left\langle \sigma,\alpha,\tau,\nu\right\rangle .\left\{ \alpha\left(x\right)|OBJ_{x}\in n\right\} \\
-\mathtt{set}\left(n,id,v\right) & = & \lambda f,\left\langle \sigma,\alpha,\tau,\nu\right\rangle .\left\langle \sigma,\left\{ x|OBJ_{x}\in\alpha,x=\begin{cases}
+\mathtt{cond}\left(v,s_{1},s_{2}\right) & = & \lambda f,\eta.\left(s_{1}\ f\ \eta\right)\sqcup\left(s_{2}\ f\ \eta\right)\\
+\mathtt{asg}\left(id,v\right) & = & \lambda\left\langle \sigma,\alpha,\tau,\nu\right\rangle .\left\langle \sigma\left[id=v\right],\alpha,\tau,\nu\right\rangle \\
+\mathtt{val}\left(id,v\right) & = & \lambda\left\langle \sigma,\alpha,\tau,\nu\right\rangle .\sigma\left(id\right)\\
+\mathtt{get}\left(n,id\right) & = & \lambda\left\langle \sigma,\alpha,\tau,\nu\right\rangle .\left\{ \alpha\left(x\right)|OBJ_{x}\in n\right\} \\
+\mathtt{set}\left(n,id,v\right) & = & \lambda\left\langle \sigma,\alpha,\tau,\nu\right\rangle .\left\langle \sigma,\left\{ x|OBJ_{x}\in\alpha,x=\begin{cases}
 \alpha\left(x\right)\left[id\mapsto v\right] & OBJ_{x}\in n\\
 \alpha\left(x\right) & \mbox{otherwise}
-\end{cases}\right\} ,\tau\right\rangle \\
+\end{cases}\right\} ,\tau,\nu\right\rangle \\
 \mathtt{conval}\left(con\right) & = & \begin{cases}
 Number & con\in\mathbb{N}\\
 Boolean & con\in\left\{ true,false\right\} 
 \end{cases}\\
-\mathtt{obj}\left(n,\left\langle \sigma,\alpha,\tau,\nu\right\rangle \right) & = & \alpha\left(n\right)\\
-\mathtt{getthis}\left(\left\langle \sigma,\alpha,\tau,\nu\right\rangle \right) & = & \tau\\
-\mathtt{getinput\left(\eta\right)} & = & \left\langle \eta,\left\{ Number\right\} \right\rangle \\
-\mathtt{newobj}\left(\left\langle \sigma,\alpha,\tau,\nu\right\rangle \right) & = & \left\langle \left\langle \sigma,\alpha\left[n\mapsto\phi\right],\tau\right\rangle ,OBJ_{n},\nu\right\rangle \ \mbox{where}\ n=N\left(\alpha\right)\\
-\mathtt{call}\left(n,p,t,f,\left\langle \sigma,\alpha,\tau,\nu\right\rangle ,s,e\right) & = & \underset{\left\langle FP_{x},C\right\rangle \in n}{\bigsqcup}\mathtt{scall}\left(\left\langle FP_{x},C\right\rangle ,p,t,f,\left\langle \sigma,\alpha,\tau,\nu\right\rangle ,s,e\right)\\
+\mathtt{obj}\left(n\right) & = & \lambda\left\langle \sigma,\alpha,\tau,\nu\right\rangle .\alpha\left(n\right)\\
+\mathtt{getthis} & = & \lambda\left\langle \sigma,\alpha,\tau,\nu\right\rangle .\tau\\
+\mathtt{getinput} & = & \lambda\eta.\left\langle \eta,\left\{ Number\right\} \right\rangle \\
+\mathtt{newobj} & = & \lambda\left\langle \sigma,\alpha,\tau,\nu\right\rangle .\left\langle \left\langle \sigma,\alpha\left[n\mapsto\phi\right],\tau\right\rangle ,OBJ_{n},\nu\right\rangle \ \mbox{where}\ n=N\left(\alpha\right)\\
+\mathtt{call}\left(n,p,t,e\right) & = & \lambda f,s,\left\langle \sigma,\alpha,\tau,\nu\right\rangle .\underset{\left\langle FP_{x},C\right\rangle \in n}{\bigsqcup}\mathtt{scall}\left(\left\langle FP_{x},C\right\rangle ,p,t,f,\left\langle \sigma,\alpha,\tau,\nu\right\rangle ,s,e\right)\\
 {\scriptstyle \mathtt{scall}\left(\left\langle FP_{n},C\right\rangle ,p,t,f,\left\langle \sigma,\alpha,\tau,\nu\right\rangle ,s,e\right)} & = & \begin{cases}
 \begin{gathered}\left\langle \left\langle \sigma,\alpha',\tau,\nu'\right\rangle ,s',r'\right\rangle \ \mbox{where}\ \left\langle \left\langle \sigma',\alpha',\tau'\right\rangle ,s',r,\nu'\right\rangle =\\
 f\ n\ \left\langle \left\{ param_{n,k}\mapsto\left[C|p\right]_{k}\right\} ,\alpha,\tau,\nu\right\rangle \ s
@@ -1052,9 +1170,9 @@ Abstraction
 \left\langle \sigma,\alpha,\tau,\nu\right\rangle \prec\left\langle V,OM,T\right\rangle \ \mbox{iff}\ \forall id\in V\exists a\in\sigma\left(id\right),a\prec V\left(id\right)\mbox{ and }\tau\prec T\\
 \forall z\in\mathbb{Z},\left\{ Number\right\} \prec z\\
 \forall b\in\left\{ True,False\right\} ,\left\{ Boolean\right\} \prec b\\
-OBJ_{m}\prec OBJ_{n}\ \mbox{if}\ \eta\models OBJ_{m}\prec OM\models OBJ_{n}\\
+OBJ_{m}\prec OBJ_{n}\ \mbox{if}\ \eta\vdash OBJ_{m}\prec OM\vdash OBJ_{n}\\
 \left\langle FP_{m},\left[c'\right],e\right\rangle \prec\left\langle FP_{n},\left[c\right]\right\rangle \ \mbox{if}\ m=n\ \\
-\ N\left(c\right)=N\left(c'\right)\ \mbox{and}\ \forall c_{k}\in c,\eta\models c'_{k}\prec c_{k}
+\ N\left(c\right)=N\left(c'\right)\ \mbox{and}\ \forall c_{k}\in c,\eta\vdash c'_{k}\prec c_{k}
 \end{gather*}
 
 \end_inset
@@ -1070,7 +1188,7 @@ In turne, contextual definitions of abstract object and function pointer
 \begin_layout Definition
 \begin_inset Formula 
 \begin{gather*}
-\left\langle \sigma,\alpha,\tau,\nu\right\rangle \models OBJ_{m}\prec OBJ_{n}\mbox{ if }\\
+\left\langle \sigma,\alpha,\tau,\nu\right\rangle \vdash OBJ_{m}\prec OBJ_{n}\mbox{ if }\\
 \forall id\in OM\left(n\right),OM\left(n\right)\left(id\right)\in Z\cup\left\{ True,False\right\} ,\alpha\left(m\right)\left(id\right)\prec OM\left(n\right)\left(id\right)\\
 \forall id\in OM\left(n\right),OM\left(n\right)\left(id\right)=OBJ_{x},\alpha\left(m\right)=OBJ_{y},\alpha\left(y\right)\prec OBJ_{x}
 \end{gather*}
@@ -1099,15 +1217,41 @@ Abstraction and concretisation
 \begin_inset Formula $Q$
 \end_inset
 
- as following: TODO
+ as following:
 \end_layout
 
-\begin_deeper
+\begin_layout Definition
+\begin_inset Formula 
+\begin{gather*}
+P:\wp\left(\rho\right)\rightarrow\eta\\
+P\left(r\right)=\bigsqcup\left\{ \eta|\rho\in r,\eta\prec\rho\right\} \\
+Q:\eta\rightarrow\wp\left(\rho\right)\\
+Q\left(\eta\right)=\left\{ r|r\in\rho,\eta\prec\rho\right\} 
+\end{gather*}
+
+\end_inset
+
+
+\end_layout
+
 \begin_layout Fact
 \begin_inset Formula $\left(P,Q\right)$
 \end_inset
 
  forms a galois connection
+\end_layout
+
+\begin_layout Proof
+TODO
+\end_layout
+
+\begin_layout Theorem
+Abstract functions are monotonic functions
+\end_layout
+
+\begin_deeper
+\begin_layout Theorem
+Abstract functions and concrete functions preserve abstraction relations
 \end_layout
 
 \end_deeper
