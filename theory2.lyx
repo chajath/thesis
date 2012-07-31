@@ -346,7 +346,6 @@ We define a state collection helper function
  state for a given statement.
 \end_layout
 
-\end_deeper
 \begin_layout Standard
 \begin_inset Formula 
 \begin{alignat*}{2}
@@ -375,6 +374,7 @@ Denotational semantics
 We now define a denotational semantics of the SDTL program
 \end_layout
 
+\begin_deeper
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
@@ -388,6 +388,9 @@ We now define a denotational semantics of the SDTL program
 
 \end_layout
 
+\end_deeper
+\end_deeper
+\end_deeper
 \begin_layout Standard
 \begin_inset Formula 
 \begin{align*}
@@ -479,6 +482,7 @@ Where
 
 \end_layout
 
+\begin_deeper
 \begin_layout Itemize
 
 \lang british
@@ -521,44 +525,6 @@ where
 \end_layout
 
 \end_deeper
-\end_deeper
-\begin_layout Theorem
-\begin_inset Formula $\mathcal{S}$
-\end_inset
-
-, 
-\begin_inset Formula $\mathcal{E}$
-\end_inset
-
- and 
-\begin_inset Formula $\mathcal{L}$
-\end_inset
-
- are monotonous functions given abstract functions are all monotonous.
-\end_layout
-
-\begin_deeper
-\begin_layout Theorem
-Given two sets of definitions of abstract functions and their domain, if
- there is a relationship 
-\begin_inset Formula $\prec$
-\end_inset
-
- between functional relations, then such relations are also found in 
-\begin_inset Formula $\mathcal{S}$
-\end_inset
-
-, 
-\begin_inset Formula $\mathcal{E}$
-\end_inset
-
- and 
-\begin_inset Formula $\mathcal{L}$
-\end_inset
-
-.
-\end_layout
-
 \end_deeper
 \begin_layout Definition
 \begin_inset Argument
@@ -638,13 +604,17 @@ f\ n\ \left\langle \left[param_{n,k}\mapsto\left[C|p\right]_{k}\right],OM,t\righ
 
 \end_layout
 
-\end_deeper
-\begin_layout Paragraph
-Abstract functions for Forward-may analysis 
+\begin_layout Definition
+\begin_inset Argument
+status open
+
+\begin_layout Plain Layout
+Abstract domain
 \end_layout
 
-\begin_layout Standard
-problematic when we have an infinite loop of currying
+\end_inset
+
+We define an abstract domain as following:
 \end_layout
 
 \begin_layout Standard
@@ -715,6 +685,7 @@ c = number of arguments curried
 eid = A uid of an expression from which this value has been produced
 \end_layout
 
+\end_deeper
 \begin_layout Example
 \begin_inset Argument
 status open
@@ -1038,12 +1009,12 @@ We define a partial ordering
 We define a union between two abstract environments.
 \end_layout
 
-\begin_layout Fact
+\begin_layout Theorem
 Given two abstract environments 
 \begin_inset Formula $\eta_{1}\ \mbox{and}\ \eta_{2}$
 \end_inset
 
-We can find a least upper bound by finding the value of 
+, we can find an upper bound by finding the value of 
 \begin_inset Formula $\eta_{1}\sqcup\eta_{2}$
 \end_inset
 
@@ -1078,10 +1049,14 @@ We can find a least upper bound by finding the value of
 \end_layout
 
 \begin_layout Proof
-Trivial
+By contra-positive.
 \end_layout
 
-\begin_layout Corollary
+\begin_layout Standard
+This existence of an upper bound gives us the following useful result.
+\end_layout
+
+\begin_layout Lemma
 \begin_inset Formula $\left(\eta,\sqsubseteq\right)$
 \end_inset
 
@@ -1140,12 +1115,6 @@ f\ n\ \left\langle \left\{ param_{n,k}\mapsto\left[C|p\right]_{k}\right\} ,\alph
 
 \end_layout
 
-\end_deeper
-\begin_layout Fact
-Abstract functions are monotonous
-\end_layout
-
-\begin_deeper
 \begin_layout Definition
 \begin_inset Argument
 status open
@@ -1181,7 +1150,7 @@ OBJ_{m}\prec OBJ_{n}\ \mbox{if}\ \eta\vdash OBJ_{m}\prec OM\vdash OBJ_{n}\\
 \end_layout
 
 \begin_layout Definition
-In turne, contextual definitions of abstract object and function pointer
+In turn, contextual definitions of abstract object and function pointer
  values are defined as following:
 \end_layout
 
@@ -1198,7 +1167,7 @@ In turne, contextual definitions of abstract object and function pointer
 
 \end_layout
 
-\end_deeper
+\begin_deeper
 \begin_layout Definition
 \begin_inset Argument
 status open
@@ -1234,26 +1203,57 @@ Q\left(\eta\right)=\left\{ r|r\in\rho,\eta\prec\rho\right\}
 
 \end_layout
 
-\begin_layout Fact
+\end_deeper
+\end_deeper
+\begin_layout Theorem
+\begin_inset Argument
+status open
+
+\begin_layout Plain Layout
+Galois connection
+\end_layout
+
+\end_inset
+
+
 \begin_inset Formula $\left(P,Q\right)$
 \end_inset
 
- forms a galois connection
-\end_layout
+ forms a galois connection between 
+\begin_inset Formula $\left(\eta,\sqsubseteq\right)$
+\end_inset
 
-\begin_layout Proof
-TODO
-\end_layout
+ and
+\begin_inset Formula $\left(\wp\left(\rho\right),\subseteq\right)$
+\end_inset
 
-\begin_layout Theorem
-Abstract functions are monotonic functions
+
 \end_layout
 
 \begin_deeper
 \begin_layout Theorem
-Abstract functions and concrete functions preserve abstraction relations
+When abstract functions are plugged into, 
+\begin_inset Formula $\mathcal{S},\mathcal{E}\ \mbox{and}\ \mathcal{L}$
+\end_inset
+
+ are monotonic functions.
 \end_layout
 
+\begin_deeper
+\begin_layout Theorem
+\begin_inset Argument
+status open
+
+\begin_layout Plain Layout
+Correctness of the analysis
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
 \end_deeper
 \end_body
 \end_document
