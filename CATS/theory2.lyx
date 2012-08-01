@@ -1,0 +1,1394 @@
+#LyX 2.0 created this file. For more info see http://www.lyx.org/
+\lyxformat 413
+\begin_document
+\begin_header
+\textclass article
+\begin_preamble
+\usepackage{stmaryrd}
+\newcommand{\dd}[1]{\llbracket#1\rrbracket}
+\end_preamble
+\options fleqn
+\use_default_options true
+\begin_modules
+theorems-ams
+eqs-within-sections
+figs-within-sections
+\end_modules
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\spacing single
+\use_hyperref false
+\papersize default
+\use_geometry true
+\use_amsmath 1
+\use_esint 1
+\use_mhchem 1
+\use_mathdots 1
+\cite_engine basic
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\use_refstyle 1
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\leftmargin 1cm
+\topmargin 1cm
+\rightmargin 1cm
+\bottommargin 1cm
+\headheight 1cm
+\headsep 1cm
+\footskip 0cm
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Paragraph
+Statement to initial and final state mapping
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $\sigma:s\rightarrow\rho\rightarrow\rho$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Paragraph
+Auxiliary functions
+\end_layout
+
+\begin_layout Standard
+Given sheer complexity of the task of analysing SDTL language, we define
+ a series of auxiliary functions to help make formulation terse and more
+ expressive.
+\end_layout
+
+\begin_layout Definition
+\begin_inset Argument
+status open
+
+\begin_layout Plain Layout
+State transformer function
+\end_layout
+
+\end_inset
+
+
+\begin_inset Formula $M_{S}$
+\end_inset
+
+ is a state transformer monad that takes a list of vectors (variable name,
+ lambda expressions) with free variables and produces a state transformer
+ with return value.
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+\begin_inset Formula $M_{S}:\left[p\times\left(\beta\rightarrow\left(\rho\times\sigma\right)\rightarrow\left(\rho\times\sigma\times\alpha\right)\right)\right]\rightarrow\beta\rightarrow\left(\rho\times\sigma\right)\rightarrow\left(\rho\times\sigma\times\alpha\right)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $M_{S}\ \left[T_{0}\right]=T_{0}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $M_{S}\ \left[\left\langle p_{0},T_{0}\right\rangle |T_{rest}\right]\ b\ \rho\ \sigma=\left(\lambda p_{0}.M_{S}\ T_{rest}\ b\ \rho'\ \sigma'\right)\ v_{0}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+where 
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\left\langle \rho',\sigma',v_{0}\right\rangle =T_{0}\ \rho\ \sigma$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Pass 
+\begin_inset Formula $p_{0}$
+\end_inset
+
+ on as a free variable, i.e.
+ 
+\begin_inset Formula $p_{0}\in FV\left(T_{rest}\right)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Definition
+\begin_inset Argument
+status open
+
+\begin_layout Plain Layout
+Lift functions
+\end_layout
+
+\end_inset
+
+We define following 
+\begin_inset Quotes eld
+\end_inset
+
+lift functions
+\begin_inset Quotes erd
+\end_inset
+
+ to incorporate non-monadic functions as a part of monadic transformation:
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+\begin_inset Formula $I_{\alpha}$
+\end_inset
+
+is an identity state transformer that takes a constant and lifts it to a
+ identity state transformer with the constant as a return value
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+\begin_inset Formula 
+\begin{gather*}
+I_{\alpha}:\alpha\rightarrow\beta\rightarrow\left(\rho\times\sigma\right)\rightarrow\left(\rho\times\sigma\times\alpha\right)\\
+I_{\alpha}\ v\ \_\ \rho\ \sigma=\left\langle \rho,\sigma,v\right\rangle 
+\end{gather*}
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+\begin_inset Formula $I_{S}$
+\end_inset
+
+ lifts a state transformer to a state transformer with state collector passing
+ through
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+\begin_inset Formula 
+\begin{gather*}
+I_{S}:\left(\rho\rightarrow\rho\times\alpha\right)\rightarrow\left(\rho\times\sigma\right)\rightarrow\left(\rho\times\sigma\times\alpha\right)\\
+I_{S}\ t=\lambda r,s.\left\langle r',s,a\right\rangle \ \mbox{where}\ \left\langle r',a\right\rangle =t\ r
+\end{gather*}
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+\begin_inset Formula $I_{\beta}$
+\end_inset
+
+ takes a state transformer that doesn't make reference to the constant input
+ part, and produces the transformer which takes the input and does nothing
+ with it
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+\begin_inset Formula 
+\begin{gather*}
+I_{\beta}:\left(\gamma\rightarrow\omega\right)\rightarrow\beta\rightarrow\gamma\rightarrow\omega\\
+I_{\beta}\ t=\lambda b.t
+\end{gather*}
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+\begin_inset Formula $I_{\rho}$
+\end_inset
+
+ lifts a function that takes a state and returns a value, to a state transformer
+ with the return value.
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+\begin_inset Formula 
+\begin{gather*}
+I_{\rho}:\left(\rho\rightarrow\alpha\right)\rightarrow\rho\rightarrow\rho\times\alpha\\
+I_{\rho}\ f=\lambda r.\left\langle r,f\ r\right\rangle 
+\end{gather*}
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+\begin_inset Formula $I_{0}$
+\end_inset
+
+ takes a state transformation and attached to it a meaningless return value
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+\begin_inset Formula 
+\begin{gather*}
+I_{0}:\left(\gamma\rightarrow\omega\right)\rightarrow\gamma\rightarrow\omega\times\alpha\\
+I_{0}\ t=\left\langle t,0\right\rangle 
+\end{gather*}
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+We note that 
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+
+\begin_inset Formula $I_{\beta}\circ I_{S}\circ I_{\rho}$
+\end_inset
+
+ and 
+\begin_inset Formula $I_{\beta}\circ I_{S}$
+\end_inset
+
+ are frequently appearing patterns, and we define shorthand notations 
+\begin_inset Formula $I_{V}=I_{\beta}\circ I_{S}\circ I_{\rho}$
+\end_inset
+
+ and 
+\begin_inset Formula $I_{T}=I_{\beta}\circ I_{S}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Definition
+\begin_inset Argument
+status collapsed
+
+\begin_layout Plain Layout
+State collector function
+\end_layout
+
+\end_inset
+
+We define a state collection helper function 
+\begin_inset Formula $T_{S}$
+\end_inset
+
+, which takes a state transformation and appends to the transformation a
+ new association of state transformation from initial state to the final
+ state for a given statement.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{alignat*}{2}
+ & T_{S} & : & s\rightarrow\left(\beta\rightarrow\rho\times\sigma\rightarrow\left(\rho\times\sigma\times\alpha\right)\right)\rightarrow\left(\beta\rightarrow\rho\times\sigma\rightarrow\left(\rho\times\sigma\times\alpha\right)\right)\\
+ & T_{S}\ X\ f\ \rho\ \sigma\ s & = & \left\langle \rho',\sigma'',\alpha'\right\rangle \\
+ &  &  & \begin{aligned}\mbox{where} & \left\langle \rho',\sigma',\alpha'\right\rangle =X\ f\ \rho\ \sigma\\
+ & \sigma''=\sigma'\left[s\times\rho\mapsto\rho'\right]
+\end{aligned}
+\end{alignat*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Definition
+\begin_inset Argument
+status open
+
+\begin_layout Plain Layout
+Denotational semantics
+\end_layout
+
+\end_inset
+
+We now define a denotational semantics of the SDTL program
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\mathcal{F} & : & number\rightarrow\left(\rho\times\sigma\rightarrow\left(\rho\times\sigma\times\alpha\cup\left\{ NoReturn\right\} \right)\right)\\
+\mathcal{S} & : & Stmt\rightarrow\mathcal{F}\rightarrow s\rightarrow\left(\rho\times\sigma\rightarrow\left(\rho\times\sigma\times\alpha\cup\left\{ NoReturn\right\} \right)\right)\\
+\mathcal{E} & : & Expr\rightarrow\mathcal{F}\rightarrow\rho\rightarrow\rho\times\alpha
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\end_deeper
+\end_deeper
+\begin_layout Standard
+\begin_inset Formula 
+\begin{align*}
+ & \mathcal{F} & = & Y\lambda f.\lambda n.\mathcal{S}\dd{\mathtt{Stmt}_{n}}\ \mathtt{sid}\left(\mathtt{Stmt}_{n}\right)\ f\\
+ & \mathcal{S}\dd{S_{1};S_{2}} & = & T_{S}\ M_{S}\left(\begin{aligned} & \left\langle r,S\dd{S_{1}}\ \mathtt{sid}\left(S_{1}\right)\right\rangle \\
+ & \left\langle \_,\mathtt{isterm}\left(r,S\dd{S_{2}}\ \mathtt{sid}\left(S_{2}\right)\right)\right\rangle 
+\end{aligned}
+\right)\\
+ & \mathcal{S}\dd{\mathtt{return}\ e} & = & T_{S}\ \mathcal{E}\dd{e}\\
+ & \mathcal{S}\dd{\mathtt{if}\left(e\right)S_{1}}\ f & = & T_{S}\ M_{S}\left(\begin{aligned} & \left\langle v,\mathcal{E}\dd{e}\right\rangle \\
+ & \left\langle \_,\mathtt{cond}\left(v,\mathcal{S}\dd{S_{1}},I_{\alpha}\ NoReturn\right)\right\rangle 
+\end{aligned}
+\right)\\
+ & {\scriptstyle \mathcal{S}\dd{\mathtt{if}\left(e\right)S_{1}\mathtt{else}S_{2}}\ f} & = & T_{S}\ M_{S}\left(\begin{aligned} & \left\langle v,\mathcal{E}\dd{e}\right\rangle \\
+ & \left\langle \_,\mathtt{cond}\left(v,\mathcal{S}\dd{S_{1}},\mathcal{S}\dd{S_{2}}\right)\right\rangle 
+\end{aligned}
+\right)\\
+ & \mathcal{S}\dd{id=e} & = & T_{S}\ M_{S}\left(\begin{aligned} & \left\langle v,\mathcal{E}\dd{e}\right\rangle \\
+ & \left\langle \_,\mathtt{asg}\left(id,v\right)\right\rangle \\
+ & \left\langle \_,I_{\alpha}\ NoReturn\right\rangle 
+\end{aligned}
+\right)\\
+ & \mathcal{S}\dd{e_{1}.id=e_{2}} & = & T_{S}\ M_{S}\left(\begin{aligned} & \left\langle v,\mathcal{E}\dd{e_{2}}\right\rangle \\
+ & \left\langle r,\mathcal{E}\dd{e_{1}}\right\rangle \\
+ & \left\langle \_,I_{T}\ \mathtt{set}\left(r,id,v\right)\right\rangle 
+\end{aligned}
+\right)\\
+ & {\scriptstyle \mathcal{S}\dd{\mathtt{while}\left(e\right)S_{1}}\ f\ \rho} & = & T_{S}\ \left(Y\lambda x.\lambda\rho,r.\mathtt{isterm}\left(r,M_{S}\left(\begin{aligned} & \left\langle v,\mathcal{E}\dd{e}\right\rangle \\
+ & \left\langle \_,{\scriptstyle \begin{gathered}\mathtt{cond}(v,\left(\lambda f,\rho'.x\ \left(\mathcal{S}\dd{S_{1}}\ \mathtt{sid}\left(S_{1}\right)f\ \rho'\right)\right)\\
+,\left(,I_{\rho}\ NoReturn\right))
+\end{gathered}
+}\right\rangle 
+\end{aligned}
+\right)\ f\right)\right)\ \rho\ {\scriptstyle NoReturn}\\
+ & \mathcal{E}\dd{con} & = & T_{S}\ M_{S}\ \left\langle \_,I_{\alpha}\ \mathtt{conval}\left(con\right)\right\rangle \\
+ & \mathcal{E}\dd{\mathtt{global}} & = & T_{S}\ M_{S}\ \left\langle \_,I_{V}\ \mathtt{obj}\left(0\right)\right\rangle \\
+ & \mathcal{E}\dd{L} & = & T_{S}\ \mathcal{L}\dd{L}\\
+ & \mathcal{E}\dd{\mathtt{this}} & = & T_{S}\ M_{S}\ \left\langle \_,I_{V}\ \mathtt{getthis}\left(\rho\right)\right\rangle \\
+ & \mathcal{E}\dd{\mathtt{input}} & = & T_{S}\ M_{S}\ \left\langle \_,I_{T}\ \mathtt{getinput}\left(\rho\right)\right\rangle \\
+ & \mathcal{E}\dd{\mathtt{new}\ L\left(E*\right)} & = & T_{S}\ M_{s}\left(\begin{aligned} & \left\langle n,\mathcal{L}\ \dd{L}\right\rangle \\
+ & \left\langle p,\mathtt{evalParams}\ n\ E*\ \phi\right\rangle \\
+ & \left\langle m,I_{T}\ \mathtt{newobj}\right\rangle \\
+ & \left\langle \_,\mathtt{call}\left(n,p,m,\mathtt{eid}\right)\right\rangle \\
+ & \left\langle \_,I_{\alpha}\ m\right\rangle 
+\end{aligned}
+\right)\\
+ & \mathcal{E}\dd{L\left(E*\right)} & = & T_{S}\ M_{S}\left(\begin{aligned} & \left\langle n,\mathcal{L}\ \dd{L}\right\rangle \\
+ & \left\langle p,\mathtt{evalParams}\ n\ E*\ \phi\right\rangle \\
+ & \left\langle \_,\mathtt{call}\left(n,p,\mathtt{obj}\left(0,\rho\right),\mathtt{eid}\right)\right\rangle 
+\end{aligned}
+\right)\\
+ & \mathcal{E}\dd{E_{0}.L\left(E*\right)} & = & T_{S}\ M_{S}\left(\begin{aligned} & \left\langle t,\mathcal{E}\ \dd{E_{0}}\right\rangle \\
+ & \left\langle n,\mathcal{L}\ \dd{L}\right\rangle \\
+ & \left\langle p,\mathtt{evalParams}\ n\ E*\ \phi\right\rangle \\
+ & \left\langle \_,\mathtt{call}\left(n,p,t,\mathtt{eid}\right)\right\rangle 
+\end{aligned}
+\right)\\
+ & \mathcal{E}\dd{E_{0}\ binop\ E_{1}} & = & T_{S}\ M_{S}\left(\begin{aligned} & \left\langle c_{0},\mathcal{E}\ \dd{E_{0}}\right\rangle \\
+ & \left\langle c_{1},\mathcal{E}\ \dd{E_{1}}\right\rangle \\
+ & \left\langle \_,\left(\lambda f,\rho.I_{\rho}\ \mathtt{bin}\left(binop,c_{0},c_{1}\right)\right)\right\rangle 
+\end{aligned}
+\right)\\
+ & \mathcal{L}\dd{id} & = & T_{S}\ \left(I_{V}\ \mathtt{val}\left(id\right)\right)\\
+ & \mathcal{L}\dd{\mathtt{this}} & = & T_{S}\ \left(.I_{V}\ \mathtt{getthis}\left(\rho\right)\right)\\
+ & \mathcal{L}\dd{\mathtt{global}} & = & T_{S}\ \left(I_{V}\ \mathtt{obj}\left(0\right)\right)\\
+ & \mathcal{L}\dd{E_{0}.id} & = & T_{S}\ M_{S}\left(\begin{aligned} & \left\langle v,\mathcal{E}\ \dd{E_{0}}\right\rangle \\
+ & \left\langle \_,I_{V}\ \mathtt{get}\left(v,id\right)\right\rangle 
+\end{aligned}
+\right)
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Where
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\mathtt{Stmt}_{n}$
+\end_inset
+
+ is a function body of a function numbered 
+\begin_inset Formula $n$
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+
+\lang british
+\begin_inset Formula $\mathtt{evalParam}=\left[ID\right]\times\left[Expr\right]\times\left[Value\right]\times\mathcal{F}\times\rho\times\sigma\rightarrow\rho\times\sigma\times\left[Value\right]$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+
+\lang british
+\begin_inset Formula $\mathtt{evalParam}\ \phi\ ps\ f\ \rho\ \sigma=\left\langle \rho,\sigma,ps\right\rangle $
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+
+\lang british
+\begin_inset Formula $\mathtt{evalParam}\ \left[E|Exprs\right]\ ps\ f\ \rho\ \sigma=\mathtt{evalParam}\ Exprs\ \left[ps|con\right]\ f\ \rho_{1}\ \sigma_{1}$
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+where
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+
+\lang british
+\begin_inset Formula $\left\langle \rho_{1},\sigma_{1},con\right\rangle =\mathcal{E}\ \dd{E}\ f\ \rho\ \sigma$
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\end_deeper
+\begin_layout Definition
+\begin_inset Argument
+status open
+
+\begin_layout Plain Layout
+Concrete domain
+\end_layout
+
+\end_inset
+
+We define a concrete domain as following:
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+Value & = & \mathbb{Z}\cup\left\{ T,F\right\} \cup Objects\cup FunctionPointers\\
+Objects & = & \left\{ OBJ_{n}|n\in\left\{ 0\right\} \cup\mathbb{N}\right\} \\
+FunctionPointers & = & \left\langle FP_{n},\left[Value\right]\right\rangle \\
+\rho & = & \left\langle V,OM,T\right\rangle \\
+V & = & id\rightarrow Value\\
+OM & = & n\rightarrow V\\
+T & = & Objects
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Definition
+\begin_inset Argument
+status open
+
+\begin_layout Plain Layout
+Concrete functions
+\end_layout
+
+\end_inset
+
+We define concrete functions as following:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\mathtt{isterm}\left(v,s\right) & = & \lambda f,\rho.\begin{cases}
+s\ f\ \rho & v=NoReturn\\
+I_{\rho}\ v & \mbox{otherwise}
+\end{cases}\\
+\mathtt{cond}\left(v,s_{1},s_{2}\right) & = & \lambda f,\rho.\begin{cases}
+s_{1}\ f\ \rho & v=true\\
+s_{2}\ f\ \rho & v=false
+\end{cases}\\
+\mathtt{asg}\left(id,v\right) & = & \lambda\left\langle V,OM,T\right\rangle .\left\langle V\left[id=v\right],OM,T\right\rangle \\
+\mathtt{val}\left(id\right) & = & \lambda\left\langle V,OM,T\right\rangle .V\left(id\right)\\
+\mathtt{get}\left(OBJ_{n},id\right) & = & \lambda\left\langle V,OM,T\right\rangle .OM\left(n\right)\\
+\mathtt{set}\left(OBJ_{n},id,v\right) & = & \lambda\left\langle V,OM,T\right\rangle .\left\langle V,OM\left[OBJ_{n}\left[id\mapsto v\right]\right],T\right\rangle \\
+\mathtt{conval}\left(con\right) & = & con\\
+\mathtt{obj}\left(n\right) & = & \lambda\left\langle V,OM,T\right\rangle .OM\left(n\right)\\
+\mathtt{getthis} & = & \lambda\left\langle V,OM,T\right\rangle .T\\
+\mathtt{getinput\left(\rho\right)} & = & \mbox{see note}\\
+\mathtt{newobj} & = & \lambda\left\langle V,OM,T\right\rangle .\left\langle \left\langle V,OM\left[n\mapsto\phi\right],T\right\rangle ,OBJ_{n}\right\rangle \ \mbox{where}\ n=N\left(OM\right)\\
+\mathtt{call}\left(\left\langle FP_{n},C\right\rangle ,p,t,\_\right) & = & \lambda f,s,\left\langle V,OM,T\right\rangle .\begin{cases}
+\begin{gathered}\left\langle \left\langle V,OM',T\right\rangle ,s',r\right\rangle \ \mbox{where}\ \left\langle \left\langle V',OM',T'\right\rangle ,s',r\right\rangle =\\
+f\ n\ \left\langle \left[param_{n,k}\mapsto\left[C|p\right]_{k}\right],OM,t\right\rangle \ s
+\end{gathered}
+ & N\left(C\right)+N\left(p\right)=arity_{n}\\
+\left\langle \left\langle V,OM,T\right\rangle ,s,\left\langle FP_{n},\left[C|p\right]\right\rangle \right\rangle  & \mbox{otherwise}
+\end{cases}
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Definition
+\begin_inset Argument
+status open
+
+\begin_layout Plain Layout
+Abstract domain
+\end_layout
+
+\end_inset
+
+We define an abstract domain as following:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\eta & = & \left\langle \sigma,\alpha,\tau,\nu\right\rangle \\
+Pri & = & \left\{ Number,Boolean\right\} \\
+Obj & = & \left\{ OBJ_{n}|n\in\left\{ 0\right\} \cup\mathbb{N}\right\} \\
+FunctionPointers & = & \left\langle FP_{n},\left[\wp\left(Pri\cup Obj\cup\left\{ FP_{n}\right\} \cup\left\{ \left\langle FC,n,c,eid\right\rangle \right\} \right)\right]\right\rangle \\
+AbsVal & = & Pri\cup Obj\cup FunctionPointers\\
+\sigma & = & id\rightarrow\wp\left(AbsVal\right)\\
+\alpha & = & n\rightarrow\sigma\\
+\tau & = & \wp\left(Obj\right)\\
+\nu & = & \left\langle n,c,eid\right\rangle \rightarrow\left[\wp\left(Pri\cup Obj\cup\left\{ \left\langle FC,n,c,eid\right\rangle \right\} \right)\right]
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+In 
+\begin_inset Formula $OBJ_{n}$
+\end_inset
+
+:
+\end_layout
+
+\begin_layout Standard
+We number each of the 
+\begin_inset Quotes eld
+\end_inset
+
+new
+\begin_inset Quotes erd
+\end_inset
+
+ expressions as we parse the program.
+ The number n corresponds to the 
+\begin_inset Quotes eld
+\end_inset
+
+new
+\begin_inset Quotes erd
+\end_inset
+
+ expression number.
+\end_layout
+
+\begin_layout Standard
+In 
+\begin_inset Formula $\left\langle FC,n,c,eid\right\rangle $
+\end_inset
+
+:
+\end_layout
+
+\begin_layout Standard
+n = function number
+\end_layout
+
+\begin_layout Standard
+c = number of arguments curried
+\end_layout
+
+\begin_layout Standard
+eid = A uid of an expression from which this value has been produced
+\end_layout
+
+\end_deeper
+\begin_layout Example
+\begin_inset Argument
+status open
+
+\begin_layout Plain Layout
+Currying loop
+\end_layout
+
+\end_inset
+
+ Consider the following SDTL program.
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+lstparams "numbers=left"
+inline false
+status open
+
+\begin_layout Plain Layout
+
+function foo(a,b) {
+\end_layout
+
+\begin_layout Plain Layout
+
+	return a;
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+x = 0;
+\end_layout
+
+\begin_layout Plain Layout
+
+while(input < 30) {
+\end_layout
+
+\begin_layout Plain Layout
+
+	x = foo(x);
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+In this case, in line 7, x is associated with a value 
+\begin_inset Formula $\left\langle FP_{1},a\mapsto\left\{ Number,\left\langle FC,1,1,e_{1}\right\rangle \right\} \right\rangle $
+\end_inset
+
+ where 
+\begin_inset Formula $e_{1}$
+\end_inset
+
+ is the eid of 
+\begin_inset Formula $\mathtt{foo\left(x\right);}$
+\end_inset
+
+ in line 7.
+ 
+\begin_inset Formula $\nu$
+\end_inset
+
+ has one entry 
+\begin_inset Formula $\left\langle 1,1,e_{1}\right\rangle \mapsto\left\{ a\mapsto\left\{ 0,\left\langle FC,1,1,e_{1}\right\rangle \right\} \right\} $
+\end_inset
+
+
+\end_layout
+
+\begin_layout Theorem
+\begin_inset Argument
+status open
+
+\begin_layout Plain Layout
+Finiteness of the abstract property
+\end_layout
+
+\end_inset
+
+Given an SDTL program,
+\begin_inset Formula $\left\langle \sigma,\alpha,\tau,\nu\right\rangle $
+\end_inset
+
+ has a finite domain
+\end_layout
+
+\begin_layout Proof
+We show that each of the component 
+\begin_inset Formula $\sigma,\alpha,\tau,\nu$
+\end_inset
+
+ has a finite domain
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+First, we show that the number of possible
+\begin_inset Formula $AbsVal$
+\end_inset
+
+ is finite.
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+Trivially,
+\begin_inset Formula $Pri$
+\end_inset
+
+ is a set of two elements.
+\end_layout
+
+\begin_layout Enumerate
+There are finite number of 
+\emph on
+new
+\emph default
+ expressions in a program.
+ Therefore number of elements in 
+\begin_inset Formula $Obj$
+\end_inset
+
+ is finite.
+\end_layout
+
+\begin_layout Enumerate
+In case of 
+\emph on
+FunctionPointers
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+There are a finite number of function declarations.
+ Each function can only have a set number of parameters.
+ There are a finite number of expressions in a program.
+ Therefore, number of possible values of
+\begin_inset Formula $\left\langle FC,n,c,eid\right\rangle $
+\end_inset
+
+is finite.
+\end_layout
+
+\begin_layout Enumerate
+Each functions have a set number of accepted parameters.
+ Therefore, the number of elements in the list is finite.
+\end_layout
+
+\begin_layout Enumerate
+There are only a finite number of function declarations in a program.
+\end_layout
+
+\begin_layout Enumerate
+Hence, 
+\emph on
+FunctionPointers
+\emph default
+ has a finite domain
+\end_layout
+
+\end_deeper
+\begin_layout Enumerate
+Then, 
+\begin_inset Formula $AbsVal$
+\end_inset
+
+, a union of finite domains, also has a finite domain.
+\end_layout
+
+\end_deeper
+\begin_layout Enumerate
+\begin_inset Formula $\sigma$
+\end_inset
+
+ is a composite of two components: 
+\emph on
+id
+\emph default
+ and 
+\begin_inset Formula $\wp\left(AbsVal\right)$
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+There are only a finite number of identifiers appearing in a program
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset Formula $AbsVal$
+\end_inset
+
+ has a finite domain.
+ Therefore, a powerset of it also has a finite domain.
+\end_layout
+
+\end_deeper
+\begin_layout Enumerate
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+\begin_inset Formula $\alpha$
+\end_inset
+
+ has two components, finiteness of which are argued in 1 (b) and 2 respectively.
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset Formula $\tau$
+\end_inset
+
+ is a finite as it is a powerset of a finite domain (1 (b))
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset Formula $\nu$
+\end_inset
+
+ has two components: 
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+
+\begin_inset Formula $\left\langle n,c,eid\right\rangle $
+\end_inset
+
+ and 
+\begin_inset Formula $\left[\wp\left(Pri\cup Obj\cup\left\{ \left\langle FC,n,c,eid\right\rangle \right\} \right)\right]$
+\end_inset
+
+.
+ Finiteness of both are argued in 1 (c).
+\end_layout
+
+\end_deeper
+\begin_layout Definition
+\begin_inset Argument
+status open
+
+\begin_layout Plain Layout
+Partial ordering
+\end_layout
+
+\end_inset
+
+We define a partial ordering 
+\begin_inset Formula $\sqsubseteq$
+\end_inset
+
+ between abstract environments as thus:
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+\begin_inset Formula 
+\begin{gather*}
+\sigma_{1}\sqsubseteq\sigma_{2}\ \mbox{if}\ \forall id\in\mbox{domain}\left(\sigma_{1}\right),\sigma_{1}\left(id\right)\subseteq\sigma_{2}\left(id\right)\\
+\alpha_{1}\sqsubseteq\alpha_{2}\ \mbox{if}\ \forall n\in\mbox{domain}\left(\alpha_{1}\right),\alpha_{1}\left(n\right)\sqsubseteq\alpha_{2}\left(n\right)\\
+\tau_{1}\sqsubseteq\tau_{2}\ \mbox{if}\ \tau_{1}\subseteq\tau_{2}\\
+\nu_{1}\sqsubseteq\nu_{2}\ \mbox{if}\ \forall\left\langle n,c,eid\right\rangle \in\mbox{domain}\left(\nu_{1}\right)\forall k\in\left\{ 1,2,3,\ldots,c\right\} ,\nu_{1}\left(\left\langle n,c,eid\right\rangle \right)_{k}\subseteq\nu_{2}\left(\left\langle n,c,eid\right\rangle \right)_{k}\\
+\left\langle \sigma_{1},\alpha_{1},\tau_{1},\nu_{1}\right\rangle \sqsubseteq\left\langle \sigma_{2},\alpha_{2},\tau_{2},\nu_{2}\right\rangle \equiv\sigma_{1}\sqsubseteq\sigma_{2}\wedge\alpha_{1}\sqsubseteq\alpha_{2}\wedge\tau_{1}\sqsubseteq\tau_{2}\wedge\nu_{1}\sqsubseteq\nu_{2}
+\end{gather*}
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Standard
+We define a union between two abstract environments.
+\end_layout
+
+\begin_layout Theorem
+Given two abstract environments 
+\begin_inset Formula $\eta_{1}\ \mbox{and}\ \eta_{2}$
+\end_inset
+
+, we can find an upper bound by finding the value of 
+\begin_inset Formula $\eta_{1}\sqcup\eta_{2}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+\begin_inset Formula 
+\begin{gather*}
+\sigma_{1}\sqcup\sigma_{2}=id\mapsto\sigma_{1}\left(id\right)\cup\sigma_{2}\left(id\right)\\
+\alpha_{1}\sqcup\alpha_{2}=n\mapsto\sigma_{1}\left(n\right)\sqcup\sigma_{2}\left(n\right)\\
+\tau_{1}\sqcup\tau_{2}=\tau_{1}\cup\tau_{2}\\
+\nu_{1}\sqcup\nu_{2}=c\mapsto\nu_{1}\left(c\right)\cup\nu_{2}\left(c\right)\\
+\left\langle \sigma_{1},\alpha_{1},\tau_{1},\nu_{1}\right\rangle \sqcup\left\langle \sigma_{2},\alpha_{2},\tau_{2},\nu_{2}\right\rangle \equiv\left\langle \sigma_{1}\sqcup\sigma_{2},\alpha_{1}\sqcup\alpha_{2},\tau_{1}\sqcup\tau_{2},\nu_{1}\sqcup\nu_{2}\right\rangle 
+\end{gather*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Proof
+Satisfying each lines of conditions gives an environment that can satisfy
+ conditions set for the partial ordering of both environments.
+\end_layout
+
+\begin_layout Proof
+Observe that if there is an upper bound 
+\begin_inset Formula $\eta'=\left\langle \sigma',\alpha',\tau',\nu'\right\rangle $
+\end_inset
+
+ of two environments 
+\begin_inset Formula $\eta_{1}$
+\end_inset
+
+ and 
+\begin_inset Formula $\eta_{2}$
+\end_inset
+
+, if 
+\begin_inset Formula $\eta'\sqsubseteq\eta_{1}\sqcup\eta_{2}$
+\end_inset
+
+ then necessarily 
+\begin_inset Formula $\eta'=\eta_{1}\sqcup\eta_{2}$
+\end_inset
+
+, since any missing elements in keys and values of 
+\begin_inset Formula $\sigma',\alpha',\tau',\nu'$
+\end_inset
+
+ will violate the partial ordering condition.
+\end_layout
+
+\begin_layout Lemma
+\begin_inset Formula $\left(\eta,\sqsubseteq\right)$
+\end_inset
+
+ is a chain complete partial ordering.
+\end_layout
+
+\begin_layout Definition
+\begin_inset Argument
+status open
+
+\begin_layout Plain Layout
+Abstract functions
+\end_layout
+
+\end_inset
+
+ We define abstract functions
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\mathtt{isterm}\left(v,s\right) & = & \lambda f,\eta.\begin{cases}
+s\ f\ \eta & v=\left\{ NoReturn\right\} \\
+I_{\rho}\ v & \mbox{otherwise}
+\end{cases}\\
+\mathtt{cond}\left(v,s_{1},s_{2}\right) & = & \lambda f,\eta.\left(s_{1}\ f\ \eta\right)\sqcup\left(s_{2}\ f\ \eta\right)\\
+\mathtt{asg}\left(id,v\right) & = & \lambda\left\langle \sigma,\alpha,\tau,\nu\right\rangle .\left\langle \sigma\left[id=v\right],\alpha,\tau,\nu\right\rangle \\
+\mathtt{val}\left(id,v\right) & = & \lambda\left\langle \sigma,\alpha,\tau,\nu\right\rangle .\sigma\left(id\right)\\
+\mathtt{get}\left(n,id\right) & = & \lambda\left\langle \sigma,\alpha,\tau,\nu\right\rangle .\left\{ \alpha\left(x\right)|OBJ_{x}\in n\right\} \\
+\mathtt{set}\left(n,id,v\right) & = & \lambda\left\langle \sigma,\alpha,\tau,\nu\right\rangle .\left\langle \sigma,\left\{ x|OBJ_{x}\in\alpha,x=\begin{cases}
+\alpha\left(x\right)\left[id\mapsto v\right] & OBJ_{x}\in n\\
+\alpha\left(x\right) & \mbox{otherwise}
+\end{cases}\right\} ,\tau,\nu\right\rangle \\
+\mathtt{conval}\left(con\right) & = & \begin{cases}
+Number & con\in\mathbb{N}\\
+Boolean & con\in\left\{ true,false\right\} 
+\end{cases}\\
+\mathtt{obj}\left(j\right) & = & \lambda\left\langle \sigma,\alpha,\tau,\nu\right\rangle .\alpha\left(j\right)\\
+\mathtt{getthis} & = & \lambda\left\langle \sigma,\alpha,\tau,\nu\right\rangle .\tau\\
+\mathtt{getinput} & = & \lambda\eta.\left\langle \eta,\left\{ Number\right\} \right\rangle \\
+\mathtt{newobj} & = & \lambda\left\langle \sigma,\alpha,\tau,\nu\right\rangle .\left\langle \left\langle \sigma,\alpha\left[n\mapsto\phi\right],\tau,\nu\right\rangle ,OBJ_{n},\nu\right\rangle \ \mbox{where}\ n=N\left(\alpha\right)\\
+\mathtt{call}\left(n,p,t,e\right) & = & \lambda f,s,\left\langle \sigma,\alpha,\tau,\nu\right\rangle .\underset{\left\langle FP_{x},C\right\rangle \in n}{\bigsqcup}\mathtt{scall}\left(\left\langle FP_{x},C\right\rangle ,p,t,f,\left\langle \sigma,\alpha,\tau,\nu\right\rangle ,s,e\right)\\
+{\scriptstyle \mathtt{scall}\left(\left\langle FP_{n},C\right\rangle ,p,t,f,\left\langle \sigma,\alpha,\tau,\nu\right\rangle ,s,e\right)} & = & \begin{cases}
+\begin{gathered}\left\langle \left\langle \sigma,\alpha',\tau,\nu'\right\rangle ,s',r'\right\rangle \ \mbox{where}\ \left\langle \left\langle \sigma',\alpha',\tau'\right\rangle ,s',r,\nu'\right\rangle =\\
+f\ n\ \left\langle \left\{ param_{n,k}\mapsto\left[C|p\right]_{k}\right\} ,\alpha,\tau,\nu\right\rangle \ s
+\end{gathered}
+ & N\left(C\right)+N\left(p\right)=arity_{n}\\
+\left\langle \left\langle \sigma,\alpha,\tau,\nu\left[\left\langle e,n,N\left(C\right)+N\left(p\right)\right\rangle \mapsto\left[C|p\right]\right]\right\rangle ,s,\left\langle FP_{n},\left[C|p\right],e\right\rangle \right\rangle  & \mbox{otherwise}
+\end{cases}
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Theorem
+Abstract functions produce monotonic lambda functions
+\end_layout
+
+\begin_layout Proof
+Following list of arguments cover all the functions:
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+Observe that for the functions calculate values from given parameters and
+ an environment, an increase in the environment implies that the values
+ we obtain are also increased.
+ This is from the definition of the partial ordering.
+\end_layout
+
+\begin_layout Enumerate
+For the functions that are updating environment, observe that an increase
+ in the environment implies an increase in the updated environment.
+\end_layout
+
+\begin_layout Enumerate
+In case of 
+\begin_inset Formula $\mathtt{call}$
+\end_inset
+
+, its the least upper bound of results from 
+\begin_inset Formula $\mathtt{scall}$
+\end_inset
+
+, which falls into categories 1 and 2.
+ An increase in the results implies increase in the least upper bound of
+ them.
+\end_layout
+
+\end_deeper
+\end_deeper
+\begin_layout Lemma
+Abstract 
+\begin_inset Formula $\mathcal{S},\mathcal{E}\ \mbox{and}\ \mathcal{L}$
+\end_inset
+
+ are monotonic functions.
+\end_layout
+
+\begin_deeper
+\begin_layout Lemma
+Fixed points exist for an abstract 
+\begin_inset Formula $\mathcal{F}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Definition
+\begin_inset Argument
+status open
+
+\begin_layout Plain Layout
+Abstraction
+\end_layout
+
+\end_inset
+
+ We define an abstraction relation between concrete and abstract environments,
+ 
+\begin_inset Formula $\eta\prec\rho$
+\end_inset
+
+ as following:
+\end_layout
+
+\begin_layout Definition
+\begin_inset Formula 
+\begin{gather*}
+\left\langle \sigma,\alpha,\tau,\nu\right\rangle \prec\left\langle V,OM,T\right\rangle \ \mbox{iff}\ \forall id\in V\exists a\in\sigma\left(id\right),a\prec V\left(id\right)\mbox{ and }\tau\prec T\\
+\forall z\in\mathbb{Z},\left\{ Number\right\} \prec z\\
+\forall b\in\left\{ True,False\right\} ,\left\{ Boolean\right\} \prec b\\
+OBJ_{m}\prec OBJ_{n}\ \mbox{if}\ \eta\vdash OBJ_{m}\prec OM\vdash OBJ_{n}\\
+\left\langle FP_{m},\left[c'\right],e\right\rangle \prec\left\langle FP_{n},\left[c\right]\right\rangle \ \mbox{if}\ m=n\ \\
+\ N\left(c\right)=N\left(c'\right)\ \mbox{and}\ \forall c_{k}\in c,\eta\vdash c'_{k}\prec c_{k}
+\end{gather*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Definition
+In turn, contextual definitions of abstract object and function pointer
+ values are defined as following:
+\end_layout
+
+\begin_layout Definition
+\begin_inset Formula 
+\begin{gather*}
+\left\langle \sigma,\alpha,\tau,\nu\right\rangle \vdash OBJ_{m}\prec OBJ_{n}\mbox{ if }\\
+\forall id\in OM\left(n\right),OM\left(n\right)\left(id\right)\in Z\cup\left\{ True,False\right\} ,\alpha\left(m\right)\left(id\right)\prec OM\left(n\right)\left(id\right)\\
+\forall id\in OM\left(n\right),OM\left(n\right)\left(id\right)=OBJ_{x},\alpha\left(m\right)=OBJ_{y},\alpha\left(y\right)\prec OBJ_{x}
+\end{gather*}
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Definition
+We now define abstraction and concretisation relations between an abstract
+ domain and a powerset of concrete domain.
+\end_layout
+
+\begin_deeper
+\begin_layout Definition
+\begin_inset Argument
+status open
+
+\begin_layout Plain Layout
+Abstraction and concretisation
+\end_layout
+
+\end_inset
+
+ We define abstraction function 
+\begin_inset Formula $P$
+\end_inset
+
+ and concretisation function 
+\begin_inset Formula $Q$
+\end_inset
+
+ as following:
+\end_layout
+
+\end_deeper
+\begin_layout Definition
+\begin_inset Formula 
+\begin{gather*}
+P:\wp\left(\rho\right)\rightarrow\eta\\
+P\left(r\right)=\bigsqcup\left\{ \eta|\rho\in r,\eta\prec\rho\right\} \\
+Q:\eta\rightarrow\wp\left(\rho\right)\\
+Q\left(\eta\right)=\left\{ r|r\in\rho,\eta\prec\rho\right\} 
+\end{gather*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Theorem
+\begin_inset Argument
+status open
+
+\begin_layout Plain Layout
+Galois connection
+\end_layout
+
+\end_inset
+
+
+\begin_inset Formula $\left(P,Q\right)$
+\end_inset
+
+ forms a Galois connection between 
+\begin_inset Formula $\left(\eta,\sqsubseteq\right)$
+\end_inset
+
+ and
+\begin_inset Formula $\left(\wp\left(\rho\right),\subseteq\right)$
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Theorem
+For all abstract and concrete functions, the following holds true: when
+ 
+\begin_inset Formula $f_{0}\left(n_{c},id_{c},v_{c},p_{c},t_{c},e_{c},j_{c}\right)=f,f\left(\rho\right)=\left\langle \rho',V_{C}\right\rangle ,g_{0}\left(n_{a},id_{a},v_{a},p_{a},t_{a},e_{a},j_{a}\right)=g,g\left(\eta\right)=\left\langle \eta',V_{A}\right\rangle $
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Theorem
+\begin_inset Formula 
+\begin{alignat*}{1}
+\begin{array}{ccc}
+\eta\vdash n_{a} & \prec & \rho\vdash n_{c}\\
+id_{a} & = & id_{c}\\
+\eta\vdash v_{a} & \prec & \rho\vdash v_{c}\\
+\eta\vdash p_{a,k} & \prec & \rho\vdash p_{c,k}\mbox{ for all\ }k\\
+\eta\vdash t_{a} & \prec & \rho\vdash t_{c}\\
+e_{a} & = & \rho\vdash e_{c}\\
+\eta\vdash OBJ_{j_{a}} & \prec & \rho\vdash OBJ_{j_{c}}
+\end{array} & \implies\left(\eta\prec\rho\implies\left\langle \eta',V_{A}\right\rangle \prec\rho'\right)
+\end{alignat*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Theorem
+(ignoring conditions set for parameters that the function is not taking)
+\end_layout
+
+\begin_deeper
+\begin_layout Theorem
+\begin_inset Argument
+status open
+
+\begin_layout Plain Layout
+Correctness of the analysis
+\end_layout
+
+\end_inset
+
+ Given an SDTL program, 
+\end_layout
+
+\begin_layout Theorem
+If 
+\begin_inset Formula $\mathcal{F}\ 0\ \left\langle \phi,\left\{ 0\mapsto\phi\right\} ,OBJ_{0}\right\rangle \ \phi=\rho'\ S_{C}$
+\end_inset
+
+ and 
+\begin_inset Formula $\mathcal{F}\ 0\ \left\langle \phi,\left\{ 0\mapsto\phi\right\} ,\left\{ OBJ_{0}\right\} ,\phi\right\rangle \ \phi=\eta'\ S_{A}$
+\end_inset
+
+ then 
+\begin_inset Formula $S_{C}$
+\end_inset
+
+ and 
+\begin_inset Formula $S_{A}$
+\end_inset
+
+ are related in the following manner:
+\end_layout
+
+\begin_layout Theorem
+\begin_inset Formula $\forall sid\in P,\exists\rho_{0},\rho_{1},\rho_{0}\times\rho_{1}\in S_{A}\left(sid\right)\rightarrow\exists\eta_{0},\eta_{1},\eta_{0}\times\eta_{1}\in S_{A}\left(sid\right)\wedge\eta_{0}\prec\rho_{0}\wedge\eta_{1}\prec\rho_{1}$
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\end_deeper
+\end_body
+\end_document
