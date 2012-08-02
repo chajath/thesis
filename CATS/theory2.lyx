@@ -313,7 +313,8 @@ We now define a denotational semantics of the SDTL program
 \begin{eqnarray*}
 \mathcal{F} & : & f\rightarrow\left(State\times StateCol\rightarrow\left(State\times StateCol\times a\cup\left\{ Void\right\} \right)\right)\\
 \mathcal{S} & : & Stmt\rightarrow s\rightarrow\mathcal{F}\rightarrow\left(State\times StateCol\right)\rightarrow\left(State\times StateCol\times a\cup\left\{ Void\right\} \right)\\
-\mathcal{E} & : & Expr\rightarrow e\rightarrow\mathcal{F}\rightarrow\left(State\times StateCol\right)\rightarrow\left(State\times StateCol\times a\right)
+\mathcal{E} & : & Expr\rightarrow e\rightarrow\mathcal{F}\rightarrow\left(State\times StateCol\right)\rightarrow\left(State\times StateCol\times a\right)\\
+\mathcal{L} & : & LExpr\rightarrow\mathcal{F}\rightarrow\left(State\times StateCol\right)\rightarrow\left(State\times StateCol\times a\right)
 \end{eqnarray*}
 
 \end_inset
@@ -458,7 +459,7 @@ We define a concrete domain of a concrete state
 \begin_inset Formula 
 \begin{eqnarray*}
 Value & = & \mathbb{Z}\cup\left\{ T,F\right\} \cup Objects\cup FunctionPointers\\
-Objects & = & \left\{ OBJ_{n}|n\in\left\{ 0\right\} \cup\mathbb{N}\right\} \\
+Objects & = & \left\{ OBJ_{n}\mid n\in\left\{ 0\right\} \cup\mathbb{N}\right\} \\
 FunctionPointers & = & \left\langle FP_{n},\left[Value\right]\right\rangle \\
 CState & = & \left\langle Vars,ObjMem,This\right\rangle \\
 Vars & = & id\rightarrow Value\\
@@ -528,21 +529,26 @@ Abstract domain
 
 \end_inset
 
-We define an abstract domain as following:
+We define an abstract domain of an abstract state, 
+\begin_inset Formula $AState$
+\end_inset
+
+ as following:
 \end_layout
 
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-\eta & = & \left\langle \sigma,\alpha,\tau,\nu\right\rangle \\
+AState & = & \left\langle AbsVars,AbsObjMem,AbsThis,CurriedVals\right\rangle \\
 Pri & = & \left\{ Number,Boolean\right\} \\
-Obj & = & \left\{ OBJ_{n}|n\in\left\{ 0\right\} \cup\mathbb{N}\right\} \\
+Obj & = & \left\{ OBJ_{n}\mid n\in\left\{ 0\right\} \cup\mathbb{N}\right\} \\
 FunctionPointers & = & \left\langle FP_{n},\left[\wp\left(Pri\cup Obj\cup\left\{ FP_{n}\right\} \cup\left\{ \left\langle FC,n,c,eid\right\rangle \right\} \right)\right]\right\rangle \\
 AbsVal & = & Pri\cup Obj\cup FunctionPointers\\
-\sigma & = & id\rightarrow\wp\left(AbsVal\right)\\
-\alpha & = & n\rightarrow\sigma\\
-\tau & = & \wp\left(Obj\right)\\
-\nu & = & \left\langle n,c,eid\right\rangle \rightarrow\left[\wp\left(Pri\cup Obj\cup\left\{ \left\langle FC,n,c,eid\right\rangle \right\} \right)\right]
+AbsVars & = & id\rightarrow\wp\left(AbsVal\right)\\
+AbsObjMem & = & n\rightarrow AbsVars\\
+AbsThis & = & \wp\left(Obj\right)\\
+CurriedVals & = & \left\langle n,c,eid\right\rangle \rightarrow\left[\wp\left(Pri\cup Obj\cup\left\{ \left\langle FC,n,c,eid\right\rangle \right\} \right)\right]\\
+ &  & \mbox{where \emph{n} is a function identifier and \emph{c} is a natural number}
 \end{eqnarray*}
 
 \end_inset
@@ -699,7 +705,7 @@ Finiteness of the abstract property
 \end_inset
 
 Given an SDTL program,
-\begin_inset Formula $\left\langle \sigma,\alpha,\tau,\nu\right\rangle $
+\begin_inset Formula $AState$
 \end_inset
 
  has a finite domain
@@ -707,7 +713,7 @@ Given an SDTL program,
 
 \begin_layout Proof
 We show that each of the component 
-\begin_inset Formula $\sigma,\alpha,\tau,\nu$
+\begin_inset Formula $AbsVars,AbsObjMem,AbsThis,CurriedVals$
 \end_inset
 
  has a finite domain
@@ -802,7 +808,7 @@ Then,
 
 \end_deeper
 \begin_layout Enumerate
-\begin_inset Formula $\sigma$
+\begin_inset Formula $AbsVars$
 \end_inset
 
  is a composite of two components: 
@@ -843,21 +849,21 @@ There are only a finite number of identifiers appearing in a program
 \uwave off
 \noun off
 \color none
-\begin_inset Formula $\alpha$
+\begin_inset Formula $AbsObjMem$
 \end_inset
 
  has two components, finiteness of which are argued in 1 (b) and 2 respectively.
 \end_layout
 
 \begin_layout Enumerate
-\begin_inset Formula $\tau$
+\begin_inset Formula $AbsThis$
 \end_inset
 
  is a finite as it is a powerset of a finite domain (1 (b))
 \end_layout
 
 \begin_layout Enumerate
-\begin_inset Formula $\nu$
+\begin_inset Formula $CurriedVals$
 \end_inset
 
  has two components: 
@@ -896,7 +902,7 @@ Partial ordering
 \end_inset
 
 We define a partial ordering 
-\begin_inset Formula $\sqsubseteq$
+\begin_inset Formula $\left\langle \sigma_{1},\alpha_{1},\tau_{1},\nu_{1}\right\rangle \sqsubseteq\left\langle \sigma_{2},\alpha_{2},\tau_{2},\nu_{2}\right\rangle $
 \end_inset
 
  between abstract environments as thus:
@@ -925,7 +931,7 @@ We define a union between two abstract environments.
 
 \begin_layout Theorem
 Given two abstract environments 
-\begin_inset Formula $\eta_{1}\ \mbox{and}\ \eta_{2}$
+\begin_inset Formula $\eta_{1}=\left\langle \sigma_{1},\alpha_{1},\tau_{1},\nu_{1}\right\rangle \ \mbox{and}\ \eta_{2}=\left\langle \sigma_{2},\alpha_{2},\tau_{2},\nu_{2}\right\rangle $
 \end_inset
 
 , we can find an upper bound by finding the value of 
@@ -996,7 +1002,7 @@ Observe that if there is an upper bound
 \end_layout
 
 \begin_layout Lemma
-\begin_inset Formula $\left(\eta,\sqsubseteq\right)$
+\begin_inset Formula $\left(AState,\sqsubseteq\right)$
 \end_inset
 
  is a chain complete partial ordering.
@@ -1026,11 +1032,11 @@ I_{\rho}\ v & \mbox{otherwise}
 \mathtt{cond}\left(v,s_{1},s_{2}\right) & = & \lambda f,\eta.\left(s_{1}\ f\ \eta\right)\sqcup\left(s_{2}\ f\ \eta\right)\\
 \mathtt{asg}\left(id,v\right) & = & \lambda\left\langle \sigma,\alpha,\tau,\nu\right\rangle .\left\langle \sigma\left[id=v\right],\alpha,\tau,\nu\right\rangle \\
 \mathtt{val}\left(id,v\right) & = & \lambda\left\langle \sigma,\alpha,\tau,\nu\right\rangle .\sigma\left(id\right)\\
-\mathtt{get}\left(n,id\right) & = & \lambda\left\langle \sigma,\alpha,\tau,\nu\right\rangle .\left\{ \alpha\left(x\right)|OBJ_{x}\in n\right\} \\
-\mathtt{set}\left(n,id,v\right) & = & \lambda\left\langle \sigma,\alpha,\tau,\nu\right\rangle .\left\langle \sigma,\left\{ x|OBJ_{x}\in\alpha,x=\begin{cases}
+\mathtt{get}\left(n,id\right) & = & \lambda\left\langle \sigma,\alpha,\tau,\nu\right\rangle .\left\{ \alpha\left(x\right)\mid OBJ_{x}\in n\right\} \\
+\mathtt{set}\left(n,id,v\right) & = & \lambda\left\langle \sigma,\alpha,\tau,\nu\right\rangle .\left\langle \sigma,\left\{ x\mid{OBJ_{x}\in\alpha,x=\begin{cases}
 \alpha\left(x\right)\left[id\mapsto v\right] & OBJ_{x}\in n\\
 \alpha\left(x\right) & \mbox{otherwise}
-\end{cases}\right\} ,\tau,\nu\right\rangle \\
+\end{cases}}\right\} ,\tau,\nu\right\rangle \\
 \mathtt{conval}\left(con\right) & = & \begin{cases}
 Number & con\in\mathbb{N}\\
 Boolean & con\in\left\{ true,false\right\} 
@@ -1120,7 +1126,7 @@ Abstraction
 
  We define an abstraction relation between concrete and abstract environments,
  
-\begin_inset Formula $\eta\prec\rho$
+\begin_inset Formula $\left\langle \sigma,\alpha,\tau,\nu\right\rangle \succ\left\langle V,OM,T\right\rangle $
 \end_inset
 
  as following:
@@ -1129,12 +1135,12 @@ Abstraction
 \begin_layout Definition
 \begin_inset Formula 
 \begin{gather*}
-\left\langle \sigma,\alpha,\tau,\nu\right\rangle \prec\left\langle V,OM,T\right\rangle \ \mbox{iff}\ \forall id\in V\exists a\in\sigma\left(id\right),a\prec V\left(id\right)\mbox{ and }\tau\prec T\\
-\forall z\in\mathbb{Z},\left\{ Number\right\} \prec z\\
-\forall b\in\left\{ True,False\right\} ,\left\{ Boolean\right\} \prec b\\
-OBJ_{m}\prec OBJ_{n}\ \mbox{if}\ \eta\vdash OBJ_{m}\prec OM\vdash OBJ_{n}\\
-\left\langle FP_{m},\left[c'\right],e\right\rangle \prec\left\langle FP_{n},\left[c\right]\right\rangle \ \mbox{if}\ m=n\ \\
-\ N\left(c\right)=N\left(c'\right)\ \mbox{and}\ \forall c_{k}\in c,\eta\vdash c'_{k}\prec c_{k}
+\left\langle \sigma,\alpha,\tau,\nu\right\rangle \succ\left\langle V,OM,T\right\rangle \ \mbox{iff}\ \forall id\in V\exists a\in\sigma\left(id\right),a\succ V\left(id\right)\mbox{ and }\tau\succ T\\
+\forall z\in\mathbb{Z},\left\{ Number\right\} \succ z\\
+\forall b\in\left\{ True,False\right\} ,\left\{ Boolean\right\} \succ b\\
+OBJ_{m}\succ OBJ_{n}\ \mbox{if}\ \eta\vdash OBJ_{m}\succ OM\vdash OBJ_{n}\\
+\left\langle FP_{m},\left[c'\right],e\right\rangle \succ\left\langle FP_{n},\left[c\right]\right\rangle \ \mbox{if}\ m=n\ \\
+\ N\left(c\right)=N\left(c'\right)\ \mbox{and}\ \forall c_{k}\in c,\eta\vdash c'_{k}\succ c_{k}
 \end{gather*}
 
 \end_inset
@@ -1150,9 +1156,9 @@ In turn, contextual definitions of abstract object and function pointer
 \begin_layout Definition
 \begin_inset Formula 
 \begin{gather*}
-\left\langle \sigma,\alpha,\tau,\nu\right\rangle \vdash OBJ_{m}\prec OBJ_{n}\mbox{ if }\\
-\forall id\in OM\left(n\right),OM\left(n\right)\left(id\right)\in Z\cup\left\{ True,False\right\} ,\alpha\left(m\right)\left(id\right)\prec OM\left(n\right)\left(id\right)\\
-\forall id\in OM\left(n\right),OM\left(n\right)\left(id\right)=OBJ_{x},\alpha\left(m\right)=OBJ_{y},\alpha\left(y\right)\prec OBJ_{x}
+\left\langle \sigma,\alpha,\tau,\nu\right\rangle \vdash OBJ_{m}\succ OBJ_{n}\mbox{ if }\\
+\forall id\in OM\left(n\right),OM\left(n\right)\left(id\right)\in Z\cup\left\{ True,False\right\} ,\alpha\left(m\right)\left(id\right)\succ OM\left(n\right)\left(id\right)\\
+\forall id\in OM\left(n\right),OM\left(n\right)\left(id\right)=OBJ_{x},\alpha\left(m\right)=OBJ_{y},\alpha\left(y\right)\succ OBJ_{x}
 \end{gather*}
 
 \end_inset
@@ -1192,10 +1198,10 @@ Abstraction and concretisation
 \begin_layout Definition
 \begin_inset Formula 
 \begin{gather*}
-P:\wp\left(\rho\right)\rightarrow\eta\\
-P\left(r\right)=\bigsqcup\left\{ \eta|\rho\in r,\eta\prec\rho\right\} \\
-Q:\eta\rightarrow\wp\left(\rho\right)\\
-Q\left(\eta\right)=\left\{ r|r\in\rho,\eta\prec\rho\right\} 
+P:\wp\left(CState\right)\rightarrow AState\\
+P\left(r\right)=\bigsqcup\left\{ \eta|\rho\in r,\eta\succ\rho\right\} \\
+Q:AState\rightarrow\wp\left(CState\right)\\
+Q\left(\eta\right)=\left\{ r|r\in\rho,\eta\succ\rho\right\} 
 \end{gather*}
 
 \end_inset
@@ -1218,11 +1224,11 @@ Galois connection
 \end_inset
 
  forms a Galois connection between 
-\begin_inset Formula $\left(\eta,\sqsubseteq\right)$
+\begin_inset Formula $\left(AState,\sqsubseteq\right)$
 \end_inset
 
  and
-\begin_inset Formula $\left(\wp\left(\rho\right),\subseteq\right)$
+\begin_inset Formula $\left(\wp\left(CState\right),\subseteq\right)$
 \end_inset
 
 
@@ -1230,9 +1236,18 @@ Galois connection
 
 \begin_deeper
 \begin_layout Theorem
+\begin_inset Argument
+status open
+
+\begin_layout Plain Layout
+Isomorphism
+\end_layout
+
+\end_inset
+
 For all abstract and concrete functions, the following holds true: when
  
-\begin_inset Formula $f_{0}\left(n_{c},id_{c},v_{c},p_{c},t_{c},e_{c},j_{c}\right)=f,f\left(\rho\right)=\left\langle \rho',V_{C}\right\rangle ,g_{0}\left(n_{a},id_{a},v_{a},p_{a},t_{a},e_{a},j_{a}\right)=g,g\left(\eta\right)=\left\langle \eta',V_{A}\right\rangle $
+\begin_inset Formula $F\left(n_{c},id_{c},v_{c},p_{c},t_{c},e_{c},j_{c}\right)=f,f\left(\rho\right)=\left\langle \rho',V_{C}\right\rangle ,G\left(n_{a},id_{a},v_{a},p_{a},t_{a},e_{a},j_{a}\right)=g,g\left(\eta\right)=\left\langle \eta',V_{A}\right\rangle $
 \end_inset
 
  
@@ -1241,15 +1256,15 @@ For all abstract and concrete functions, the following holds true: when
 \begin_layout Theorem
 \begin_inset Formula 
 \begin{alignat*}{1}
-\begin{array}{ccc}
-\eta\vdash n_{a} & \prec & \rho\vdash n_{c}\\
+\left(\begin{array}{ccc}
+\eta\vdash n_{a} & \succ & \rho\vdash n_{c}\\
 id_{a} & = & id_{c}\\
-\eta\vdash v_{a} & \prec & \rho\vdash v_{c}\\
-\eta\vdash p_{a,k} & \prec & \rho\vdash p_{c,k}\mbox{ for all\ }k\\
-\eta\vdash t_{a} & \prec & \rho\vdash t_{c}\\
+\eta\vdash v_{a} & \succ & \rho\vdash v_{c}\\
+\eta\vdash p_{a,k} & \succ & \rho\vdash p_{c,k}\mbox{ for all\ }k\\
+\eta\vdash t_{a} & \succ & \rho\vdash t_{c}\\
 e_{a} & = & \rho\vdash e_{c}\\
-\eta\vdash OBJ_{j_{a}} & \prec & \rho\vdash OBJ_{j_{c}}
-\end{array} & \implies\left(\eta\prec\rho\implies\left\langle \eta',V_{A}\right\rangle \prec\rho'\right)
+\eta\vdash OBJ_{j_{a}} & \succ & \rho\vdash OBJ_{j_{c}}
+\end{array}\right) & \implies\left(\eta\succ\rho\implies\left\langle \eta',V_{A}\right\rangle \succ\left\langle \rho',V_{C}\right\rangle \right)
 \end{alignat*}
 
 \end_inset
@@ -1296,7 +1311,7 @@ If
 \end_layout
 
 \begin_layout Theorem
-\begin_inset Formula $\forall sid\in P,\exists\rho_{0},\rho_{1},\rho_{0}\times\rho_{1}\in S_{A}\left(sid\right)\rightarrow\exists\eta_{0},\eta_{1},\eta_{0}\times\eta_{1}\in S_{A}\left(sid\right)\wedge\eta_{0}\prec\rho_{0}\wedge\eta_{1}\prec\rho_{1}$
+\begin_inset Formula $\forall sid\in P,\exists\rho_{0},\rho_{1},\rho_{0}\times\rho_{1}\in S_{A}\left(sid\right)\rightarrow\exists\eta_{0},\eta_{1},\eta_{0}\times\eta_{1}\in S_{A}\left(sid\right)\wedge\eta_{0}\succ\rho_{0}\wedge\eta_{1}\succ\rho_{1}$
 \end_inset
 
 
