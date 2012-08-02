@@ -328,69 +328,69 @@ We now define a denotational semantics of the SDTL program
 \begin_inset Formula 
 \begin{align*}
  & \mathcal{F} & = & Y\lambda f.\lambda n.\mathcal{S}\ \mathtt{Stmt}_{n}\ \mathtt{sid}\left(\mathtt{Stmt}_{n}\right)\ f\\
- & \mathcal{S}\dd{S_{1};S_{2}} & = & T_{S}\ M_{S}\left(\begin{aligned} & \left\langle r,S\ S_{1}\ \mathtt{sid}\left(S_{1}\right)\right\rangle \\
- & \left\langle \_,\mathtt{isterm}\left(r,S\ S_{2}\ \mathtt{sid}\left(S_{2}\right)\right)\right\rangle 
+ & \mathcal{S}\dd{S_{1};S_{2}} & = & T_{S}\ \left(\begin{aligned}S\ S_{1}\ \mathtt{sid}\left(S_{1}\right) & \bind\lambda r.\\
+\mathtt{isterm}\left(r,S\ S_{2}\ \mathtt{sid}\left(S_{2}\right)\right)
 \end{aligned}
 \right)\\
- & \mathcal{S}\dd{\mathtt{return}\ e} & = & T_{S}\ \mathcal{E}\ e\ \mathtt{eid}\left(e\right)\\
- & \mathcal{S}\dd{\mathtt{if}\left(e\right)S_{1}}\ f & = & T_{S}\ M_{S}\left(\begin{aligned} & \left\langle v,\mathcal{E}\ e\ \mathtt{eid}\left(e\right)\right\rangle \\
- & \left\langle \_,\mathtt{cond}\left(v,\mathcal{S}\ S_{1}\ \mathtt{sid}\left(S_{1}\right),I_{\alpha}\ NoReturn\right)\right\rangle 
+ & \mathcal{S}\dd{\mathtt{return}\ e} & = & T_{S}\ \left(\mathcal{E}\ e\ \mathtt{eid}\left(e\right)\right)\\
+ & \mathcal{S}\dd{\mathtt{if}\left(e\right)S_{1}}\ f & = & T_{S}\ \left(\begin{aligned}\mathcal{E}\ e\ \mathtt{eid}\left(e\right) & \bind\lambda v.\\
+\mathtt{cond}\left(v,\mathcal{S}\ S_{1}\ \mathtt{sid}\left(S_{1}\right),I_{\alpha}\ NoReturn\right)
 \end{aligned}
 \right)\\
- & {\scriptstyle \mathcal{S}\dd{\mathtt{if}\left(e\right)S_{1}\mathtt{else}S_{2}}\ f} & = & T_{S}\ M_{S}\left(\begin{aligned} & \left\langle v,\mathcal{E}\ e\ \mathtt{eid}\left(e\right)\right\rangle \\
- & \left\langle \_,\mathtt{cond}\left(v,\mathcal{S}\ S_{1}\ \mathtt{sid}\left(S_{1}\right),\mathcal{S}\ S_{2}\ \mathtt{sid}\left(S_{2}\right)\right)\right\rangle 
+ & {\scriptstyle \mathcal{S}\dd{\mathtt{if}\left(e\right)S_{1}\mathtt{else}S_{2}}\ f} & = & T_{S}\ \left(\begin{aligned}\mathcal{E}\ e\ \mathtt{eid}\left(e\right) & \bind\lambda v.\\
+\mathtt{cond}\left(v,\mathcal{S}\ S_{1}\ \mathtt{sid}\left(S_{1}\right),\mathcal{S}\ S_{2}\ \mathtt{sid}\left(S_{2}\right)\right)
 \end{aligned}
 \right)\\
- & \mathcal{S}\dd{id=e} & = & T_{S}\ M_{S}\left(\begin{aligned} & \left\langle v,\mathcal{E}\ e\ \mathtt{eid}\left(e\right)\right\rangle \\
- & \left\langle \_,\mathtt{asg}\left(id,v\right)\right\rangle \\
- & \left\langle \_,I_{\alpha}\ NoReturn\right\rangle 
+ & \mathcal{S}\dd{id=e} & = & T_{S}\ \left(\begin{aligned}\mathcal{E}\ e\ \mathtt{eid}\left(e\right) & \bind\lambda v.\\
+\mathtt{asg}\left(id,v\right) & \bind\lambda\_.\\
+I_{\alpha}\ NoReturn
 \end{aligned}
 \right)\\
- & \mathcal{S}\dd{e_{1}.id=e_{2}} & = & T_{S}\ M_{S}\left(\begin{aligned} & \left\langle v,\mathcal{E}\ e_{1}\ \mathtt{eid}\left(e_{1}\right)\right\rangle \\
- & \left\langle r,\mathcal{E}\ e_{2}\ \mathtt{eid}\left(e_{2}\right)\right\rangle \\
- & \left\langle \_,I_{T}\ \mathtt{set}\left(r,id,v\right)\right\rangle 
+ & \mathcal{S}\dd{e_{1}.id=e_{2}} & = & T_{S}\ \left(\begin{aligned}\mathcal{E}\ e_{1}\ \mathtt{eid}\left(e_{1}\right) & \bind\lambda v.\\
+\mathcal{E}\ e_{2}\ \mathtt{eid}\left(e_{2}\right) & \bind\lambda r.\\
+I_{T}\ \mathtt{set}\left(r,id,v\right)
 \end{aligned}
 \right)\\
- & {\scriptstyle \mathcal{S}\dd{\mathtt{while}\left(e\right)S_{1}}\ f\ \rho} & = & T_{S}\ \left(Y\lambda x.\lambda\rho,r.\mathtt{isterm}\left(r,M_{S}\left(\begin{aligned} & \left\langle v,\mathcal{E}\ e\ \mathtt{eid}\left(e\right)\right\rangle \\
- & \left\langle \_,{\scriptstyle \begin{gathered}\mathtt{cond}(v,\left(\lambda f,\rho'.x\ \left(\mathcal{S}\ S_{1}\ \mathtt{sid}\left(S_{1}\right)f\ \rho'\right)\right)\\
+ & {\scriptstyle \mathcal{S}\dd{\mathtt{while}\left(e\right)S_{1}}\ f\ \rho} & = & T_{S}\ \left(Y\lambda x.\lambda\rho,r.\mathtt{isterm}\left(r,\left(\begin{aligned}\mathcal{E}\ e\ \mathtt{eid}\left(e\right)\bind\lambda v.\\
+{\scriptstyle \begin{gathered}\mathtt{cond}(v,\left(\lambda f,\rho'.x\ \left(\mathcal{S}\ S_{1}\ \mathtt{sid}\left(S_{1}\right)f\ \rho'\right)\right)\\
 ,\left(,I_{\rho}\ NoReturn\right))
 \end{gathered}
-}\right\rangle 
+}
 \end{aligned}
 \right)\ f\right)\right)\ \rho\ {\scriptstyle NoReturn}\\
- & \mathcal{E}\dd{con}\ \mathtt{eid} & = & M_{S}\ \left\langle \_,I_{\alpha}\ \mathtt{conval}\left(con\right)\right\rangle \\
- & \mathcal{E}\dd{\mathtt{global}}\ \mathtt{eid} & = & M_{S}\ \left\langle \_,I_{V}\ \mathtt{obj}\left(0\right)\right\rangle \\
+ & \mathcal{E}\dd{con}\ \mathtt{eid} & = & I_{\alpha}\ \mathtt{conval}\left(con\right)\\
+ & \mathcal{E}\dd{\mathtt{global}}\ \mathtt{eid} & = & I_{V}\ \mathtt{obj}\left(0\right)\\
  & \mathcal{E}\dd{L}\ \mathtt{eid} & = & \mathcal{L}\ L\\
- & \mathcal{E}\dd{\mathtt{this}}\ \mathtt{eid} & = & M_{S}\ \left\langle \_,I_{V}\ \mathtt{getthis}\left(\rho\right)\right\rangle \\
- & \mathcal{E}\dd{\mathtt{input}}\ \mathtt{eid} & = & M_{S}\ \left\langle \_,I_{T}\ \mathtt{getinput}\left(\rho\right)\right\rangle \\
- & \mathcal{E}\dd{\mathtt{new}\ L\left(E*\right)}\ \mathtt{eid} & = & M_{s}\left(\begin{aligned} & \left\langle n,\mathcal{L}\ L\right\rangle \\
- & \left\langle p,\mathtt{evalParams}\ n\ E*\ \phi\right\rangle \\
- & \left\langle m,I_{T}\ \mathtt{newobj}\right\rangle \\
- & \left\langle \_,\mathtt{call}\left(n,p,m,\mathtt{eid}\right)\right\rangle \\
- & \left\langle \_,I_{\alpha}\ m\right\rangle 
+ & \mathcal{E}\dd{\mathtt{this}}\ \mathtt{eid} & = & I_{V}\ \mathtt{getthis}\\
+ & \mathcal{E}\dd{\mathtt{input}}\ \mathtt{eid} & = & I_{T}\ \mathtt{getinput}\\
+ & \mathcal{E}\dd{\mathtt{new}\ L\left(E*\right)}\ \mathtt{eid} & = & \left(\begin{aligned}\mathcal{L}\ L & \bind\lambda n.\\
+\mathtt{evalParams}\ n\ E*\ \phi & \bind\lambda p.\\
+I_{T}\ \mathtt{newobj} & \bind\lambda m.\\
+\mathtt{call}\left(n,p,m,\mathtt{eid}\right) & \bind\lambda\_.\\
+I_{\alpha}\ m
 \end{aligned}
 \right)\\
- & \mathcal{E}\dd{L\left(E*\right)}\ \mathtt{eid} & = & M_{S}\left(\begin{aligned} & \left\langle n,\mathcal{L}\ L\right\rangle \\
- & \left\langle p,\mathtt{evalParams}\ n\ E*\ \phi\right\rangle \\
- & \left\langle \_,\mathtt{call}\left(n,p,\mathtt{obj}\left(0,\rho\right),\mathtt{eid}\right)\right\rangle 
+ & \mathcal{E}\dd{L\left(E*\right)}\ \mathtt{eid} & = & \left(\begin{aligned}\mathcal{L}\ L & \bind\lambda n.\\
+\mathtt{evalParams}\ n\ E*\ \phi & \bind\lambda p.\\
+\mathtt{call}\left(n,p,\mathtt{obj}\left(0,\rho\right),\mathtt{eid}\right)
 \end{aligned}
 \right)\\
- & \mathcal{E}\dd{e_{0}.L\left(E*\right)}\ \mathtt{eid} & = & M_{S}\left(\begin{aligned} & \left\langle t,\mathcal{E}\ e_{0}\ \mathtt{eid}\left(e_{0}\right)\right\rangle \\
- & \left\langle n,\mathcal{L}\ L\right\rangle \\
- & \left\langle p,\mathtt{evalParams}\ n\ E*\ \phi\right\rangle \\
- & \left\langle \_,\mathtt{call}\left(n,p,t,\mathtt{eid}\right)\right\rangle 
+ & \mathcal{E}\dd{e_{0}.L\left(E*\right)}\ \mathtt{eid} & = & \left(\begin{aligned}\mathcal{E}\ e_{0}\ \mathtt{eid}\left(e_{0}\right) & \bind\lambda t.\\
+\mathcal{L}\ L & \bind\lambda n.\\
+\mathtt{evalParams}\ n\ E*\ \phi & \bind\lambda p.\\
+\mathtt{call}\left(n,p,t,\mathtt{eid}\right)
 \end{aligned}
 \right)\\
- & \mathcal{E}\dd{e_{0}\ binop\ e_{1}}\ \mathtt{eid} & = & M_{S}\left(\begin{aligned} & \left\langle c_{0},\mathcal{E}\ e_{1}\ \mathtt{eid}\left(e_{1}\right)\right\rangle \\
- & \left\langle c_{1},\mathcal{E}\ e_{2}\ \mathtt{eid}\left(e_{2}\right)\right\rangle \\
- & \left\langle \_,I_{V}\ \mathtt{bin}\left(binop,c_{0},c_{1}\right)\right\rangle 
+ & \mathcal{E}\dd{e_{0}\ binop\ e_{1}}\ \mathtt{eid} & = & \left(\begin{aligned}\mathcal{E}\ e_{1}\ \mathtt{eid}\left(e_{1}\right) & \bind\lambda c_{0}.\\
+\mathcal{E}\ e_{2}\ \mathtt{eid}\left(e_{2}\right) & \bind\lambda c_{1}.\\
+I_{V}\ \mathtt{bin}\left(binop,c_{0},c_{1}\right)
 \end{aligned}
 \right)\\
  & \mathcal{L}\dd{id} & = & \left(I_{V}\ \mathtt{val}\left(id\right)\right)\\
  & \mathcal{L}\dd{\mathtt{this}} & = & \left(.I_{V}\ \mathtt{getthis}\left(\rho\right)\right)\\
  & \mathcal{L}\dd{\mathtt{global}} & = & \left(I_{V}\ \mathtt{obj}\left(0\right)\right)\\
- & \mathcal{L}\dd{e_{0}.id} & = & M_{S}\left(\begin{aligned} & \left\langle v,\mathcal{E}\ e_{0}\ \mathtt{eid}\left(e_{0}\right)\right\rangle \\
- & \left\langle \_,I_{V}\ \mathtt{get}\left(v,id\right)\right\rangle 
+ & \mathcal{L}\dd{e_{0}.id} & = & \left(\begin{aligned}\mathcal{E}\ e_{0}\ \mathtt{eid}\left(e_{0}\right) & \bind\lambda v.\\
+I_{V}\ \mathtt{get}\left(v,id\right)
 \end{aligned}
 \right)
 \end{align*}
@@ -415,16 +415,16 @@ Where
 
 \end_layout
 
-\begin_deeper
 \begin_layout Itemize
 
 \lang british
-\begin_inset Formula $\mathtt{evalParam}=\left[ID\right]\times\left[Expr\right]\times\left[Value\right]\times\mathcal{F}\times\rho\times\sigma\rightarrow\rho\times\sigma\times\left[Value\right]$
+\begin_inset Formula $\mathtt{evalParam}=\left[ID\right]\times\left[Expr\right]\times\left[a\right]\times\mathcal{F}\times State\times StateCol\rightarrow State\times StateCol\times\left[a\right]$
 \end_inset
 
 
 \end_layout
 
+\begin_deeper
 \begin_layout Itemize
 
 \lang british
@@ -437,7 +437,7 @@ Where
 \begin_layout Itemize
 
 \lang british
-\begin_inset Formula $\mathtt{evalParam}\ \left[E|Exprs\right]\ ps\ f\ \rho\ \sigma=\mathtt{evalParam}\ Exprs\ \left[ps|con\right]\ f\ \rho_{1}\ \sigma_{1}$
+\begin_inset Formula $\mathtt{evalParam}\ \left[e|Exprs\right]\ ps\ f\ \rho\ \sigma=\mathtt{evalParam}\ Exprs\ \left[ps|con\right]\ f\ \rho_{1}\ \sigma_{1}$
 \end_inset
 
 
@@ -448,10 +448,10 @@ where
 \end_layout
 
 \begin_deeper
-\begin_layout Itemize
+\begin_layout Standard
 
 \lang british
-\begin_inset Formula $\left\langle \rho_{1},\sigma_{1},con\right\rangle =\mathcal{E}\ \dd{E}\ f\ \rho\ \sigma$
+\begin_inset Formula $\left\langle \rho_{1},\sigma_{1},con\right\rangle =\mathcal{E}\ e\ f\ \rho\ \sigma$
 \end_inset
 
 
