@@ -416,49 +416,26 @@ Where
 \end_layout
 
 \begin_layout Itemize
-
-\lang british
-\begin_inset Formula $\mathtt{evalParam}=\left[ID\right]\times\left[Expr\right]\times\left[a\right]\times\mathcal{F}\times State\times StateCol\rightarrow State\times StateCol\times\left[a\right]$
+\begin_inset Formula $\mathtt{evalParam}$
 \end_inset
 
-
+ is a parameter evaluation auxiliary function, defined as following:
 \end_layout
 
-\begin_deeper
-\begin_layout Itemize
-
-\lang british
-\begin_inset Formula $\mathtt{evalParam}\ \phi\ ps\ f\ \rho\ \sigma=\left\langle \rho,\sigma,ps\right\rangle $
-\end_inset
-
-
-\end_layout
-
-\begin_layout Itemize
-
-\lang british
-\begin_inset Formula $\mathtt{evalParam}\ \left[e|Exprs\right]\ ps\ f\ \rho\ \sigma=\mathtt{evalParam}\ Exprs\ \left[ps|con\right]\ f\ \rho_{1}\ \sigma_{1}$
-\end_inset
-
-
-\begin_inset Newline newline
-\end_inset
-
-where
-\end_layout
-
-\begin_deeper
 \begin_layout Standard
+\begin_inset Formula 
+\begin{gather*}
+\mathtt{evalParam}:\left[ID\right]\times\left[Expr\right]\times\left[a\right]\times\mathcal{F}\times State\times StateCol\rightarrow State\times StateCol\times\left[a\right]\\
+\mathtt{evalParam}\ \phi\ ps\ f\ \rho\ \sigma=\left\langle \rho,\sigma,ps\right\rangle \\
+\mathtt{evalParam}\ \left[e|Exprs\right]\ ps\ f\ \rho\ \sigma=\mathtt{evalParam}\ Exprs\ \left[ps|con\right]\ f\ \rho_{1}\ \sigma_{1}\\
+\ \mbox{where}\left\langle \rho_{1},\sigma_{1},con\right\rangle =\mathcal{E}\ e\ f\ \rho\ \sigma
+\end{gather*}
 
-\lang british
-\begin_inset Formula $\left\langle \rho_{1},\sigma_{1},con\right\rangle =\mathcal{E}\ e\ f\ \rho\ \sigma$
 \end_inset
 
 
 \end_layout
 
-\end_deeper
-\end_deeper
 \begin_layout Definition
 \begin_inset Argument
 status open
