@@ -6,6 +6,7 @@
 \begin_preamble
 \usepackage{stmaryrd}
 \newcommand{\dd}[1]{\llbracket#1\rrbracket}
+\newcommand{\bind}{\Yright}
 \end_preamble
 \options fleqn
 \use_default_options true
@@ -82,7 +83,7 @@ Statement to initial and final state mapping
 \end_layout
 
 \begin_layout Standard
-\begin_inset Formula $\sigma:s\rightarrow\rho\rightarrow\rho$
+\begin_inset Formula $StateCol:Stmt\rightarrow State\rightarrow State$
 \end_inset
 
 
@@ -103,66 +104,62 @@ Given sheer complexity of the task of analysing SDTL language, we define
 status open
 
 \begin_layout Plain Layout
-State transformer function
+Type constructor
 \end_layout
 
 \end_inset
 
-
-\begin_inset Formula $M_{S}$
+ We define a type constructor 
+\begin_inset Formula $M$
 \end_inset
 
- is a state transformer monad that takes a list of vectors (variable name,
- lambda expressions) with free variables and produces a state transformer
- with return value.
+ as the following polymorphic type
+\end_layout
+
+\begin_layout Definition
+\begin_inset Formula $M\ a=\left(Func\rightarrow\left(State\times StateCol\right)\rightarrow\left(State\times StateCol\times a\right)\right)$
+\end_inset
+
+
 \end_layout
 
 \begin_deeper
-\begin_layout Standard
-\begin_inset Formula $M_{S}:\left[p\times\left(\beta\rightarrow\left(\rho\times\sigma\right)\rightarrow\left(\rho\times\sigma\times\alpha\right)\right)\right]\rightarrow\beta\rightarrow\left(\rho\times\sigma\right)\rightarrow\left(\rho\times\sigma\times\alpha\right)$
+\begin_layout Definition
+\begin_inset Argument
+status open
+
+\begin_layout Plain Layout
+Bind operator
+\end_layout
+
+\end_inset
+
+We define a bind operator 
+\begin_inset Formula $\bind$
+\end_inset
+
+ as following:
+\end_layout
+
+\begin_layout Definition
+\begin_inset Formula $\bind:M\ a\rightarrow\left(a\rightarrow M\ b\right)\rightarrow M\ b$
 \end_inset
 
 
 \end_layout
 
-\begin_layout Standard
-\begin_inset Formula $M_{S}\ \left[T_{0}\right]=T_{0}$
+\begin_layout Definition
+\begin_inset Formula $T\ \bind\ U=\lambda f,r,s.U\ t\ f\ r'\ s'$
+\end_inset
+
+ where 
+\begin_inset Formula $\left\langle r',s',t\right\rangle =T\ f\ r\ s$
 \end_inset
 
 
 \end_layout
 
-\begin_layout Standard
-\begin_inset Formula $M_{S}\ \left[\left\langle p_{0},T_{0}\right\rangle |T_{rest}\right]\ b\ \rho\ \sigma=\left(\lambda p_{0}.M_{S}\ T_{rest}\ b\ \rho'\ \sigma'\right)\ v_{0}$
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-where 
-\end_layout
-
-\begin_layout Itemize
-\begin_inset Formula $\left\langle \rho',\sigma',v_{0}\right\rangle =T_{0}\ \rho\ \sigma$
-\end_inset
-
-
-\end_layout
-
-\begin_layout Itemize
-Pass 
-\begin_inset Formula $p_{0}$
-\end_inset
-
- on as a free variable, i.e.
- 
-\begin_inset Formula $p_{0}\in FV\left(T_{rest}\right)$
-\end_inset
-
-
-\end_layout
-
+\begin_deeper
 \begin_layout Definition
 \begin_inset Argument
 status open
@@ -173,20 +170,12 @@ Lift functions
 
 \end_inset
 
-We define following 
-\begin_inset Quotes eld
-\end_inset
-
-lift functions
-\begin_inset Quotes erd
-\end_inset
-
- to incorporate non-monadic functions as a part of monadic transformation:
+We define following lift functions to incorporate non-monadic functions
+ as a part of monadic transformation:
 \end_layout
 
-\begin_deeper
 \begin_layout Itemize
-\begin_inset Formula $I_{\alpha}$
+\begin_inset Formula $I_{A}$
 \end_inset
 
 is an identity state transformer that takes a constant and lifts it to a
@@ -197,8 +186,8 @@ is an identity state transformer that takes a constant and lifts it to a
 \begin_layout Standard
 \begin_inset Formula 
 \begin{gather*}
-I_{\alpha}:\alpha\rightarrow\beta\rightarrow\left(\rho\times\sigma\right)\rightarrow\left(\rho\times\sigma\times\alpha\right)\\
-I_{\alpha}\ v\ \_\ \rho\ \sigma=\left\langle \rho,\sigma,v\right\rangle 
+I_{a}:a\rightarrow b\rightarrow M\ a\\
+I_{a}\ v=\lambda f,r,s.\left\langle r,s,v\right\rangle 
 \end{gather*}
 
 \end_inset
@@ -208,19 +197,18 @@ I_{\alpha}\ v\ \_\ \rho\ \sigma=\left\langle \rho,\sigma,v\right\rangle
 
 \end_deeper
 \begin_layout Itemize
-\begin_inset Formula $I_{S}$
+\begin_inset Formula $I_{T}$
 \end_inset
 
- lifts a state transformer to a state transformer with state collector passing
- through
+ lifts a state transformer with a return value to a monadic function
 \end_layout
 
 \begin_deeper
 \begin_layout Standard
 \begin_inset Formula 
 \begin{gather*}
-I_{S}:\left(\rho\rightarrow\rho\times\alpha\right)\rightarrow\left(\rho\times\sigma\right)\rightarrow\left(\rho\times\sigma\times\alpha\right)\\
-I_{S}\ t=\lambda r,s.\left\langle r',s,a\right\rangle \ \mbox{where}\ \left\langle r',a\right\rangle =t\ r
+I_{S}:\left(State\rightarrow State\times a\right)\rightarrow M\ a\\
+I_{S}\ t=\lambda f,r,s.\left\langle r',s,a\right\rangle \ \mbox{where}\ \left\langle r',a\right\rangle =t\ r
 \end{gather*}
 
 \end_inset
@@ -230,42 +218,18 @@ I_{S}\ t=\lambda r,s.\left\langle r',s,a\right\rangle \ \mbox{where}\ \left\lang
 
 \end_deeper
 \begin_layout Itemize
-\begin_inset Formula $I_{\beta}$
+\begin_inset Formula $I_{V}$
 \end_inset
 
- takes a state transformer that doesn't make reference to the constant input
- part, and produces the transformer which takes the input and does nothing
- with it
+ lifes a function that takes a state and returns a value to a monadic function
 \end_layout
 
 \begin_deeper
 \begin_layout Standard
 \begin_inset Formula 
 \begin{gather*}
-I_{\beta}:\left(\gamma\rightarrow\omega\right)\rightarrow\beta\rightarrow\gamma\rightarrow\omega\\
-I_{\beta}\ t=\lambda b.t
-\end{gather*}
-
-\end_inset
-
-
-\end_layout
-
-\end_deeper
-\begin_layout Itemize
-\begin_inset Formula $I_{\rho}$
-\end_inset
-
- lifts a function that takes a state and returns a value, to a state transformer
- with the return value.
-\end_layout
-
-\begin_deeper
-\begin_layout Standard
-\begin_inset Formula 
-\begin{gather*}
-I_{\rho}:\left(\rho\rightarrow\alpha\right)\rightarrow\rho\rightarrow\rho\times\alpha\\
-I_{\rho}\ f=\lambda r.\left\langle r,f\ r\right\rangle 
+I_{V}:\left(State\rightarrow a\right)\rightarrow M\ a\\
+I_{V}\ t=\lambda f,r,s.\left\langle r,s,t\ r\right\rangle 
 \end{gather*}
 
 \end_inset
@@ -278,15 +242,16 @@ I_{\rho}\ f=\lambda r.\left\langle r,f\ r\right\rangle
 \begin_inset Formula $I_{0}$
 \end_inset
 
- takes a state transformation and attached to it a meaningless return value
+ takes a state transformation with no return value and attach to it a meaningles
+s return value
 \end_layout
 
 \begin_deeper
 \begin_layout Standard
 \begin_inset Formula 
 \begin{gather*}
-I_{0}:\left(\gamma\rightarrow\omega\right)\rightarrow\gamma\rightarrow\omega\times\alpha\\
-I_{0}\ t=\left\langle t,0\right\rangle 
+I_{0}:\left(State\rightarrow State\right)\rightarrow M\ a\\
+I_{0}\ t=\lambda f,r,s.\left\langle r',s,0\right\rangle \ \mbox{where}\ \left\langle r'\right\rangle =t\ r
 \end{gather*}
 
 \end_inset
@@ -295,38 +260,6 @@ I_{0}\ t=\left\langle t,0\right\rangle
 \end_layout
 
 \end_deeper
-\begin_layout Itemize
-We note that 
-\family roman
-\series medium
-\shape up
-\size normal
-\emph off
-\bar no
-\strikeout off
-\uuline off
-\uwave off
-\noun off
-\color none
-
-\begin_inset Formula $I_{\beta}\circ I_{S}\circ I_{\rho}$
-\end_inset
-
- and 
-\begin_inset Formula $I_{\beta}\circ I_{S}$
-\end_inset
-
- are frequently appearing patterns, and we define shorthand notations 
-\begin_inset Formula $I_{V}=I_{\beta}\circ I_{S}\circ I_{\rho}$
-\end_inset
-
- and 
-\begin_inset Formula $I_{T}=I_{\beta}\circ I_{S}$
-\end_inset
-
-
-\end_layout
-
 \begin_layout Definition
 \begin_inset Argument
 status collapsed
@@ -349,10 +282,10 @@ We define a state collection helper function
 \begin_layout Standard
 \begin_inset Formula 
 \begin{alignat*}{2}
- & T_{S} & : & s\rightarrow\left(\beta\rightarrow\rho\times\sigma\rightarrow\left(\rho\times\sigma\times\alpha\right)\right)\rightarrow\left(\beta\rightarrow\rho\times\sigma\rightarrow\left(\rho\times\sigma\times\alpha\right)\right)\\
- & T_{S}\ X\ f\ \rho\ \sigma\ s & = & \left\langle \rho',\sigma'',\alpha'\right\rangle \\
- &  &  & \begin{aligned}\mbox{where} & \left\langle \rho',\sigma',\alpha'\right\rangle =X\ f\ \rho\ \sigma\\
- & \sigma''=\sigma'\left[s\times\rho\mapsto\rho'\right]
+ & T_{S} & : & M\ a\rightarrow s\rightarrow M\ a\\
+ & T_{S}\ X\ s & = & \lambda f,r,s.\left\langle r',s'',a\right\rangle \\
+ &  &  & \begin{aligned}\mbox{where} & \left\langle r',s',a\right\rangle =X\ f\ r\ s\\
+ & s''=s'\left[s\times r\mapsto r'\right]
 \end{aligned}
 \end{alignat*}
 
@@ -378,9 +311,9 @@ We now define a denotational semantics of the SDTL program
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-\mathcal{F} & : & number\rightarrow\left(\rho\times\sigma\rightarrow\left(\rho\times\sigma\times\alpha\cup\left\{ NoReturn\right\} \right)\right)\\
-\mathcal{S} & : & Stmt\rightarrow\mathcal{F}\rightarrow s\rightarrow\left(\rho\times\sigma\rightarrow\left(\rho\times\sigma\times\alpha\cup\left\{ NoReturn\right\} \right)\right)\\
-\mathcal{E} & : & Expr\rightarrow\mathcal{F}\rightarrow\rho\rightarrow\rho\times\alpha
+\mathcal{F} & : & f\rightarrow\left(State\times StateCol\rightarrow\left(State\times StateCol\times a\cup\left\{ Void\right\} \right)\right)\\
+\mathcal{S} & : & Stmt\rightarrow s\rightarrow\mathcal{F}\rightarrow\left(State\times StateCol\right)\rightarrow\left(State\times StateCol\times a\cup\left\{ Void\right\} \right)\\
+\mathcal{E} & : & Expr\rightarrow e\rightarrow\mathcal{F}\rightarrow\left(State\times StateCol\right)\rightarrow\left(State\times StateCol\times a\right)
 \end{eqnarray*}
 
 \end_inset
@@ -394,69 +327,69 @@ We now define a denotational semantics of the SDTL program
 \begin_layout Standard
 \begin_inset Formula 
 \begin{align*}
- & \mathcal{F} & = & Y\lambda f.\lambda n.\mathcal{S}\dd{\mathtt{Stmt}_{n}}\ \mathtt{sid}\left(\mathtt{Stmt}_{n}\right)\ f\\
- & \mathcal{S}\dd{S_{1};S_{2}} & = & T_{S}\ M_{S}\left(\begin{aligned} & \left\langle r,S\dd{S_{1}}\ \mathtt{sid}\left(S_{1}\right)\right\rangle \\
- & \left\langle \_,\mathtt{isterm}\left(r,S\dd{S_{2}}\ \mathtt{sid}\left(S_{2}\right)\right)\right\rangle 
+ & \mathcal{F} & = & Y\lambda f.\lambda n.\mathcal{S}\ \mathtt{Stmt}_{n}\ \mathtt{sid}\left(\mathtt{Stmt}_{n}\right)\ f\\
+ & \mathcal{S}\dd{S_{1};S_{2}} & = & T_{S}\ M_{S}\left(\begin{aligned} & \left\langle r,S\ S_{1}\ \mathtt{sid}\left(S_{1}\right)\right\rangle \\
+ & \left\langle \_,\mathtt{isterm}\left(r,S\ S_{2}\ \mathtt{sid}\left(S_{2}\right)\right)\right\rangle 
 \end{aligned}
 \right)\\
- & \mathcal{S}\dd{\mathtt{return}\ e} & = & T_{S}\ \mathcal{E}\dd{e}\\
- & \mathcal{S}\dd{\mathtt{if}\left(e\right)S_{1}}\ f & = & T_{S}\ M_{S}\left(\begin{aligned} & \left\langle v,\mathcal{E}\dd{e}\right\rangle \\
- & \left\langle \_,\mathtt{cond}\left(v,\mathcal{S}\dd{S_{1}},I_{\alpha}\ NoReturn\right)\right\rangle 
+ & \mathcal{S}\dd{\mathtt{return}\ e} & = & T_{S}\ \mathcal{E}\ e\ \mathtt{eid}\left(e\right)\\
+ & \mathcal{S}\dd{\mathtt{if}\left(e\right)S_{1}}\ f & = & T_{S}\ M_{S}\left(\begin{aligned} & \left\langle v,\mathcal{E}\ e\ \mathtt{eid}\left(e\right)\right\rangle \\
+ & \left\langle \_,\mathtt{cond}\left(v,\mathcal{S}\ S_{1}\ \mathtt{sid}\left(S_{1}\right),I_{\alpha}\ NoReturn\right)\right\rangle 
 \end{aligned}
 \right)\\
- & {\scriptstyle \mathcal{S}\dd{\mathtt{if}\left(e\right)S_{1}\mathtt{else}S_{2}}\ f} & = & T_{S}\ M_{S}\left(\begin{aligned} & \left\langle v,\mathcal{E}\dd{e}\right\rangle \\
- & \left\langle \_,\mathtt{cond}\left(v,\mathcal{S}\dd{S_{1}},\mathcal{S}\dd{S_{2}}\right)\right\rangle 
+ & {\scriptstyle \mathcal{S}\dd{\mathtt{if}\left(e\right)S_{1}\mathtt{else}S_{2}}\ f} & = & T_{S}\ M_{S}\left(\begin{aligned} & \left\langle v,\mathcal{E}\ e\ \mathtt{eid}\left(e\right)\right\rangle \\
+ & \left\langle \_,\mathtt{cond}\left(v,\mathcal{S}\ S_{1}\ \mathtt{sid}\left(S_{1}\right),\mathcal{S}\ S_{2}\ \mathtt{sid}\left(S_{2}\right)\right)\right\rangle 
 \end{aligned}
 \right)\\
- & \mathcal{S}\dd{id=e} & = & T_{S}\ M_{S}\left(\begin{aligned} & \left\langle v,\mathcal{E}\dd{e}\right\rangle \\
+ & \mathcal{S}\dd{id=e} & = & T_{S}\ M_{S}\left(\begin{aligned} & \left\langle v,\mathcal{E}\ e\ \mathtt{eid}\left(e\right)\right\rangle \\
  & \left\langle \_,\mathtt{asg}\left(id,v\right)\right\rangle \\
  & \left\langle \_,I_{\alpha}\ NoReturn\right\rangle 
 \end{aligned}
 \right)\\
- & \mathcal{S}\dd{e_{1}.id=e_{2}} & = & T_{S}\ M_{S}\left(\begin{aligned} & \left\langle v,\mathcal{E}\dd{e_{2}}\right\rangle \\
- & \left\langle r,\mathcal{E}\dd{e_{1}}\right\rangle \\
+ & \mathcal{S}\dd{e_{1}.id=e_{2}} & = & T_{S}\ M_{S}\left(\begin{aligned} & \left\langle v,\mathcal{E}\ e_{1}\ \mathtt{eid}\left(e_{1}\right)\right\rangle \\
+ & \left\langle r,\mathcal{E}\ e_{2}\ \mathtt{eid}\left(e_{2}\right)\right\rangle \\
  & \left\langle \_,I_{T}\ \mathtt{set}\left(r,id,v\right)\right\rangle 
 \end{aligned}
 \right)\\
- & {\scriptstyle \mathcal{S}\dd{\mathtt{while}\left(e\right)S_{1}}\ f\ \rho} & = & T_{S}\ \left(Y\lambda x.\lambda\rho,r.\mathtt{isterm}\left(r,M_{S}\left(\begin{aligned} & \left\langle v,\mathcal{E}\dd{e}\right\rangle \\
- & \left\langle \_,{\scriptstyle \begin{gathered}\mathtt{cond}(v,\left(\lambda f,\rho'.x\ \left(\mathcal{S}\dd{S_{1}}\ \mathtt{sid}\left(S_{1}\right)f\ \rho'\right)\right)\\
+ & {\scriptstyle \mathcal{S}\dd{\mathtt{while}\left(e\right)S_{1}}\ f\ \rho} & = & T_{S}\ \left(Y\lambda x.\lambda\rho,r.\mathtt{isterm}\left(r,M_{S}\left(\begin{aligned} & \left\langle v,\mathcal{E}\ e\ \mathtt{eid}\left(e\right)\right\rangle \\
+ & \left\langle \_,{\scriptstyle \begin{gathered}\mathtt{cond}(v,\left(\lambda f,\rho'.x\ \left(\mathcal{S}\ S_{1}\ \mathtt{sid}\left(S_{1}\right)f\ \rho'\right)\right)\\
 ,\left(,I_{\rho}\ NoReturn\right))
 \end{gathered}
 }\right\rangle 
 \end{aligned}
 \right)\ f\right)\right)\ \rho\ {\scriptstyle NoReturn}\\
- & \mathcal{E}\dd{con} & = & T_{S}\ M_{S}\ \left\langle \_,I_{\alpha}\ \mathtt{conval}\left(con\right)\right\rangle \\
- & \mathcal{E}\dd{\mathtt{global}} & = & T_{S}\ M_{S}\ \left\langle \_,I_{V}\ \mathtt{obj}\left(0\right)\right\rangle \\
- & \mathcal{E}\dd{L} & = & T_{S}\ \mathcal{L}\dd{L}\\
- & \mathcal{E}\dd{\mathtt{this}} & = & T_{S}\ M_{S}\ \left\langle \_,I_{V}\ \mathtt{getthis}\left(\rho\right)\right\rangle \\
- & \mathcal{E}\dd{\mathtt{input}} & = & T_{S}\ M_{S}\ \left\langle \_,I_{T}\ \mathtt{getinput}\left(\rho\right)\right\rangle \\
- & \mathcal{E}\dd{\mathtt{new}\ L\left(E*\right)} & = & T_{S}\ M_{s}\left(\begin{aligned} & \left\langle n,\mathcal{L}\ \dd{L}\right\rangle \\
+ & \mathcal{E}\dd{con}\ \mathtt{eid} & = & M_{S}\ \left\langle \_,I_{\alpha}\ \mathtt{conval}\left(con\right)\right\rangle \\
+ & \mathcal{E}\dd{\mathtt{global}}\ \mathtt{eid} & = & M_{S}\ \left\langle \_,I_{V}\ \mathtt{obj}\left(0\right)\right\rangle \\
+ & \mathcal{E}\dd{L}\ \mathtt{eid} & = & \mathcal{L}\ L\\
+ & \mathcal{E}\dd{\mathtt{this}}\ \mathtt{eid} & = & M_{S}\ \left\langle \_,I_{V}\ \mathtt{getthis}\left(\rho\right)\right\rangle \\
+ & \mathcal{E}\dd{\mathtt{input}}\ \mathtt{eid} & = & M_{S}\ \left\langle \_,I_{T}\ \mathtt{getinput}\left(\rho\right)\right\rangle \\
+ & \mathcal{E}\dd{\mathtt{new}\ L\left(E*\right)}\ \mathtt{eid} & = & M_{s}\left(\begin{aligned} & \left\langle n,\mathcal{L}\ L\right\rangle \\
  & \left\langle p,\mathtt{evalParams}\ n\ E*\ \phi\right\rangle \\
  & \left\langle m,I_{T}\ \mathtt{newobj}\right\rangle \\
  & \left\langle \_,\mathtt{call}\left(n,p,m,\mathtt{eid}\right)\right\rangle \\
  & \left\langle \_,I_{\alpha}\ m\right\rangle 
 \end{aligned}
 \right)\\
- & \mathcal{E}\dd{L\left(E*\right)} & = & T_{S}\ M_{S}\left(\begin{aligned} & \left\langle n,\mathcal{L}\ \dd{L}\right\rangle \\
+ & \mathcal{E}\dd{L\left(E*\right)}\ \mathtt{eid} & = & M_{S}\left(\begin{aligned} & \left\langle n,\mathcal{L}\ L\right\rangle \\
  & \left\langle p,\mathtt{evalParams}\ n\ E*\ \phi\right\rangle \\
  & \left\langle \_,\mathtt{call}\left(n,p,\mathtt{obj}\left(0,\rho\right),\mathtt{eid}\right)\right\rangle 
 \end{aligned}
 \right)\\
- & \mathcal{E}\dd{E_{0}.L\left(E*\right)} & = & T_{S}\ M_{S}\left(\begin{aligned} & \left\langle t,\mathcal{E}\ \dd{E_{0}}\right\rangle \\
- & \left\langle n,\mathcal{L}\ \dd{L}\right\rangle \\
+ & \mathcal{E}\dd{e_{0}.L\left(E*\right)}\ \mathtt{eid} & = & M_{S}\left(\begin{aligned} & \left\langle t,\mathcal{E}\ e_{0}\ \mathtt{eid}\left(e_{0}\right)\right\rangle \\
+ & \left\langle n,\mathcal{L}\ L\right\rangle \\
  & \left\langle p,\mathtt{evalParams}\ n\ E*\ \phi\right\rangle \\
  & \left\langle \_,\mathtt{call}\left(n,p,t,\mathtt{eid}\right)\right\rangle 
 \end{aligned}
 \right)\\
- & \mathcal{E}\dd{E_{0}\ binop\ E_{1}} & = & T_{S}\ M_{S}\left(\begin{aligned} & \left\langle c_{0},\mathcal{E}\ \dd{E_{0}}\right\rangle \\
- & \left\langle c_{1},\mathcal{E}\ \dd{E_{1}}\right\rangle \\
- & \left\langle \_,\left(\lambda f,\rho.I_{\rho}\ \mathtt{bin}\left(binop,c_{0},c_{1}\right)\right)\right\rangle 
+ & \mathcal{E}\dd{e_{0}\ binop\ e_{1}}\ \mathtt{eid} & = & M_{S}\left(\begin{aligned} & \left\langle c_{0},\mathcal{E}\ e_{1}\ \mathtt{eid}\left(e_{1}\right)\right\rangle \\
+ & \left\langle c_{1},\mathcal{E}\ e_{2}\ \mathtt{eid}\left(e_{2}\right)\right\rangle \\
+ & \left\langle \_,I_{V}\ \mathtt{bin}\left(binop,c_{0},c_{1}\right)\right\rangle 
 \end{aligned}
 \right)\\
- & \mathcal{L}\dd{id} & = & T_{S}\ \left(I_{V}\ \mathtt{val}\left(id\right)\right)\\
- & \mathcal{L}\dd{\mathtt{this}} & = & T_{S}\ \left(.I_{V}\ \mathtt{getthis}\left(\rho\right)\right)\\
- & \mathcal{L}\dd{\mathtt{global}} & = & T_{S}\ \left(I_{V}\ \mathtt{obj}\left(0\right)\right)\\
- & \mathcal{L}\dd{E_{0}.id} & = & T_{S}\ M_{S}\left(\begin{aligned} & \left\langle v,\mathcal{E}\ \dd{E_{0}}\right\rangle \\
+ & \mathcal{L}\dd{id} & = & \left(I_{V}\ \mathtt{val}\left(id\right)\right)\\
+ & \mathcal{L}\dd{\mathtt{this}} & = & \left(.I_{V}\ \mathtt{getthis}\left(\rho\right)\right)\\
+ & \mathcal{L}\dd{\mathtt{global}} & = & \left(I_{V}\ \mathtt{obj}\left(0\right)\right)\\
+ & \mathcal{L}\dd{e_{0}.id} & = & M_{S}\left(\begin{aligned} & \left\langle v,\mathcal{E}\ e_{0}\ \mathtt{eid}\left(e_{0}\right)\right\rangle \\
  & \left\langle \_,I_{V}\ \mathtt{get}\left(v,id\right)\right\rangle 
 \end{aligned}
 \right)
@@ -536,7 +469,11 @@ Concrete domain
 
 \end_inset
 
-We define a concrete domain as following:
+We define a concrete domain of a concrete state 
+\begin_inset Formula $CState$
+\end_inset
+
+ as following:
 \end_layout
 
 \begin_deeper
@@ -546,10 +483,10 @@ We define a concrete domain as following:
 Value & = & \mathbb{Z}\cup\left\{ T,F\right\} \cup Objects\cup FunctionPointers\\
 Objects & = & \left\{ OBJ_{n}|n\in\left\{ 0\right\} \cup\mathbb{N}\right\} \\
 FunctionPointers & = & \left\langle FP_{n},\left[Value\right]\right\rangle \\
-\rho & = & \left\langle V,OM,T\right\rangle \\
-V & = & id\rightarrow Value\\
-OM & = & n\rightarrow V\\
-T & = & Objects
+CState & = & \left\langle Vars,ObjMem,This\right\rangle \\
+Vars & = & id\rightarrow Value\\
+ObjMem & = & n\rightarrow V\\
+This & = & Objects
 \end{eqnarray*}
 
 \end_inset
