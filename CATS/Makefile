@@ -20,8 +20,5 @@ clean:
 
 theory2: theory2.pdf
 
-theory2.dvi: theory2.tex
-	latex $<
-
-theory2.tex: theory2.lyx
-	lyx -export latex $@
+theory2.pdf: theory2.lyx
+	lyx --export pdf $<
