@@ -17,3 +17,11 @@ cats.dvi: cats.tex duck.bib CRPITStyle.cls harvard.sty agsm.bst
 clean:
 	$(RM) *.aux *.bbl *.blg *.thm *.log
 	$(RM) *.dvi *.pdf *.ps
+
+theory2: theory2.pdf
+
+theory2.dvi: theory2.tex
+	latex $<
+
+theory2.tex: theory2.lyx
+	lyx -export latex $@
