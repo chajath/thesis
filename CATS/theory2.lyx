@@ -330,6 +330,26 @@ For the result of
  function, whose return value is also monotonous.
 \end_layout
 
+\begin_layout Theorem
+Given two pairs of isomorphic functions 
+\begin_inset Formula $\left\langle F,F'\right\rangle $
+\end_inset
+
+ and 
+\begin_inset Formula $\left\langle G,G'\right\rangle $
+\end_inset
+
+, 
+\begin_inset Formula $F\bind G$
+\end_inset
+
+ and 
+\begin_inset Formula $F'\bind G'$
+\end_inset
+
+ are also isomorphic.
+\end_layout
+
 \begin_layout Definition
 \begin_inset Argument
 status collapsed
