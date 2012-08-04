@@ -606,7 +606,8 @@ f\ n\ \left\langle \left[param_{n,k}\mapsto\left[C|p\right]_{k}\right],OM,t\righ
 \end{gathered}
  & N\left(C\right)+N\left(p\right)=arity_{n}\\
 \left\langle \left\langle V,OM,T\right\rangle ,s,\left\langle FP_{n},\left[C|p\right]\right\rangle \right\rangle  & \mbox{otherwise}
-\end{cases}
+\end{cases}\\
+\mathtt{bin}\left(binop,c_{0},c_{1}\right) & = & \mbox{perform binary operation between two constants}
 \end{eqnarray*}
 
 \end_inset
@@ -1149,6 +1150,10 @@ f\ n\ \left\langle \left\{ param_{n,k}\mapsto\left[C|p\right]_{k}\right\} ,\alph
 \end{gathered}
  & N\left(C\right)+N\left(p\right)=arity_{n}\\
 \left\langle \left\langle \sigma,\alpha,\tau,\nu\left[\left\langle e,n,N\left(C\right)+N\left(p\right)\right\rangle \mapsto\left[C|p\right]\right]\right\rangle ,s,\left\langle FP_{n},\left[C|p\right],e\right\rangle \right\rangle  & \mbox{otherwise}
+\end{cases}\\
+\mathtt{bin}\left(binop,c_{0},c_{1}\right) & = & \begin{cases}
+\left\{ Number\right\}  & binop\in\left\{ '+','-','*','/'\right\} \\
+\left\{ Boolean\right\}  & \mbox{otherwise}
 \end{cases}
 \end{eqnarray*}
 
