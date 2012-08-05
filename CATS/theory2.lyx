@@ -275,6 +275,13 @@ key "Liang_modularmonadic"
 \end_layout
 
 \begin_layout Theorem
+\begin_inset CommandInset label
+LatexCommand label
+name "thm:bindmono"
+
+\end_inset
+
+
 \begin_inset Argument
 status open
 
@@ -284,7 +291,7 @@ Continuity of bind operation
 
 \end_inset
 
-Given two monotonous function 
+Given two monotonous functions 
 \begin_inset Formula $F$
 \end_inset
 
@@ -340,6 +347,81 @@ Given two pairs of isomorphic functions
 \end_inset
 
 , 
+\begin_inset Formula $F\bind G$
+\end_inset
+
+ and 
+\begin_inset Formula $F'\bind G'$
+\end_inset
+
+ are also isomorphic.
+\end_layout
+
+\begin_layout Proof
+Let 
+\begin_inset Formula $F\left(\rho_{0}\right)=\left\langle \rho_{1},\alpha_{1}\right\rangle $
+\end_inset
+
+, 
+\begin_inset Formula $G\left(\rho_{1},\alpha_{1}\right)=\left\langle \rho_{2},\alpha_{2}\right\rangle $
+\end_inset
+
+, 
+\begin_inset Formula $F'\left(\eta_{0}\right)=\left\langle \eta_{1},\upsilon_{1}\right\rangle $
+\end_inset
+
+, 
+\begin_inset Formula $G'\left(\eta_{1},\upsilon_{1}\right)=\left\langle \eta_{2},\upsilon_{2}\right\rangle $
+\end_inset
+
+
+\end_layout
+
+\begin_layout Proof
+If there are defined relationship 
+\begin_inset Formula $\prec$
+\end_inset
+
+between two different domains that two pairs of functions are isomorphic
+ with, isomorphicity of 
+\begin_inset Formula $F$
+\end_inset
+
+ and 
+\begin_inset Formula $F'$
+\end_inset
+
+ provides that 
+\begin_inset Formula $\rho_{0}\prec\eta_{0}$
+\end_inset
+
+, 
+\begin_inset Formula $\rho_{1}\prec\eta_{1}$
+\end_inset
+
+ and 
+\begin_inset Formula $\alpha_{1}\prec\upsilon_{1}$
+\end_inset
+
+.
+ Isomorphicity of 
+\begin_inset Formula $G$
+\end_inset
+
+ and 
+\begin_inset Formula $G'$
+\end_inset
+
+ gives 
+\begin_inset Formula $\rho_{2}\prec\eta_{2}$
+\end_inset
+
+ and 
+\begin_inset Formula $\alpha_{2}\prec\upsilon_{2}$
+\end_inset
+
+.
+ Therefore 
 \begin_inset Formula $F\bind G$
 \end_inset
 
@@ -615,6 +697,15 @@ f\ n\ \left\langle \left[param_{n,k}\mapsto\left[C|p\right]_{k}\right],OM,t\righ
 
 \end_layout
 
+\end_deeper
+\begin_layout Definition
+Note that we largely omit IO operation, since it is not a major concern
+ of this paper.
+ It is trivial to add another element to the state vector to take account
+ of IO operations.
+\end_layout
+
+\begin_deeper
 \begin_layout Definition
 \begin_inset Argument
 status open
@@ -1205,6 +1296,24 @@ In case of
 
 \end_deeper
 \end_deeper
+\begin_layout Standard
+From theorems 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "thm:bindmono"
+
+\end_inset
+
+ and 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "thm:mono"
+
+\end_inset
+
+ give the following important lemma:
+\end_layout
+
 \begin_layout Lemma
 Abstract 
 \begin_inset Formula $\mathcal{S},\mathcal{E}\ \mbox{and}\ \mathcal{L}$
@@ -1213,13 +1322,20 @@ Abstract
  are monotonic functions.
 \end_layout
 
-\begin_deeper
+\begin_layout Standard
+Then, it stands to reason that fixed points exist for our analytic framework.
+\end_layout
+
 \begin_layout Lemma
 Fixed points exist for an abstract 
 \begin_inset Formula $\mathcal{F}$
 \end_inset
 
 
+\end_layout
+
+\begin_layout Standard
+Now we turn to examine the relationship between concrete and abstract domain.
 \end_layout
 
 \begin_layout Definition
@@ -1274,13 +1390,11 @@ In turn, contextual definitions of abstract object and function pointer
 
 \end_layout
 
-\end_deeper
-\begin_layout Definition
+\begin_layout Standard
 We now define abstraction and concretisation relations between an abstract
  domain and a powerset of concrete domain.
 \end_layout
 
-\begin_deeper
 \begin_layout Definition
 \begin_inset Argument
 status open
@@ -1302,7 +1416,6 @@ Abstraction and concretisation
  as following:
 \end_layout
 
-\end_deeper
 \begin_layout Definition
 \begin_inset Formula 
 \begin{gather*}
@@ -1453,6 +1566,28 @@ reference "thm:galois"
 \end_layout
 
 \end_deeper
+\begin_layout Standard
+These theorems together with the properties of bind operator give rise to
+ an important lemma in proving the correctness of the analysis.
+ That is:
+\end_layout
+
+\begin_layout Lemma
+Abstract 
+\begin_inset Formula $\mathcal{F},\mathcal{S},\mathcal{E},\mathcal{L}$
+\end_inset
+
+ and concrete 
+\begin_inset Formula $\mathcal{F},\mathcal{S},\mathcal{E},\mathcal{L}$
+\end_inset
+
+ are isomorphic.
+\end_layout
+
+\begin_layout Standard
+Now we are ready to produce the main thesis.
+\end_layout
+
 \begin_layout Theorem
 \begin_inset Argument
 status open
@@ -1495,6 +1630,12 @@ If
 \end_inset
 
  is set of all statement IDs in the program.
+\end_layout
+
+\begin_layout Proof
+Recall the isomorphicity between abstract and concrete functions.
+ If there is a state collected in the concrete result, then it is implied
+ that an abstraction of such state is collected in an abstract result.
 \end_layout
 
 \begin_layout Standard
