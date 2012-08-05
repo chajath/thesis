@@ -78,8 +78,12 @@ figs-within-sections
 
 \begin_body
 
-\begin_layout Paragraph
-Statement to initial and final state mapping
+\begin_layout Section
+Analysis
+\end_layout
+
+\begin_layout Subsection
+State collection
 \end_layout
 
 \begin_layout Standard
@@ -103,8 +107,8 @@ state collection
 
 \end_layout
 
-\begin_layout Paragraph
-Auxiliary functions
+\begin_layout Subsection
+Auxiliary functions and monads
 \end_layout
 
 \begin_layout Standard
@@ -486,6 +490,120 @@ We define a state collection helper function
 
 \end_layout
 
+\end_deeper
+\begin_layout Standard
+Now we have monadic constructs and auxiliary functions to help describing
+ the monadic denotational semantics of the SDTL language.
+\end_layout
+
+\begin_layout Subsection
+Monadic denotational semantics
+\end_layout
+
+\begin_layout Standard
+Before discussing definitions of the semantic functions, we first discuss
+ our treatment of functions in this analytic framework.
+\end_layout
+
+\begin_layout Subsubsection
+Functions
+\end_layout
+
+\begin_layout Standard
+A difficulty of analysing a function in a reflective language without any
+ given type information has been noted in 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Bono:arXiv2012"
+
+\end_inset
+
+.
+ Furthermore, functions in SDTL cause side-effects, which in turn allow
+ them to function as a class extender and a mixin creator.
+ 
+\begin_inset Formula $\mbox{JS}_{0}$
+\end_inset
+
+ language, as developed and presented in 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "pubsdoc:typeinferenceforjavascript-ecoop,Anderson04typechecking"
+
+\end_inset
+
+.
+ Such concern is also absent in the discussion of 
+\begin_inset Formula $\lambda_{S}$
+\end_inset
+
+ language as devised in 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Guha:2011:TLC:1987211.1987225"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+With the languages like JavaScript, it is in the nature of such language
+ that functions are side-effect causing, and much of the type operations
+ are being done with by the side-effects.
+ If we model a function in such a manner, then the function itself is a
+ state transformer of a type: 
+\begin_inset Formula $State\rightarrow State\times a$
+\end_inset
+
+.
+ Parameters and a receiver object can be a part of the state as we define.
+ This formulation could have been further refined by distinguishing what
+ remains the same throughout a function execution (a receiver object, for
+ example), and those that can be transformed.
+ However, we do not make such distinction for simplicity's sake.
+\end_layout
+
+\begin_layout Standard
+Observe that in a given program, we have a mutually recursive collection
+ of such functions.
+ In order to analyse such collection, we augment the syntax tree of the
+ SDTL language to give each function declaration a unique ID.
+ We then map to each unique ID the function as we have discussed.
+ Given recursions, we formulate a fixed point of such collection with mutual
+ reference.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\mathcal{F}_{D}=Y\lambda f\lambda n.\mathcal{S}_{D}\ \mathtt{Stmt}_{n}\ f
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Where 
+\begin_inset Formula $\mathcal{S}_{D}$
+\end_inset
+
+ is a denotational semantic function that takes a statement and a function
+ fixed point, and returns an updated state and a return value.
+\end_layout
+
+\begin_layout Subsubsection
+Denotational semantics
+\end_layout
+
+\begin_layout Standard
+We define semantics functions as discussed previously, with the addition
+ of state collecting in order to cater for the state collecting of this
+ analysis.
+\end_layout
+
 \begin_layout Definition
 \begin_inset Argument
 status open
@@ -496,9 +614,10 @@ Denotational semantics
 
 \end_inset
 
-We now define a denotational semantics of the SDTL program
+We define a monadic denotational semantics of the SDTL program
 \end_layout
 
+\begin_deeper
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
@@ -1798,6 +1917,234 @@ If
 Recall the isomorphicity between abstract and concrete functions.
  If there is a state collected in the concrete result, then it is implied
  that an abstraction of such state is collected in an abstract result.
+\end_layout
+
+\begin_layout Subparagraph
+Dual of the analysis
+\end_layout
+
+\begin_layout Standard
+Partial ordering theory provides that what holds true for the particular
+ partial ordering will also hold true for a dual of it.
+ We show the dual of this analysis by the following example.
+\end_layout
+
+\begin_layout Example
+\begin_inset Argument
+status open
+
+\begin_layout Plain Layout
+Dual
+\end_layout
+
+\end_inset
+
+Consider the following program.
+\end_layout
+
+\begin_layout Example
+\begin_inset listings
+lstparams "numbers=left"
+inline false
+status open
+
+\begin_layout Plain Layout
+
+function object() { this.value = 1; }
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+function foo(x) {
+\end_layout
+
+\begin_layout Plain Layout
+
+	if(input > 20) { 
+\end_layout
+
+\begin_layout Plain Layout
+
+		x.propA = 20;
+\end_layout
+
+\begin_layout Plain Layout
+
+		x.propC = 15;
+\end_layout
+
+\begin_layout Plain Layout
+
+	else {
+\end_layout
+
+\begin_layout Plain Layout
+
+		x.propB = False;
+\end_layout
+
+\begin_layout Plain Layout
+
+		x.propC = 15;
+\end_layout
+
+\begin_layout Plain Layout
+
+	}
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+z = new object(); # 1
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+if(input > 15) {
+\end_layout
+
+\begin_layout Plain Layout
+
+	a = new object(); # 2
+\end_layout
+
+\begin_layout Plain Layout
+
+	foo(a);
+\end_layout
+
+\begin_layout Plain Layout
+
+} else {
+\end_layout
+
+\begin_layout Plain Layout
+
+	a = new object(); # 3
+\end_layout
+
+\begin_layout Plain Layout
+
+	foo(a);
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+output a.value + a.propC;
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Example
+we obtain different results depending on the kind of analysis we perform.
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\subseteq$
+\end_inset
+
+ ordering
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\sigma_{\subseteq} & = & \left\{ \begin{alignedat}{2}z & \mapsto & \left\{ OBJ_{1}\right\} \\
+a & \mapsto & \left\{ OBJ_{2},OBJ_{3}\right\} 
+\end{alignedat}
+\right\} \\
+\alpha_{\subseteq} & = & \left\{ \begin{alignedat}{2}1 & \mapsto & \left\{ \mathtt{value}\mapsto\left\{ Number\right\} \right\} \\
+2,3 & \mapsto & \left\{ \begin{gathered}\mathtt{value}\mapsto\left\{ Number\right\} \\
+\mathtt{propA}\mapsto\left\{ Number\right\} \\
+\mathtt{propB}\mapsto\left\{ Boolean\right\} \\
+\mathtt{propC}\mapsto\left\{ Number\right\} 
+\end{gathered}
+\right\} 
+\end{alignedat}
+\right\} 
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\supseteq$
+\end_inset
+
+ ordering
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\sigma_{\supseteq} & = & \left\{ \begin{alignedat}{2}z & \mapsto & \left\{ OBJ_{1}\right\} \\
+a & \mapsto & \left\{ \right\} 
+\end{alignedat}
+\right\} \\
+\alpha_{\supseteq} & = & \left\{ \begin{alignedat}{2}1 & \mapsto & \left\{ \mathtt{value}\mapsto\left\{ Number\right\} \right\} \\
+2,3 & \mapsto & \left\{ \begin{gathered}\mathtt{value}\mapsto\left\{ Number\right\} \\
+\mathtt{propC}\mapsto\left\{ Number\right\} 
+\end{gathered}
+\right\} 
+\end{alignedat}
+\right\} 
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Given our treatment of each new expression as a creation of a type of its
+ own, the result that we obtain for 
+\begin_inset Formula $\sigma_{\supseteq}$
+\end_inset
+
+ might be too limiting and imprecise.
+ We could use the combination of 
+\begin_inset Formula $\sigma_{\subseteq}$
+\end_inset
+
+ and 
+\begin_inset Formula $\alpha_{\supseteq}$
+\end_inset
+
+ to calculate a member of an object that is referred to by a variable must
+ have.
+ We discuss more on the practical use of the result of the analysis in the
+ next section.
 \end_layout
 
 \begin_layout Standard
