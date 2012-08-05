@@ -1,0 +1,797 @@
+%% LyX 2.0.4 created this file.  For more info, see http://www.lyx.org/.
+%% Do not edit unless you really know what you are doing.
+\documentclass[english,fleqn]{CRPITStyle}
+\usepackage[T1]{fontenc}
+\usepackage[latin9]{inputenc}
+\usepackage{listings}
+\usepackage{geometry}
+\geometry{verbose,tmargin=1cm,bmargin=1cm,lmargin=1cm,rmargin=1cm,headheight=1cm,headsep=1cm,footskip=0cm}
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{3}
+\usepackage{amsthm}
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+\makeatletter
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Textclass specific LaTeX commands.
+\numberwithin{equation}{section}
+\numberwithin{figure}{section}
+\theoremstyle{plain}
+\newtheorem{thm}{\protect\theoremname}
+  \theoremstyle{definition}
+  \newtheorem{defn}[thm]{\protect\definitionname}
+  \theoremstyle{definition}
+  \newtheorem{example}[thm]{\protect\examplename}
+  \theoremstyle{plain}
+  \newtheorem{lem}[thm]{\protect\lemmaname}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% User specified LaTeX commands.
+\usepackage{stmaryrd}
+\newcommand{\dd}[1]{\llbracket#1\rrbracket}
+\newcommand{\bind}{\Yright}
+
+\makeatother
+
+\usepackage{babel}
+  \providecommand{\definitionname}{Definition}
+  \providecommand{\examplename}{Example}
+  \providecommand{\lemmaname}{Lemma}
+\providecommand{\theoremname}{Theorem}
+
+\begin{document}
+
+\section{Analysis}
+
+\subsection{State collection}
+
+We design functions to collect state transitions as they occur in
+the course of the execution of a program. The ``state collection''
+has a type:
+
+$StateCol:Stmt\rightarrow State\rightarrow State$
+
+
+\subsection{Auxiliary functions and monads}
+
+Given sheer complexity of the task of analysing SDTL language, we
+define a series of auxiliary functions to help make formulation terse
+and more expressive.
+\begin{defn}[Type constructor]
+ We define a type constructor $M$ as the following polymorphic type
+
+\begin{multline*}
+M\ a=Func\rightarrow\left(State\times StateCol\right)\rightarrow\\
+\left(State\times StateCol\times a\right)
+\end{multline*}
+
+\begin{defn}[Bind operator]
+We define a bind operator $\bind$ as following:
+
+$\left(\bind\right):M\ a\rightarrow\left(a\rightarrow M\ b\right)\rightarrow M\ b$
+
+$T\ \bind\ U=\lambda f,r,s.U\ t\ f\ r'\ s'$ where $\left\langle r',s',t\right\rangle =T\ f\ r\ s$
+\begin{defn}[Lift functions]
+We define following lift functions to incorporate non-monadic functions
+as a part of monadic transformation:\end{defn}
+\begin{itemize}
+\item $I_{A}$is an identity state transformer that takes a constant and
+lifts it to a identity state transformer with the constant as a return
+value
+
+
+\begin{gather*}
+I_{a}:a\rightarrow b\rightarrow M\ a\\
+I_{a}\ v=\lambda f,r,s.\left\langle r,s,v\right\rangle 
+\end{gather*}
+
+
+\item $I_{T}$ lifts a state transformer with a return value to a monadic
+function
+
+
+\begin{gather*}
+I_{S}:\left(State\rightarrow State\times a\right)\rightarrow M\ a\\
+I_{S}\ t=\lambda f,r,s.\left\langle r',s,a\right\rangle \ \mbox{where}\ \left\langle r',a\right\rangle =t\ r
+\end{gather*}
+
+
+\item $I_{V}$ lifes a function that takes a state and returns a value to
+a monadic function
+
+
+\begin{gather*}
+I_{V}:\left(State\rightarrow a\right)\rightarrow M\ a\\
+I_{V}\ t=\lambda f,r,s.\left\langle r,s,t\ r\right\rangle 
+\end{gather*}
+
+
+\item $I_{0}$ takes a state transformation with no return value and attach
+to it a meaningless return value
+
+
+\begin{gather*}
+I_{0}:\left(State\rightarrow State\right)\rightarrow M\ a\\
+I_{0}\ t=\lambda f,r,s.\left\langle r',s,0\right\rangle \ \mbox{where}\ \left\langle r'\right\rangle =t\ r
+\end{gather*}
+
+
+\end{itemize}
+\end{defn}
+\end{defn}
+\cite{Liang_modularmonadic} gives a survey of mathematical properties
+that monadic constructs exhibit. For the purpose our discussion, we
+limit ourselves to the discussion of properties of monads that are
+crucial in proving correctness of the system.
+\begin{thm}[Continuity of bind operation]
+\label{thm:bindmono}Given two monotonous functions $F$ and $G$,
+$F\bind G$ is also a monotonous function.\end{thm}
+\begin{proof}
+For state and state collection arguments, $F\bind G$ is a series
+of monotonic transformation. Since the composition of two monotonic
+functions is also monotonic, state and state collection are monotonic.
+
+For the result of $F$ passed on to $G$ as a bound variable, a return
+value from $F$ is monotonous to the input. The return value, then
+becomes part of input to the $G$ function, whose return value is
+also monotonous.\end{proof}
+\begin{thm}
+Given two pairs of isomorphic functions $\left\langle F,F'\right\rangle $
+and $\left\langle G,G'\right\rangle $, $F\bind G$ and $F'\bind G'$
+are also isomorphic.\end{thm}
+\begin{proof}
+Let $F\left(\rho_{0}\right)=\left\langle \rho_{1},\alpha_{1}\right\rangle $,
+$G\left(\rho_{1},\alpha_{1}\right)=\left\langle \rho_{2},\alpha_{2}\right\rangle $,
+$F'\left(\eta_{0}\right)=\left\langle \eta_{1},\upsilon_{1}\right\rangle $,
+$G'\left(\eta_{1},\upsilon_{1}\right)=\left\langle \eta_{2},\upsilon_{2}\right\rangle $
+
+If there are defined relationship $\prec$between two different domains
+that two pairs of functions are isomorphic with, isomorphicity of
+$F$ and $F'$ provides that $\rho_{0}\prec\eta_{0}$, $\rho_{1}\prec\eta_{1}$
+and $\alpha_{1}\prec\upsilon_{1}$. Isomorphicity of $G$ and $G'$
+gives $\rho_{2}\prec\eta_{2}$ and $\alpha_{2}\prec\upsilon_{2}$.
+Therefore $F\bind G$ and $F'\bind G'$ are also isomorphic.\end{proof}
+\begin{defn}[State collector function]
+We define a state collection helper function $T_{S}$, which takes
+a state transformation and appends to the transformation a new association
+of state transformation from initial state to the final state for
+a given statement.
+
+\begin{alignat*}{2}
+ & T_{S} & : & M\ a\rightarrow s\rightarrow M\ a\\
+ & T_{S}\ X\ s & = & \lambda f,r,s.\left\langle r',s'',a\right\rangle \\
+ &  &  & \begin{aligned}\mbox{where} & \left\langle r',s',a\right\rangle =X\ f\ r\ s\\
+ & s''=s'\left[s\times r\mapsto r'\right]
+\end{aligned}
+\end{alignat*}
+
+
+\end{defn}
+Now we have monadic constructs and auxiliary functions to help describing
+the monadic denotational semantics of the SDTL language.
+
+
+\subsection{Monadic denotational semantics}
+
+Before discussing definitions of the semantic functions, we first
+discuss our treatment of functions in this analytic framework.
+
+
+\subsubsection{Functions}
+
+A difficulty of analysing a function in a reflective language without
+any given type information has been noted in \cite{Bono:arXiv2012}.
+Furthermore, functions in SDTL cause side-effects, which in turn allow
+them to function as a class extender and a mixin creator. $\mbox{JS}_{0}$
+language, as developed and presented in \cite{pubsdoc:typeinferenceforjavascript-ecoop,Anderson04typechecking}.
+Such concern is also absent in the discussion of $\lambda_{S}$ language
+as devised in \cite{Guha:2011:TLC:1987211.1987225}.
+
+With the languages like JavaScript, it is in the nature of such language
+that functions are side-effect causing, and much of the type operations
+are being done with by the side-effects. If we model a function in
+such a manner, then the function itself is a state transformer of
+a type: $State\rightarrow State\times a$. Parameters and a receiver
+object can be a part of the state as we define. This formulation could
+have been further refined by distinguishing what remains the same
+throughout a function execution (a receiver object, for example),
+and those that can be transformed. However, we do not make such distinction
+for simplicity's sake.
+
+Observe that in a given program, we have a mutually recursive collection
+of such functions. In order to analyse such collection, we augment
+the syntax tree of the SDTL language to give each function declaration
+a unique ID. We then map to each unique ID the function as we have
+discussed. Given recursions, we formulate a fixed point of such collection
+with mutual reference.
+
+\[
+\mathcal{F}_{D}=Y\lambda f\lambda n.\mathcal{S}_{D}\ \mathtt{Stmt}_{n}\ f
+\]
+
+
+Where $\mathcal{S}_{D}$ is a denotational semantic function that
+takes a statement and a function fixed point, and returns an updated
+state and a return value.
+
+
+\subsubsection{Denotational semantics}
+
+We define semantics functions as discussed previously, with the addition
+of state collecting in order to cater for the state collecting of
+this analysis.
+\begin{defn}[Denotational semantics]
+We define a monadic denotational semantics of the SDTL program
+
+\begin{eqnarray*}
+\mathcal{F} & : & f\rightarrow\left(State\times StateCol\right)\rightarrow\\
+ &  & \left(State\times StateCol\times a\cup\left\{ Void\right\} \right)\\
+\mathcal{S} & : & Stmt\rightarrow s\rightarrow\mathcal{F}\rightarrow\left(State\times StateCol\right)\rightarrow\\
+ &  & \left(State\times StateCol\times a\cup\left\{ Void\right\} \right)\\
+\mathcal{E} & : & Expr\rightarrow e\rightarrow\mathcal{F}\rightarrow\left(State\times StateCol\right)\rightarrow\\
+ &  & \left(State\times StateCol\times a\right)\\
+\mathcal{L} & : & LExpr\rightarrow\mathcal{F}\rightarrow\left(State\times StateCol\right)\rightarrow\\
+ &  & \left(State\times StateCol\times a\right)
+\end{eqnarray*}
+
+
+Definition for those functions are given in figure \ref{semmon}.
+\end{defn}
+\begin{figure*}
+\begin{align*}
+ & \mathcal{F} & = & Y\lambda f.\lambda n.\mathcal{S}\ \mathtt{Stmt}_{n}\ \mathtt{sid}\left(\mathtt{Stmt}_{n}\right)\ f\\
+ & \mathcal{S}\dd{S_{1};S_{2}} & = & T_{S}\ \left(\begin{aligned}S\ S_{1}\ \mathtt{sid}\left(S_{1}\right) & \bind\lambda r.\\
+\mathtt{isterm}\left(r,S\ S_{2}\ \mathtt{sid}\left(S_{2}\right)\right)
+\end{aligned}
+\right)\\
+ & \mathcal{S}\dd{\mathtt{return}\ e} & = & T_{S}\ \left(\mathcal{E}\ e\ \mathtt{eid}\left(e\right)\right)\\
+ & \mathcal{S}\dd{\mathtt{if}\left(e\right)S_{1}}\ f & = & T_{S}\ \left(\begin{aligned}\mathcal{E}\ e\ \mathtt{eid}\left(e\right) & \bind\lambda v.\\
+\mathtt{cond}\left(v,\mathcal{S}\ S_{1}\ \mathtt{sid}\left(S_{1}\right),I_{\alpha}\ Void\right)
+\end{aligned}
+\right)\\
+ & \mathcal{S}\dd{\mathtt{if}\left(e\right)S_{1}\mathtt{else}S_{2}}\ f & = & T_{S}\ \left(\begin{aligned}\mathcal{E}\ e\ \mathtt{eid}\left(e\right) & \bind\lambda v.\\
+\mathtt{cond}\left(v,\mathcal{S}\ S_{1}\ \mathtt{sid}\left(S_{1}\right),\mathcal{S}\ S_{2}\ \mathtt{sid}\left(S_{2}\right)\right)
+\end{aligned}
+\right)\\
+ & \mathcal{S}\dd{id=e} & = & T_{S}\ \left(\begin{aligned}\mathcal{E}\ e\ \mathtt{eid}\left(e\right) & \bind\lambda v.\\
+\mathtt{asg}\left(id,v\right) & \bind\lambda\_.\\
+I_{\alpha}\ NoReturn
+\end{aligned}
+\right)\\
+ & \mathcal{S}\dd{e_{0}.id=e_{1}} & = & T_{S}\ \left(\begin{aligned}\mathcal{E}\ e_{0}\ \mathtt{eid}\left(e_{0}\right) & \bind\lambda v.\\
+\mathcal{E}\ e_{1}\ \mathtt{eid}\left(e_{1}\right) & \bind\lambda r.\\
+I_{T}\ \mathtt{set}\left(r,id,v\right)
+\end{aligned}
+\right)\\
+ & \mathcal{S}\dd{\mathtt{while}\left(e\right)S_{1}}\ f\ \rho & = & T_{S}\ \left(Y\lambda x.\lambda\rho,r.\mathtt{isterm}\left(r,\left(\begin{aligned}\mathcal{E}\ e\ \mathtt{eid}\left(e\right)\bind\lambda v.\\
+{\scriptstyle \begin{gathered}\mathtt{cond}(v,\left(\lambda f,\rho'.x\ \left(\mathcal{S}\ S_{1}\ \mathtt{sid}\left(S_{1}\right)f\ \rho'\right)\right)\\
+,\left(,I_{\rho}\ Void\right))
+\end{gathered}
+}
+\end{aligned}
+\right)\ f\right)\right)\ \rho\ {\scriptstyle Void}\\
+ & \mathcal{S}\dd{\mathtt{output}\ e} & = & T_{S}\ \left(\begin{aligned}\mathcal{E}\ e\ eid\left(e\right) & \bind\lambda v.\\
+\mathtt{output}\left(v\right)
+\end{aligned}
+\right)\\
+ & \mathcal{E}\dd{con}\ \mathtt{eid} & = & I_{\alpha}\ \mathtt{conval}\left(con\right)\\
+ & \mathcal{E}\dd{\mathtt{global}}\ \mathtt{eid} & = & I_{V}\ \mathtt{obj}\left(0\right)\\
+ & \mathcal{E}\dd{L}\ \mathtt{eid} & = & \mathcal{L}\ L\\
+ & \mathcal{E}\dd{\mathtt{this}}\ \mathtt{eid} & = & I_{V}\ \mathtt{getthis}\\
+ & \mathcal{E}\dd{\mathtt{input}}\ \mathtt{eid} & = & I_{T}\ \mathtt{getinput}\\
+ & \mathcal{E}\dd{\mathtt{new}\ L\left(E*\right)}\ \mathtt{eid} & = & \left(\begin{aligned}\mathcal{L}\ L & \bind\lambda n.\\
+\mathtt{evalParams}\ n\ E*\ \phi & \bind\lambda p.\\
+I_{T}\ \mathtt{newobj} & \bind\lambda m.\\
+\mathtt{call}\left(n,p,m,\mathtt{eid}\right) & \bind\lambda\_.\\
+I_{\alpha}\ m
+\end{aligned}
+\right)\\
+ & \mathcal{E}\dd{L\left(E*\right)}\ \mathtt{eid} & = & \left(\begin{aligned}\mathcal{L}\ L & \bind\lambda n.\\
+\mathtt{evalParams}\ n\ E*\ \phi & \bind\lambda p.\\
+\mathtt{call}\left(n,p,\mathtt{obj}\left(0,\rho\right),\mathtt{eid}\right)
+\end{aligned}
+\right)\\
+ & \mathcal{E}\dd{e_{0}.L\left(E*\right)}\ \mathtt{eid} & = & \left(\begin{aligned}\mathcal{E}\ e_{0}\ \mathtt{eid}\left(e_{0}\right) & \bind\lambda t.\\
+\mathcal{L}\ L & \bind\lambda n.\\
+\mathtt{evalParams}\ n\ E*\ \phi & \bind\lambda p.\\
+\mathtt{call}\left(n,p,t,\mathtt{eid}\right)
+\end{aligned}
+\right)\\
+ & \mathcal{E}\dd{e_{0}\ binop\ e_{1}}\ \mathtt{eid} & = & \left(\begin{aligned}\mathcal{E}\ e_{0}\ \mathtt{eid}\left(e_{0}\right) & \bind\lambda c_{0}.\\
+\mathcal{E}\ e_{1}\ \mathtt{eid}\left(e_{1}\right) & \bind\lambda c_{1}.\\
+I_{V}\ \mathtt{bin}\left(binop,c_{0},c_{1}\right)
+\end{aligned}
+\right)\\
+ & \mathcal{L}\dd{id} & = & \left(I_{V}\ \mathtt{val}\left(id\right)\right)\\
+ & \mathcal{L}\dd{\mathtt{this}} & = & \left(I_{V}\ \mathtt{getthis}\left(\rho\right)\right)\\
+ & \mathcal{L}\dd{\mathtt{global}} & = & \left(I_{V}\ \mathtt{obj}\left(0\right)\right)\\
+ & \mathcal{L}\dd{e_{0}.id} & = & \left(\begin{aligned}\mathcal{E}\ e_{0}\ \mathtt{eid}\left(e_{0}\right) & \bind\lambda v.\\
+I_{V}\ \mathtt{get}\left(v,id\right)
+\end{aligned}
+\right)
+\end{align*}
+
+
+Where
+
+$\mathtt{Stmt}_{n}$ is a function body of a function numbered $n$
+
+$\mathtt{evalParam}$ is a parameter evaluation auxiliary function,
+defined as following:
+
+\begin{gather*}
+\mathtt{evalParam}:\left[ID\right]\times\left[Expr\right]\times\left[a\right]\times\mathcal{F}\times State\times StateCol\rightarrow State\times StateCol\times\left[a\right]\\
+\mathtt{evalParam}\ \phi\ ps\ f\ \rho\ \sigma=\left\langle \rho,\sigma,ps\right\rangle \\
+\mathtt{evalParam}\ \left[e|Exprs\right]\ ps\ f\ \rho\ \sigma=\mathtt{evalParam}\ Exprs\ \left[ps|con\right]\ f\ \rho_{1}\ \sigma_{1}\\
+\ \mbox{where}\left\langle \rho_{1},\sigma_{1},con\right\rangle =\mathcal{E}\ e\ f\ \rho\ \sigma
+\end{gather*}
+
+
+\caption{Semantic monadic functions}
+\label{semmon}
+
+\end{figure*}
+
+\begin{defn}[Concrete domain]
+We define a concrete domain of a concrete state $CState$ as following:
+
+\begin{eqnarray*}
+Value & = & \mathbb{Z}\cup\left\{ T,F\right\} \cup Objects\cup\\
+ &  & FunctionPointers\\
+Objects & = & \left\{ OBJ_{n}\mid n\in\left\{ 0\right\} \cup\mathbb{N}\right\} \\
+FunctionPointers & = & \left\langle FP_{n},\left[Value\right]\right\rangle \\
+CState & = & \left\langle Vars,ObjMem,This\right\rangle \\
+Vars & = & id\rightarrow Value\\
+ObjMem & = & n\rightarrow V\\
+This & = & Objects
+\end{eqnarray*}
+
+\begin{defn}[Concrete functions]
+We define concrete functions in figure \ref{concfunc}.
+\end{defn}
+\end{defn}
+\begin{figure*}
+
+
+\begin{eqnarray*}
+\mathtt{isterm}\left(v,s\right) & = & \lambda f,\rho.\begin{cases}
+s\ f\ \rho & v=Void\\
+I_{\rho}\ v & \mbox{otherwise}
+\end{cases}\\
+\mathtt{cond}\left(v,s_{1},s_{2}\right) & = & \lambda f,\rho.\begin{cases}
+s_{1}\ f\ \rho & v=true\\
+s_{2}\ f\ \rho & v=false
+\end{cases}\\
+\mathtt{asg}\left(id,v\right) & = & \lambda\left\langle V,OM,T\right\rangle .\left\langle V\left[id=v\right],OM,T\right\rangle \\
+\mathtt{val}\left(id\right) & = & \lambda\left\langle V,OM,T\right\rangle .V\left(id\right)\\
+\mathtt{get}\left(OBJ_{n},id\right) & = & \lambda\left\langle V,OM,T\right\rangle .OM\left(n\right)\\
+\mathtt{set}\left(OBJ_{n},id,v\right) & = & \lambda\left\langle V,OM,T\right\rangle .\left\langle V,OM\left[OBJ_{n}\left[id\mapsto v\right]\right],T\right\rangle \\
+\mathtt{conval}\left(con\right) & = & con\\
+\mathtt{obj}\left(n\right) & = & \lambda\left\langle V,OM,T\right\rangle .OM\left(n\right)\\
+\mathtt{getthis} & = & \lambda\left\langle V,OM,T\right\rangle .T\\
+\mathtt{getinput\left(\rho\right)} & = & \mbox{see note}\\
+\mathtt{dooutput}\left(v\right) & = & \mbox{see note}\\
+\mathtt{newobj} & = & \lambda\left\langle V,OM,T\right\rangle .\left\langle \left\langle V,OM\left[n\mapsto\phi\right],T\right\rangle ,OBJ_{n}\right\rangle \ \mbox{where}\ n=N\left(OM\right)\\
+\mathtt{call}\left(\left\langle FP_{n},C\right\rangle ,p,t,\_\right) & = & \lambda f,s,\left\langle V,OM,T\right\rangle .\begin{cases}
+\begin{gathered}\left\langle \left\langle V,OM',T\right\rangle ,s',r\right\rangle \ \mbox{where}\ \left\langle \left\langle V',OM',T'\right\rangle ,s',r\right\rangle =\\
+f\ n\ \left\langle \left[param_{n,k}\mapsto\left[C|p\right]_{k}\right],OM,t\right\rangle \ s
+\end{gathered}
+ & N\left(C\right)+N\left(p\right)=arity_{n}\\
+\left\langle \left\langle V,OM,T\right\rangle ,s,\left\langle FP_{n},\left[C|p\right]\right\rangle \right\rangle  & \mbox{otherwise}
+\end{cases}\\
+\mathtt{bin}\left(binop,c_{0},c_{1}\right) & = & \mbox{perform binary operation between two constants}
+\end{eqnarray*}
+
+
+Note that we largely omit IO operation, since it is not a major concern
+of this paper. It is trivial to add another element to the state vector
+to take account of IO operations.\caption{Concrete functions}
+\label{concfunc}
+
+\end{figure*}
+
+\begin{defn}[Abstract domain]
+We define an abstract domain of an abstract state, $AState$ as following:
+
+\begin{eqnarray*}
+AState & = & \left\langle AVars,AObjMem,AThis,CurriedVals\right\rangle \\
+P & = & \left\{ Number,Boolean\right\} \\
+Obj & = & \left\{ OBJ_{n}\mid n\in\left\{ 0\right\} \cup\mathbb{N}\right\} \\
+FunPointers & = & \left\langle FP_{n},\left[\wp\left(P\cup Obj\cup\left\{ FP_{n}\right\} \cup\left\{ \left\langle FC,n,c,eid\right\rangle \right\} \right)\right]\right\rangle \\
+AVal & = & P\cup Obj\cup FunPointers\\
+AVars & = & id\rightarrow\wp\left(AVal\right)\\
+AObjMem & = & n\rightarrow AVars\\
+AThis & = & \wp\left(Obj\right)\\
+CurriedVals & = & \left\langle n,c,eid\right\rangle \rightarrow\left[\wp\left(P\cup Obj\cup\left\{ \left\langle FC,n,c,eid\right\rangle \right\} \right)\right]\\
+ &  & \mbox{where \emph{n} is a function identifier \emph{c}}\\
+ &  & \ \ c\mbox{ is a natural number}
+\end{eqnarray*}
+
+
+
+In $OBJ_{n}$:
+
+
+We number each of the ``new'' expressions as we parse the program.
+The number n corresponds to the ``new'' expression number.
+
+
+In $\left\langle FC,n,c,eid\right\rangle $:
+
+
+n = function number
+
+
+c = number of arguments curried
+
+
+eid = A uid of an expression from which this value has been produced
+
+\end{defn}
+\begin{example}[Currying loop]
+ Consider the following SDTL program.
+\end{example}
+\begin{lstlisting}[numbers=left]
+function foo(a,b) {
+	return a;
+}
+
+x = 0;
+while(input < 30) {
+	x = foo(x);
+}
+\end{lstlisting}
+
+
+In this case, in line 7, x is associated with a value $\left\langle FP_{1},a\mapsto\left\{ Number,\left\langle FC,1,1,e_{1}\right\rangle \right\} \right\rangle $
+where $e_{1}$ is the eid of $\mathtt{foo\left(x\right);}$ in line
+7. $\nu$ has one entry $\left\langle 1,1,e_{1}\right\rangle \mapsto\left\{ a\mapsto\left\{ 0,\left\langle FC,1,1,e_{1}\right\rangle \right\} \right\} $
+\begin{thm}[Finiteness of the abstract property]
+Given an SDTL program,$AState$ has a finite domain\end{thm}
+\begin{proof}
+We show that each of the component $AVars,AObjMem,AThis,CurriedVals$
+has a finite domain
+\begin{enumerate}
+\item First, we show that the number of possible$AVal$ is finite.
+
+\begin{enumerate}
+\item Trivially,$P$ is a set of two elements.
+\item There are finite number of \emph{new} expressions in a program. Therefore
+number of elements in $Obj$ is finite.
+\item In case of \emph{FunPointers}
+
+\begin{enumerate}
+\item There are a finite number of function declarations. Each function
+can only have a set number of parameters. There are a finite number
+of expressions in a program. Therefore, number of possible values
+of$\left\langle FC,n,c,eid\right\rangle $is finite.
+\item Each functions have a set number of accepted parameters. Therefore,
+the number of elements in the list is finite.
+\item There are only a finite number of function declarations in a program.
+\item Hence, \emph{FunPointers} has a finite domain
+\end{enumerate}
+\item Then, $AVal$, a union of finite domains, also has a finite domain.
+\end{enumerate}
+\item $AVars$ is a composite of two components: \emph{id} and $\wp\left(AVal\right)$
+
+\begin{enumerate}
+\item There are only a finite number of identifiers appearing in a program
+\item $AVal$ has a finite domain. Therefore, a powerset of it also has
+a finite domain.
+\end{enumerate}
+\item $AObjMem$ has two components, finiteness of which are argued in 1
+(b) and 2 respectively.
+\item $AThis$ is a finite as it is a powerset of a finite domain (1 (b))
+\item $CurriedVals$ has two components: $\left\langle n,c,eid\right\rangle $
+and $\left[\wp\left(P\cup Obj\cup\left\{ \left\langle FC,n,c,eid\right\rangle \right\} \right)\right]$.
+Finiteness of both are argued in 1 (c).
+\end{enumerate}
+\end{proof}
+\begin{defn}[Partial ordering]
+We define a partial ordering $\left\langle \sigma_{1},\alpha_{1},\tau_{1},\nu_{1}\right\rangle \sqsubseteq\left\langle \sigma_{2},\alpha_{2},\tau_{2},\nu_{2}\right\rangle $
+between abstract environments as thus:
+
+\begin{gather*}
+\sigma_{1}\sqsubseteq\sigma_{2}\ \mbox{if}\ \forall id\in\mbox{domain}\left(\sigma_{1}\right),\sigma_{1}\left(id\right)\subseteq\sigma_{2}\left(id\right)\\
+\alpha_{1}\sqsubseteq\alpha_{2}\ \mbox{if}\ \forall n\in\mbox{domain}\left(\alpha_{1}\right),\alpha_{1}\left(n\right)\sqsubseteq\alpha_{2}\left(n\right)\\
+\tau_{1}\sqsubseteq\tau_{2}\ \mbox{if}\ \tau_{1}\subseteq\tau_{2}\\
+\nu_{1}\sqsubseteq\nu_{2}\ \mbox{if}\ \forall\left\langle n,c,eid\right\rangle \in\mbox{domain}\left(\nu_{1}\right)\\
+\ \ \forall k\in\left\{ 1,2,3,\ldots,c\right\} ,\nu_{1}\left(\left\langle n,c,eid\right\rangle \right)_{k}\subseteq\nu_{2}\left(\left\langle n,c,eid\right\rangle \right)_{k}\\
+\left\langle \sigma_{1},\alpha_{1},\tau_{1},\nu_{1}\right\rangle \sqsubseteq\left\langle \sigma_{2},\alpha_{2},\tau_{2},\nu_{2}\right\rangle \equiv\\
+\ \ \sigma_{1}\sqsubseteq\sigma_{2}\wedge\alpha_{1}\sqsubseteq\alpha_{2}\wedge\tau_{1}\sqsubseteq\tau_{2}\wedge\nu_{1}\sqsubseteq\nu_{2}
+\end{gather*}
+
+
+\end{defn}
+We define a union between two abstract environments.
+\begin{thm}
+Given two abstract environments $\eta_{1}=\left\langle \sigma_{1},\alpha_{1},\tau_{1},\nu_{1}\right\rangle \ \mbox{and}\ \eta_{2}=\left\langle \sigma_{2},\alpha_{2},\tau_{2},\nu_{2}\right\rangle $,
+we can find an upper bound by finding the value of $\eta_{1}\sqcup\eta_{2}$
+\end{thm}
+\begin{gather*}
+\sigma_{1}\sqcup\sigma_{2}=id\mapsto\sigma_{1}\left(id\right)\cup\sigma_{2}\left(id\right)\\
+\alpha_{1}\sqcup\alpha_{2}=n\mapsto\sigma_{1}\left(n\right)\sqcup\sigma_{2}\left(n\right)\\
+\tau_{1}\sqcup\tau_{2}=\tau_{1}\cup\tau_{2}\\
+\nu_{1}\sqcup\nu_{2}=c\mapsto\nu_{1}\left(c\right)\cup\nu_{2}\left(c\right)\\
+\left\langle \sigma_{1},\alpha_{1},\tau_{1},\nu_{1}\right\rangle \sqcup\left\langle \sigma_{2},\alpha_{2},\tau_{2},\nu_{2}\right\rangle \equiv\\
+\ \ \left\langle \sigma_{1}\sqcup\sigma_{2},\alpha_{1}\sqcup\alpha_{2},\tau_{1}\sqcup\tau_{2},\nu_{1}\sqcup\nu_{2}\right\rangle 
+\end{gather*}
+
+\begin{proof}
+Satisfying each lines of conditions gives an environment that can
+satisfy conditions set for the partial ordering of both environments.
+
+Observe that if there is an upper bound $\eta'=\left\langle \sigma',\alpha',\tau',\nu'\right\rangle $
+of two environments $\eta_{1}$ and $\eta_{2}$, if $\eta'\sqsubseteq\eta_{1}\sqcup\eta_{2}$
+then necessarily $\eta'=\eta_{1}\sqcup\eta_{2}$, since any missing
+elements in keys and values of $\sigma',\alpha',\tau',\nu'$ will
+violate the partial ordering condition.\end{proof}
+\begin{lem}
+$\left(AState,\sqsubseteq\right)$ is a chain complete partial ordering.\end{lem}
+\begin{defn}[Abstract functions]
+ We define abstract functions in figure \ref{absfun}.
+
+\begin{figure*}
+
+
+\begin{eqnarray*}
+\mathtt{isterm}\left(v,s\right) & = & \lambda f,\eta.\begin{cases}
+s\ f\ \eta & v=\left\{ Void\right\} \\
+\left(s\ f\ \eta\right)\sqcup\left(I_{\rho}\ v\right) & Void\in v,N\left(v\right)>1\\
+I_{\rho}\ v & \mbox{otherwise}\left(\mbox{i.e.}\ Void\notin v\right)
+\end{cases}\\
+\mathtt{cond}\left(v,s_{1},s_{2}\right) & = & \lambda f,\eta.\left(s_{1}\ f\ \eta\right)\sqcup\left(s_{2}\ f\ \eta\right)\\
+\mathtt{asg}\left(id,v\right) & = & \lambda\left\langle \sigma,\alpha,\tau,\nu\right\rangle .\left\langle \sigma\left[id=v\right],\alpha,\tau,\nu\right\rangle \\
+\mathtt{val}\left(id,v\right) & = & \lambda\left\langle \sigma,\alpha,\tau,\nu\right\rangle .\sigma\left(id\right)\\
+\mathtt{get}\left(n,id\right) & = & \lambda\left\langle \sigma,\alpha,\tau,\nu\right\rangle .\left\{ \alpha\left(x\right)\mid OBJ_{x}\in n\right\} \\
+\mathtt{set}\left(n,id,v\right) & = & \lambda\left\langle \sigma,\alpha,\tau,\nu\right\rangle .\left\langle \sigma,\left\{ x\mid{OBJ_{x}\in\alpha,x=\begin{cases}
+\alpha\left(x\right)\left[id\mapsto v\right] & OBJ_{x}\in n\\
+\alpha\left(x\right) & \mbox{otherwise}
+\end{cases}}\right\} ,\tau,\nu\right\rangle \\
+\mathtt{conval}\left(con\right) & = & \begin{cases}
+Number & con\in\mathbb{N}\\
+Boolean & con\in\left\{ true,false\right\} 
+\end{cases}\\
+\mathtt{obj}\left(j\right) & = & \lambda\left\langle \sigma,\alpha,\tau,\nu\right\rangle .\alpha\left(j\right)\\
+\mathtt{getthis} & = & \lambda\left\langle \sigma,\alpha,\tau,\nu\right\rangle .\tau\\
+\mathtt{getinput} & = & \lambda\eta.\left\langle \eta,\left\{ Number\right\} \right\rangle \\
+\mathtt{dooutput}\left(v\right) & = & \lambda\eta.\eta\\
+\mathtt{newobj} & = & \lambda\left\langle \sigma,\alpha,\tau,\nu\right\rangle .\left\langle \left\langle \sigma,\alpha\left[n\mapsto\phi\right],\tau,\nu\right\rangle ,OBJ_{n},\nu\right\rangle \ \mbox{where}\ n=N\left(\alpha\right)\\
+\mathtt{call}\left(n,p,t,e\right) & = & \lambda f,s,\left\langle \sigma,\alpha,\tau,\nu\right\rangle .\underset{\left\langle FP_{x},C\right\rangle \in n}{\bigsqcup}\mathtt{scall}\left(\left\langle FP_{x},C\right\rangle ,p,t,f,\left\langle \sigma,\alpha,\tau,\nu\right\rangle ,s,e\right)\\
+{\scriptstyle \mathtt{scall}\left(\left\langle FP_{n},C\right\rangle ,p,t,f,\left\langle \sigma,\alpha,\tau,\nu\right\rangle ,s,e\right)} & = & \begin{cases}
+\begin{gathered}\left\langle \left\langle \sigma,\alpha',\tau,\nu'\right\rangle ,s',r'\right\rangle \ \mbox{where}\ \left\langle \left\langle \sigma',\alpha',\tau'\right\rangle ,s',r,\nu'\right\rangle =\\
+f\ n\ \left\langle \left\{ param_{n,k}\mapsto\left[C|p\right]_{k}\right\} ,\alpha,\tau,\nu\right\rangle \ s
+\end{gathered}
+ & N\left(C\right)+N\left(p\right)=arity_{n}\\
+\left\langle \left\langle \sigma,\alpha,\tau,\nu\left[\left\langle e,n,N\left(C\right)+N\left(p\right)\right\rangle \mapsto\left[C|p\right]\right]\right\rangle ,s,\left\langle FP_{n},\left[C|p\right],e\right\rangle \right\rangle  & \mbox{otherwise}
+\end{cases}\\
+\mathtt{bin}\left(binop,c_{0},c_{1}\right) & = & \begin{cases}
+\left\{ Number\right\}  & binop\in\left\{ '+','-','*','/'\right\} \\
+\left\{ Boolean\right\}  & \mbox{otherwise}
+\end{cases}
+\end{eqnarray*}
+
+
+\caption{Abstract functions}
+\label{absfun}
+
+\end{figure*}
+
+\begin{thm}
+\label{thm:mono}Abstract functions produce monotonic lambda functions\end{thm}
+\begin{proof}
+Following list of arguments cover all the functions:
+\begin{enumerate}
+\item Observe that for the functions calculating values from given parameters
+and an environment, an increase in the environment implies that the
+values we obtain are also increased. This is from the definition of
+the partial ordering.
+\item For the functions that are updating environment, observe that an increase
+in the environment implies an increase in the updated environment.
+\item In case of $\mathtt{call}$, its the least upper bound of results
+from $\mathtt{scall}$, which falls into categories 1 and 2. An increase
+in the results implies increase in the least upper bound of them.
+\end{enumerate}
+\end{proof}
+\end{defn}
+From theorems \ref{thm:bindmono} and \ref{thm:mono} give the following
+important lemma:
+\begin{lem}
+Abstract $\mathcal{S},\mathcal{E}\ \mbox{and}\ \mathcal{L}$ are monotonic
+functions.
+\end{lem}
+Then, it stands to reason that fixed points exist for our analytic
+framework.
+\begin{lem}
+Fixed points exist for an abstract $\mathcal{F}$
+\end{lem}
+Now we turn to examine the relationship between concrete and abstract
+domain.
+\begin{defn}[Abstraction]
+ We define an abstraction relation between concrete and abstract
+environments, $\left\langle \sigma,\alpha,\tau,\nu\right\rangle \succ\left\langle V,OM,T\right\rangle $
+as following:
+
+\begin{gather*}
+\left\langle \sigma,\alpha,\tau,\nu\right\rangle \succ\left\langle V,OM,T\right\rangle \ \mbox{iff}\ \\
+\ \ \forall id\in V\exists a\in\sigma\left(id\right),a\succ V\left(id\right)\mbox{ and }\tau\succ T\\
+\forall z\in\mathbb{Z},\left\{ Number\right\} \succ z\\
+\forall b\in\left\{ True,False\right\} ,\left\{ Boolean\right\} \succ b\\
+OBJ_{m}\succ OBJ_{n}\ \mbox{if}\ \eta\vdash OBJ_{m}\succ OM\vdash OBJ_{n}\\
+\left\langle FP_{m},\left[c'\right],e\right\rangle \succ\left\langle FP_{n},\left[c\right]\right\rangle \ \mbox{if}\ m=n\ \\
+\ \ N\left(c\right)=N\left(c'\right)\ \mbox{and}\ \forall c_{k}\in c,\eta\vdash c'_{k}\succ c_{k}
+\end{gather*}
+
+
+In turn, contextual definitions of abstract object and function pointer
+values are defined as following:
+
+\begin{gather*}
+\left\langle \sigma,\alpha,\tau,\nu\right\rangle \vdash OBJ_{m}\succ OBJ_{n}\mbox{ if }\\
+\forall id\in OM\left(n\right),OM\left(n\right)\left(id\right)\in Z\cup\left\{ True,False\right\} ,\\
+\ \ \alpha\left(m\right)\left(id\right)\succ OM\left(n\right)\left(id\right)\\
+\forall id\in OM\left(n\right),OM\left(n\right)\left(id\right)=OBJ_{x},\alpha\left(m\right)=OBJ_{y},\\
+\ \ \alpha\left(y\right)\succ OBJ_{x}
+\end{gather*}
+
+\end{defn}
+We now define abstraction and concretisation relations between an
+abstract domain and a powerset of concrete domain.
+\begin{defn}[Abstraction and concretisation]
+ We define abstraction function $P$ and concretisation function
+$Q$ as following:
+
+\begin{gather*}
+P:\wp\left(CState\right)\rightarrow AState\\
+P\left(r\right)=\bigsqcup\left\{ \eta|\rho\in r,\eta\succ\rho\right\} \\
+Q:AState\rightarrow\wp\left(CState\right)\\
+Q\left(\eta\right)=\left\{ r|r\in\rho,\eta\succ\rho\right\} 
+\end{gather*}
+\end{defn}
+\begin{thm}[Galois connection]
+\label{thm:galois}$\left(P,Q\right)$ forms a Galois connection
+between $\left(AState,\sqsubseteq\right)$ and$\left(\wp\left(CState\right),\subseteq\right)$
+\end{thm}
+For the simplicity of argument, without losing generality, we lift
+abstract functions to produce a lambda function of the type $\left(State\times StateCol\right)\rightarrow\left(State\times StateCol\times a\right)$.
+Now we turn to argue isomorphism.
+\begin{thm}[Isomorphism]
+For all abstract and concrete functions, the following holds true:
+when $F\left(n_{c},id_{c},v_{c},p_{c},t_{c},e_{c},j_{c}\right)=f,f\left(s_{a},\rho\right)=\left\langle s_{c}',\rho',V_{C}\right\rangle ,G\left(n_{a},id_{a},v_{a},p_{a},t_{a},e_{a},j_{a}\right)=g,g\left(s_{a},\eta\right)=\left\langle s_{a}',\eta',V_{A}\right\rangle $ 
+
+\begin{multline*}
+\left(\begin{array}{ccc}
+\eta\vdash n_{a} & \succ & \rho\vdash n_{c}\\
+id_{a} & = & id_{c}\\
+\eta\vdash v_{a} & \succ & \rho\vdash v_{c}\\
+\eta\vdash p_{a,k} & \succ & \rho\vdash p_{c,k}\mbox{ for all\ }k\\
+\eta\vdash t_{a} & \succ & \rho\vdash t_{c}\\
+e_{a} & = & \rho\vdash e_{c}\\
+\eta\vdash OBJ_{j_{a}} & \succ & \rho\vdash OBJ_{j_{c}}
+\end{array}\right)\implies\\
+\left(\left\langle s_{a},\eta\right\rangle \succ\left\langle s_{c},\rho\right\rangle \implies\left\langle s_{a}',\eta',V_{A}\right\rangle \succ\left\langle s_{c}'\rho',V_{C}\right\rangle \right)
+\end{multline*}
+
+
+(ignoring conditions set for parameters that the function is not taking)\end{thm}
+\begin{proof}
+As with \ref{thm:mono}, we categorise our discussion as following:
+\begin{enumerate}
+\item Observe that for the functions calculating values from given parameters
+and an environment, isomorphicity between parameters and given environments
+implies isomorphicity of the results.
+\item For the functions that are updating environment, observe that an isomorphicity
+between given environments and between parameters imply an isomorphicity
+in the updated environments.
+\item In case of $\mathtt{call}$, its the least upper bound of results
+from $\mathtt{scall}$, which falls into categories 1 and 2. Given
+Theorem \ref{thm:galois}, when $\mathtt{scall}$ functions are isomorphic,
+then so are $\mathtt{call}$ functions.
+\end{enumerate}
+\end{proof}
+These theorems together with the properties of bind operator give
+rise to an important lemma in proving the correctness of the analysis.
+That is:
+\begin{lem}
+Abstract $\mathcal{F},\mathcal{S},\mathcal{E},\mathcal{L}$ and concrete
+$\mathcal{F},\mathcal{S},\mathcal{E},\mathcal{L}$ are isomorphic.
+\end{lem}
+Now we are ready to produce the main thesis.
+\begin{thm}[Correctness of the analysis]
+ Given an SDTL program, 
+
+If $\mathcal{F}\ 0\ \left\langle \phi,\left\{ 0\mapsto\phi\right\} ,OBJ_{0}\right\rangle \ \phi=\rho'\ S_{C}$
+and $\mathcal{F}\ 0\ \left\langle \phi,\left\{ 0\mapsto\phi\right\} ,\left\{ OBJ_{0}\right\} ,\phi\right\rangle \ \phi=\eta'\ S_{A}$
+then $S_{C}$ and $S_{A}$ are related in the following manner:
+
+$\forall sid\in P,\exists\rho_{0},\rho_{1},\rho_{0}\times\rho_{1}\in S_{A}\left(sid\right)\rightarrow\exists\eta_{0},\eta_{1},\eta_{0}\times\eta_{1}\in S_{A}\left(sid\right)\wedge\eta_{0}\succ\rho_{0}\wedge\eta_{1}\succ\rho_{1}$
+where $P$ is set of all statement IDs in the program.\end{thm}
+\begin{proof}
+Recall the isomorphicity between abstract and concrete functions.
+If there is a state collected in the concrete result, then it is implied
+that an abstraction of such state is collected in an abstract result.
+\end{proof}
+
+\subparagraph{Dual of the analysis}
+
+Partial ordering theory provides that what holds true for the particular
+partial ordering will also hold true for a dual of it. We show the
+dual of this analysis by the following example.
+\begin{example}[Dual]
+Consider the following program.
+
+\begin{lstlisting}[numbers=left]
+function object() { this.value = 1; }
+
+function foo(x) {
+	if(input > 20) { 
+		x.propA = 20;
+		x.propC = 15;
+	else {
+		x.propB = False;
+		x.propC = 15;
+	}
+}
+
+z = new object(); # 1
+
+if(input > 15) {
+	a = new object(); # 2
+	foo(a);
+} else {
+	a = new object(); # 3
+	foo(a);
+}
+
+output a.value + a.propC;
+\end{lstlisting}
+
+
+we obtain different results depending on the kind of analysis we perform.\end{example}
+\begin{itemize}
+\item $\subseteq$ ordering
+\end{itemize}
+\begin{eqnarray*}
+\sigma_{\subseteq} & = & \left\{ \begin{alignedat}{2}z & \mapsto & \left\{ OBJ_{1}\right\} \\
+a & \mapsto & \left\{ OBJ_{2},OBJ_{3}\right\} 
+\end{alignedat}
+\right\} \\
+\alpha_{\subseteq} & = & \left\{ \begin{alignedat}{2}1 & \mapsto & \left\{ \mathtt{value}\mapsto\left\{ Number\right\} \right\} \\
+2,3 & \mapsto & \left\{ \begin{gathered}\mathtt{value}\mapsto\left\{ Number\right\} \\
+\mathtt{propA}\mapsto\left\{ Number\right\} \\
+\mathtt{propB}\mapsto\left\{ Boolean\right\} \\
+\mathtt{propC}\mapsto\left\{ Number\right\} 
+\end{gathered}
+\right\} 
+\end{alignedat}
+\right\} 
+\end{eqnarray*}
+
+\begin{itemize}
+\item $\supseteq$ ordering
+\end{itemize}
+\begin{eqnarray*}
+\sigma_{\supseteq} & = & \left\{ \begin{alignedat}{2}z & \mapsto & \left\{ OBJ_{1}\right\} \\
+a & \mapsto & \left\{ \right\} 
+\end{alignedat}
+\right\} \\
+\alpha_{\supseteq} & = & \left\{ \begin{alignedat}{2}1 & \mapsto & \left\{ \mathtt{value}\mapsto\left\{ Number\right\} \right\} \\
+2,3 & \mapsto & \left\{ \begin{gathered}\mathtt{value}\mapsto\left\{ Number\right\} \\
+\mathtt{propC}\mapsto\left\{ Number\right\} 
+\end{gathered}
+\right\} 
+\end{alignedat}
+\right\} 
+\end{eqnarray*}
+
+
+Given our treatment of each new expression as a creation of a type
+of its own, the result that we obtain for $\sigma_{\supseteq}$ might
+be too limiting and imprecise. We could use the combination of $\sigma_{\subseteq}$
+and $\alpha_{\supseteq}$ to calculate a member of an object that
+is referred to by a variable must have. We discuss more on the practical
+use of the result of the analysis in the next section.
+
+\bibliographystyle{plain}
+\bibliography{duck}
+
+\end{document}
