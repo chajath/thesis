@@ -2,7 +2,7 @@
 \lyxformat 413
 \begin_document
 \begin_header
-\textclass article
+\textclass CRPITStyle
 \begin_preamble
 \usepackage{stmaryrd}
 \newcommand{\dd}[1]{\llbracket#1\rrbracket}
@@ -83,6 +83,20 @@ Statement to initial and final state mapping
 \end_layout
 
 \begin_layout Standard
+We design functions to collect state transitions as they occur in the course
+ of the execution of a program.
+ The 
+\begin_inset Quotes eld
+\end_inset
+
+state collection
+\begin_inset Quotes erd
+\end_inset
+
+ has a type:
+\end_layout
+
+\begin_layout Standard
 \begin_inset Formula $StateCol:Stmt\rightarrow State\rightarrow State$
 \end_inset
 
@@ -117,7 +131,12 @@ Type constructor
 \end_layout
 
 \begin_layout Definition
-\begin_inset Formula $M\ a=\left(Func\rightarrow\left(State\times StateCol\right)\rightarrow\left(State\times StateCol\times a\right)\right)$
+\begin_inset Formula 
+\begin{multline*}
+M\ a=Func\rightarrow\left(State\times StateCol\right)\rightarrow\\
+\left(State\times StateCol\times a\right)
+\end{multline*}
+
 \end_inset
 
 
@@ -142,7 +161,7 @@ We define a bind operator
 \end_layout
 
 \begin_layout Definition
-\begin_inset Formula $\bind:M\ a\rightarrow\left(a\rightarrow M\ b\right)\rightarrow M\ b$
+\begin_inset Formula $\left(\bind\right):M\ a\rightarrow\left(a\rightarrow M\ b\right)\rightarrow M\ b$
 \end_inset
 
 
@@ -480,14 +499,17 @@ Denotational semantics
 We now define a denotational semantics of the SDTL program
 \end_layout
 
-\begin_deeper
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-\mathcal{F} & : & f\rightarrow\left(State\times StateCol\rightarrow\left(State\times StateCol\times a\cup\left\{ Void\right\} \right)\right)\\
-\mathcal{S} & : & Stmt\rightarrow s\rightarrow\mathcal{F}\rightarrow\left(State\times StateCol\right)\rightarrow\left(State\times StateCol\times a\cup\left\{ Void\right\} \right)\\
-\mathcal{E} & : & Expr\rightarrow e\rightarrow\mathcal{F}\rightarrow\left(State\times StateCol\right)\rightarrow\left(State\times StateCol\times a\right)\\
-\mathcal{L} & : & LExpr\rightarrow\mathcal{F}\rightarrow\left(State\times StateCol\right)\rightarrow\left(State\times StateCol\times a\right)
+\mathcal{F} & : & f\rightarrow\left(State\times StateCol\right)\rightarrow\\
+ &  & \left(State\times StateCol\times a\cup\left\{ Void\right\} \right)\\
+\mathcal{S} & : & Stmt\rightarrow s\rightarrow\mathcal{F}\rightarrow\left(State\times StateCol\right)\rightarrow\\
+ &  & \left(State\times StateCol\times a\cup\left\{ Void\right\} \right)\\
+\mathcal{E} & : & Expr\rightarrow e\rightarrow\mathcal{F}\rightarrow\left(State\times StateCol\right)\rightarrow\\
+ &  & \left(State\times StateCol\times a\right)\\
+\mathcal{L} & : & LExpr\rightarrow\mathcal{F}\rightarrow\left(State\times StateCol\right)\rightarrow\\
+ &  & \left(State\times StateCol\times a\right)
 \end{eqnarray*}
 
 \end_inset
@@ -496,8 +518,24 @@ We now define a denotational semantics of the SDTL program
 \end_layout
 
 \end_deeper
-\end_deeper
+\begin_layout Definition
+Definition for those functions are given in figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "semmon"
+
+\end_inset
+
+.
+\end_layout
+
 \begin_layout Standard
+\begin_inset Float figure
+wide true
+sideways false
+status open
+
+\begin_layout Plain Layout
 \begin_inset Formula 
 \begin{align*}
  & \mathcal{F} & = & Y\lambda f.\lambda n.\mathcal{S}\ \mathtt{Stmt}_{n}\ \mathtt{sid}\left(\mathtt{Stmt}_{n}\right)\ f\\
@@ -577,11 +615,11 @@ I_{V}\ \mathtt{get}\left(v,id\right)
 
 \end_layout
 
-\begin_layout Standard
+\begin_layout Plain Layout
 Where
 \end_layout
 
-\begin_layout Itemize
+\begin_layout Plain Layout
 \begin_inset Formula $\mathtt{Stmt}_{n}$
 \end_inset
 
@@ -592,14 +630,14 @@ Where
 
 \end_layout
 
-\begin_layout Itemize
+\begin_layout Plain Layout
 \begin_inset Formula $\mathtt{evalParam}$
 \end_inset
 
  is a parameter evaluation auxiliary function, defined as following:
 \end_layout
 
-\begin_layout Standard
+\begin_layout Plain Layout
 \begin_inset Formula 
 \begin{gather*}
 \mathtt{evalParam}:\left[ID\right]\times\left[Expr\right]\times\left[a\right]\times\mathcal{F}\times State\times StateCol\rightarrow State\times StateCol\times\left[a\right]\\
@@ -607,6 +645,34 @@ Where
 \mathtt{evalParam}\ \left[e|Exprs\right]\ ps\ f\ \rho\ \sigma=\mathtt{evalParam}\ Exprs\ \left[ps|con\right]\ f\ \rho_{1}\ \sigma_{1}\\
 \ \mbox{where}\left\langle \rho_{1},\sigma_{1},con\right\rangle =\mathcal{E}\ e\ f\ \rho\ \sigma
 \end{gather*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+Semantic monadic functions
+\end_layout
+
+\end_inset
+
+
+\begin_inset CommandInset label
+LatexCommand label
+name "semmon"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
 
 \end_inset
 
@@ -634,7 +700,8 @@ We define a concrete domain of a concrete state
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-Value & = & \mathbb{Z}\cup\left\{ T,F\right\} \cup Objects\cup FunctionPointers\\
+Value & = & \mathbb{Z}\cup\left\{ T,F\right\} \cup Objects\cup\\
+ &  & FunctionPointers\\
 Objects & = & \left\{ OBJ_{n}\mid n\in\left\{ 0\right\} \cup\mathbb{N}\right\} \\
 FunctionPointers & = & \left\langle FP_{n},\left[Value\right]\right\rangle \\
 CState & = & \left\langle Vars,ObjMem,This\right\rangle \\
@@ -658,10 +725,28 @@ Concrete functions
 
 \end_inset
 
-We define concrete functions as following:
+We define concrete functions in figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "concfunc"
+
+\end_inset
+
+.
 \end_layout
 
+\end_deeper
 \begin_layout Standard
+\begin_inset Float figure
+wide true
+sideways false
+status open
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
 \begin_inset Formula 
 \begin{eqnarray*}
 \mathtt{isterm}\left(v,s\right) & = & \lambda f,\rho.\begin{cases}
@@ -697,15 +782,38 @@ f\ n\ \left\langle \left[param_{n,k}\mapsto\left[C|p\right]_{k}\right],OM,t\righ
 
 \end_layout
 
-\end_deeper
-\begin_layout Definition
+\begin_layout Plain Layout
 Note that we largely omit IO operation, since it is not a major concern
  of this paper.
  It is trivial to add another element to the state vector to take account
  of IO operations.
+\begin_inset Caption
+
+\begin_layout Plain Layout
+Concrete functions
 \end_layout
 
-\begin_deeper
+\end_inset
+
+
+\begin_inset CommandInset label
+LatexCommand label
+name "concfunc"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
 \begin_layout Definition
 \begin_inset Argument
 status open
@@ -723,19 +831,21 @@ We define an abstract domain of an abstract state,
  as following:
 \end_layout
 
+\begin_deeper
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-AState & = & \left\langle AbsVars,AbsObjMem,AbsThis,CurriedVals\right\rangle \\
-Pri & = & \left\{ Number,Boolean\right\} \\
+AState & = & \left\langle AVars,AObjMem,AThis,CurriedVals\right\rangle \\
+P & = & \left\{ Number,Boolean\right\} \\
 Obj & = & \left\{ OBJ_{n}\mid n\in\left\{ 0\right\} \cup\mathbb{N}\right\} \\
-FunctionPointers & = & \left\langle FP_{n},\left[\wp\left(Pri\cup Obj\cup\left\{ FP_{n}\right\} \cup\left\{ \left\langle FC,n,c,eid\right\rangle \right\} \right)\right]\right\rangle \\
-AbsVal & = & Pri\cup Obj\cup FunctionPointers\\
-AbsVars & = & id\rightarrow\wp\left(AbsVal\right)\\
-AbsObjMem & = & n\rightarrow AbsVars\\
-AbsThis & = & \wp\left(Obj\right)\\
-CurriedVals & = & \left\langle n,c,eid\right\rangle \rightarrow\left[\wp\left(Pri\cup Obj\cup\left\{ \left\langle FC,n,c,eid\right\rangle \right\} \right)\right]\\
- &  & \mbox{where \emph{n} is a function identifier and \emph{c} is a natural number}
+FunPointers & = & \left\langle FP_{n},\left[\wp\left(P\cup Obj\cup\left\{ FP_{n}\right\} \cup\left\{ \left\langle FC,n,c,eid\right\rangle \right\} \right)\right]\right\rangle \\
+AVal & = & P\cup Obj\cup FunPointers\\
+AVars & = & id\rightarrow\wp\left(AVal\right)\\
+AObjMem & = & n\rightarrow AVars\\
+AThis & = & \wp\left(Obj\right)\\
+CurriedVals & = & \left\langle n,c,eid\right\rangle \rightarrow\left[\wp\left(P\cup Obj\cup\left\{ \left\langle FC,n,c,eid\right\rangle \right\} \right)\right]\\
+ &  & \mbox{where \emph{n} is a function identifier \emph{c}}\\
+ &  & \ \ c\mbox{ is a natural number}
 \end{eqnarray*}
 
 \end_inset
@@ -900,7 +1010,7 @@ Given an SDTL program,
 
 \begin_layout Proof
 We show that each of the component 
-\begin_inset Formula $AbsVars,AbsObjMem,AbsThis,CurriedVals$
+\begin_inset Formula $AVars,AObjMem,AThis,CurriedVals$
 \end_inset
 
  has a finite domain
@@ -909,7 +1019,7 @@ We show that each of the component
 \begin_deeper
 \begin_layout Enumerate
 First, we show that the number of possible
-\begin_inset Formula $AbsVal$
+\begin_inset Formula $AVal$
 \end_inset
 
  is finite.
@@ -918,7 +1028,7 @@ First, we show that the number of possible
 \begin_deeper
 \begin_layout Enumerate
 Trivially,
-\begin_inset Formula $Pri$
+\begin_inset Formula $P$
 \end_inset
 
  is a set of two elements.
@@ -940,7 +1050,7 @@ new
 \begin_layout Enumerate
 In case of 
 \emph on
-FunctionPointers
+FunPointers
 \end_layout
 
 \begin_deeper
@@ -979,7 +1089,7 @@ There are only a finite number of function declarations in a program.
 \begin_layout Enumerate
 Hence, 
 \emph on
-FunctionPointers
+FunPointers
 \emph default
  has a finite domain
 \end_layout
@@ -987,7 +1097,7 @@ FunctionPointers
 \end_deeper
 \begin_layout Enumerate
 Then, 
-\begin_inset Formula $AbsVal$
+\begin_inset Formula $AVal$
 \end_inset
 
 , a union of finite domains, also has a finite domain.
@@ -995,7 +1105,7 @@ Then,
 
 \end_deeper
 \begin_layout Enumerate
-\begin_inset Formula $AbsVars$
+\begin_inset Formula $AVars$
 \end_inset
 
  is a composite of two components: 
@@ -1003,7 +1113,7 @@ Then,
 id
 \emph default
  and 
-\begin_inset Formula $\wp\left(AbsVal\right)$
+\begin_inset Formula $\wp\left(AVal\right)$
 \end_inset
 
 
@@ -1015,7 +1125,7 @@ There are only a finite number of identifiers appearing in a program
 \end_layout
 
 \begin_layout Enumerate
-\begin_inset Formula $AbsVal$
+\begin_inset Formula $AVal$
 \end_inset
 
  has a finite domain.
@@ -1036,14 +1146,14 @@ There are only a finite number of identifiers appearing in a program
 \uwave off
 \noun off
 \color none
-\begin_inset Formula $AbsObjMem$
+\begin_inset Formula $AObjMem$
 \end_inset
 
  has two components, finiteness of which are argued in 1 (b) and 2 respectively.
 \end_layout
 
 \begin_layout Enumerate
-\begin_inset Formula $AbsThis$
+\begin_inset Formula $AThis$
 \end_inset
 
  is a finite as it is a powerset of a finite domain (1 (b))
@@ -1070,7 +1180,7 @@ There are only a finite number of identifiers appearing in a program
 \end_inset
 
  and 
-\begin_inset Formula $\left[\wp\left(Pri\cup Obj\cup\left\{ \left\langle FC,n,c,eid\right\rangle \right\} \right)\right]$
+\begin_inset Formula $\left[\wp\left(P\cup Obj\cup\left\{ \left\langle FC,n,c,eid\right\rangle \right\} \right)\right]$
 \end_inset
 
 .
@@ -1102,8 +1212,10 @@ We define a partial ordering
 \sigma_{1}\sqsubseteq\sigma_{2}\ \mbox{if}\ \forall id\in\mbox{domain}\left(\sigma_{1}\right),\sigma_{1}\left(id\right)\subseteq\sigma_{2}\left(id\right)\\
 \alpha_{1}\sqsubseteq\alpha_{2}\ \mbox{if}\ \forall n\in\mbox{domain}\left(\alpha_{1}\right),\alpha_{1}\left(n\right)\sqsubseteq\alpha_{2}\left(n\right)\\
 \tau_{1}\sqsubseteq\tau_{2}\ \mbox{if}\ \tau_{1}\subseteq\tau_{2}\\
-\nu_{1}\sqsubseteq\nu_{2}\ \mbox{if}\ \forall\left\langle n,c,eid\right\rangle \in\mbox{domain}\left(\nu_{1}\right)\forall k\in\left\{ 1,2,3,\ldots,c\right\} ,\nu_{1}\left(\left\langle n,c,eid\right\rangle \right)_{k}\subseteq\nu_{2}\left(\left\langle n,c,eid\right\rangle \right)_{k}\\
-\left\langle \sigma_{1},\alpha_{1},\tau_{1},\nu_{1}\right\rangle \sqsubseteq\left\langle \sigma_{2},\alpha_{2},\tau_{2},\nu_{2}\right\rangle \equiv\sigma_{1}\sqsubseteq\sigma_{2}\wedge\alpha_{1}\sqsubseteq\alpha_{2}\wedge\tau_{1}\sqsubseteq\tau_{2}\wedge\nu_{1}\sqsubseteq\nu_{2}
+\nu_{1}\sqsubseteq\nu_{2}\ \mbox{if}\ \forall\left\langle n,c,eid\right\rangle \in\mbox{domain}\left(\nu_{1}\right)\\
+\ \ \forall k\in\left\{ 1,2,3,\ldots,c\right\} ,\nu_{1}\left(\left\langle n,c,eid\right\rangle \right)_{k}\subseteq\nu_{2}\left(\left\langle n,c,eid\right\rangle \right)_{k}\\
+\left\langle \sigma_{1},\alpha_{1},\tau_{1},\nu_{1}\right\rangle \sqsubseteq\left\langle \sigma_{2},\alpha_{2},\tau_{2},\nu_{2}\right\rangle \equiv\\
+\ \ \sigma_{1}\sqsubseteq\sigma_{2}\wedge\alpha_{1}\sqsubseteq\alpha_{2}\wedge\tau_{1}\sqsubseteq\tau_{2}\wedge\nu_{1}\sqsubseteq\nu_{2}
 \end{gather*}
 
 \end_inset
@@ -1147,7 +1259,8 @@ Given two abstract environments
 \alpha_{1}\sqcup\alpha_{2}=n\mapsto\sigma_{1}\left(n\right)\sqcup\sigma_{2}\left(n\right)\\
 \tau_{1}\sqcup\tau_{2}=\tau_{1}\cup\tau_{2}\\
 \nu_{1}\sqcup\nu_{2}=c\mapsto\nu_{1}\left(c\right)\cup\nu_{2}\left(c\right)\\
-\left\langle \sigma_{1},\alpha_{1},\tau_{1},\nu_{1}\right\rangle \sqcup\left\langle \sigma_{2},\alpha_{2},\tau_{2},\nu_{2}\right\rangle \equiv\left\langle \sigma_{1}\sqcup\sigma_{2},\alpha_{1}\sqcup\alpha_{2},\tau_{1}\sqcup\tau_{2},\nu_{1}\sqcup\nu_{2}\right\rangle 
+\left\langle \sigma_{1},\alpha_{1},\tau_{1},\nu_{1}\right\rangle \sqcup\left\langle \sigma_{2},\alpha_{2},\tau_{2},\nu_{2}\right\rangle \equiv\\
+\ \ \left\langle \sigma_{1}\sqcup\sigma_{2},\alpha_{1}\sqcup\alpha_{2},\tau_{1}\sqcup\tau_{2},\nu_{1}\sqcup\nu_{2}\right\rangle 
 \end{gather*}
 
 \end_inset
@@ -1205,11 +1318,27 @@ Abstract functions
 
 \end_inset
 
- We define abstract functions
+ We define abstract functions in figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "absfun"
+
+\end_inset
+
+.
 \end_layout
 
-\begin_deeper
-\begin_layout Standard
+\begin_layout Definition
+\begin_inset Float figure
+wide true
+sideways false
+status open
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
 \begin_inset Formula 
 \begin{eqnarray*}
 \mathtt{isterm}\left(v,s\right) & = & \lambda f,\eta.\begin{cases}
@@ -1253,6 +1382,35 @@ f\ n\ \left\langle \left\{ param_{n,k}\mapsto\left[C|p\right]_{k}\right\} ,\alph
 
 \end_layout
 
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+Abstract functions
+\end_layout
+
+\end_inset
+
+
+\begin_inset CommandInset label
+LatexCommand label
+name "absfun"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
 \begin_layout Theorem
 \begin_inset CommandInset label
 LatexCommand label
@@ -1359,12 +1517,13 @@ Abstraction
 \begin_layout Definition
 \begin_inset Formula 
 \begin{gather*}
-\left\langle \sigma,\alpha,\tau,\nu\right\rangle \succ\left\langle V,OM,T\right\rangle \ \mbox{iff}\ \forall id\in V\exists a\in\sigma\left(id\right),a\succ V\left(id\right)\mbox{ and }\tau\succ T\\
+\left\langle \sigma,\alpha,\tau,\nu\right\rangle \succ\left\langle V,OM,T\right\rangle \ \mbox{iff}\ \\
+\ \ \forall id\in V\exists a\in\sigma\left(id\right),a\succ V\left(id\right)\mbox{ and }\tau\succ T\\
 \forall z\in\mathbb{Z},\left\{ Number\right\} \succ z\\
 \forall b\in\left\{ True,False\right\} ,\left\{ Boolean\right\} \succ b\\
 OBJ_{m}\succ OBJ_{n}\ \mbox{if}\ \eta\vdash OBJ_{m}\succ OM\vdash OBJ_{n}\\
 \left\langle FP_{m},\left[c'\right],e\right\rangle \succ\left\langle FP_{n},\left[c\right]\right\rangle \ \mbox{if}\ m=n\ \\
-\ N\left(c\right)=N\left(c'\right)\ \mbox{and}\ \forall c_{k}\in c,\eta\vdash c'_{k}\succ c_{k}
+\ \ N\left(c\right)=N\left(c'\right)\ \mbox{and}\ \forall c_{k}\in c,\eta\vdash c'_{k}\succ c_{k}
 \end{gather*}
 
 \end_inset
@@ -1381,8 +1540,10 @@ In turn, contextual definitions of abstract object and function pointer
 \begin_inset Formula 
 \begin{gather*}
 \left\langle \sigma,\alpha,\tau,\nu\right\rangle \vdash OBJ_{m}\succ OBJ_{n}\mbox{ if }\\
-\forall id\in OM\left(n\right),OM\left(n\right)\left(id\right)\in Z\cup\left\{ True,False\right\} ,\alpha\left(m\right)\left(id\right)\succ OM\left(n\right)\left(id\right)\\
-\forall id\in OM\left(n\right),OM\left(n\right)\left(id\right)=OBJ_{x},\alpha\left(m\right)=OBJ_{y},\alpha\left(y\right)\succ OBJ_{x}
+\forall id\in OM\left(n\right),OM\left(n\right)\left(id\right)\in Z\cup\left\{ True,False\right\} ,\\
+\ \ \alpha\left(m\right)\left(id\right)\succ OM\left(n\right)\left(id\right)\\
+\forall id\in OM\left(n\right),OM\left(n\right)\left(id\right)=OBJ_{x},\alpha\left(m\right)=OBJ_{y},\\
+\ \ \alpha\left(y\right)\succ OBJ_{x}
 \end{gather*}
 
 \end_inset
@@ -1492,7 +1653,7 @@ For all abstract and concrete functions, the following holds true: when
 
 \begin_layout Theorem
 \begin_inset Formula 
-\begin{alignat*}{1}
+\begin{multline*}
 \left(\begin{array}{ccc}
 \eta\vdash n_{a} & \succ & \rho\vdash n_{c}\\
 id_{a} & = & id_{c}\\
@@ -1501,8 +1662,9 @@ id_{a} & = & id_{c}\\
 \eta\vdash t_{a} & \succ & \rho\vdash t_{c}\\
 e_{a} & = & \rho\vdash e_{c}\\
 \eta\vdash OBJ_{j_{a}} & \succ & \rho\vdash OBJ_{j_{c}}
-\end{array}\right) & \implies\left(\left\langle s_{a},\eta\right\rangle \succ\left\langle s_{c},\rho\right\rangle \implies\left\langle s_{a}',\eta',V_{A}\right\rangle \succ\left\langle s_{c}'\rho',V_{C}\right\rangle \right)
-\end{alignat*}
+\end{array}\right)\implies\\
+\left(\left\langle s_{a},\eta\right\rangle \succ\left\langle s_{c},\rho\right\rangle \implies\left\langle s_{a}',\eta',V_{A}\right\rangle \succ\left\langle s_{c}'\rho',V_{C}\right\rangle \right)
+\end{multline*}
 
 \end_inset
 
