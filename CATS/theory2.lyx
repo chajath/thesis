@@ -201,8 +201,8 @@ We define following lift functions to incorporate non-monadic functions
 \begin_inset Formula $I_{A}$
 \end_inset
 
-is an identity state transformer that takes a constant and lifts it to a
- identity state transformer with the constant as a return value
+ is an identity state transformer that takes a constant and lifts it to
+ an identity state transformer with the constant as a return value
 \end_layout
 
 \begin_deeper
@@ -244,7 +244,7 @@ I_{S}\ t=\lambda f,r,s.\left\langle r',s,a\right\rangle \ \mbox{where}\ \left\la
 \begin_inset Formula $I_{V}$
 \end_inset
 
- lifes a function that takes a state and returns a value to a monadic function
+ lifts a function that takes a state and returns a value to a monadic function
 \end_layout
 
 \begin_deeper
@@ -265,8 +265,8 @@ I_{V}\ t=\lambda f,r,s.\left\langle r,s,t\ r\right\rangle
 \begin_inset Formula $I_{0}$
 \end_inset
 
- takes a state transformation with no return value and attach to it a meaningles
-s return value
+ takes a state transformation with no return value and attaches a meaningless
+ return value to it
 \end_layout
 
 \begin_deeper

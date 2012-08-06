@@ -184,8 +184,9 @@ These seem relevant:
 \citeasnoun{Bloom:OOPSLA2009},
 \citeasnoun{Wrigstad:POPL2010}.
 
-Liang and Hudak also give ``monadic'' denotational definitions
-of programming languages.
+Liang and Hudak
+also give ``monadic'' denotational definitions of programming 
+languages~\cite{Liang_Hudak:ESOP1996,Liang:phd1998}.
 However, their aim is to show that the approach makes it easier
 to extend a denotational definition to account for new features
 in the language being defined.
@@ -194,15 +195,16 @@ the fact that incorporation of new object language features may require
 extensive rewriting of \emph{existing} definitions,
 even for simple extensions.
 For example, a semantic function 
-${\cal E}: \id{Exp} \rightarrow \id{Val}$ 
+${\cal E}: \ident{Exp} \rightarrow \ident{Val}$ 
 may have been defined for a language of arithmetic expressions.
 If we want to extend the language to allow for the use of variables
 in expressions, the type of ${\cal E}$ needs to change to, say,
-$\id{Exp} \rightarrow (id{Var} \rightarrow \id{Val}) \rightarrow \id{Val}$,
+$\ident{Exp} \rightarrow 
+(\ident{Var} \rightarrow \ident{Val}) \rightarrow \ident{Val}$,
 and all the equations defining ${\cal E}$ similarly needs to be
-changed to pass around a ``store'' of type $id{Var} \rightarrow \id{Val}$.
+changed to pass around a ``store'' of type 
+$\ident{Var} \rightarrow \ident{Val}$.
 Liang and Hudak show how a monadic approach can 
-
 
 
 
