@@ -222,7 +222,7 @@ On a theoretical side, denotational semantics is the starting point of our
  in 
 \begin_inset CommandInset citation
 LatexCommand cite
-key "Liang:phd1998,Liang_Hudak:ESOP1996,Liang_modularmonadic"
+key "Liang:phd1998,Liang_Hudak:ESOP1996"
 
 \end_inset
 
@@ -306,6 +306,20 @@ key "Anderson:ECOOP2005,Vub-prog-tr96aformalisation"
  Where those works seek to find a functional models for mixins, we model
  a language with side-effect causing functions that is expressive enough
  to program a mixin inheritance.
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Jensen:SAS2009"
+
+\end_inset
+
+ built a feature-complete analyser for JavaScript language.
+ Our work can be progressed further to become a theoretical counterpart
+ of the analyser.
+ Furthermore, such attempt at formalising the analysis might pave a way
+ for a further refinement and improvement.
 \end_layout
 
 \begin_layout Section
@@ -542,7 +556,7 @@ Now we turn to examine properties of the monad.
  
 \begin_inset CommandInset citation
 LatexCommand cite
-key "Liang_modularmonadic"
+key "Liang:phd1998"
 
 \end_inset
 
@@ -1172,6 +1186,14 @@ output apple.cider(20,50); # 15+20+20+50
 Now object type `apple' is different to that of `grape'.
  In our analysis, we approximate the object types of a variable by treating
  each construction site as a separate object type.
+ Similar approach has been taken in 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Jensen:SAS2009"
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Section
@@ -1663,12 +1685,18 @@ We define an abstract domain of an abstract state,
 AState & = & \left\langle AVars,AObjMem,AThis,CurriedVals\right\rangle \\
 P & = & \left\{ Number,Boolean\right\} \\
 Obj & = & \left\{ OBJ_{n}\mid n\in\left\{ 0\right\} \cup\mathbb{N}\right\} \\
-FunPointers & = & \left\langle FP_{n},\left[\wp\left(P\cup Obj\cup\left\{ FP_{n}\right\} \cup\left\{ \left\langle FC,n,c,eid\right\rangle \right\} \right)\right]\right\rangle \\
+FunPointers & = & \left\langle FP_{n},\left[\wp\left(\begin{gathered}P\cup Obj\cup\left\{ FP_{n}\right\} \cup\\
+\left\{ \left\langle FC,n,c,eid\right\rangle \right\} 
+\end{gathered}
+\right)\right]\right\rangle \\
 AVal & = & P\cup Obj\cup FunPointers\\
 AVars & = & id\rightarrow\wp\left(AVal\right)\\
 AObjMem & = & n\rightarrow AVars\\
 AThis & = & \wp\left(Obj\right)\\
-CurriedVals & = & \left\langle n,c,eid\right\rangle \rightarrow\left[\wp\left(P\cup Obj\cup\left\{ \left\langle FC,n,c,eid\right\rangle \right\} \right)\right]\\
+CurriedVals & = & \left\langle n,c,eid\right\rangle \rightarrow\left[\wp\left(\begin{gathered}P\cup Obj\cup\\
+\left\{ \left\langle FC,n,c,eid\right\rangle \right\} 
+\end{gathered}
+\right)\right]\\
  &  & \mbox{where \emph{n} is a function identifier \emph{c}}\\
  &  & \ \ c\mbox{ is a natural number}
 \end{eqnarray*}
@@ -2425,7 +2453,12 @@ Q\left(\eta\right)=\left\{ r|r\in\rho,\eta\succ\rho\right\}
 
 \end_layout
 
-\begin_layout Theorem
+\begin_layout Definition
+Note that, as one would expect, we find a Galois connection between the
+ abstract domain and the collection of concrete states.
+\end_layout
+
+\begin_layout Corollary
 \begin_inset CommandInset label
 LatexCommand label
 name "thm:galois"
@@ -2458,13 +2491,13 @@ Galois connection
 \end_layout
 
 \begin_layout Standard
-For the simplicity of argument, without losing generality, we lift abstract
+Now we turn to argue isomorphism.
+ For the simplicity of argument, without losing generality, we lift abstract
  functions to produce a lambda function of the type 
 \begin_inset Formula $\left(State\times StateCol\right)\rightarrow\left(State\times StateCol\times a\right)$
 \end_inset
 
 .
- Now we turn to argue isomorphism.
 \end_layout
 
 \begin_layout Theorem
@@ -2581,7 +2614,7 @@ Abstract
 \end_layout
 
 \begin_layout Standard
-Now we are ready to produce the main thesis.
+Now we are ready to argue correctness.
 \end_layout
 
 \begin_layout Theorem
@@ -2857,12 +2890,27 @@ Given our treatment of each new expression as a creation of a type of its
 
  to calculate a member of an object that is referred to by a variable must
  have.
- We discuss more on the practical use of the result of the analysis in the
- next section.
+ Combinations of results from may and must analysis is helpful in designing
+ an IDE for a programming language, where the IDE can statically inform
+ the programmer what members would an object must have or may have at a
+ particular program point.
 \end_layout
 
 \begin_layout Section
 Conclusion and Future Direction
+\end_layout
+
+\begin_layout Standard
+As we have noted in the introduction, this work is a snapshot of an ongoing
+ dialect between theory and practice, positively informing each other to
+ gradually move towards a better theorisation (and practical implementation)
+ of a difficult task of analysing dynamic languages.
+ We sought to modularise the theoretic framework so that we can take an
+ evolutionary approach.
+ We anticipate that, as a result of having such theory, adding new features
+ to the current SDTL while maintaining formality and rigour will be considerably
+ less laborious than to invent a new incarnation of a more feature-complete
+ model language and produce theory for it.
 \end_layout
 
 \begin_layout Standard
