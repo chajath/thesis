@@ -17,6 +17,9 @@
 \newcommand{\bind}{\Yright}
 
 \exhyphenpenalty=10000\hyphenpenalty=10000
+
+\newcommand\conferencenameandplace{First Australasian Web Conference (AWC2013), Adelaide, Australia, January 2013} \newcommand\volumenumber{xx} \newcommand\conferenceyear{2013} 
+\newcommand\editorname {Helen Ashman, Quan Z. Sheng and Andrew Trotman}
 \end_preamble
 \options fleqn
 \use_default_options true
@@ -108,6 +111,22 @@ Department of Computing and Information Systems
 \end_inset
 
  i.yi@student.unimelb.edu.au, schachte@unimelb.edu.au, harald@unimelb.edu.au
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+submittedstandard
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Abstract
