@@ -1386,6 +1386,20 @@ sideways false
 status open
 
 \begin_layout Plain Layout
+\begin_inset Box Boxed
+position "t"
+hor_pos "c"
+has_inner_box 1
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "100text%"
+special "none"
+height "1in"
+height_special "totalheight"
+status open
+
+\begin_layout Plain Layout
 \begin_inset Formula 
 \begin{align*}
  & \mathcal{F} & = & Y\lambda f.\lambda n.\mathcal{S}\ \mathtt{Stmt}_{n}\ \mathtt{sid}\left(\mathtt{Stmt}_{n}\right)\ f\\
@@ -1502,6 +1516,11 @@ Where
 
 \end_layout
 
+\end_inset
+
+
+\end_layout
+
 \begin_layout Plain Layout
 \begin_inset Caption
 
@@ -1518,10 +1537,6 @@ name "semmon"
 
 \end_inset
 
-
-\end_layout
-
-\begin_layout Plain Layout
 
 \end_layout
 
@@ -1603,8 +1618,18 @@ sideways false
 status open
 
 \begin_layout Plain Layout
-
-\end_layout
+\begin_inset Box Boxed
+position "t"
+hor_pos "c"
+has_inner_box 1
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "100text%"
+special "none"
+height "1in"
+height_special "totalheight"
+status open
 
 \begin_layout Plain Layout
 \begin_inset Formula 
@@ -1628,7 +1653,7 @@ s_{2}\ f\ \rho & v=false
 \mathtt{dooutput}\left(v\right) & = & \mbox{see note}\\
 \mathtt{newobj} & = & \lambda\left\langle V,OM,T\right\rangle .\left\langle \left\langle V,OM\left[n\mapsto\phi\right],T\right\rangle ,OBJ_{n}\right\rangle \ \mbox{where}\ n=N\left(OM\right)\\
 \mathtt{call}\left(\left\langle FP_{n},C\right\rangle ,p,t,\_\right) & = & \lambda f,s,\left\langle V,OM,T\right\rangle .\begin{cases}
-\begin{gathered}\left\langle \left\langle V,OM',T\right\rangle ,s',r\right\rangle \ \mbox{where}\ \left\langle \left\langle V',OM',T'\right\rangle ,s',r\right\rangle =\\
+\begin{gathered}\left\langle \left\langle V,OM',T\right\rangle ,s',r\right\rangle \mbox{where}\left\langle \left\langle V',OM',T'\right\rangle ,s',r\right\rangle =\\
 f\ n\ \left\langle \left[param_{n,k}\mapsto\left[C|p\right]_{k}\right],OM,t\right\rangle \ s
 \end{gathered}
  & N\left(C\right)+N\left(p\right)=arity_{n}\\
@@ -1647,6 +1672,14 @@ Note that we largely omit IO operation, since it is not a major concern
  of this paper.
  It is trivial to add another element to the state vector to take account
  of IO operations.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
 \begin_inset Caption
 
 \begin_layout Plain Layout
@@ -2216,6 +2249,20 @@ status open
 \end_layout
 
 \begin_layout Plain Layout
+\begin_inset Box Boxed
+position "t"
+hor_pos "c"
+has_inner_box 1
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "100text%"
+special "none"
+height "1in"
+height_special "totalheight"
+status open
+
+\begin_layout Plain Layout
 \begin_inset Formula 
 \begin{eqnarray*}
 \mathtt{isterm}\left(v,s\right) & = & \lambda f,\eta.\begin{cases}
@@ -2253,6 +2300,11 @@ f\ n\ \left\langle \left\{ param_{n,k}\mapsto\left[C|p\right]_{k}\right\} ,\alph
 \left\{ Boolean\right\}  & \mbox{otherwise}
 \end{cases}
 \end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
 
 \end_inset
 
