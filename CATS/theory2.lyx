@@ -528,7 +528,7 @@ key "Bono:arXiv2012"
  language, as developed and presented in 
 \begin_inset CommandInset citation
 LatexCommand cite
-key "pubsdoc:typeinferenceforjavascript-ecoop,Anderson04typechecking"
+key "Anderson:ECOOP2005,Anderson:ENTCS2005"
 
 \end_inset
 
@@ -663,17 +663,17 @@ status open
 \end{aligned}
 \right)\\
  & \mathcal{S}\dd{\mathtt{return}\ e} & = & T_{S}\ \left(\mathcal{E}\ e\ \mathtt{eid}\left(e\right)\right)\\
- & \mathcal{S}\dd{\mathtt{if}\left(e\right)S_{1}}\ f & = & T_{S}\ \left(\begin{aligned}\mathcal{E}\ e\ \mathtt{eid}\left(e\right) & \bind\lambda v.\\
+ & \mathcal{S}\dd{\mathtt{if}\left(e\right)S_{1}} & = & T_{S}\ \left(\begin{aligned}\mathcal{E}\ e\ \mathtt{eid}\left(e\right) & \bind\lambda v.\\
 \mathtt{cond}\left(v,\mathcal{S}\ S_{1}\ \mathtt{sid}\left(S_{1}\right),I_{\alpha}\ Void\right)
 \end{aligned}
 \right)\\
- & \mathcal{S}\dd{\mathtt{if}\left(e\right)S_{1}\mathtt{else}S_{2}}\ f & = & T_{S}\ \left(\begin{aligned}\mathcal{E}\ e\ \mathtt{eid}\left(e\right) & \bind\lambda v.\\
+ & \mathcal{S}\dd{\mathtt{if}\left(e\right)S_{1}\mathtt{else}S_{2}} & = & T_{S}\ \left(\begin{aligned}\mathcal{E}\ e\ \mathtt{eid}\left(e\right) & \bind\lambda v.\\
 \mathtt{cond}\left(v,\mathcal{S}\ S_{1}\ \mathtt{sid}\left(S_{1}\right),\mathcal{S}\ S_{2}\ \mathtt{sid}\left(S_{2}\right)\right)
 \end{aligned}
 \right)\\
  & \mathcal{S}\dd{id=e} & = & T_{S}\ \left(\begin{aligned}\mathcal{E}\ e\ \mathtt{eid}\left(e\right) & \bind\lambda v.\\
 \mathtt{asg}\left(id,v\right) & \bind\lambda\_.\\
-I_{\alpha}\ NoReturn
+I_{\alpha}\ Void
 \end{aligned}
 \right)\\
  & \mathcal{S}\dd{e_{0}.id=e_{1}} & = & T_{S}\ \left(\begin{aligned}\mathcal{E}\ e_{0}\ \mathtt{eid}\left(e_{0}\right) & \bind\lambda v.\\
