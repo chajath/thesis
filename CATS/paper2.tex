@@ -23,9 +23,16 @@ xleftmargin=20pt}
 \setcounter{secnumdepth}{3}
 \setcounter{tocdepth}{3}
 \usepackage{color}
+\usepackage{babel}
+\usepackage{calc}
 \usepackage{amsthm}
 \usepackage{amsmath}
 \usepackage{amssymb}
+\usepackage[authoryear]{natbib}
+\usepackage[unicode=true,pdfusetitle,
+ bookmarks=true,bookmarksnumbered=false,bookmarksopen=false,
+ breaklinks=true,pdfborder={0 0 1},backref=false,colorlinks=false]
+ {hyperref}
 
 \makeatletter
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Textclass specific LaTeX commands.
@@ -46,6 +53,7 @@ xleftmargin=20pt}
 \usepackage{stmaryrd}
 \usepackage{syntax}
 \usepackage{color}
+
 \definecolor{lightgray}{rgb}{.9,.9,.9}
 \definecolor{darkgray}{rgb}{.4,.4,.4}
 \definecolor{purple}{rgb}{0.65, 0.12, 0.82}
@@ -64,7 +72,6 @@ xleftmargin=20pt}
 
 \makeatother
 
-\usepackage{babel}
   \providecommand{\corollaryname}{Corollary}
   \providecommand{\definitionname}{Definition}
   \providecommand{\examplename}{Example}
@@ -156,15 +163,15 @@ causing, type-altering functions.
 
 On a theoretical side, denotational semantics is the starting point
 of our development of a theoretical system. The idea of incorporating
-monads in the denotational semantics, as presented in \cite{Liang:phd1998,Liang_Hudak:ESOP1996},
+monads in the denotational semantics, as presented in \citet{Liang:phd1998,Liang_Hudak:ESOP1996},
 directly inspired the present work. We extend the idea to the static
 analysis of a language.
 
 An idea of constructing formulae with parametric types can be found
-in \cite{Wadler:1989:TF:99370.99404}. This work is a special application
+in \citet{Wadler:1989:TF:99370.99404}. This work is a special application
 of the parametricity in the field of language semantics and analysis.
 
-On the type analysis of dynamic languages, \cite{Anderson:ECOOP2005,Anderson:ENTCS2005,Guha:ESOP2011,Wrigstad:POPL2010}
+On the type analysis of dynamic languages, \citet{Anderson:ECOOP2005,Anderson:ENTCS2005,Guha:ESOP2011,Wrigstad:POPL2010}
 devise model languages and their semantics for the purpose of static
 analysis of dynamic languages. A major difference between them and
 the model language presented in this paper is that our model language
@@ -174,22 +181,22 @@ and differences of this work compared to the cited works are given
 as we encounter them in this paper.
 
 Type analysis plays a crucial part in compiling scripting languages,
-mainly to improve performance. \cite{Ancona:2007:RST:1297081.1297091,Dufour:2006}
+mainly to improve performance. \citet{Ancona:2007:RST:1297081.1297091,Dufour:2006}
 design restricted versions of a scripting language so that a static
 inference of types can be performed. Some techniques employed in those
 projects can also be found in this paper, the use of allocation sites
 as static references is an example.
 
 An important use case of functions in dynamic typing language is ``mixin''
-(\cite{Bracha:1990:MI:97946.97982}) functions, where, by passing
+(\citet{Bracha:1990:MI:97946.97982}) functions, where, by passing
 argument to such function the variable, the object is extended with
 extra methods. There are model languages and formalisations of mixin
-functions (\cite{Anderson:ECOOP2005,Vub-prog-tr96aformalisation}).
+functions (\citet{Anderson:ECOOP2005,Vub-prog-tr96aformalisation}).
 Where those works seek to find a functional models for mixins, we
 model a language with side-effect causing functions that is expressive
 enough to program a mixin inheritance.
 
-\cite{Jensen:SAS2009} built a feature-complete analyser for JavaScript
+\citet{Jensen:SAS2009} built a feature-complete analyser for JavaScript
 language. Our work can be progressed further to become a theoretical
 counterpart of the analyser. Furthermore, such attempt at formalising
 the analysis might pave a way for a further refinement and improvement.
@@ -287,7 +294,7 @@ I_{0}\ t=\lambda f,r,s.\left\langle r',s,0\right\rangle \ \mbox{where}\ \left\la
 
 
 \end{defn}
-Now we turn to examine properties of the monad. \cite{Liang:phd1998}
+Now we turn to examine properties of the monad. \citet{Liang:phd1998}
 gives a survey of mathematical properties that monadic constructs
 exhibit. For the purpose our discussion, we limit ourselves to the
 discussion of properties of monads that are crucial in proving correctness
@@ -443,7 +450,7 @@ output apple.cider(20,50); # 15+20+20+50
 Now object type `apple' is different to that of `grape'. In our analysis,
 we approximate the object types of a variable by treating each construction
 site as a separate object type. Similar approach has been taken in
-\cite{Jensen:SAS2009}.
+\citet{Jensen:SAS2009}.
 
 
 \section{Analysis}
@@ -459,13 +466,13 @@ the correctness of the analysis.
 \subsection{Functions}
 
 A difficulty of analysing a function in a reflective language without
-any given type information has been noted in \cite{Bono:arXiv2012}.
+any given type information has been noted in \citet{Bono:arXiv2012}.
 Functions in SDTL cause side-effects, which in turn allow them to
 function as a class extender and a mixin creator. $\mbox{JS}_{0}$
-language, as developed and presented in \cite{Anderson:ECOOP2005,Anderson:ENTCS2005}
+language, as developed and presented in \citet{Anderson:ECOOP2005,Anderson:ENTCS2005}
 is an attempt to contain a mixin creating behaviour in a functional
 model language. Similar approach has been taken in the discussion
-of $\lambda_{S}$ language as devised in \cite{Guha:2011:TLC:1987211.1987225}.
+of $\lambda_{S}$ language as devised in \citet{Guha:2011:TLC:1987211.1987225}.
 
 With the languages like JavaScript, it is in the nature of such language
 that functions are side-effect causing, and much of the type operations
@@ -518,6 +525,7 @@ We define a monadic denotational semantics of the SDTL program
 Definition for those functions are given in figure \ref{semmon}.
 \end{defn}
 \begin{figure*}
+\framebox{\begin{minipage}[t]{1\textwidth}%
 \begin{align*}
  & \mathcal{F} & = & Y\lambda f.\lambda n.\mathcal{S}\ \mathtt{Stmt}_{n}\ \mathtt{sid}\left(\mathtt{Stmt}_{n}\right)\ f\\
  & \mathcal{S}\dd{S_{1};S_{2}} & = & T_{S}\ \left(\begin{aligned}S\ S_{1}\ \mathtt{sid}\left(S_{1}\right) & \bind\lambda r.\\
@@ -606,11 +614,11 @@ defined as following:
 \mathtt{evalParam}\ \left[e|Exprs\right]\ ps\ f\ \rho\ \sigma=\mathtt{evalParam}\ Exprs\ \left[ps|con\right]\ f\ \rho_{1}\ \sigma_{1}\\
 \ \mbox{where}\left\langle \rho_{1},\sigma_{1},con\right\rangle =\mathcal{E}\ e\ f\ \rho\ \sigma
 \end{gather*}
-
+%
+\end{minipage}}
 
 \caption{Semantic functions}
 \label{semmon}
-
 \end{figure*}
 
 
@@ -639,8 +647,7 @@ We define concrete functions in figure \ref{concfunc}.
 \end{defn}
 \end{defn}
 \begin{figure*}
-
-
+\framebox{\begin{minipage}[t]{1\textwidth}%
 \begin{eqnarray*}
 \mathtt{isterm}\left(v,s\right) & = & \lambda f,\rho.\begin{cases}
 s\ f\ \rho & v=Void\\
@@ -661,7 +668,7 @@ s_{2}\ f\ \rho & v=false
 \mathtt{dooutput}\left(v\right) & = & \mbox{see note}\\
 \mathtt{newobj} & = & \lambda\left\langle V,OM,T\right\rangle .\left\langle \left\langle V,OM\left[n\mapsto\phi\right],T\right\rangle ,OBJ_{n}\right\rangle \ \mbox{where}\ n=N\left(OM\right)\\
 \mathtt{call}\left(\left\langle FP_{n},C\right\rangle ,p,t,\_\right) & = & \lambda f,s,\left\langle V,OM,T\right\rangle .\begin{cases}
-\begin{gathered}\left\langle \left\langle V,OM',T\right\rangle ,s',r\right\rangle \ \mbox{where}\ \left\langle \left\langle V',OM',T'\right\rangle ,s',r\right\rangle =\\
+\begin{gathered}\left\langle \left\langle V,OM',T\right\rangle ,s',r\right\rangle \mbox{where}\left\langle \left\langle V',OM',T'\right\rangle ,s',r\right\rangle =\\
 f\ n\ \left\langle \left[param_{n,k}\mapsto\left[C|p\right]_{k}\right],OM,t\right\rangle \ s
 \end{gathered}
  & N\left(C\right)+N\left(p\right)=arity_{n}\\
@@ -673,7 +680,10 @@ f\ n\ \left\langle \left[param_{n,k}\mapsto\left[C|p\right]_{k}\right],OM,t\righ
 
 Note that we largely omit IO operation, since it is not a major concern
 of this paper. It is trivial to add another element to the state vector
-to take account of IO operations.\caption{Concrete functions}
+to take account of IO operations.%
+\end{minipage}}
+
+\caption{Concrete functions}
 \label{concfunc}
 
 \end{figure*}
@@ -835,6 +845,7 @@ $\left(AState,\sqsubseteq\right)$ is a chain complete partial ordering.\end{lem}
 \begin{figure*}
 
 
+\framebox{\begin{minipage}[t]{1\textwidth}%
 \begin{eqnarray*}
 \mathtt{isterm}\left(v,s\right) & = & \lambda f,\eta.\begin{cases}
 s\ f\ \eta & v=\left\{ Void\right\} \\
@@ -871,7 +882,8 @@ f\ n\ \left\langle \left\{ param_{n,k}\mapsto\left[C|p\right]_{k}\right\} ,\alph
 \left\{ Boolean\right\}  & \mbox{otherwise}
 \end{cases}
 \end{eqnarray*}
-
+%
+\end{minipage}}
 
 \caption{Abstract functions}
 \label{absfun}
@@ -1118,7 +1130,7 @@ formality and rigour will be considerably less laborious than to invent
 a new incarnation of a more feature-complete model language and produce
 theory for it.
 
-\bibliographystyle{plain}
+\bibliographystyle{elsarticle-harv}
 \bibliography{duck}
 
 \end{document}

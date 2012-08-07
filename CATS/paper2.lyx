@@ -7,6 +7,7 @@
 \usepackage{stmaryrd}
 \usepackage{syntax}
 \usepackage{color}
+
 \definecolor{lightgray}{rgb}{.9,.9,.9}
 \definecolor{darkgray}{rgb}{.4,.4,.4}
 \definecolor{purple}{rgb}{0.65, 0.12, 0.82}
@@ -52,14 +53,23 @@ figs-within-sections
 \index_command default
 \paperfontsize default
 \spacing single
-\use_hyperref false
+\use_hyperref true
+\pdf_bookmarks true
+\pdf_bookmarksnumbered false
+\pdf_bookmarksopen false
+\pdf_bookmarksopenlevel 1
+\pdf_breaklinks true
+\pdf_pdfborder false
+\pdf_colorlinks false
+\pdf_backref false
+\pdf_pdfusetitle true
 \papersize default
 \use_geometry true
 \use_amsmath 1
 \use_esint 1
 \use_mhchem 1
 \use_mathdots 1
-\cite_engine basic
+\cite_engine natbib_authoryear
 \use_bibtopic false
 \use_indices false
 \paperorientation portrait
@@ -2990,7 +3000,7 @@ As we have noted in the introduction, this work is a snapshot of an ongoing
 \begin_inset CommandInset bibtex
 LatexCommand bibtex
 bibfiles "duck"
-options "plain"
+options "elsarticle-harv"
 
 \end_inset
 
