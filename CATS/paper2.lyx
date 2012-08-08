@@ -210,9 +210,9 @@ However, these features come at a cost.
 
 \begin_layout Itemize
 As applications become more mature, more efforts are devoted to program
- unit testing or assertions to make sure type safety of systems.
- These extra overheads can sometimes overshoot the benefit of having a dynamical
-ly typing language.
+ unit testing or assertions to ensure type safety of systems.
+ These extra overheads can sometimes outweigh the benefit of having a dynamicall
+y typing language.
 \end_layout
 
 \begin_layout Itemize
@@ -243,7 +243,7 @@ The two concerns are not distinct ones, but an interconnected dialectic.
 \end_layout
 
 \begin_layout Section
-Related works
+Related work
 \end_layout
 
 \begin_layout Standard
@@ -1276,8 +1276,8 @@ key "Anderson:ECOOP2005,Anderson:ENTCS2005"
 
  language as devised in 
 \begin_inset CommandInset citation
-LatexCommand cite
-key "Guha:2011:TLC:1987211.1987225"
+LatexCommand citet
+key "Guha:ESOP2011"
 
 \end_inset
 
