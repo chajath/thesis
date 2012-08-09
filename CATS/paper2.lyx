@@ -1530,22 +1530,21 @@ I_{0}\ \mathtt{set}\left(r,id,v\right) & \bind\lambda\_.\\
 I_{A}\ Void
 \end{aligned}
 \right)\\
- & \mathcal{S}\dd{\mathtt{while}\left(e\right)S_{1}}\ f\ \rho_{0} & = & T_{S}\ \left(Y\lambda x.\lambda\rho,r.{\scriptstyle \mathtt{isterm}}\left(r,\begin{aligned}\mathcal{E}\ e\ \mathtt{eid}\left(e\right)\bind\lambda v.\\
+ & \mathcal{S}\dd{\mathtt{while}\left(e\right)S_{1}} & = & T_{S}\ \left(Y\lambda x.\lambda a,f,r,s.\left(\begin{aligned}\mathcal{E}\ e\ \mathtt{eid}\left(e\right)\bind\lambda v.\\
 {\scriptstyle \begin{gathered}\mathtt{cond}\left(\begin{gathered}v,\\
-\left(\begin{gathered}\lambda\rho'.x\ \left(\mathcal{S}\ S_{1}\ \mathtt{sid}\left(S_{1}\right)\ f\ \rho'\right)\end{gathered}
-\right),\\
+\left(\mathcal{S}\ S_{1}\ \mathtt{sid}\left(S_{1}\right)\right)\bind\lambda a.\mathtt{isterm}\left(a,x\right),\\
 \left(I_{\rho}\ Void\right)
 \end{gathered}
 \right)\end{gathered}
 }
 \end{aligned}
-\right)\ \rho_{0}\ {\scriptstyle Void}\right)\\
+\right)\right)\\
  & \mathcal{S}\dd{\mathtt{output}\ e} & = & T_{S}\ \left(\begin{aligned}\mathcal{E}\ e\ eid\left(e\right) & \bind\lambda v.\\
 I_{0}\ \mathtt{output}\left(v\right) & \bind\lambda\_.\\
 I_{A}\ Void
 \end{aligned}
 \right)\\
- & S\dd{\mathtt{function}\ id\left(IDs\right)\ S_{1}}\ \mathtt{s} & = & T_{S}\ \left(\begin{aligned}I_{0}\ \mathtt{fundecl}\left(id,\mathtt{s}\right) & \bind\lambda\_.\\
+ & S\dd{{\scriptstyle \mathtt{function}}\ id\left(IDs\right)\ S_{1}}\ \mathtt{s} & = & T_{S}\ \left(\begin{aligned}I_{0}\ \mathtt{fundecl}\left(id,\mathtt{s}\right) & \bind\lambda\_.\\
 I_{A}\ Void
 \end{aligned}
 \right)\\
@@ -2853,7 +2852,7 @@ status open
 
 \begin_layout Plain Layout
 
-function object() { this.value = 1; }
+function object() { this.value=1; }
 \end_layout
 
 \begin_layout Plain Layout
