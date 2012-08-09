@@ -1329,11 +1329,39 @@ Where
 
  is a denotational semantic function that takes a statement and a function
  fixed point, and returns an updated state and a return value.
- With this formulation in mind, we define 
-\begin_inset Formula $\mathcal{F}$
+ 
+\begin_inset Formula $\mathtt{Stmt}_{n}$
 \end_inset
 
- and other semantic functions.
+ is a function body of a function with ID 
+\begin_inset Formula $n$
+\end_inset
+
+.
+ We also define 
+\begin_inset Formula $param_{n,k}$
+\end_inset
+
+ to denote the name of 
+\begin_inset Formula $k^{\mbox{th}}$
+\end_inset
+
+ parameter of the function 
+\begin_inset Formula $n$
+\end_inset
+
+.
+ 
+\begin_inset Formula $arity_{n}$
+\end_inset
+
+ is an arity of the function 
+\begin_inset Formula $n$
+\end_inset
+
+.
+ These informations are all immediately available from the syntax tree of
+ a given program.
 \end_layout
 
 \begin_layout Subsection
@@ -1341,7 +1369,12 @@ Semantic functions
 \end_layout
 
 \begin_layout Standard
-As discussed earlier, definition of semantics functions has a state collector
+Now, we define 
+\begin_inset Formula $\mathcal{F}$
+\end_inset
+
+ and other semantic functions.
+ As discussed earlier, definition of semantics functions has a state collector
  incorporate to cater for the needs of the analysis.
 \end_layout
 
@@ -1427,13 +1460,14 @@ status open
 \end{aligned}
 \right)\\
  & \mathcal{S}\dd{id=e} & = & T_{S}\ \left(\begin{aligned}\mathcal{E}\ e\ \mathtt{eid}\left(e\right) & \bind\lambda v.\\
-\mathtt{asg}\left(id,v\right) & \bind\lambda\_.\\
-I_{\alpha}\ Void
+I_{0}\ \mathtt{asg}\left(id,v\right) & \bind\lambda\_.\\
+I_{A}\ Void
 \end{aligned}
 \right)\\
  & \mathcal{S}\dd{e_{0}.id=e_{1}} & = & T_{S}\ \left(\begin{aligned}\mathcal{E}\ e_{0}\ \mathtt{eid}\left(e_{0}\right) & \bind\lambda v.\\
 \mathcal{E}\ e_{1}\ \mathtt{eid}\left(e_{1}\right) & \bind\lambda r.\\
-I_{T}\ \mathtt{set}\left(r,id,v\right)
+I_{0}\ \mathtt{set}\left(r,id,v\right) & \bind\lambda\_.\\
+I_{A}\ Void
 \end{aligned}
 \right)\\
  & \mathcal{S}\dd{\mathtt{while}\left(e\right)S_{1}}\ f\ \rho_{0} & = & T_{S}\ \left(Y\lambda x.\lambda\rho,r.\mathtt{isterm}\left(r,\left(\begin{aligned}\mathcal{E}\ e\ \mathtt{eid}\left(e\right)\bind\lambda v.\\
@@ -1489,21 +1523,6 @@ I_{V}\ \mathtt{get}\left(v,id\right)
 \right)
 \end{align*}
 
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-Where
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Formula $\mathtt{Stmt}_{n}$
-\end_inset
-
- is a function body of a function with id 
-\begin_inset Formula $n$
 \end_inset
 
 
