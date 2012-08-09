@@ -94,7 +94,7 @@ figs-within-sections
 \papercolumns 1
 \papersides 1
 \paperpagestyle default
-\listings_params "comment={[l]{\#}},commentstyle={\color{purple}\ttfamily},frame=leftline,identifierstyle={\color{black}},keywords={new, true, false, function, return, if, while, else, output, input},keywordstyle={\bfseries\underline},ndkeywords={this, global},ndkeywordstyle={\bfseries},numbers=left,numbersep=10pt,numberstyle={\tiny},sensitive=false,tabsize=2,xleftmargin=20pt"
+\listings_params "basicstyle={\small},comment={[l]{\#}},commentstyle={\color{purple}\ttfamily},frame=leftline,identifierstyle={\color{black}},keywords={new, function, return, if, while, else, output, input},keywordstyle={\bfseries\underline},ndkeywords={this, global, true, false},ndkeywordstyle={\bfseries},numbers=left,numbersep=10pt,numberstyle={\tiny},sensitive=false,tabsize=2,xleftmargin=20pt"
 \tracking_changes false
 \output_changes false
 \html_math_output 0
