@@ -64,7 +64,7 @@ figs-within-sections
 \pdf_backref false
 \pdf_pdfusetitle true
 \papersize default
-\use_geometry true
+\use_geometry false
 \use_amsmath 1
 \use_esint 1
 \use_mhchem 1
@@ -471,7 +471,14 @@ We define a bind operator
 \begin_inset Formula $T\ \bind\ U=\lambda f,r,s.U\ t\ f\ r'\ s'$
 \end_inset
 
- where 
+ 
+\end_layout
+
+\begin_layout Definition
+\begin_inset Formula $\ \ $
+\end_inset
+
+where 
 \begin_inset Formula $\left\langle r',s',t\right\rangle =T\ f\ r\ s$
 \end_inset
 
@@ -1072,7 +1079,12 @@ function juicible(fruit, juice) {
 
 \begin_layout Plain Layout
 
-	fruit.juice = juiceMe(juice); #currying
+	fruit.juice = juiceMe(juice); 
+\end_layout
+
+\begin_layout Plain Layout
+
+      #currying
 \end_layout
 
 \begin_layout Plain Layout
@@ -1148,12 +1160,12 @@ watermelon = new Fruit(25);
 
 \begin_layout Plain Layout
 
-output apple.juice(10); # 15 + 20 + 10
+output apple.juice(10); # 15+20+10
 \end_layout
 
 \begin_layout Plain Layout
 
-output grape.juice(10); # 30 + 50 + 10
+output grape.juice(10); # 30+50+10
 \end_layout
 
 \begin_layout Plain Layout
@@ -1205,7 +1217,12 @@ apple.cider = cider;
 
 \begin_layout Plain Layout
 
-output apple.cider(20,50); # 15+20+20+50
+output apple.cider(20,50); 
+\end_layout
+
+\begin_layout Plain Layout
+
+  # 15+20+20+50
 \end_layout
 
 \end_inset
@@ -1376,6 +1393,32 @@ Now, we define
  and other semantic functions.
  As discussed earlier, definition of semantics functions has a state collector
  incorporate to cater for the needs of the analysis.
+ First, we define a parameter evaluation auxiliary function that takes a
+ list of IDs and expressions, and iteratively evaluate expressions and produces
+ a mapping from IDs to resulting values of expressions.
+\end_layout
+
+\begin_layout Definition
+\begin_inset Formula $\mathtt{evalParam}$
+\end_inset
+
+ is a parameter evaluation auxiliary function:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{gather*}
+\mathtt{evalParam}:\left[ID\right]\times\left[Expr\right]\times\left[a\right]\times\\
+\mathcal{F}\times State\times StateCol\rightarrow State\times StateCol\times\left[a\right]\\
+\mathtt{evalParam}\ \phi\ ps\ f\ \rho\ \sigma=\left\langle \rho,\sigma,ps\right\rangle \\
+\mathtt{evalParam}\ \left[e|Exprs\right]\ ps\ f\ \rho\ \sigma=\\
+\ \mathtt{evalParam}\ Exprs\ \left[ps|con\right]\ f\ \rho_{1}\ \sigma_{1}\\
+\ \ \mbox{where}\left\langle \rho_{1},\sigma_{1},con\right\rangle =\mathcal{E}\ e\ f\ \rho\ \sigma
+\end{gather*}
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Definition
@@ -1419,7 +1462,24 @@ reference "semmon"
 
 \end_inset
 
-.
+
+\end_layout
+
+\begin_layout Standard
+Most definitions are 
+\begin_inset Quotes eld
+\end_inset
+
+procedural
+\begin_inset Quotes erd
+\end_inset
+
+ in its nature, as is expected in monadic composition of functions.
+ The definition for a 
+\begin_inset Formula $\mathtt{while}$
+\end_inset
+
+ statement is a complicated one, and deserves a closer look.
 \end_layout
 
 \begin_layout Standard
@@ -1470,20 +1530,22 @@ I_{0}\ \mathtt{set}\left(r,id,v\right) & \bind\lambda\_.\\
 I_{A}\ Void
 \end{aligned}
 \right)\\
- & \mathcal{S}\dd{\mathtt{while}\left(e\right)S_{1}}\ f\ \rho_{0} & = & T_{S}\ \left(Y\lambda x.\lambda\rho,r.\mathtt{isterm}\left(r,\left(\begin{aligned}\mathcal{E}\ e\ \mathtt{eid}\left(e\right)\bind\lambda v.\\
-{\scriptstyle \begin{gathered}\mathtt{cond}\left(v,\left(\begin{gathered}\lambda f,\rho'.x\ \\
-\left(\mathcal{S}\ S_{1}\ \mathtt{sid}\left(S_{1}\right)f\ \rho'\right)
+ & \mathcal{S}\dd{\mathtt{while}\left(e\right)S_{1}}\ f\ \rho_{0} & = & T_{S}\ \left(Y\lambda x.\lambda\rho,r.{\scriptstyle \mathtt{isterm}}\left(r,\begin{aligned}\mathcal{E}\ e\ \mathtt{eid}\left(e\right)\bind\lambda v.\\
+{\scriptstyle \begin{gathered}\mathtt{cond}\left(\begin{gathered}v,\\
+\left(\begin{gathered}\lambda\rho'.x\ \left(\mathcal{S}\ S_{1}\ \mathtt{sid}\left(S_{1}\right)\ f\ \rho'\right)\end{gathered}
+\right),\\
+\left(I_{\rho}\ Void\right)
 \end{gathered}
-\right),\left(I_{\rho}\ Void\right)\right)\end{gathered}
+\right)\end{gathered}
 }
 \end{aligned}
-\right)\ f\right)\ \rho_{0}\ {\scriptstyle Void}\right)\\
+\right)\ \rho_{0}\ {\scriptstyle Void}\right)\\
  & \mathcal{S}\dd{\mathtt{output}\ e} & = & T_{S}\ \left(\begin{aligned}\mathcal{E}\ e\ eid\left(e\right) & \bind\lambda v.\\
 I_{0}\ \mathtt{output}\left(v\right) & \bind\lambda\_.\\
 I_{A}\ Void
 \end{aligned}
 \right)\\
- & S\dd{{\scriptstyle \mathtt{function}}\ id\left(IDs\right)\ S_{1}}\ \mathtt{s} & = & T_{S}\ \left(\begin{aligned}I_{0}\ \mathtt{fundecl}\left(id,\mathtt{s}\right) & \bind\lambda\_.\\
+ & S\dd{\mathtt{function}\ id\left(IDs\right)\ S_{1}}\ \mathtt{s} & = & T_{S}\ \left(\begin{aligned}I_{0}\ \mathtt{fundecl}\left(id,\mathtt{s}\right) & \bind\lambda\_.\\
 I_{A}\ Void
 \end{aligned}
 \right)\\
@@ -1523,26 +1585,6 @@ I_{V}\ \mathtt{get}\left(v,id\right)
 \end{aligned}
 \right)
 \end{align*}
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Formula $\mathtt{evalParam}$
-\end_inset
-
- is a parameter evaluation auxiliary function, defined as following:
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Formula 
-\begin{gather*}
-\mathtt{evalParam}:\left[ID\right]\times\left[Expr\right]\times\left[a\right]\times\mathcal{F}\times State\times StateCol\rightarrow State\times StateCol\times\left[a\right]\\
-\mathtt{evalParam}\ \phi\ ps\ f\ \rho\ \sigma=\left\langle \rho,\sigma,ps\right\rangle \\
-\mathtt{evalParam}\ \left[e|Exprs\right]\ ps\ f\ \rho\ \sigma=\mathtt{evalParam}\ Exprs\ \left[ps|con\right]\ f\ \rho_{1}\ \sigma_{1}\ \mbox{where}\left\langle \rho_{1},\sigma_{1},con\right\rangle =\mathcal{E}\ e\ f\ \rho\ \sigma
-\end{gather*}
 
 \end_inset
 
@@ -1685,13 +1727,16 @@ s_{2}\ f\ \rho & v=false
 \mathtt{getinput\left(\rho\right)} & = & \mbox{see note}\\
 \mathtt{dooutput}\left(v\right) & = & \mbox{see note}\\
 \mathtt{newobj} & = & \lambda\left\langle V,OM,T\right\rangle .\left\langle \left\langle V,OM\left[n\mapsto\phi\right],T\right\rangle ,OBJ_{n}\right\rangle \ \mbox{where}\ n=N\left(OM\right)\\
-\mathtt{call}\left(\left\langle FP_{n},C\right\rangle ,p,t,\_\right) & = & \lambda f,s,\left\langle V,OM,T\right\rangle .\begin{cases}
+\mathtt{call}\left(\left\langle FP_{n},C\right\rangle ,p,t,\_\right) & = & {\scriptstyle \lambda f,s,\left\langle V,OM,T\right\rangle .\begin{cases}
 \begin{gathered}\left\langle \left\langle V,OM',T\right\rangle ,s',r\right\rangle \mbox{where}\left\langle \left\langle V',OM',T'\right\rangle ,s',r\right\rangle =\\
 f\ n\ \left\langle \left[param_{n,k}\mapsto\left[C|p\right]_{k}\right],OM,t\right\rangle \ s
 \end{gathered}
- & N\left(C\right)+N\left(p\right)=arity_{n}\\
+ & \begin{gathered}N\left(\left[C|p\right]\right)\\
+=arity_{n}
+\end{gathered}
+\\
 \left\langle \left\langle V,OM,T\right\rangle ,s,\left\langle FP_{n},\left[C|p\right]\right\rangle \right\rangle  & \mbox{otherwise}
-\end{cases}\\
+\end{cases}}\\
 \mathtt{fundecl}(id,n) & = & \lambda\left\langle V,OM,T\right\rangle .V\left[id\mapsto\left\langle FP_{n},\phi\right\rangle \right]\\
 \mathtt{bin}\left(binop,c_{0},c_{1}\right) & = & \mbox{perform binary operation between two constants}
 \end{eqnarray*}
@@ -2322,13 +2367,16 @@ Boolean & con\in\left\{ true,false\right\}
 \mathtt{dooutput}\left(v\right) & = & \lambda\eta.\eta\\
 \mathtt{newobj} & = & \lambda\left\langle \sigma,\alpha,\tau,\nu\right\rangle .\left\langle \left\langle \sigma,\alpha\left[n\mapsto\phi\right],\tau,\nu\right\rangle ,OBJ_{n},\nu\right\rangle \ \mbox{where}\ n=N\left(\alpha\right)\\
 \mathtt{call}\left(n,p,t,e\right) & = & \lambda f,s,\left\langle \sigma,\alpha,\tau,\nu\right\rangle .\underset{\left\langle FP_{x},C\right\rangle \in n}{\bigsqcup}\mathtt{scall}\left(\left\langle FP_{x},C\right\rangle ,p,t,f,\left\langle \sigma,\alpha,\tau,\nu\right\rangle ,s,e\right)\\
-{\scriptstyle \mathtt{scall}\left(\left\langle FP_{n},C\right\rangle ,p,t,f,\left\langle \sigma,\alpha,\tau,\nu\right\rangle ,s,e\right)} & = & \begin{cases}
+{\scriptstyle \mathtt{scall}\left(\left\langle FP_{n},C\right\rangle ,p,t,f,\left\langle \sigma,\alpha,\tau,\nu\right\rangle ,s,e\right)} & = & {\scriptstyle \begin{cases}
 \begin{gathered}\left\langle \left\langle \sigma,\alpha',\tau,\nu'\right\rangle ,s',r'\right\rangle \ \mbox{where}\ \left\langle \left\langle \sigma',\alpha',\tau'\right\rangle ,s',r,\nu'\right\rangle =\\
 f\ n\ \left\langle \left\{ param_{n,k}\mapsto\left[C|p\right]_{k}\right\} ,\alpha,\tau,\nu\right\rangle \ s
 \end{gathered}
- & N\left(C\right)+N\left(p\right)=arity_{n}\\
-\left\langle \left\langle \sigma,\alpha,\tau,\nu\left[\left\langle e,n,N\left(C\right)+N\left(p\right)\right\rangle \mapsto\left[C|p\right]\right]\right\rangle ,s,\left\langle FP_{n},\left[C|p\right],e\right\rangle \right\rangle  & \mbox{otherwise}
-\end{cases}\\
+ & {\scriptscriptstyle \begin{gathered}N\left(\left[C|p\right]\right)\\
+=arity_{n}
+\end{gathered}
+}\\
+\left\langle \left\langle \sigma,\alpha,\tau,\nu\left[\left\langle e,n,N\left(\left[C|p\right]\right)\right\rangle \mapsto\left[C|p\right]\right]\right\rangle ,s,\left\langle FP_{n},\left[C|p\right],e\right\rangle \right\rangle  & \mbox{otherwise}
+\end{cases}}\\
 \mathtt{bin}\left(binop,c_{0},c_{1}\right) & = & \begin{cases}
 \left\{ Number\right\}  & binop\in\left\{ '+','-','*','/'\right\} \\
 \left\{ Boolean\right\}  & \mbox{otherwise}
