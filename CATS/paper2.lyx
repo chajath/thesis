@@ -514,8 +514,8 @@ We define following lift functions to incorporate non-monadic functions
 \begin_layout Standard
 \begin_inset Formula 
 \begin{gather*}
-I_{a}:a\rightarrow b\rightarrow M\ a\\
-I_{a}\ v=\lambda f,r,s.\left\langle r,s,v\right\rangle 
+I_{A}:a\rightarrow M\ a\\
+I_{A}\ v=\lambda f,r,s.\left\langle r,s,v\right\rangle 
 \end{gather*}
 
 \end_inset
@@ -533,8 +533,8 @@ I_{a}\ v=\lambda f,r,s.\left\langle r,s,v\right\rangle
 \begin_layout Standard
 \begin_inset Formula 
 \begin{gather*}
-I_{S}:\left(State\rightarrow State\times a\right)\rightarrow M\ a\\
-I_{S}\ t=\lambda f,r,s.\left\langle r',s,a\right\rangle \ \mbox{where}\ \left\langle r',a\right\rangle =t\ r
+I_{T}:\left(State\rightarrow State\times a\right)\rightarrow M\ a\\
+I_{T}\ t=\lambda f,r,s.\left\langle r',s,a\right\rangle \ \mbox{where}\ \left\langle r',a\right\rangle =t\ r
 \end{gather*}
 
 \end_inset
@@ -1437,8 +1437,8 @@ I_{T}\ \mathtt{set}\left(r,id,v\right)
 \end{aligned}
 \right)\\
  & \mathcal{S}\dd{\mathtt{while}\left(e\right)S_{1}}\ f\ \rho_{0} & = & T_{S}\ \left(Y\lambda x.\lambda\rho,r.\mathtt{isterm}\left(r,\left(\begin{aligned}\mathcal{E}\ e\ \mathtt{eid}\left(e\right)\bind\lambda v.\\
-{\scriptstyle \begin{gathered}\mathtt{cond}\left(v,\left(\begin{gathered}\lambda f,\rho'.\\
-x\ \left(\mathcal{S}\ S_{1}\ \mathtt{sid}\left(S_{1}\right)f\ \rho'\right)
+{\scriptstyle \begin{gathered}\mathtt{cond}\left(v,\left(\begin{gathered}\lambda f,\rho'.x\ \\
+\left(\mathcal{S}\ S_{1}\ \mathtt{sid}\left(S_{1}\right)f\ \rho'\right)
 \end{gathered}
 \right),\left(I_{\rho}\ Void\right)\right)\end{gathered}
 }
@@ -1446,6 +1446,10 @@ x\ \left(\mathcal{S}\ S_{1}\ \mathtt{sid}\left(S_{1}\right)f\ \rho'\right)
 \right)\ f\right)\ \rho_{0}\ {\scriptstyle Void}\right)\\
  & \mathcal{S}\dd{\mathtt{output}\ e} & = & T_{S}\ \left(\begin{aligned}\mathcal{E}\ e\ eid\left(e\right) & \bind\lambda v.\\
 \mathtt{output}\left(v\right)
+\end{aligned}
+\right)\\
+ & S\dd{{\scriptstyle \mathtt{function}}\ id\left(IDs\right)\ S_{1}}\ \mathtt{s} & = & T_{S}\ \left(\begin{aligned}I_{0}\ \mathtt{fundecl}\left(id,\mathtt{s}\right) & \bind\lambda\_.\\
+I_{A}\ Void
 \end{aligned}
 \right)\\
  & \mathcal{E}\dd{con}\ \mathtt{eid} & = & I_{\alpha}\ \mathtt{conval}\left(con\right)\\
@@ -1498,7 +1502,7 @@ Where
 \begin_inset Formula $\mathtt{Stmt}_{n}$
 \end_inset
 
- is a function body of a function numbered 
+ is a function body of a function with id 
 \begin_inset Formula $n$
 \end_inset
 
@@ -1669,6 +1673,7 @@ f\ n\ \left\langle \left[param_{n,k}\mapsto\left[C|p\right]_{k}\right],OM,t\righ
  & N\left(C\right)+N\left(p\right)=arity_{n}\\
 \left\langle \left\langle V,OM,T\right\rangle ,s,\left\langle FP_{n},\left[C|p\right]\right\rangle \right\rangle  & \mbox{otherwise}
 \end{cases}\\
+\mathtt{fundecl}(id,n) & = & \lambda\left\langle V,OM,T\right\rangle .V\left[id\mapsto\left\langle FP_{n},\left[\right]\right\rangle \right]\\
 \mathtt{bin}\left(binop,c_{0},c_{1}\right) & = & \mbox{perform binary operation between two constants}
 \end{eqnarray*}
 
@@ -2308,7 +2313,8 @@ f\ n\ \left\langle \left\{ param_{n,k}\mapsto\left[C|p\right]_{k}\right\} ,\alph
 \mathtt{bin}\left(binop,c_{0},c_{1}\right) & = & \begin{cases}
 \left\{ Number\right\}  & binop\in\left\{ '+','-','*','/'\right\} \\
 \left\{ Boolean\right\}  & \mbox{otherwise}
-\end{cases}
+\end{cases}\\
+\mathtt{fundecl}\left(id,n\right) & = & \lambda\left\langle \sigma,\alpha,\tau,\nu\right\rangle .\sigma\left[id\mapsto\left\langle FP_{n},\left[\right],n\right\rangle \right]
 \end{eqnarray*}
 
 \end_inset
