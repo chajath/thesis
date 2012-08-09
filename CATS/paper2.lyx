@@ -1692,7 +1692,7 @@ f\ n\ \left\langle \left[param_{n,k}\mapsto\left[C|p\right]_{k}\right],OM,t\righ
  & N\left(C\right)+N\left(p\right)=arity_{n}\\
 \left\langle \left\langle V,OM,T\right\rangle ,s,\left\langle FP_{n},\left[C|p\right]\right\rangle \right\rangle  & \mbox{otherwise}
 \end{cases}\\
-\mathtt{fundecl}(id,n) & = & \lambda\left\langle V,OM,T\right\rangle .V\left[id\mapsto\left\langle FP_{n},\left[\right]\right\rangle \right]\\
+\mathtt{fundecl}(id,n) & = & \lambda\left\langle V,OM,T\right\rangle .V\left[id\mapsto\left\langle FP_{n},\phi\right\rangle \right]\\
 \mathtt{bin}\left(binop,c_{0},c_{1}\right) & = & \mbox{perform binary operation between two constants}
 \end{eqnarray*}
 
@@ -2333,7 +2333,7 @@ f\ n\ \left\langle \left\{ param_{n,k}\mapsto\left[C|p\right]_{k}\right\} ,\alph
 \left\{ Number\right\}  & binop\in\left\{ '+','-','*','/'\right\} \\
 \left\{ Boolean\right\}  & \mbox{otherwise}
 \end{cases}\\
-\mathtt{fundecl}\left(id,n\right) & = & \lambda\left\langle \sigma,\alpha,\tau,\nu\right\rangle .\sigma\left[id\mapsto\left\langle FP_{n},\left[\right],n\right\rangle \right]
+\mathtt{fundecl}\left(id,n\right) & = & \lambda\left\langle \sigma,\alpha,\tau,\nu\right\rangle .\sigma\left[id\mapsto\left\langle FP_{n},\phi,n\right\rangle \right]
 \end{eqnarray*}
 
 \end_inset
