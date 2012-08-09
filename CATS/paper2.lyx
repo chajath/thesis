@@ -1452,7 +1452,7 @@ status open
 \right)\\
  & \mathcal{S}\dd{\mathtt{return}\ e} & = & T_{S}\ \left(\mathcal{E}\ e\ \mathtt{eid}\left(e\right)\right)\\
  & \mathcal{S}\dd{\mathtt{if}\left(e\right)S_{1}} & = & T_{S}\ \left(\begin{aligned}\mathcal{E}\ e\ \mathtt{eid}\left(e\right) & \bind\lambda v.\\
-\mathtt{cond}\left(v,\mathcal{S}\ S_{1}\ \mathtt{sid}\left(S_{1}\right),I_{\alpha}\ Void\right)
+\mathtt{cond}\left(v,\mathcal{S}\ S_{1}\ \mathtt{sid}\left(S_{1}\right),I_{A}\ Void\right)
 \end{aligned}
 \right)\\
  & \mathcal{S}\dd{\mathtt{if}\left(e\right)S_{1}\mathtt{else}S_{2}} & = & T_{S}\ \left(\begin{aligned}\mathcal{E}\ e\ \mathtt{eid}\left(e\right) & \bind\lambda v.\\
@@ -1479,14 +1479,15 @@ I_{A}\ Void
 \end{aligned}
 \right)\ f\right)\ \rho_{0}\ {\scriptstyle Void}\right)\\
  & \mathcal{S}\dd{\mathtt{output}\ e} & = & T_{S}\ \left(\begin{aligned}\mathcal{E}\ e\ eid\left(e\right) & \bind\lambda v.\\
-\mathtt{output}\left(v\right)
+I_{0}\ \mathtt{output}\left(v\right) & \bind\lambda\_.\\
+I_{A}\ Void
 \end{aligned}
 \right)\\
  & S\dd{{\scriptstyle \mathtt{function}}\ id\left(IDs\right)\ S_{1}}\ \mathtt{s} & = & T_{S}\ \left(\begin{aligned}I_{0}\ \mathtt{fundecl}\left(id,\mathtt{s}\right) & \bind\lambda\_.\\
 I_{A}\ Void
 \end{aligned}
 \right)\\
- & \mathcal{E}\dd{con}\ \mathtt{eid} & = & I_{\alpha}\ \mathtt{conval}\left(con\right)\\
+ & \mathcal{E}\dd{con}\ \mathtt{eid} & = & I_{A}\ \mathtt{conval}\left(con\right)\\
  & \mathcal{E}\dd{\mathtt{global}}\ \mathtt{eid} & = & I_{V}\ \mathtt{obj}\left(0\right)\\
  & \mathcal{E}\dd{L}\ \mathtt{eid} & = & \mathcal{L}\ L\\
  & \mathcal{E}\dd{\mathtt{this}}\ \mathtt{eid} & = & I_{V}\ \mathtt{getthis}\\
@@ -1495,7 +1496,7 @@ I_{A}\ Void
 \mathtt{evalParams}\ n\ E*\ \phi & \bind\lambda p.\\
 I_{T}\ \mathtt{newobj} & \bind\lambda m.\\
 \mathtt{call}\left(n,p,m,\mathtt{eid}\right) & \bind\lambda\_.\\
-I_{\alpha}\ m
+I_{A}\ m
 \end{aligned}
 \right)\\
  & \mathcal{E}\dd{L\left(E*\right)}\ \mathtt{eid} & = & \left(\begin{aligned}\mathcal{L}\ L & \bind\lambda n.\\
@@ -1540,8 +1541,7 @@ I_{V}\ \mathtt{get}\left(v,id\right)
 \begin{gather*}
 \mathtt{evalParam}:\left[ID\right]\times\left[Expr\right]\times\left[a\right]\times\mathcal{F}\times State\times StateCol\rightarrow State\times StateCol\times\left[a\right]\\
 \mathtt{evalParam}\ \phi\ ps\ f\ \rho\ \sigma=\left\langle \rho,\sigma,ps\right\rangle \\
-\mathtt{evalParam}\ \left[e|Exprs\right]\ ps\ f\ \rho\ \sigma=\mathtt{evalParam}\ Exprs\ \left[ps|con\right]\ f\ \rho_{1}\ \sigma_{1}\\
-\ \mbox{where}\left\langle \rho_{1},\sigma_{1},con\right\rangle =\mathcal{E}\ e\ f\ \rho\ \sigma
+\mathtt{evalParam}\ \left[e|Exprs\right]\ ps\ f\ \rho\ \sigma=\mathtt{evalParam}\ Exprs\ \left[ps|con\right]\ f\ \rho_{1}\ \sigma_{1}\ \mbox{where}\left\langle \rho_{1},\sigma_{1},con\right\rangle =\mathcal{E}\ e\ f\ \rho\ \sigma
 \end{gather*}
 
 \end_inset
