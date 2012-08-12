@@ -814,6 +814,260 @@ Model language
 \end_layout
 
 \begin_layout Standard
+In this section we gradually develop the model language from a simple procedural
+ language to a full-blown duck-typing object-oriented language.
+\end_layout
+
+\begin_layout Subsection
+Procedural language
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{grammar}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+<con> ::= Number | Boolean
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+<Lexpr> ::= ID
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+<Expr> ::= <con> | <Lexpr>
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+alt  <Lexpr> `(' [<Expr> [,<Expr>]*]? `)'
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+alt  <Expr> <binop> <Expr>
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+alt  `(' <Expr> `)'
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+<binop> ::= `+' | `-' | `*' | `/' | `>' | `<' | `=='
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+<Stmt> ::= nil | <Stmt> `;' <Stmt> | <Expr>
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+alt `output' <Expr>
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+alt <LExpr> `=' <Expr>
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+alt `if' `(' <Expr> `)' `{' <Stmt> `}'
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+alt `if' `(' <Expr> `)' `{' <Stmt> `}' `else' `{' <Stmt> `}'
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+alt `while' `(' <Expr> `)' `{' <Stmt> `}'
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+alt `function' ID `(' [ID [, ID]*]? `)' `{' <Stmt> `}'
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+alt `return' <Expr>
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{grammar}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide true
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Box Boxed
+position "t"
+hor_pos "c"
+has_inner_box 1
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "100text%"
+special "none"
+height "1in"
+height_special "totalheight"
+status open
+
+\begin_layout Plain Layout
+\begin_inset Formula 
+\begin{align*}
+ & F & = &  &  & Y\lambda f.\lambda n.\mathcal{S}\ \dd{\mathtt{Stmt}_{n}}\ \mathtt{sid}\left(\mathtt{Stmt}_{n}\right)\ f\\
+ & \mathcal{S}\dd{S_{1};S_{2}} & = &  &  & T_{S}\ \left(\begin{aligned}\mathcal{S}\ \dd{S_{1}}\ \mathtt{sid}\left(S_{1}\right) & \bind\lambda r.\\
+\mathtt{isterm}\left(r,\mathcal{S}\ \dd{S_{2}}\ \mathtt{sid}\left(S_{2}\right)\right)
+\end{aligned}
+\right)\\
+ & \mathcal{S}\dd{\mathtt{return}\ e} & = &  &  & T_{S}\ \left(\mathcal{E}\ \dd{e}\ \mathtt{eid}\left(e\right)\right)\\
+ & \mathcal{S}\dd{\mathtt{if}\left(e\right)S_{1}} & = &  &  & T_{S}\ \left(\begin{aligned}\mathcal{E}\ \dd{e}\ \mathtt{eid}\left(e\right) & \bind\lambda v.\\
+\mathtt{cond}\left(v,\mathcal{S}\ \dd{S_{1}}\ \mathtt{sid}\left(S_{1}\right),I_{A}\ Void\right)
+\end{aligned}
+\right)\\
+ & \mathcal{S}\dd{\mathtt{if}\left(e\right)S_{1}\mathtt{else}S_{2}} & = &  &  & T_{S}\ \left(\begin{aligned}\mathcal{E}\ \dd{e}\ \mathtt{eid}\left(e\right) & \bind\lambda v.\\
+\mathtt{cond}\left(v,\mathcal{S}\ \dd{S_{1}}\ \mathtt{sid}\left(S_{1}\right),\mathcal{S}\ \dd{S_{2}}\ \mathtt{sid}\left(S_{2}\right)\right)
+\end{aligned}
+\right)\\
+ & \mathcal{S}\dd{id=e} & = &  &  & T_{S}\ \left(\begin{aligned}\mathcal{E}\ \dd{e}\ \mathtt{eid}\left(e\right) & \bind\lambda v.\\
+I_{0}\ \mathtt{asg}\left(id,v\right)
+\end{aligned}
+\right)\\
+ & \mathcal{S}\dd{\mathtt{while}\left(e\right)S_{1}} & = &  &  & T_{S}\ \left(Y\lambda x.\lambda f,r,\gamma.\left(\begin{aligned}\mathcal{E}\ \dd{e}\ \mathtt{eid}\left(e\right)\bind\lambda v.\\
+{\scriptstyle \begin{gathered}\mathtt{cond}\left(\begin{gathered}v,\\
+\left(\mathcal{S}\ \dd{S_{1}}\ \mathtt{sid}\left(S_{1}\right)\right)\bind\lambda a.\mathtt{isterm}\left(a,x\right),\\
+\left(I_{A}\ Void\right)
+\end{gathered}
+\right)\end{gathered}
+}
+\end{aligned}
+\right)\right)\\
+ & \mathcal{S}\dd{\mathtt{output}\ e} & = &  &  & T_{S}\ \left(\begin{aligned}\mathcal{E}\ \dd{e}\ eid\left(e\right) & \bind\lambda v.\\
+I_{0}\ \mathtt{output}\left(v\right)
+\end{aligned}
+\right)\\
+ & S\dd{{\scriptstyle \mathtt{function}}\ id\left(IDs\right)\ S_{1}}\ \mathtt{sid} & = &  &  & T_{S}\ \left(\begin{aligned}I_{0}\ \mathtt{fundecl}\left(id,\mathtt{sid}\right)\end{aligned}
+\right)\ \mathtt{sid}\\
+ & \mathcal{E}\dd{con}\ \mathtt{eid} & = &  &  & I_{A}\ \mathtt{conval}\left(con\right)\\
+ & \mathcal{E}\dd{L}\ \mathtt{eid} & = &  &  & \mathcal{L}\ \dd{L}\\
+ & \mathcal{E}\dd{\mathtt{input}}\ \mathtt{eid} & = &  &  & I_{T}\ \mathtt{getinput}\\
+ & \mathcal{E}\dd{L\left(E*\right)}\ \mathtt{eid} & = &  &  & \left(\begin{aligned}\mathcal{L}\ \dd{L} & \bind\lambda n.\\
+\mathtt{evalParams}\ n\ E*\ \phi & \bind\lambda p.\\
+I_{A}\ \mathtt{call}\left(n,p\right)
+\end{aligned}
+\right)\\
+ & \mathcal{E}\dd{e_{0}\ binop\ e_{1}}\ \mathtt{eid} & = &  &  & \left(\begin{aligned}\mathcal{E}\ \dd{e_{0}}\ \mathtt{eid}\left(e_{0}\right) & \bind\lambda c_{0}.\\
+\mathcal{E}\ \dd{e_{1}}\ \mathtt{eid}\left(e_{1}\right) & \bind\lambda c_{1}.\\
+I_{V}\ \mathtt{bin}\left(binop,c_{0},c_{1}\right)
+\end{aligned}
+\right)\\
+ & \mathcal{L}\dd{id} & = &  &  & \left(I_{V}\ \mathtt{val}\left(id\right)\right)
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+Semantic functions
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+SDTL
+\end_layout
+
+\begin_layout Standard
 In this section we define a model language, 
 \begin_inset Quotes eld
 \end_inset
@@ -1629,9 +1883,7 @@ I_{0}\ \mathtt{set}\left(r,id,v\right)
 I_{0}\ \mathtt{output}\left(v\right)
 \end{aligned}
 \right)\\
- & S\dd{{\scriptstyle \mathtt{function}}\ id\left(IDs\right)\ S_{1}}\ \mathtt{sid} & = &  &  & T_{S}\ \left(\begin{aligned}I_{0}\ \mathtt{fundecl}\left(id,\mathtt{sid}\right)\\
-\\
-\end{aligned}
+ & S\dd{{\scriptstyle \mathtt{function}}\ id\left(IDs\right)\ S_{1}}\ \mathtt{sid} & = &  &  & T_{S}\ \left(\begin{aligned}I_{0}\ \mathtt{fundecl}\left(id,\mathtt{sid}\right)\end{aligned}
 \right)\ \mathtt{sid}\\
  & \mathcal{E}\dd{con}\ \mathtt{eid} & = &  &  & I_{A}\ \mathtt{conval}\left(con\right)\\
  & \mathcal{E}\dd{\mathtt{global}}\ \mathtt{eid} & = &  &  & I_{V}\ \mathtt{obj}\left(0\right)\\
