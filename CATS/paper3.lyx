@@ -23,6 +23,9 @@
 \newcommand\volumenumber{xxx}
 \newcommand\conferenceyear{2013}
 \newcommand\editorname{Anthony Wirth}
+
+\usepackage{hyperref}
+\usepackage[all]{hypcap}
 \end_preamble
 \options fleqn
 \use_default_options true
@@ -606,6 +609,35 @@ key "Liang:phd1998"
  properties of monads that are crucial in proving correctness of the system.
 \end_layout
 
+\begin_layout Definition
+\begin_inset Argument
+status open
+
+\begin_layout Plain Layout
+Monadic transformers
+\end_layout
+
+\end_inset
+
+ We define following polymorphic transformers that takes a monadic operators
+ defined for a subspace and transforms into an operator at a higher domain,
+ where traces of transformations at a subspace is preserved while other
+ orthogonal components remain identical.
+\end_layout
+
+\begin_layout Definition
+\begin_inset Formula 
+\begin{eqnarray*}
+\Upsilon & : & \left(A\rightarrow A\right)\rightarrow\left(B\rightarrow B\right)\\
+\Psi & : & \left(A\rightarrow A\times a\right)\rightarrow\left(B\rightarrow B\times a\right)\\
+\Theta & : & \left(A\rightarrow a\right)\rightarrow\left(B\rightarrow a\right)
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
 \begin_layout Theorem
 \begin_inset CommandInset label
 LatexCommand label
@@ -618,7 +650,7 @@ name "thm:bindmono"
 status open
 
 \begin_layout Plain Layout
-Continuity of bind operation
+Monotonicity of bind operation
 \end_layout
 
 \end_inset
@@ -1063,212 +1095,23 @@ Semantic functions
 
 \end_layout
 
-\begin_layout Subsection
-SDTL
+\begin_layout Subsubsection
+Concrete interpretation
+\end_layout
+
+\begin_layout Paragraph
+Domain
 \end_layout
 
 \begin_layout Standard
-In this section we define a model language, 
-\begin_inset Quotes eld
-\end_inset
-
-Simple Duck-Typing Language (SDTL)
-\begin_inset Quotes erd
-\end_inset
-
-.
- Our model language features C-like syntax and resembles JavaScript.
- The key differences are:
-\end_layout
-
-\begin_layout Itemize
-Absence of prototypes
-\end_layout
-
-\begin_layout Itemize
-Lack of lexical scoping
-\end_layout
-
-\begin_layout Itemize
-Function currying
-\end_layout
-
-\begin_layout Itemize
-Explicit use of 
-\begin_inset Quotes eld
-\end_inset
-
-
-\begin_inset Formula $\mathtt{global}$
-\end_inset
-
-
-\begin_inset Quotes erd
-\end_inset
-
- keyword
-\end_layout
-
-\begin_layout Standard
-It is our anticipation that, with the methodology that we employ, we can
- gradually extend this language to embrace much of the language features
- in real world.
-\end_layout
-
-\begin_layout Standard
-Following is the syntax of SDTL.
-\end_layout
-
-\begin_layout Standard
-\begin_inset ERT
-status open
-
-\begin_layout Plain Layout
-
-
-\backslash
-begin{grammar}
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-<con> ::= Number | Boolean
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-<Lexpr> ::= ID | <Expr> `.' ID
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-<Expr> ::= <con> | `global' | `this'
-\end_layout
-
-\begin_layout Plain Layout
-
-
-\backslash
-alt  <Lexpr>
-\end_layout
-
-\begin_layout Plain Layout
-
-
-\backslash
-alt  `new' <Lexpr> `(' [<Expr> [,<Expr>]*]? `)'
-\end_layout
-
-\begin_layout Plain Layout
-
-
-\backslash
-alt  <Lexpr> `(' [<Expr> [,<Expr>]*]? `)'
-\end_layout
-
-\begin_layout Plain Layout
-
-
-\backslash
-alt  <Expr> <binop> <Expr>
-\end_layout
-
-\begin_layout Plain Layout
-
-
-\backslash
-alt  `(' <Expr> `)'
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-<binop> ::= `+' | `-' | `*' | `/' | `>' | `<' | `=='
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-<Stmt> ::= nil | <Stmt> `;' <Stmt> | <Expr>
-\end_layout
-
-\begin_layout Plain Layout
-
-
-\backslash
-alt `output' <Expr>
-\end_layout
-
-\begin_layout Plain Layout
-
-
-\backslash
-alt <LExpr> `=' <Expr>
-\end_layout
-
-\begin_layout Plain Layout
-
-
-\backslash
-alt `if' `(' <Expr> `)' `{' <Stmt> `}'
-\end_layout
-
-\begin_layout Plain Layout
-
-
-\backslash
-alt `if' `(' <Expr> `)' `{' <Stmt> `}' `else' `{' <Stmt> `}'
-\end_layout
-
-\begin_layout Plain Layout
-
-
-\backslash
-alt `while' `(' <Expr> `)' `{' <Stmt> `}'
-\end_layout
-
-\begin_layout Plain Layout
-
-
-\backslash
-alt `function' ID `(' [ID [, ID]*]? `)' `{' <Stmt> `}'
-\end_layout
-
-\begin_layout Plain Layout
-
-
-\backslash
-alt `return' <Expr>
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-
-\backslash
-end{grammar}
-\end_layout
+\begin_inset Formula 
+\begin{eqnarray*}
+Value & = & \mathbb{Z}\cup\left\{ true,false\right\} \\
+ &  & \cup FunctionPointer\\
+FunctionPointer & = & FP_{n}\\
+CState & = & Var\times IO\\
+Var & = & id\rightarrow Value
+\end{eqnarray*}
 
 \end_inset
 
@@ -1276,788 +1119,18 @@ end{grammar}
 \end_layout
 
 \begin_layout Standard
-\begin_inset Formula $\mathtt{global}$
+where 
+\begin_inset Formula $n$
 \end_inset
 
- is a reference to a global object, and the reference to global object is
- program invariant (akin to `window' in Client-side javascript or `global'
- in Node.js).
- When the number of arguments given is less than that of the arity of the
- function as declared, a function is partially applied, and a curried function
- is returned for a further currying or invoking.
- In SDTL, like many other dynamic languages, functions are first-class objects.
- As such, we can express mixins in this language:
+ is a function identifier.
 \end_layout
 
-\begin_layout Standard
-\begin_inset listings
-lstparams "name=juice"
-inline false
-status open
-
-\begin_layout Plain Layout
-
-function Fruit(v) {
-\end_layout
-
-\begin_layout Plain Layout
-
-	this.value = v;
-\end_layout
-
-\begin_layout Plain Layout
-
-}
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-function juicible(fruit, juice) {
-\end_layout
-
-\begin_layout Plain Layout
-
-	function juiceMe(j,x) {
-\end_layout
-
-\begin_layout Plain Layout
-
-		return this.value + j + x;
-\end_layout
-
-\begin_layout Plain Layout
-
-	}
-\end_layout
-
-\begin_layout Plain Layout
-
-	fruit.juice = juiceMe(juice); 
-\end_layout
-
-\begin_layout Plain Layout
-
-      #currying
-\end_layout
-
-\begin_layout Plain Layout
-
-	global.answer=42;
-\end_layout
-
-\begin_layout Plain Layout
-
-}
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-global.answer = 0;
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-# Juicibles
-\end_layout
-
-\begin_layout Plain Layout
-
-apple = new Fruit(15);
-\end_layout
-
-\begin_layout Plain Layout
-
-juicible(apple, 20);
-\end_layout
-
-\begin_layout Plain Layout
-
-grape = new Fruit(30);
-\end_layout
-
-\begin_layout Plain Layout
-
-juicible(grape, 50);
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-# Non-juicibles
-\end_layout
-
-\begin_layout Plain Layout
-
-banana = new Fruit(20);
-\end_layout
-
-\begin_layout Plain Layout
-
-watermelon = new Fruit(25);
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-output apple.juice(10); # 15+20+10
-\end_layout
-
-\begin_layout Plain Layout
-
-output grape.juice(10); # 30+50+10
-\end_layout
-
-\begin_layout Plain Layout
-
-output global.answer; # 42
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-`juicible' function turns an ordinary fruit object into a juicible object.
- Although constructed by the same constructor function, types of variables
- `apple' and `grape' is different to that of non-juicibles.
- This gets further complicated if we add in-line extensions:
-\end_layout
-
-\begin_layout Standard
-\begin_inset listings
-lstparams "name=juice"
-inline false
-status open
-
-\begin_layout Plain Layout
-
-function cider(x,y) {
-\end_layout
-
-\begin_layout Plain Layout
-
-	return this.juice(x) + y;
-\end_layout
-
-\begin_layout Plain Layout
-
-}
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-apple.cider = cider;
-\end_layout
-
-\begin_layout Plain Layout
-
-output apple.cider(20,50); 
-\end_layout
-
-\begin_layout Plain Layout
-
-  # 15+20+20+50
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-Now object type `apple' is different to that of `grape'.
- In our analysis, we approximate the object types of a variable by treating
- each construction site as a separate object type.
- Similar approach has been taken in 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "Jensen:SAS2009"
-
-\end_inset
-
-.
-\end_layout
-
-\begin_layout Section
-Analysis
-\end_layout
-
-\begin_layout Standard
-We now present a concrete and abstract analysis of SDTL.
- We first discuss briefly on analysing functions in SDTL.
- Then we present a parametrised monadic semantics and concrete and abstract
- functions that we can plug-in to obtain denotational semantics and a static
- analysis.
- Finally, we use properties of monadic constructs to prove the correctness
- of the analysis.
-\end_layout
-
-\begin_layout Subsection
+\begin_layout Paragraph
 Functions
 \end_layout
 
 \begin_layout Standard
-A difficulty of analysing a function in a reflective language without any
- given type information has been noted in 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "Bono:arXiv2012"
-
-\end_inset
-
-.
- Functions in SDTL cause side-effects, which in turn allow them to function
- as a class extender and a mixin creator.
- 
-\begin_inset Formula $\mbox{JS}_{0}$
-\end_inset
-
- language, as developed and presented in 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "Anderson:ECOOP2005,Anderson:ENTCS2005"
-
-\end_inset
-
- is an attempt to contain a mixin creating behaviour in a functional model
- language.
- Similar approach has been taken in the discussion of 
-\begin_inset Formula $\lambda_{S}$
-\end_inset
-
- language as devised in 
-\begin_inset CommandInset citation
-LatexCommand citet
-key "Guha:ESOP2011"
-
-\end_inset
-
-.
-\end_layout
-
-\begin_layout Standard
-With the languages like JavaScript, it is in the nature of such language
- that functions are side-effect causing, and much of the type operations
- are being done with by the side-effects.
- If we model a function in such a manner, then the function itself is a
- state transformer of a type: 
-\begin_inset Formula $State\rightarrow State\times a$
-\end_inset
-
-.
- Parameters and a receiver object can be a part of the state as we define.
- This formulation could have been further refined by distinguishing what
- remains the same throughout a function execution (a receiver object, for
- example), and those that can be transformed.
- However, we do not make such distinction for simplicity's sake.
-\end_layout
-
-\begin_layout Standard
-Observe that in a given program, we have a mutually recursive collection
- of such functions.
- In order to analyse such collection, we augment the syntax tree of the
- SDTL language to give each function declaration a unique ID.
- We then map to each unique ID the function as we have discussed.
- Given recursions, we formulate a fixed point of such collection with mutual
- reference.
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula 
-\[
-F=Y\lambda f\lambda n.\mathcal{S}_{D}\ \mathtt{Stmt}_{n}\ f
-\]
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-Where 
-\begin_inset Formula $\mathcal{S}_{D}$
-\end_inset
-
- is a denotational semantic function that takes a statement and a function
- fixed point, and returns an updated state and a return value.
- 
-\begin_inset Formula $\mathtt{Stmt}_{n}$
-\end_inset
-
- is a function body of a function with ID 
-\begin_inset Formula $n$
-\end_inset
-
-.
- We also define 
-\begin_inset Formula $param_{n,k}$
-\end_inset
-
- to denote the name of 
-\begin_inset Formula $k^{\mbox{th}}$
-\end_inset
-
- parameter of the function 
-\begin_inset Formula $n$
-\end_inset
-
-.
- 
-\begin_inset Formula $arity_{n}$
-\end_inset
-
- is an arity of the function 
-\begin_inset Formula $n$
-\end_inset
-
-.
- These informations are all immediately available from the syntax tree of
- a given program.
-\end_layout
-
-\begin_layout Subsection
-Semantic functions
-\end_layout
-
-\begin_layout Standard
-Now, we define 
-\begin_inset Formula $F$
-\end_inset
-
- and 
-\begin_inset Formula $\mathcal{S}$
-\end_inset
-
- and other semantic functions.
- As discussed earlier, definition of semantics functions has a state collector
- incorporate to cater for the needs of the analysis.
- First, we define a parameter evaluation auxiliary function that takes a
- list of IDs and expressions, and iteratively evaluate expressions and produces
- a mapping from IDs to resulting values of expressions.
-\end_layout
-
-\begin_layout Definition
-\begin_inset Formula $\mathtt{evalParam}$
-\end_inset
-
- is a parameter evaluation auxiliary function:
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula 
-\begin{gather*}
-\mathtt{evalParam}:\left[ID\right]\times\left[Expr\right]\times\left[a\right]\times\\
-F\times State\times StateCol\rightarrow State\times StateCol\times\left[a\right]\\
-\mathtt{evalParam}\ \phi\ ps\ f\ \rho\ \sigma=\left\langle \rho,\sigma,ps\right\rangle \\
-\mathtt{evalParam}\ \left[e|Exprs\right]\ ps\ f\ \rho\ \sigma=\\
-\ \mathtt{evalParam}\ Exprs\ \left[ps|con\right]\ f\ \rho_{1}\ \sigma_{1}\\
-\ \ \mbox{where}\left\langle \rho_{1},\sigma_{1},con\right\rangle =\mathcal{E}\ e\ f\ \rho\ \sigma
-\end{gather*}
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Definition
-\begin_inset Argument
-status open
-
-\begin_layout Plain Layout
-Semantic functions
-\end_layout
-
-\end_inset
-
-We define a monadic denotational semantics of the SDTL program
-\end_layout
-
-\begin_deeper
-\begin_layout Standard
-\begin_inset Formula 
-\begin{eqnarray*}
-F & = & f\rightarrow\left(State\times StateCol\right)\rightarrow\\
- &  & \left(State\times StateCol\times a\cup\left\{ Void\right\} \right)\\
-\mathcal{S} & : & Stmt\rightarrow s\rightarrow F\rightarrow\left(State\times StateCol\right)\rightarrow\\
- &  & \left(State\times StateCol\times a\cup\left\{ Void\right\} \right)\\
-\mathcal{E} & : & Expr\rightarrow e\rightarrow F\rightarrow\left(State\times StateCol\right)\rightarrow\\
- &  & \left(State\times StateCol\times a\right)\\
-\mathcal{L} & : & LExpr\rightarrow F\rightarrow\left(State\times StateCol\right)\rightarrow\\
- &  & \left(State\times StateCol\times a\right)
-\end{eqnarray*}
-
-\end_inset
-
-
-\end_layout
-
-\end_deeper
-\begin_layout Definition
-\begin_inset Formula $\mathcal{S}$
-\end_inset
-
- function returns a value other than 
-\begin_inset Formula $Void$
-\end_inset
-
- when it is returning from a function (i.e.
- 
-\begin_inset Formula $\mathtt{return}$
-\end_inset
-
- statement has been met).
- A type for the return value is parametrised (marked as 
-\begin_inset Formula $a$
-\end_inset
-
-).
-\end_layout
-
-\begin_layout Definition
-Definition for those functions are given in figure 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "semmon"
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-Most definitions are 
-\begin_inset Quotes eld
-\end_inset
-
-procedural
-\begin_inset Quotes erd
-\end_inset
-
- in its nature, as is expected in monadic composition of functions.
- The definition for 
-\begin_inset Formula $\mathtt{while}$
-\end_inset
-
- statement is a complicated one, and we give a closer look.
- First, we give a recursive definition 
-\begin_inset Formula $Y\lambda x.\lambda f,s,r.g\left(x\right)$
-\end_inset
-
- where 
-\begin_inset Formula $x$
-\end_inset
-
- takes 
-\begin_inset Formula $\mathcal{F}\times State\times StateCol$
-\end_inset
-
- as an input and 
-\begin_inset Formula $g$
-\end_inset
-
- is a function that produces 
-\begin_inset Formula $\left(State\times StateCol\times a\cup\left\{ Void\right\} \right)$
-\end_inset
-
-(cf.
- type signature for 
-\begin_inset Formula $\mathcal{S}$
-\end_inset
-
-)
-\end_layout
-
-\begin_layout Standard
-Function 
-\begin_inset Formula $g$
-\end_inset
-
- first evaluates a given condition expression within a given state.
- If the result is false, we end the recursion with void as a result 
-\begin_inset Formula $\left(I_{A}\ Void\right)$
-\end_inset
-
-.
- If true, we first evaluate an inner statement.
- If we are returning any value from inside, we return the value.
- Otherwise, we invoke a recursion with an updated state.
- Hence the monadic formulation
-\begin_inset Formula $\left(\mathcal{S}\ \dd{S_{1}}\ \mathtt{sid}\left(S_{1}\right)\bind\lambda a.\mathtt{isterm}\left(a,x\right)\right)$
-\end_inset
-
-.
- Substituting 
-\begin_inset Formula $g$
-\end_inset
-
- back into our formulation, then adding a usual state collector helper,
- gives the formula as given in figure 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "semmon"
-
-\end_inset
-
-.
-\end_layout
-
-\begin_layout Standard
-\begin_inset Float figure
-wide true
-sideways false
-status open
-
-\begin_layout Plain Layout
-\begin_inset Box Boxed
-position "t"
-hor_pos "c"
-has_inner_box 1
-inner_pos "t"
-use_parbox 0
-use_makebox 0
-width "100text%"
-special "none"
-height "1in"
-height_special "totalheight"
-status open
-
-\begin_layout Plain Layout
-\begin_inset Formula 
-\begin{align*}
- & F & = &  &  & Y\lambda f.\lambda n.\mathcal{S}\ \dd{\mathtt{Stmt}_{n}}\ \mathtt{sid}\left(\mathtt{Stmt}_{n}\right)\ f\\
- & \mathcal{S}\dd{S_{1};S_{2}} & = &  &  & T_{S}\ \left(\begin{aligned}\mathcal{S}\ \dd{S_{1}}\ \mathtt{sid}\left(S_{1}\right) & \bind\lambda r.\\
-\mathtt{isterm}\left(r,\mathcal{S}\ \dd{S_{2}}\ \mathtt{sid}\left(S_{2}\right)\right)
-\end{aligned}
-\right)\\
- & \mathcal{S}\dd{\mathtt{return}\ e} & = &  &  & T_{S}\ \left(\mathcal{E}\ \dd{e}\ \mathtt{eid}\left(e\right)\right)\\
- & \mathcal{S}\dd{\mathtt{if}\left(e\right)S_{1}} & = &  &  & T_{S}\ \left(\begin{aligned}\mathcal{E}\ \dd{e}\ \mathtt{eid}\left(e\right) & \bind\lambda v.\\
-\mathtt{cond}\left(v,\mathcal{S}\ \dd{S_{1}}\ \mathtt{sid}\left(S_{1}\right),I_{A}\ Void\right)
-\end{aligned}
-\right)\\
- & \mathcal{S}\dd{\mathtt{if}\left(e\right)S_{1}\mathtt{else}S_{2}} & = &  &  & T_{S}\ \left(\begin{aligned}\mathcal{E}\ \dd{e}\ \mathtt{eid}\left(e\right) & \bind\lambda v.\\
-\mathtt{cond}\left(v,\mathcal{S}\ \dd{S_{1}}\ \mathtt{sid}\left(S_{1}\right),\mathcal{S}\ \dd{S_{2}}\ \mathtt{sid}\left(S_{2}\right)\right)
-\end{aligned}
-\right)\\
- & \mathcal{S}\dd{id=e} & = &  &  & T_{S}\ \left(\begin{aligned}\mathcal{E}\ \dd{e}\ \mathtt{eid}\left(e\right) & \bind\lambda v.\\
-I_{0}\ \mathtt{asg}\left(id,v\right)
-\end{aligned}
-\right)\\
- & \mathcal{S}\dd{e_{0}.id=e_{1}} & = &  &  & T_{S}\ \left(\begin{aligned}\mathcal{E}\ \dd{e_{0}}\ \mathtt{eid}\left(e_{0}\right) & \bind\lambda v.\\
-\mathcal{E}\ \dd{e_{1}}\ \mathtt{eid}\left(e_{1}\right) & \bind\lambda r.\\
-I_{0}\ \mathtt{set}\left(r,id,v\right)
-\end{aligned}
-\right)\\
- & \mathcal{S}\dd{\mathtt{while}\left(e\right)S_{1}} & = &  &  & T_{S}\ \left(Y\lambda x.\lambda f,r,\gamma.\left(\begin{aligned}\mathcal{E}\ \dd{e}\ \mathtt{eid}\left(e\right)\bind\lambda v.\\
-{\scriptstyle \begin{gathered}\mathtt{cond}\left(\begin{gathered}v,\\
-\left(\mathcal{S}\ \dd{S_{1}}\ \mathtt{sid}\left(S_{1}\right)\right)\bind\lambda a.\mathtt{isterm}\left(a,x\right),\\
-\left(I_{A}\ Void\right)
-\end{gathered}
-\right)\end{gathered}
-}
-\end{aligned}
-\right)\right)\\
- & \mathcal{S}\dd{\mathtt{output}\ e} & = &  &  & T_{S}\ \left(\begin{aligned}\mathcal{E}\ \dd{e}\ eid\left(e\right) & \bind\lambda v.\\
-I_{0}\ \mathtt{output}\left(v\right)
-\end{aligned}
-\right)\\
- & S\dd{{\scriptstyle \mathtt{function}}\ id\left(IDs\right)\ S_{1}}\ \mathtt{sid} & = &  &  & T_{S}\ \left(\begin{aligned}I_{0}\ \mathtt{fundecl}\left(id,\mathtt{sid}\right)\end{aligned}
-\right)\ \mathtt{sid}\\
- & \mathcal{E}\dd{con}\ \mathtt{eid} & = &  &  & I_{A}\ \mathtt{conval}\left(con\right)\\
- & \mathcal{E}\dd{\mathtt{global}}\ \mathtt{eid} & = &  &  & I_{V}\ \mathtt{obj}\left(0\right)\\
- & \mathcal{E}\dd{L}\ \mathtt{eid} & = &  &  & \mathcal{L}\ \dd{L}\\
- & \mathcal{E}\dd{\mathtt{this}}\ \mathtt{eid} & = &  &  & I_{V}\ \mathtt{getthis}\\
- & \mathcal{E}\dd{\mathtt{input}}\ \mathtt{eid} & = &  &  & I_{T}\ \mathtt{getinput}\\
- & \mathcal{E}\dd{\mathtt{new}\ L\left(E*\right)}\ \mathtt{eid} & = &  &  & \left(\begin{aligned}\mathcal{L}\ \dd{L} & \bind\lambda n.\\
-\mathtt{evalParams}\ n\ E*\ \phi & \bind\lambda p.\\
-I_{T}\ \mathtt{newobj} & \bind\lambda m.\\
-\mathtt{call}\left(n,p,m,\mathtt{eid}\right) & \bind\lambda\_.\\
-I_{A}\ m
-\end{aligned}
-\right)\\
- & \mathcal{E}\dd{L\left(E*\right)}\ \mathtt{eid} & = &  &  & \left(\begin{aligned}\mathcal{L}\ \dd{L} & \bind\lambda n.\\
-\mathtt{evalParams}\ n\ E*\ \phi & \bind\lambda p.\\
-\mathtt{call}\left(n,p,\mathtt{obj}\left(0,\rho\right),\mathtt{eid}\right)
-\end{aligned}
-\right)\\
- & \mathcal{E}\dd{e_{0}.L\left(E*\right)}\ \mathtt{eid} & = &  &  & \left(\begin{aligned}\mathcal{E}\ \dd{e_{0}}\ \mathtt{eid}\left(e_{0}\right) & \bind\lambda t.\\
-\mathcal{L}\ \dd{L} & \bind\lambda n.\\
-\mathtt{evalParams}\ n\ E*\ \phi & \bind\lambda p.\\
-\mathtt{call}\left(n,p,t,\mathtt{eid}\right)
-\end{aligned}
-\right)\\
- & \mathcal{E}\dd{e_{0}\ binop\ e_{1}}\ \mathtt{eid} & = &  &  & \left(\begin{aligned}\mathcal{E}\ \dd{e_{0}}\ \mathtt{eid}\left(e_{0}\right) & \bind\lambda c_{0}.\\
-\mathcal{E}\ \dd{e_{1}}\ \mathtt{eid}\left(e_{1}\right) & \bind\lambda c_{1}.\\
-I_{V}\ \mathtt{bin}\left(binop,c_{0},c_{1}\right)
-\end{aligned}
-\right)\\
- & \mathcal{L}\dd{id} & = &  &  & \left(I_{V}\ \mathtt{val}\left(id\right)\right)\\
- & \mathcal{L}\dd{e_{0}.id} & = &  &  & \left(\begin{aligned}\mathcal{E}\ \dd{e_{0}}\ \mathtt{eid}\left(e_{0}\right) & \bind\lambda v.\\
-I_{V}\ \mathtt{get}\left(v,id\right)
-\end{aligned}
-\right)
-\end{align*}
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption
-
-\begin_layout Plain Layout
-Semantic functions
-\end_layout
-
-\end_inset
-
-
-\begin_inset CommandInset label
-LatexCommand label
-name "semmon"
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Subsection
-Denotational semantics
-\end_layout
-
-\begin_layout Standard
-We define a concrete domain and concrete functions to plug into the semantic
- functions, the end result of which is a state-collecting denotational semantics.
-\end_layout
-
-\begin_layout Definition
-\begin_inset Argument
-status open
-
-\begin_layout Plain Layout
-Concrete domain
-\end_layout
-
-\end_inset
-
-We define a concrete domain of a concrete state 
-\begin_inset Formula $CState$
-\end_inset
-
- as following:
-\end_layout
-
-\begin_deeper
-\begin_layout Standard
-\begin_inset Formula 
-\begin{eqnarray*}
-Value & = & \mathbb{Z}\cup\left\{ T,F\right\} \cup Object\cup\\
- &  & FunctionPointer\\
-Object & = & \left\{ OBJ_{n}\mid n\in\left\{ 0\right\} \cup\mathbb{N}\right\} \\
-FunctionPointer & = & \left\langle FP_{n},\left[Value\right]\right\rangle \\
-CState & = & Var\times ObjMem\times Object\\
-Var & = & id\rightarrow Value\\
-ObjMem & = & n\rightarrow V
-\end{eqnarray*}
-
-\end_inset
-
-
-\end_layout
-
-\end_deeper
-\begin_layout Definition
-Note that the third element of 
-\begin_inset Formula $CState$
-\end_inset
-
- denotes the 
-\begin_inset Quotes eld
-\end_inset
-
-this
-\begin_inset Quotes erd
-\end_inset
-
- object at a given context.
-\end_layout
-
-\begin_deeper
-\begin_layout Definition
-\begin_inset Argument
-status open
-
-\begin_layout Plain Layout
-Concrete functions
-\end_layout
-
-\end_inset
-
-We define concrete functions in figure 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "concfunc"
-
-\end_inset
-
-.
-\end_layout
-
-\end_deeper
-\begin_layout Standard
-\begin_inset Float figure
-wide true
-sideways false
-status open
-
-\begin_layout Plain Layout
-\begin_inset Box Boxed
-position "t"
-hor_pos "c"
-has_inner_box 1
-inner_pos "t"
-use_parbox 0
-use_makebox 0
-width "100text%"
-special "none"
-height "1in"
-height_special "totalheight"
-status open
-
-\begin_layout Plain Layout
 \begin_inset Formula 
 \begin{eqnarray*}
 \mathtt{isterm}\left(v,s\right) & = & \begin{cases}
@@ -2068,28 +1141,16 @@ I_{A}\ v & \mbox{otherwise}
 s_{1} & v=true\\
 s_{2} & v=false
 \end{cases}\\
-\mathtt{asg}\left(id,v\right) & = & \lambda\left\langle V,OM,T\right\rangle .\left\langle V\left[id=v\right],OM,T\right\rangle \\
-\mathtt{val}\left(id\right) & = & \lambda\left\langle V,OM,T\right\rangle .V\left(id\right)\\
-\mathtt{get}\left(OBJ_{n},id\right) & = & \lambda\left\langle V,OM,T\right\rangle .OM\left(n\right)\\
-\mathtt{set}\left(OBJ_{n},id,v\right) & = & \lambda\left\langle V,OM,T\right\rangle .\left\langle V,OM\left[OBJ_{n}\left[id\mapsto v\right]\right],T\right\rangle \\
+\mathtt{asg}\left(id,v\right) & = & \Upsilon\ \lambda V:Var.V\left[id\mapsto v\right]\\
+\mathtt{val}\left(id\right) & = & \Upsilon\ \lambda V:Var.V\left(id\right)\\
 \mathtt{conval}\left(con\right) & = & con\\
-\mathtt{obj}\left(n\right) & = & \lambda\left\langle V,OM,T\right\rangle .OM\left(n\right)\\
-\mathtt{getthis} & = & \lambda\left\langle V,OM,T\right\rangle .T\\
-\mathtt{getinput\left(\rho\right)} & = & \mbox{see note}\\
-\mathtt{dooutput}\left(v\right) & = & \mbox{see note}\\
-\mathtt{newobj} & = & \lambda\left\langle V,OM,T\right\rangle .\left\langle \left\langle V,OM\left[n\mapsto\phi\right],T\right\rangle ,OBJ_{n}\right\rangle \ \mbox{where}\ n=N\left(OM\right)\\
-\mathtt{call}\left(\left\langle FP_{n},C\right\rangle ,p,t,\_\right) & = & {\scriptstyle \lambda f,\left\langle V,OM,T\right\rangle ,\gamma.\begin{cases}
-\begin{gathered}\left\langle \left\langle V,OM',T\right\rangle ,\gamma',r\right\rangle \mbox{where}\left\langle \left\langle V',OM',T'\right\rangle ,\gamma',r\right\rangle =\\
-f\ n\ \left\langle \left[param_{n,k}\mapsto\left[C|p\right]_{k}\right],OM,t\right\rangle \ \gamma
-\end{gathered}
- & \begin{gathered}N\left(\left[C|p\right]\right)\\
-=arity_{n}
-\end{gathered}
-\\
-\left\langle \left\langle V,OM,T\right\rangle ,\gamma,\left\langle FP_{n},\left[C|p\right]\right\rangle \right\rangle  & \mbox{otherwise}
-\end{cases}}\\
-\mathtt{fundecl}(id,n) & = & \lambda\left\langle V,OM,T\right\rangle .V\left[id\mapsto\left\langle FP_{n},\phi\right\rangle \right]\\
-\mathtt{bin}\left(binop,c_{0},c_{1}\right) & = & \mbox{perform binary operation between two constants}
+\mathtt{getinput\left(\rho\right)} & = & \Psi\ \lambda O:IO.\left\langle O',z\in\mathbb{N}\right\rangle \mbox{see note}\\
+\mathtt{dooutput}\left(v\right) & = & \Upsilon\ \lambda O:IO.O'\mbox{see note}\\
+\mathtt{call}\left(FP_{n},p\right) & = & \lambda f,\rho,\gamma.\left\langle \bar{\kappa}\ \rho\ \rho',\gamma',r\right\rangle \ \mbox{where}\\
+ &  & \left\langle \rho',\gamma',r\right\rangle =f\ n\ \left(\kappa\ \rho\ p\right)\ \gamma\\
+\mathtt{fundecl}(id,n) & = & \Upsilon\ \lambda V:Var.V\left[id\mapsto FP_{n}\right]\\
+\mathtt{bin}\left(binop,c_{0},c_{1}\right) & = & \mbox{perform binary operation }\\
+ &  & \mbox{between two constants}
 \end{eqnarray*}
 
 \end_inset
@@ -2097,11 +1158,101 @@ f\ n\ \left\langle \left[param_{n,k}\mapsto\left[C|p\right]_{k}\right],OM,t\righ
 
 \end_layout
 
+\begin_layout Standard
+We omit a detailed description of IO environment.
+ Normally, IO can be modelled as a queue of inputs and outputs as they are
+ given and produced during the execution of a program.
+\end_layout
+
+\begin_layout Subsubsection
+Abstract interpretation
+\end_layout
+
+\begin_layout Paragraph
+Domain
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+AState & = & AVar\\
+P & = & \left\{ Number,Boolean\right\} \\
+FunPointer & = & FP_{n}\\
+AVal & = & P\cup FunPointer\\
+AVar & = & id\rightarrow\wp\left(AVal\right)\\
+ &  & \mbox{where \emph{n} is a function identifier}
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Paragraph
+Functions
+\end_layout
+
+\begin_layout Standard
+Definitions are given in figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "absfun-proc"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide true
+sideways false
+status open
+
 \begin_layout Plain Layout
-Note that we largely omit IO operation, since it is not a major concern
- of this paper.
- It is trivial to add another element to the state vector to take account
- of IO operations.
+\begin_inset Box Boxed
+position "t"
+hor_pos "c"
+has_inner_box 1
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "100text%"
+special "none"
+height "1in"
+height_special "totalheight"
+status open
+
+\begin_layout Plain Layout
+\begin_inset Formula 
+\begin{eqnarray*}
+\mathtt{isterm}\left(v,s\right) & = & \lambda f,\eta,\gamma.\begin{cases}
+s\ f\ \eta\ \gamma & v=\left\{ Void\right\} \\
+\left(s\ f\ \eta\ \gamma\right)\sqcup\left(I_{A}\ v\right) & Void\in v,N\left(v\right)>1\\
+I_{A}\ v & \mbox{otherwise}\left(\mbox{i.e.}\ Void\notin v\right)
+\end{cases}\\
+\mathtt{cond}\left(v,s_{1},s_{2}\right) & = & \lambda f,\eta,\gamma.\left(s_{1}\ f\ \eta\ \gamma\right)\sqcup\left(s_{2}\ f\ \eta\ \gamma\right)\\
+\mathtt{asg}\left(id,v\right) & = & \Upsilon\ \lambda\sigma:AVar.\sigma\left[id=v\right]\\
+\mathtt{val}\left(id,v\right) & = & \Upsilon\ \lambda\sigma:AVar.\sigma\left(id\right)\\
+\mathtt{conval}\left(con\right) & = & \begin{cases}
+Number & con\in\mathbb{N}\\
+Boolean & con\in\left\{ true,false\right\} 
+\end{cases}\\
+\mathtt{getinput} & = & \lambda\eta.\left\langle \eta,\left\{ Number\right\} \right\rangle \\
+\mathtt{dooutput}\left(v\right) & = & \lambda\eta.\eta\\
+\mathtt{call}\left(n,p\right) & = & \lambda f,\eta,\gamma.\underset{FP_{x}\in n}{\bigsqcup}\mathtt{scall}\left(FP_{x},p,f,\eta,\gamma\right)\\
+\mathtt{scall}\left(FP_{n},p,f,\eta,\gamma\right) & = & \left\langle \bar{\kappa}\ \eta\ \eta',r,\gamma'\right\rangle \ \mbox{where}\ \\
+ &  & \left\langle \eta',r,\gamma'\right\rangle =f\ n\ \left(\kappa\ \eta\ p\right)\ \gamma\\
+\mathtt{bin}\left(binop,c_{0},c_{1}\right) & = & \begin{cases}
+\left\{ Number\right\}  & binop\in\left\{ '+','-','*','/'\right\} \\
+\left\{ Boolean\right\}  & \mbox{otherwise}
+\end{cases}\\
+\mathtt{fundecl}\left(id,n\right) & = & \Upsilon\ \lambda\sigma:AVar.\sigma\left[id\mapsto\left\{ FP_{n}\right\} \right]
+\end{eqnarray*}
+
+\end_inset
+
+
 \end_layout
 
 \end_inset
@@ -2113,15 +1264,8 @@ Note that we largely omit IO operation, since it is not a major concern
 \begin_inset Caption
 
 \begin_layout Plain Layout
-Concrete functions
+Abstract functions for the procedural model language
 \end_layout
-
-\end_inset
-
-
-\begin_inset CommandInset label
-LatexCommand label
-name "concfunc"
 
 \end_inset
 
@@ -2129,6 +1273,12 @@ name "concfunc"
 \end_layout
 
 \begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "absfun-proc"
+
+\end_inset
+
 
 \end_layout
 
@@ -2138,107 +1288,77 @@ name "concfunc"
 \end_layout
 
 \begin_layout Subsection
-Abstract interpretation
+Function currying
 \end_layout
 
 \begin_layout Standard
-We now define an abstract domain and abstract functions.
+There is no inherent semantic function change required in this case.
+ However, we do extend call function to include an eid as an input, for
+ the reason explained in the abstract domain paragraph.
 \end_layout
 
-\begin_layout Definition
-\begin_inset Argument
-status open
-
-\begin_layout Plain Layout
-Abstract domain
-\end_layout
-
+\begin_layout Standard
+\begin_inset Formula $\mathcal{E}\dd{L\left(E*\right)}\ \mathtt{eid}=\left(\begin{aligned}\mathcal{L}\ \dd{L} & \bind\lambda n.\\
+\mathtt{evalParams}\ n\ E*\ \phi & \bind\lambda p.\\
+\mathtt{call}\left(n,p,\mathtt{eid}\right)
+\end{aligned}
+\right)$
 \end_inset
 
-We define an abstract domain of an abstract state, 
-\begin_inset Formula $AState$
-\end_inset
 
- as following:
 \end_layout
 
-\begin_deeper
+\begin_layout Subsubsection
+Concrete
+\end_layout
+
+\begin_layout Paragraph
+Domain
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $FunctionPointer=\left\langle FP_{n},\left[Value\right]\right\rangle $
+\end_inset
+
+
+\end_layout
+
+\begin_layout Paragraph
+Functions
+\end_layout
+
 \begin_layout Standard
 \begin_inset Formula 
-\begin{eqnarray*}
-AState & = & {\scriptstyle AVar\times AObjMem\times\wp\left(Obj\right)\times CurriedVal}\\
-P & = & \left\{ Number,Boolean\right\} \\
-Obj & = & \left\{ OBJ_{n}\mid n\in\left\{ 0\right\} \cup eid\right\} \\
-FunPointer & = & FP_{fid}\times\left[\wp\left(\begin{gathered}P\cup Obj\cup\left\{ FP_{fid}\right\} \cup\\
-FC\times n\times c\times eid
+\begin{gather*}
+\mathtt{call}\left(\left\langle FP_{n},C\right\rangle ,p,\_\right)=\\
+\lambda f,\rho,\gamma.\begin{cases}
+\begin{gathered}\begin{gathered}\left\langle \bar{\kappa}\ \rho\ \rho',\gamma',r\right\rangle \mbox{where}\\
+\left\langle \rho',\gamma',r\right\rangle =\\
+f\ n\ \left(\kappa\ \rho\ p\right)\ \gamma
 \end{gathered}
-\right)\right]\\
-AVal & = & P\cup Obj\cup FunPointer\\
-AVar & = & id\rightarrow\wp\left(AVal\right)\\
-AObjMem & = & n\rightarrow AVar\\
-CurriedVal & = & n\times c\times eid\rightarrow\left[\wp\left(\begin{gathered}P\cup Obj\cup\\
-FC\times n\times c\times eid
 \end{gathered}
-\right)\right]\\
- &  & \mbox{where \emph{n} is a function identifier \emph{c}}\\
- &  & \ \ c\mbox{ is a natural number}
-\end{eqnarray*}
+ & \begin{gathered}N\left(\left[C|p\right]\right)\\
+=arity_{n}
+\end{gathered}
+\\
+\left\langle \rho,\gamma,\left\langle FP_{n},\left[C|p\right]\right\rangle \right\rangle  & \mbox{otherwise}
+\end{cases}\\
+\mathtt{fundecl}(id,n)=\Upsilon\ \lambda V.V\left[id\mapsto\left\langle FP_{n},\phi\right\rangle \right]
+\end{gather*}
 
 \end_inset
 
 
+\end_layout
+
+\begin_layout Subsubsection
+Abstract
 \end_layout
 
 \begin_layout Standard
-In 
-\begin_inset Formula $OBJ_{n}$
-\end_inset
-
-:
+Curried functions introduce an infinitely large concrete domain.
 \end_layout
 
-\begin_layout Standard
-We number each of the 
-\begin_inset Quotes eld
-\end_inset
-
-new
-\begin_inset Quotes erd
-\end_inset
-
- expressions as we parse the program.
- The number n corresponds to the 
-\begin_inset Quotes eld
-\end_inset
-
-new
-\begin_inset Quotes erd
-\end_inset
-
- expression number.
-\end_layout
-
-\begin_layout Standard
-In 
-\begin_inset Formula $FC\times n\times c\times eid$
-\end_inset
-
-:
-\end_layout
-
-\begin_layout Standard
-n = function number
-\end_layout
-
-\begin_layout Standard
-c = number of arguments curried
-\end_layout
-
-\begin_layout Standard
-eid = A uid of an expression from which this value has been produced
-\end_layout
-
-\end_deeper
 \begin_layout Example
 \begin_inset Argument
 status open
@@ -2302,381 +1422,63 @@ while(input < 30) {
 \end_layout
 
 \begin_layout Standard
-In this case, in line 7, x is associated with a value 
-\begin_inset Formula $\left\langle FP_{1},a\mapsto\left\{ Number,\left\langle FC,1,1,e_{1}\right\rangle \right\} \right\rangle $
+In this case, variable 
+\begin_inset Formula $\mathtt{x}$
 \end_inset
 
- where 
-\begin_inset Formula $e_{1}$
-\end_inset
-
- is the eid of 
-\begin_inset Formula $\mathtt{foo\left(x\right);}$
-\end_inset
-
- in line 7.
- 
-\begin_inset Formula $\nu$
-\end_inset
-
- has one entry 
-\begin_inset Formula $\left\langle 1,1,e_{1}\right\rangle \mapsto\left\{ a\mapsto\left\{ 0,\left\langle FC,1,1,e_{1}\right\rangle \right\} \right\} $
-\end_inset
-
-
+ could refer to an undetermined number of currying of a function.
+ A solution to this problem is to have a curried function anchored to a
+ particular language construct.
+ In this case, we can use an eid of a currying expression as a point of
+ reference.
 \end_layout
 
-\begin_layout Theorem
-\begin_inset Argument
-status open
-
-\begin_layout Plain Layout
-Finiteness of the abstract property
+\begin_layout Paragraph
+Domain
 \end_layout
 
-\end_inset
-
-Given an SDTL program,
-\begin_inset Formula $AState$
-\end_inset
-
- has a finite domain
-\end_layout
-
-\begin_layout Proof
-We show that each of the component 
-\begin_inset Formula $AVar,AObjMem,\wp\left(Obj\right),CurriedVal$
-\end_inset
-
- has a finite domain
-\end_layout
-
-\begin_deeper
-\begin_layout Enumerate
-First, we show that the number of possible
-\begin_inset Formula $AVal$
-\end_inset
-
- is finite.
-\end_layout
-
-\begin_deeper
-\begin_layout Enumerate
-Trivially,
-\begin_inset Formula $P$
-\end_inset
-
- is a set of two elements.
-\end_layout
-
-\begin_layout Enumerate
-There are finite number of 
-\emph on
-new
-\emph default
- expressions in a program.
- Therefore number of elements in 
-\begin_inset Formula $Obj$
-\end_inset
-
- is finite.
-\end_layout
-
-\begin_layout Enumerate
-In case of 
-\emph on
-FunPointers
-\end_layout
-
-\begin_deeper
-\begin_layout Enumerate
-
-\family roman
-\series medium
-\shape up
-\size normal
-\emph off
-\bar no
-\strikeout off
-\uuline off
-\uwave off
-\noun off
-\color none
-There are a finite number of function declarations.
- Each function can only have a set number of parameters.
- There are a finite number of expressions in a program.
- Therefore, number of possible values of
-\begin_inset Formula $FC\times n\times c\times eid$
-\end_inset
-
-is finite.
-\end_layout
-
-\begin_layout Enumerate
-Each functions have a set number of accepted parameters.
- Therefore, the number of elements in the list is finite.
-\end_layout
-
-\begin_layout Enumerate
-There are only a finite number of function declarations in a program.
-\end_layout
-
-\begin_layout Enumerate
-Hence, 
-\emph on
-FunPointer
-\emph default
- has a finite domain
-\end_layout
-
-\end_deeper
-\begin_layout Enumerate
-Then, 
-\begin_inset Formula $AVal$
-\end_inset
-
-, a union of finite domains, also has a finite domain.
-\end_layout
-
-\end_deeper
-\begin_layout Enumerate
-\begin_inset Formula $AVar$
-\end_inset
-
- is a composite of two components: 
-\emph on
-id
-\emph default
- and 
-\begin_inset Formula $\wp\left(AVal\right)$
-\end_inset
-
-
-\end_layout
-
-\begin_deeper
-\begin_layout Enumerate
-There are only a finite number of identifiers appearing in a program
-\end_layout
-
-\begin_layout Enumerate
-\begin_inset Formula $AVal$
-\end_inset
-
- has a finite domain.
- Therefore, a powerset of it also has a finite domain.
-\end_layout
-
-\end_deeper
-\begin_layout Enumerate
-
-\family roman
-\series medium
-\shape up
-\size normal
-\emph off
-\bar no
-\strikeout off
-\uuline off
-\uwave off
-\noun off
-\color none
-\begin_inset Formula $AObjMem$
-\end_inset
-
- has two components, finiteness of which are argued in 1 (b) and 2 respectively.
-\end_layout
-
-\begin_layout Enumerate
-\begin_inset Formula $\wp\left(Obj\right)$
-\end_inset
-
- is a finite as it is a powerset of a finite domain (1 (b))
-\end_layout
-
-\begin_layout Enumerate
-\begin_inset Formula $CurriedVal$
-\end_inset
-
- has two components: 
-\family roman
-\series medium
-\shape up
-\size normal
-\emph off
-\bar no
-\strikeout off
-\uuline off
-\uwave off
-\noun off
-\color none
-
-\begin_inset Formula $n\times c\times eid$
-\end_inset
-
- and 
-\begin_inset Formula $\left[\wp\left(P\cup Obj\cup FC\times n\times c\times eid\right)\right]$
-\end_inset
-
-.
- Finiteness of both are argued in 1 (c).
-\end_layout
-
-\end_deeper
-\begin_layout Definition
-\begin_inset Argument
-status open
-
-\begin_layout Plain Layout
-Partial ordering
-\end_layout
-
-\end_inset
-
-We define a partial ordering 
-\begin_inset Formula $\left\langle \sigma_{1},\alpha_{1},\tau_{1},\nu_{1}\right\rangle \sqsubseteq\left\langle \sigma_{2},\alpha_{2},\tau_{2},\nu_{2}\right\rangle $
-\end_inset
-
- between abstract environments as thus:
-\end_layout
-
-\begin_deeper
 \begin_layout Standard
 \begin_inset Formula 
-\begin{gather*}
-\sigma_{1}\sqsubseteq\sigma_{2}\ \mbox{if}\ \forall id\in\mbox{domain}\left(\sigma_{1}\right),\sigma_{1}\left(id\right)\subseteq\sigma_{2}\left(id\right)\\
-\alpha_{1}\sqsubseteq\alpha_{2}\ \mbox{if}\ \forall n\in\mbox{domain}\left(\alpha_{1}\right),\alpha_{1}\left(n\right)\sqsubseteq\alpha_{2}\left(n\right)\\
-\tau_{1}\sqsubseteq\tau_{2}\ \mbox{if}\ \tau_{1}\subseteq\tau_{2}\\
-\nu_{1}\sqsubseteq\nu_{2}\ \mbox{if}\\
-\ \forall\left\langle n,c,e\right\rangle \in\mbox{domain}\left(\nu_{1}\right),\forall k\in\left\{ 1,2,3,\ldots,c\right\} ,\\
-\ \ \nu_{1}\left(\left\langle n,c,e\right\rangle \right)_{k}\subseteq\nu_{2}\left(\left\langle n,c,e\right\rangle \right)_{k}\\
-\left\langle \sigma_{1},\alpha_{1},\tau_{1},\nu_{1}\right\rangle \sqsubseteq\left\langle \sigma_{2},\alpha_{2},\tau_{2},\nu_{2}\right\rangle \equiv\\
-\ \ \sigma_{1}\sqsubseteq\sigma_{2}\wedge\alpha_{1}\sqsubseteq\alpha_{2}\wedge\tau_{1}\sqsubseteq\tau_{2}\wedge\nu_{1}\sqsubseteq\nu_{2}
-\end{gather*}
+\begin{eqnarray*}
+AState & = & AVar\times Curried\\
+FunPointer & = & FP_{fid}\times\left[\wp\left(\begin{gathered}\left(AVal-FunPointer\right)\\
+\cup FC\times n\times c\times eid
+\end{gathered}
+\right)\right]\\
+Curried & = & n\times c\times eid\rightarrow\\
+ &  & \left[\wp\left(\begin{gathered}\left(AVal-FunPointer\right)\\
+\cup FC\times n\times c\times eid
+\end{gathered}
+\right)\right]\\
+ &  & \mbox{where \emph{n} is a function identifier}\\
+ &  & \ \ c\mbox{ is a number of parameters curried}
+\end{eqnarray*}
 
 \end_inset
 
 
 \end_layout
 
-\end_deeper
-\begin_layout Standard
-We formulate a least upper bound between two abstract environments.
-\end_layout
-
-\begin_layout Theorem
-Given two abstract environments 
-\begin_inset Formula $\eta_{1}=\left\langle \sigma_{1},\alpha_{1},\tau_{1},\nu_{1}\right\rangle \ \mbox{and}\ \eta_{2}=\left\langle \sigma_{2},\alpha_{2},\tau_{2},\nu_{2}\right\rangle $
-\end_inset
-
-, we can find a least upper bound by finding the value of 
-\begin_inset Formula $\eta_{1}\sqcup\eta_{2}$
-\end_inset
-
-
+\begin_layout Paragraph
+Functions
 \end_layout
 
 \begin_layout Standard
-
-\family roman
-\series medium
-\shape up
-\size normal
-\emph off
-\bar no
-\strikeout off
-\uuline off
-\uwave off
-\noun off
-\color none
-\begin_inset Formula 
-\begin{gather*}
-\sigma_{1}\sqcup\sigma_{2}=id\mapsto\sigma_{1}\left(id\right)\cup\sigma_{2}\left(id\right)\\
-\alpha_{1}\sqcup\alpha_{2}=n\mapsto\sigma_{1}\left(n\right)\sqcup\sigma_{2}\left(n\right)\\
-\tau_{1}\sqcup\tau_{2}=\tau_{1}\cup\tau_{2}\\
-\nu_{1}\sqcup\nu_{2}=c\mapsto\nu_{1}\left(c\right)\cup\nu_{2}\left(c\right)\\
-\left\langle \sigma_{1},\alpha_{1},\tau_{1},\nu_{1}\right\rangle \sqcup\left\langle \sigma_{2},\alpha_{2},\tau_{2},\nu_{2}\right\rangle \equiv\\
-\ \ \left\langle \sigma_{1}\sqcup\sigma_{2},\alpha_{1}\sqcup\alpha_{2},\tau_{1}\sqcup\tau_{2},\nu_{1}\sqcup\nu_{2}\right\rangle 
-\end{gather*}
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Proof
-Satisfying each lines of conditions gives an environment that can satisfy
- conditions set for the partial ordering of both environments.
-\end_layout
-
-\begin_layout Proof
-Observe that if there is an upper bound 
-\begin_inset Formula $\eta'=\left\langle \sigma',\alpha',\tau',\nu'\right\rangle $
-\end_inset
-
- of two environments 
-\begin_inset Formula $\eta_{1}$
-\end_inset
-
- and 
-\begin_inset Formula $\eta_{2}$
-\end_inset
-
-, if 
-\begin_inset Formula $\eta'\sqsubseteq\eta_{1}\sqcup\eta_{2}$
-\end_inset
-
- then necessarily 
-\begin_inset Formula $\eta'=\eta_{1}\sqcup\eta_{2}$
-\end_inset
-
-, since any missing elements in keys and values of 
-\begin_inset Formula $\sigma',\alpha',\tau',\nu'$
-\end_inset
-
- will violate the partial ordering condition.
-\end_layout
-
-\begin_layout Standard
-We can then deduce that:
-\end_layout
-
-\begin_layout Lemma
-\begin_inset Formula $\left(AState,\sqsubseteq\right)$
-\end_inset
-
- is a chain complete partial ordering.
-\end_layout
-
-\begin_layout Definition
-\begin_inset Argument
-status open
-
-\begin_layout Plain Layout
-Abstract functions
-\end_layout
-
-\end_inset
-
- We define abstract functions in figure 
+Definitions are given in figure 
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "absfun"
+reference "absfun-curry"
 
 \end_inset
 
-.
+
 \end_layout
 
-\begin_layout Definition
+\begin_layout Standard
 \begin_inset Float figure
 wide true
 sideways false
 status open
-
-\begin_layout Plain Layout
-
-\end_layout
 
 \begin_layout Plain Layout
 \begin_inset Box Boxed
@@ -2695,39 +1497,461 @@ status open
 \begin_layout Plain Layout
 \begin_inset Formula 
 \begin{eqnarray*}
-\mathtt{isterm}\left(v,s\right) & = & \lambda f,\eta,\gamma.\begin{cases}
-s\ f\ \eta\ \gamma & v=\left\{ Void\right\} \\
-\left(s\ f\ \eta\ \gamma\right)\sqcup\left(I_{A}\ v\right) & Void\in v,N\left(v\right)>1\\
-I_{A}\ v & \mbox{otherwise}\left(\mbox{i.e.}\ Void\notin v\right)
-\end{cases}\\
-\mathtt{cond}\left(v,s_{1},s_{2}\right) & = & \lambda f,\eta,\gamma.\left(s_{1}\ f\ \eta\ \gamma\right)\sqcup\left(s_{2}\ f\ \eta\ \gamma\right)\\
-\mathtt{asg}\left(id,v\right) & = & \lambda\left\langle \sigma,\alpha,\tau,\nu\right\rangle .\left\langle \sigma\left[id=v\right],\alpha,\tau,\nu\right\rangle \\
-\mathtt{val}\left(id,v\right) & = & \lambda\left\langle \sigma,\alpha,\tau,\nu\right\rangle .\sigma\left(id\right)\\
-\mathtt{get}\left(n,id\right) & = & \lambda\left\langle \sigma,\alpha,\tau,\nu\right\rangle .\left\{ \alpha\left(x\right)\mid OBJ_{x}\in n\right\} \\
-\mathtt{set}\left(n,id,v\right) & = & \lambda\left\langle \sigma,\alpha,\tau,\nu\right\rangle .\left\langle \sigma,\left\{ x\mid{OBJ_{x}\in\alpha,x=\begin{cases}
-\alpha\left(x\right)\left[id\mapsto v\right] & OBJ_{x}\in n\\
-\alpha\left(x\right) & \mbox{otherwise}
-\end{cases}}\right\} ,\tau,\nu\right\rangle \\
-\mathtt{conval}\left(con\right) & = & \begin{cases}
-Number & con\in\mathbb{N}\\
-Boolean & con\in\left\{ true,false\right\} 
-\end{cases}\\
-\mathtt{obj}\left(j\right) & = & \lambda\left\langle \sigma,\alpha,\tau,\nu\right\rangle .\alpha\left(j\right)\\
-\mathtt{getthis} & = & \lambda\left\langle \sigma,\alpha,\tau,\nu\right\rangle .\tau\\
-\mathtt{getinput} & = & \lambda\eta.\left\langle \eta,\left\{ Number\right\} \right\rangle \\
-\mathtt{dooutput}\left(v\right) & = & \lambda\eta.\eta\\
-\mathtt{newobj} & = & \lambda\left\langle \sigma,\alpha,\tau,\nu\right\rangle .\left\langle \left\langle \sigma,\alpha\left[n\mapsto\phi\right],\tau,\nu\right\rangle ,OBJ_{n},\nu\right\rangle \ \mbox{where}\ n=N\left(\alpha\right)\\
-\mathtt{call}\left(n,p,t,e\right) & = & \lambda f,\left\langle \sigma,\alpha,\tau,\nu\right\rangle ,\gamma.\underset{\left\langle FP_{x},C\right\rangle \in n}{\bigsqcup}\mathtt{scall}\left(\left\langle FP_{x},C\right\rangle ,p,t,f,\left\langle \sigma,\alpha,\tau,\nu\right\rangle ,\gamma,e\right)\\
-{\scriptstyle \mathtt{scall}\left(\left\langle FP_{n},C\right\rangle ,p,t,f,\left\langle \sigma,\alpha,\tau,\nu\right\rangle ,\gamma,e\right)} & = & {\scriptstyle \begin{cases}
-\begin{gathered}\left\langle \left\langle \sigma,\alpha',\tau,\nu'\right\rangle ,r',\gamma',\nu'\right\rangle \ \mbox{where}\ \left\langle \left\langle \sigma',\alpha',\tau'\right\rangle ,r,\gamma',\nu'\right\rangle =\\
-f\ n\ \left\langle \left\{ param_{n,k}\mapsto\left[C|p\right]_{k}\right\} ,\alpha,\tau,\nu\right\rangle \ \gamma
+\mathtt{call}\left(n,p,e\right) & = & \lambda f,\eta,\gamma.\underset{\left\langle FP_{x},C\right\rangle \in n}{\bigsqcup}\mathtt{scall}\left(\left\langle FP_{x},C\right\rangle ,p,f,\eta,\gamma,e\right)\\
+\mathtt{scall}\left(\left\langle FP_{n},C\right\rangle ,p,f,\eta,\gamma,e\right) & = & \begin{cases}
+\begin{gathered}\left\langle \bar{\kappa}\ \eta\ \eta',r',\gamma',\nu'\right\rangle \ \mbox{where}\\
+\left\langle \eta',r,\gamma',\nu'\right\rangle =f\ n\ \left(\kappa\ \eta\ p\right)\ \gamma
 \end{gathered}
  & \begin{gathered}N\left(\left[C|p\right]\right)\\
 =arity_{n}
 \end{gathered}
 \\
-\left\langle \left\langle \sigma,\alpha,\tau,\nu\left[\left\langle e,n,N\left(\left[C|p\right]\right)\right\rangle \mapsto\left[C|p\right]\right]\right\rangle ,\gamma,\left\langle FP_{n},\left[C|p\right],e\right\rangle \right\rangle  & \mbox{otherwise}
-\end{cases}}\\
+{\scriptstyle \left\langle \Upsilon\ \lambda\nu:Curried.\nu\left[\left\langle e,n,N\left(\left[C|p\right]\right)\right\rangle \mapsto\left[C|p\right]\right],\gamma,\left\langle FP_{n},\left[C|p\right],e\right\rangle \right\rangle } & \mbox{otherwise}
+\end{cases}\\
+\mathtt{fundecl}\left(id,n\right) & = & \Upsilon\ \lambda\sigma:AVar.\sigma\left[id\mapsto\left\langle FP_{n},\phi,n\right\rangle \right]
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+Abstract functions for curried functions
+\end_layout
+
+\end_inset
+
+
+\begin_inset CommandInset label
+LatexCommand label
+name "absfun-curry"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Object Oriented
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{grammar}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+<Lexpr> ::= <Expr> `.' ID
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+<Expr> ::= `global' | `this'
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+alt  `new' <Lexpr> `(' [<Expr> [,<Expr>]*]? `)'
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{grammar}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Definitions for semantic functions are given in figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "semmon-oo"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide true
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Box Boxed
+position "t"
+hor_pos "c"
+has_inner_box 1
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "100text%"
+special "none"
+height "1in"
+height_special "totalheight"
+status open
+
+\begin_layout Plain Layout
+\begin_inset Formula 
+\begin{align*}
+ & \mathcal{S}\dd{e_{0}.id=e_{1}} & = &  &  & T_{S}\ \left(\begin{aligned}\mathcal{E}\ \dd{e_{0}}\ \mathtt{eid}\left(e_{0}\right) & \bind\lambda v.\\
+\mathcal{E}\ \dd{e_{1}}\ \mathtt{eid}\left(e_{1}\right) & \bind\lambda r.\\
+I_{0}\ \mathtt{set}\left(r,id,v\right)
+\end{aligned}
+\right)\\
+ & \mathcal{E}\dd{\mathtt{global}}\ \mathtt{eid} & = &  &  & I_{V}\ \mathtt{obj}\left(0\right)\\
+ & \mathcal{E}\dd{\mathtt{this}}\ \mathtt{eid} & = &  &  & I_{V}\ \mathtt{getthis}\\
+ & \mathcal{E}\dd{L\left(E*\right)}\ \mathtt{eid} & = &  &  & \left(\begin{aligned}\mathcal{L}\ \dd{L} & \bind\lambda n.\\
+\mathtt{evalParams}\ n\ E*\ \phi & \bind\lambda p.\\
+\mathtt{call}\left(n,p,\mathtt{obj}\left(0,\rho\right),\mathtt{eid}\right)
+\end{aligned}
+\right)\\
+ & \mathcal{E}\dd{\mathtt{new}\ L\left(E*\right)}\ \mathtt{eid} & = &  &  & \left(\begin{aligned}\mathcal{L}\ \dd{L} & \bind\lambda n.\\
+\mathtt{evalParams}\ n\ E*\ \phi & \bind\lambda p.\\
+I_{T}\ \mathtt{newobj} & \bind\lambda m.\\
+\mathtt{call}\left(n,p,m,\mathtt{eid}\right) & \bind\lambda\_.\\
+I_{A}\ m
+\end{aligned}
+\right)\\
+ & \mathcal{E}\dd{e_{0}.L\left(E*\right)}\ \mathtt{eid} & = &  &  & \left(\begin{aligned}\mathcal{E}\ \dd{e_{0}}\ \mathtt{eid}\left(e_{0}\right) & \bind\lambda t.\\
+\mathcal{L}\ \dd{L} & \bind\lambda n.\\
+\mathtt{evalParams}\ n\ E*\ \phi & \bind\lambda p.\\
+\mathtt{call}\left(n,p,t,\mathtt{eid}\right)
+\end{aligned}
+\right)\\
+ & \mathcal{L}\dd{e_{0}.id} & = &  &  & \left(\begin{aligned}\mathcal{E}\ \dd{e_{0}}\ \mathtt{eid}\left(e_{0}\right) & \bind\lambda v.\\
+I_{V}\ \mathtt{get}\left(v,id\right)
+\end{aligned}
+\right)
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+Object-oriented extension of the model language
+\end_layout
+
+\end_inset
+
+
+\begin_inset CommandInset label
+LatexCommand label
+name "semmon-oo"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+Concrete interpretation
+\end_layout
+
+\begin_layout Paragraph
+Domain
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+Value & = & \mathbb{Z}\cup\left\{ T,F\right\} \cup Object\cup\\
+ &  & FunctionPointer\\
+Object & = & \left\{ OBJ_{n}\mid n\in\left\{ 0\right\} \cup\mathbb{N}\right\} \\
+CState & = & Var\times ObjMem\times Object\\
+ObjMem & = & n\rightarrow V
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Paragraph
+Functions
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\kappa & = & \lambda\left\langle \_,OM:ObjMem,\_\right\rangle ,\\
+ &  & \left\langle P:\left[con\right],T':Object\right\rangle ,n:Fid.\\
+ &  & \ \left\langle \left[param_{n,k}\mapsto P_{k}\right],OM,T'\right\rangle \\
+\bar{\kappa} & = & \lambda\left\langle V:Var,\_,T:Object\right\rangle ,\\
+ &  & \left\langle \_,OM':ObjMem,\_\right\rangle .\\
+ &  & \ \left\langle V,OM',T\right\rangle 
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Functions are given in figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "concfunc-oo"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide true
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Box Boxed
+position "t"
+hor_pos "c"
+has_inner_box 1
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "100text%"
+special "none"
+height "1in"
+height_special "totalheight"
+status open
+
+\begin_layout Plain Layout
+\begin_inset Formula 
+\begin{eqnarray*}
+\mathtt{get}\left(OBJ_{n},id\right) & = & \Theta\ \lambda OM:ObjMem.OM\left(n\right)\\
+\mathtt{set}\left(OBJ_{n},id,v\right) & = & \Upsilon\ \lambda OM:ObjMem.OM\left[OBJ_{n}\left[id\mapsto v\right]\right]\\
+\mathtt{obj}\left(n\right) & = & \Theta\ \lambda OM:ObjMem.OM\left(n\right)\\
+\mathtt{getthis} & = & \Theta\ \lambda T:Object.T\\
+\mathtt{call}\left(\left\langle FP_{n},C\right\rangle ,p,t,\_\right) & = & \lambda f,\rho,\gamma.\begin{cases}
+\begin{gathered}\left\langle \bar{\kappa}\ \rho\ \rho',\gamma',r\right\rangle \mbox{where}\left\langle \rho',\gamma',r\right\rangle =\\
+f\ n\ \left(\kappa\ \rho\ \left\langle p,t\right\rangle \ n\right)\ \gamma
+\end{gathered}
+ & \begin{gathered}N\left(\left[C|p\right]\right)\\
+=arity_{n}
+\end{gathered}
+\\
+\left\langle \rho,\gamma,\left\langle FP_{n},\left[C|p\right]\right\rangle \right\rangle  & \mbox{otherwise}
+\end{cases}\\
+\mathtt{newobj} & = & \Psi\ \lambda OM:ObjMem.\left\langle OM\left[n\mapsto\phi\right],OBJ_{n}\right\rangle \ \mbox{where}\ n=N\left(OM\right)
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+Concrete functions for object-oriented function
+\end_layout
+
+\end_inset
+
+
+\begin_inset CommandInset label
+LatexCommand label
+name "concfunc-oo"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+Abstract interpretation
+\end_layout
+
+\begin_layout Paragraph
+Domain
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+AState & = & AVar\times AObjMem\times AObj\times Curried\\
+AObj & = & \left\{ OBJ_{n}\mid n\in\left\{ 0\right\} \cup eid\right\} \\
+AVal & = & P\cup AObj\cup FunPointer\\
+AObjMem & = & n\rightarrow AVar
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+In 
+\begin_inset Formula $OBJ_{n}$
+\end_inset
+
+:
+\end_layout
+
+\begin_layout Standard
+We number each of the 
+\begin_inset Quotes eld
+\end_inset
+
+new
+\begin_inset Quotes erd
+\end_inset
+
+ expressions as we parse the program.
+ The number n corresponds to the 
+\begin_inset Quotes eld
+\end_inset
+
+new
+\begin_inset Quotes erd
+\end_inset
+
+ expression number.
+\end_layout
+
+\begin_layout Paragraph
+Functions
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\kappa & = & \lambda\left\langle \_,\alpha:AObjMem,\_,\nu:Curried\right\rangle ,\\
+ &  & \left\langle P:\left[con\right],\tau':Object\right\rangle ,n:Fid.\\
+ &  & \ \left\langle \left[param_{n,k}\mapsto P_{k}\right],\alpha,\tau',\nu\right\rangle \\
+\bar{\kappa} & = & \lambda\left\langle \sigma:AVar,\_,\tau:AObj,\_\right\rangle ,\\
+ &  & \left\langle \_,\alpha':AObjMem,\_,\nu':Curried\right\rangle .\\
+ &  & \ \left\langle \sigma,\alpha',\tau,\nu'\right\rangle 
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Defined in figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "absfun-oo"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide true
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Box Boxed
+position "t"
+hor_pos "c"
+has_inner_box 1
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "100text%"
+special "none"
+height "1in"
+height_special "totalheight"
+status open
+
+\begin_layout Plain Layout
+\begin_inset Formula 
+\begin{eqnarray*}
+\mathtt{get}\left(n,id\right) & = & \Theta\ \lambda\alpha:AObjMem.\left\{ \alpha\left(x\right)\mid OBJ_{x}\in n\right\} \\
+\mathtt{set}\left(n,id,v\right) & = & \Upsilon\ \lambda\alpha:AObjMem.\left\{ x\mid{OBJ_{x}\in\alpha,x=\begin{cases}
+\alpha\left(x\right)\left[id\mapsto v\right] & OBJ_{x}\in n\\
+\alpha\left(x\right) & \mbox{otherwise}
+\end{cases}}\right\} \\
+\mathtt{obj}\left(j\right) & = & \Theta\ \lambda\alpha:AObjMem.\alpha\left(j\right)\\
+\mathtt{getthis} & = & \Theta\ \lambda\tau:AObj.\tau\\
+\mathtt{newobj} & = & \Psi\ \lambda\alpha:AObjMem.\left\langle \alpha\left[n\mapsto\phi\right],OBJ_{n}\right\rangle \ \mbox{where}\ n=N\left(\alpha\right)\\
+\mathtt{call}\left(n,p,t,e\right) & = & \lambda f,\eta,\gamma.\underset{\left\langle FP_{x},C\right\rangle \in n}{\bigsqcup}\mathtt{scall}\left(\left\langle FP_{x},C\right\rangle ,p,t,f,\eta,\gamma,e\right)\\
+\mathtt{scall}\left(\left\langle FP_{n},C\right\rangle ,p,t,f,\eta,\gamma,e\right) & = & \begin{cases}
+\begin{gathered}\left\langle \bar{\kappa}\ \eta\ \eta',r',\gamma',\nu'\right\rangle \ \mbox{where}\\
+\left\langle \eta',r,\gamma',\nu'\right\rangle =f\ n\ \left(\kappa\ \eta\ \left\langle p,t\right\rangle \ n\right)\ \gamma
+\end{gathered}
+ & \begin{gathered}N\left(\left[C|p\right]\right)\\
+=arity_{n}
+\end{gathered}
+\\
+{\scriptstyle \left\langle \Upsilon\ \lambda\nu:Curried.\nu\left[\left\langle e,n,N\left(\left[C|p\right]\right)\right\rangle \mapsto\left[C|p\right]\right],\gamma,\left\langle FP_{n},\left[C|p\right],e\right\rangle \right\rangle } & \mbox{otherwise}
+\end{cases}\\
 \mathtt{bin}\left(binop,c_{0},c_{1}\right) & = & \begin{cases}
 \left\{ Number\right\}  & binop\in\left\{ '+','-','*','/'\right\} \\
 \left\{ Boolean\right\}  & \mbox{otherwise}
@@ -2757,7 +1981,7 @@ Abstract functions
 
 \begin_inset CommandInset label
 LatexCommand label
-name "absfun"
+name "absfun-oo"
 
 \end_inset
 
@@ -2767,641 +1991,6 @@ name "absfun"
 \end_inset
 
 
-\end_layout
-
-\begin_layout Standard
-In order to argue for a completeness of an analysis, we first argue monotonicity
- of the interpretation.
-\end_layout
-
-\begin_layout Theorem
-\begin_inset CommandInset label
-LatexCommand label
-name "thm:mono"
-
-\end_inset
-
-Abstract functions produce monotonic lambda functions
-\end_layout
-
-\begin_deeper
-\begin_layout Proof
-Following list of arguments cover all the functions:
-\end_layout
-
-\begin_deeper
-\begin_layout Enumerate
-Observe that for the functions calculating values from given parameters
- and an environment, an increase in the environment implies that the values
- we obtain are also increased.
- This is from the definition of the partial ordering.
-\end_layout
-
-\begin_layout Enumerate
-For the functions that are updating environment, observe that an increase
- in the environment implies an increase in the updated environment.
-\end_layout
-
-\begin_layout Enumerate
-In case of 
-\begin_inset Formula $\mathtt{call}$
-\end_inset
-
-, its the least upper bound of results from 
-\begin_inset Formula $\mathtt{scall}$
-\end_inset
-
-, which falls into categories 1 and 2.
- An increase in the results implies increase in the least upper bound of
- them.
-\end_layout
-
-\end_deeper
-\end_deeper
-\begin_layout Standard
-From theorems 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "thm:bindmono"
-
-\end_inset
-
- and 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "thm:mono"
-
-\end_inset
-
- give the following important lemma:
-\end_layout
-
-\begin_layout Lemma
-Abstract 
-\begin_inset Formula $\mathcal{S},\mathcal{E}\ \mbox{and}\ \mathcal{L}$
-\end_inset
-
- are monotonic functions.
-\end_layout
-
-\begin_layout Standard
-Then, it stands to reason that fixed points exist for our analytic framework.
-\end_layout
-
-\begin_layout Lemma
-Fixed points exist for an abstract 
-\begin_inset Formula $\mathcal{F}$
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-Hence, it stands to reason that for any given program, we obtain an analysis
- of it.
-\end_layout
-
-\begin_layout Standard
-Now we turn to examine the relationship between concrete and abstract domain.
-\end_layout
-
-\begin_layout Definition
-\begin_inset Argument
-status open
-
-\begin_layout Plain Layout
-Abstraction
-\end_layout
-
-\end_inset
-
- We define an abstraction relation between concrete and abstract environments,
- 
-\begin_inset Formula $\left\langle \sigma,\alpha,\tau,\nu\right\rangle \succ\left\langle V,OM,T\right\rangle $
-\end_inset
-
- as following:
-\end_layout
-
-\begin_layout Definition
-\begin_inset Formula 
-\begin{gather*}
-\left\langle \sigma,\alpha,\tau,\nu\right\rangle \succ\left\langle V,OM,T\right\rangle \ \mbox{iff}\ \\
-\ \ \forall id\in V\exists a\in\sigma\left(id\right),a\succ V\left(id\right)\mbox{ and }\tau\succ T\\
-\forall z\in\mathbb{Z},\left\{ Number\right\} \succ z\\
-\forall b\in\left\{ True,False\right\} ,\left\{ Boolean\right\} \succ b\\
-OBJ_{m}\succ OBJ_{n}\ \mbox{if}\ \alpha,OM\vdash OBJ_{m}\succ OBJ_{n}\\
-\left\langle FP_{m},\left[c'\right],e\right\rangle \succ\left\langle FP_{n},\left[c\right]\right\rangle \ \mbox{if}\ m=n\ \\
-\ \ N\left(c\right)=N\left(c'\right)\ \mbox{and}\ \forall c_{k}\in c,\eta\vdash c'_{k}\succ c_{k}
-\end{gather*}
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Definition
-In turn, a contextual definition of abstract object is given as following:
-\end_layout
-
-\begin_layout Definition
-\begin_inset Formula 
-\begin{gather*}
-\alpha,OM\vdash\alpha\succ OM\mbox{ if }\exists b\in0\cup\mathbb{N}\rightarrow0\cup eid,\\
-\forall n\in OM,m=b\left(n\right),b\vdash OBJ_{n}\succ OBJ_{m}\\
-b\vdash OBJ_{m}\succ OBJ_{n}\mbox{ if }\forall id\in OM\left(n\right),\\
-OM\left(n\right)\left(id\right)\in Z\cup\left\{ True,False\right\} \\
-\ \wedge\alpha\left(m\right)\left(id\right)\succ OM\left(n\right)\left(id\right)\\
-\vee OM\left(n\right)\left(id\right)=OBJ_{x}\wedge\alpha\left(m\right)=OBJ_{y}\\
-\ \wedge b\left(x\right)=y
-\end{gather*}
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-We now define abstraction and concretisation relations between an abstract
- domain and a powerset of concrete domain.
-\end_layout
-
-\begin_layout Definition
-\begin_inset Argument
-status open
-
-\begin_layout Plain Layout
-Abstraction and concretisation
-\end_layout
-
-\end_inset
-
- We define abstraction function 
-\begin_inset Formula $P$
-\end_inset
-
- and concretisation function 
-\begin_inset Formula $Q$
-\end_inset
-
- as following:
-\end_layout
-
-\begin_layout Definition
-\begin_inset Formula 
-\begin{gather*}
-P:\wp\left(CState\right)\rightarrow AState\\
-P\left(r\right)=\bigsqcup\left\{ \eta|\rho\in r,\eta\succ\rho\right\} \\
-Q:AState\rightarrow\wp\left(CState\right)\\
-Q\left(\eta\right)=\left\{ r|r\in\rho,\eta\succ\rho\right\} 
-\end{gather*}
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Definition
-Note that, as one would expect, we find a Galois connection between the
- abstract domain and the collection of concrete states.
-\end_layout
-
-\begin_layout Corollary
-\begin_inset CommandInset label
-LatexCommand label
-name "thm:galois"
-
-\end_inset
-
-
-\begin_inset Argument
-status open
-
-\begin_layout Plain Layout
-Galois connection
-\end_layout
-
-\end_inset
-
-
-\begin_inset Formula $\left(P,Q\right)$
-\end_inset
-
- forms a Galois connection between 
-\begin_inset Formula $\left(AState,\sqsubseteq\right)$
-\end_inset
-
- and
-\begin_inset Formula $\left(\wp\left(CState\right),\subseteq\right)$
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-Now we turn to argue isomorphism.
- For the simplicity of argument, without losing generality, we lift abstract
- functions to produce a lambda function of the type 
-\begin_inset Formula $\left(\mathcal{F}\times State\times StateCol\right)\rightarrow\left(State\times StateCol\times a\right)$
-\end_inset
-
-.
-\end_layout
-
-\begin_layout Theorem
-\begin_inset Argument
-status open
-
-\begin_layout Plain Layout
-Isomorphism
-\end_layout
-
-\end_inset
-
-For all abstract and concrete functions, the following holds true: when
- 
-\begin_inset Formula $F\left(n_{c},id_{c},v_{c},p_{c},t_{c},e_{c},j_{c}\right)=f,f\left(\psi_{c},\rho,\gamma_{c}\right)=\left\langle \rho',\gamma_{c}',V_{C}\right\rangle ,G\left(n_{a},id_{a},v_{a},p_{a},t_{a},e_{a},j_{a}\right)=g,g\left(\psi_{a},\eta,\gamma_{a}\right)=\left\langle \eta',\gamma_{a}',V_{A}\right\rangle $
-\end_inset
-
- 
-\end_layout
-
-\begin_layout Theorem
-\begin_inset Formula 
-\begin{multline*}
-\left(\begin{array}{ccc}
-\eta\vdash n_{a} & \succ & \rho\vdash n_{c}\\
-id_{a} & = & id_{c}\\
-\eta\vdash v_{a} & \succ & \rho\vdash v_{c}\\
-\eta\vdash p_{a,k} & \succ & \rho\vdash p_{c,k}\mbox{ for all\ }k\\
-\eta\vdash t_{a} & \succ & \rho\vdash t_{c}\\
-e_{a} & = & \rho\vdash e_{c}\\
-\eta\vdash OBJ_{j_{a}} & \succ & \rho\vdash OBJ_{j_{c}}
-\end{array}\right)\implies\\
-\left(\left\langle \eta,\gamma_{a}\right\rangle \succ\left\langle \rho,\gamma_{c}\right\rangle \implies\left\langle \eta',\gamma_{a}',V_{A}\right\rangle \succ\left\langle \rho',\gamma_{c}',V_{C}\right\rangle \right)
-\end{multline*}
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Theorem
-(ignoring conditions set for parameters that the function is not taking)
-\end_layout
-
-\begin_layout Proof
-As with 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "thm:mono"
-
-\end_inset
-
-, we categorise our discussion as following:
-\end_layout
-
-\begin_deeper
-\begin_layout Enumerate
-Observe that for the functions calculating values from given parameters
- and an environment, isomorphicity between parameters and given environments
- implies isomorphicity of the results.
-\end_layout
-
-\begin_layout Enumerate
-For the functions that are updating environment, observe that an isomorphicity
- between given environments and between parameters imply an isomorphicity
- in the updated environments.
-\end_layout
-
-\begin_layout Enumerate
-In case of 
-\begin_inset Formula $\mathtt{call}$
-\end_inset
-
-, its the least upper bound of results from 
-\begin_inset Formula $\mathtt{scall}$
-\end_inset
-
-, which falls into categories 1 and 2.
- Given Theorem 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "thm:galois"
-
-\end_inset
-
-, when 
-\begin_inset Formula $\mathtt{scall}$
-\end_inset
-
- functions are isomorphic, then so are 
-\begin_inset Formula $\mathtt{call}$
-\end_inset
-
- functions.
-\end_layout
-
-\end_deeper
-\begin_layout Standard
-These theorems together with the properties of bind operator give rise to
- an important lemma in proving the correctness of the analysis.
- That is:
-\end_layout
-
-\begin_layout Lemma
-Abstract 
-\begin_inset Formula $\mathcal{F},\mathcal{S},\mathcal{E},\mathcal{L}$
-\end_inset
-
- and concrete 
-\begin_inset Formula $\mathcal{F},\mathcal{S},\mathcal{E},\mathcal{L}$
-\end_inset
-
- are isomorphic.
-\end_layout
-
-\begin_layout Standard
-Now we are ready to argue correctness.
-\end_layout
-
-\begin_layout Theorem
-\begin_inset Argument
-status open
-
-\begin_layout Plain Layout
-Correctness of the analysis
-\end_layout
-
-\end_inset
-
- Given an SDTL program, 
-\end_layout
-
-\begin_layout Theorem
-If 
-\begin_inset Formula $\mathcal{F}\ 0\ \left\langle \phi,\left\{ 0\mapsto\phi\right\} ,OBJ_{0}\right\rangle \ \phi=\rho'\ S_{C}$
-\end_inset
-
- and 
-\begin_inset Formula $\mathcal{F}\ 0\ \left\langle \phi,\left\{ 0\mapsto\phi\right\} ,\left\{ OBJ_{0}\right\} ,\phi\right\rangle \ \phi=\eta'\ S_{A}$
-\end_inset
-
- then 
-\begin_inset Formula $S_{C}$
-\end_inset
-
- and 
-\begin_inset Formula $S_{A}$
-\end_inset
-
- are related in the following manner:
-\end_layout
-
-\begin_layout Theorem
-\begin_inset Formula $\forall sid\in P,\exists\rho_{0},\rho_{1},\rho_{0}\times\rho_{1}\in S_{A}\left(sid\right)\rightarrow\exists\eta_{0},\eta_{1},\eta_{0}\times\eta_{1}\in S_{A}\left(sid\right)\wedge\eta_{0}\succ\rho_{0}\wedge\eta_{1}\succ\rho_{1}$
-\end_inset
-
- where 
-\begin_inset Formula $P$
-\end_inset
-
- is set of all statement IDs in the program.
-\end_layout
-
-\begin_layout Proof
-Recall the isomorphicity between abstract and concrete functions.
- If there is a state collected in the concrete result, then it is implied
- that an abstraction of such state is collected in an abstract result.
-\end_layout
-
-\begin_layout Subparagraph
-Dual of the analysis
-\end_layout
-
-\begin_layout Standard
-Partial ordering theory provides that what holds true for the particular
- partial ordering will also hold true for a dual of it.
- We show the dual of this analysis by the following example.
-\end_layout
-
-\begin_layout Example
-\begin_inset Argument
-status open
-
-\begin_layout Plain Layout
-Dual
-\end_layout
-
-\end_inset
-
-Consider the following program.
-\end_layout
-
-\begin_layout Example
-\begin_inset listings
-inline false
-status open
-
-\begin_layout Plain Layout
-
-function object() { this.value=1; }
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-function foo(x) {
-\end_layout
-
-\begin_layout Plain Layout
-
-	if(input > 20) { 
-\end_layout
-
-\begin_layout Plain Layout
-
-		x.propA = 20;
-\end_layout
-
-\begin_layout Plain Layout
-
-		x.propC = 15;
-\end_layout
-
-\begin_layout Plain Layout
-
-	else {
-\end_layout
-
-\begin_layout Plain Layout
-
-		x.propB = False;
-\end_layout
-
-\begin_layout Plain Layout
-
-		x.propC = 15;
-\end_layout
-
-\begin_layout Plain Layout
-
-	}
-\end_layout
-
-\begin_layout Plain Layout
-
-}
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-z = new object(); # 1
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-if(input > 15) {
-\end_layout
-
-\begin_layout Plain Layout
-
-	a = new object(); # 2
-\end_layout
-
-\begin_layout Plain Layout
-
-	foo(a);
-\end_layout
-
-\begin_layout Plain Layout
-
-} else {
-\end_layout
-
-\begin_layout Plain Layout
-
-	a = new object(); # 3
-\end_layout
-
-\begin_layout Plain Layout
-
-	foo(a);
-\end_layout
-
-\begin_layout Plain Layout
-
-}
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-output a.value + a.propC;
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Example
-we obtain different results depending on the kind of analysis we perform.
-\end_layout
-
-\begin_layout Itemize
-\begin_inset Formula $\subseteq$
-\end_inset
-
- ordering
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula 
-\begin{eqnarray*}
-\sigma_{\subseteq} & = & \left\{ \begin{alignedat}{2}z & \mapsto & \left\{ OBJ_{1}\right\} \\
-a & \mapsto & \left\{ OBJ_{2},OBJ_{3}\right\} 
-\end{alignedat}
-\right\} \\
-\alpha_{\subseteq} & = & \left\{ \begin{alignedat}{2}1 & \mapsto & \left\{ \mathtt{value}\mapsto\left\{ Number\right\} \right\} \\
-2,3 & \mapsto & \left\{ \begin{gathered}\mathtt{value}\mapsto\left\{ Number\right\} \\
-\mathtt{propA}\mapsto\left\{ Number\right\} \\
-\mathtt{propB}\mapsto\left\{ Boolean\right\} \\
-\mathtt{propC}\mapsto\left\{ Number\right\} 
-\end{gathered}
-\right\} 
-\end{alignedat}
-\right\} 
-\end{eqnarray*}
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Itemize
-\begin_inset Formula $\supseteq$
-\end_inset
-
- ordering
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula 
-\begin{eqnarray*}
-\sigma_{\supseteq} & = & \left\{ \begin{alignedat}{2}z & \mapsto & \left\{ OBJ_{1}\right\} \\
-a & \mapsto & \left\{ \right\} 
-\end{alignedat}
-\right\} \\
-\alpha_{\supseteq} & = & \left\{ \begin{alignedat}{2}1 & \mapsto & \left\{ \mathtt{value}\mapsto\left\{ Number\right\} \right\} \\
-2,3 & \mapsto & \left\{ \begin{gathered}\mathtt{value}\mapsto\left\{ Number\right\} \\
-\mathtt{propC}\mapsto\left\{ Number\right\} 
-\end{gathered}
-\right\} 
-\end{alignedat}
-\right\} 
-\end{eqnarray*}
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-Given our treatment of each new expression as a creation of a type of its
- own, the result that we obtain for 
-\begin_inset Formula $\sigma_{\supseteq}$
-\end_inset
-
- might be too limiting and imprecise.
- We could use the combination of 
-\begin_inset Formula $\sigma_{\subseteq}$
-\end_inset
-
- and 
-\begin_inset Formula $\alpha_{\supseteq}$
-\end_inset
-
- to calculate a member of an object that is referred to by a variable must
- have.
- Combinations of results from may and must analysis is helpful in designing
- an IDE for a programming language, where the IDE can statically inform
- the programmer what members would an object must have or may have at a
- particular program point.
 \end_layout
 
 \begin_layout Section
