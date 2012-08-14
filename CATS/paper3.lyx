@@ -2127,7 +2127,8 @@ status open
 \begin{eqnarray*}
 \mathtt{get}\left(n,\mathtt{prototype}\right) & = & \Theta\ \lambda\alpha:AObjMem,\zeta:APrototype.\\
  &  & \left\{ \alpha\left(x\right)\left(\mathtt{prototype}\right)\mid OBJ_{x}\in n\right\} \cup\left\{ \zeta\left(m\right)\mid\left\langle FP_{m},\_,\_\right\rangle \in n\right\} \\
-\mathtt{get}\left(n,id\right) & = & \Theta\ \lambda\alpha:AObjMem.\left\{ \alpha\left(x\right)\left(id\right)\mid OBJ_{x}\in n\right\} \\
+\mathtt{get}\left(n,id\right) & = & \Theta\ \lambda\alpha:AObjMem,\zeta:APrototype.\\
+ &  & \left\{ \alpha\left(x\right)\left(id\right)\mid x\in\mathtt{reach}\left(\alpha,\zeta,n\right)\right\} \\
 \mathtt{set}\left(n,\mathtt{prototype},v\right) & = & \Upsilon\ \lambda\alpha:AObjMem,\zeta:APrototype.\\
  &  & \left\langle \begin{gathered}\left\{ x\mid{OBJ_{x}\in\alpha,x=\begin{cases}
 \alpha\left(x\right)\left[\mathtt{prototype}\mapsto v\right] & OBJ_{x}\in n\\
