@@ -1777,7 +1777,7 @@ status open
 \begin_layout Plain Layout
 \begin_inset Formula 
 \begin{eqnarray*}
-\mathtt{get}\left(OBJ_{n},id\right) & = & \Theta\ \lambda OM:ObjMem.OM\left(n\right)\\
+\mathtt{get}\left(OBJ_{n},id\right) & = & \Theta\ \lambda OM:ObjMem.OM\left(n\right)\left(id\right)\\
 \mathtt{set}\left(OBJ_{n},id,v\right) & = & \Upsilon\ \lambda OM:ObjMem.OM\left[OBJ_{n}\left[id\mapsto v\right]\right]\\
 \mathtt{obj}\left(n\right) & = & \Theta\ \lambda OM:ObjMem.OM\left(n\right)\\
 \mathtt{getthis} & = & \Theta\ \lambda T:Object.T\\
@@ -1839,8 +1839,8 @@ Domain
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-AState & = & AVar\times AObjMem\times AObj\times Curried\\
-AObj & = & \left\{ OBJ_{n}\mid n\in\left\{ 0\right\} \cup eid\right\} \\
+AState & = & AVar\times AObjMem\times\wp\left(AObj\right)\times Curried\\
+AObj & = & \left\{ 0\right\} \cup Eid\\
 AVal & = & P\cup AObj\cup FunPointer\\
 AObjMem & = & n\rightarrow AVar
 \end{eqnarray*}
@@ -1939,7 +1939,7 @@ status open
 \alpha\left(x\right) & \mbox{otherwise}
 \end{cases}}\right\} \\
 \mathtt{obj}\left(j\right) & = & \Theta\ \lambda\alpha:AObjMem.\alpha\left(j\right)\\
-\mathtt{getthis} & = & \Theta\ \lambda\tau:AObj.\tau\\
+\mathtt{getthis} & = & \Theta\ \lambda\tau:\wp\left(AObj\right).\tau\\
 \mathtt{newobj} & = & \Psi\ \lambda\alpha:AObjMem.\left\langle \alpha\left[n\mapsto\phi\right],OBJ_{n}\right\rangle \ \mbox{where}\ n=N\left(\alpha\right)\\
 \mathtt{call}\left(n,p,t,e\right) & = & \lambda f,\eta,\gamma.\underset{\left\langle FP_{x},C\right\rangle \in n}{\bigsqcup}\mathtt{scall}\left(\left\langle FP_{x},C\right\rangle ,p,t,f,\eta,\gamma,e\right)\\
 \mathtt{scall}\left(\left\langle FP_{n},C\right\rangle ,p,t,f,\eta,\gamma,e\right) & = & \begin{cases}
@@ -1956,7 +1956,7 @@ status open
 \left\{ Number\right\}  & binop\in\left\{ '+','-','*','/'\right\} \\
 \left\{ Boolean\right\}  & \mbox{otherwise}
 \end{cases}\\
-\mathtt{fundecl}\left(id,n\right) & = & \lambda\left\langle \sigma,\alpha,\tau,\nu\right\rangle .\sigma\left[id\mapsto\left\langle FP_{n},\phi,n\right\rangle \right]
+\mathtt{fundecl}\left(id,n\right) & = & \Upsilon\ \lambda\sigma.\sigma\left[id\mapsto\left\langle FP_{n},\phi,n\right\rangle \right]
 \end{eqnarray*}
 
 \end_inset
@@ -1982,6 +1982,194 @@ Abstract functions
 \begin_inset CommandInset label
 LatexCommand label
 name "absfun-oo"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Prototype system
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula ${\scriptstyle \mathcal{E}\dd{\mathtt{new}\ L\left(E*\right)}\ \mathtt{eid}}={\scriptstyle \left(\begin{aligned}\mathcal{L}\ \dd{L} & \bind\lambda n.\\
+\mathtt{evalParams}\ n\ E*\ \phi & \bind\lambda p.\\
+I_{T}\ \mathtt{newobj\left(n\right)} & \bind\lambda m.\\
+\mathtt{call}\left(n,p,m,\mathtt{eid}\right) & \bind\lambda\_.\\
+I_{A}\ m
+\end{aligned}
+\right)}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+Concrete
+\end_layout
+
+\begin_layout Paragraph
+Domain
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+Object & = & Oid\times\left\{ null\right\} \cup Fid\\
+CState & = & Var\times ObjMem\times Object\\
+ &  & \times Prototype\\
+Prototype & = & Fid\rightarrow Object
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Paragraph
+Functions
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+{\scriptstyle \mathtt{get}\left(\left\langle FP_{n},\_\right\rangle ,\mathtt{prototype}\right)} & = & \Theta\ \lambda PT:Prototype.PT\left(n\right)\\
+\mathtt{chain}\left(\left\langle OBJ_{n},f\right\rangle ,id,tr\right) & = & \lambda OM.PT.\\
+ &  & \mbox{if}\ id\in OM\left(n\right),\ OM\left(n\right)\left(id\right)\\
+ &  & \mbox{else if }f\notin tr\ \\
+ &  & \mathtt{chain}\left(PT\left(f\right),id,\left[tr\mid f\right]\right)\\
+ &  & \ OM\ PT\\
+\mathtt{get}\left(\left\langle OBJ_{n},f\right\rangle ,id\right) & = & \Theta\ \lambda{\scriptstyle OM:ObjMem,PT:Prototype}.\\
+ &  & \mbox{if}\ id\in OM\left(n\right)\ OM\left(n\right)\left(id\right)\\
+ &  & \mbox{else}\ \mathtt{chain}\left(PT\left(f\right),id,\left[f\right]\right)\\
+{\scriptstyle \mathtt{set}\left(\left\langle FP_{n},\_\right\rangle ,\mathtt{prototype},v\right)} & = & \Upsilon\ \lambda PT:Prototype.PT\left[n\mapsto v\right]\\
+\mathtt{newobj}\left(\left\langle FP_{n},\_\right\rangle \right) & = & {\scriptstyle \Psi\ \lambda OM:ObjMem.\left\langle OM\left[n\mapsto\phi\right],OBJ_{n},f\right\rangle }\\
+ &  & \ \mbox{where}\ n=N\left(OM\right)\\
+\mathtt{fundecl}(id,n) & = & \Upsilon\ \lambda V,PT:Prototype.\\
+ &  & \left\langle V\left[id\mapsto\left\langle FP_{n},\phi\right\rangle \right],PT'\right\rangle \\
+ &  & \mbox{where}\\
+ &  & PT'=\begin{cases}
+PT\left[n\mapsto\phi\right] & n\notin PT\\
+PT & \mbox{otherwise}
+\end{cases}
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+Abstract
+\end_layout
+
+\begin_layout Paragraph
+Domain
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+AState & = & AVar\times AObjMem\times\wp\left(AObj\right)\times\\
+ &  & Curried\times APrototype\\
+AObj & = & \left\{ 0\right\} \cup Eid\times Fid\cup\left\{ null\right\} \\
+APrototype & = & Fid\rightarrow\wp\left(AObj\right)
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Paragraph
+Functions
+\end_layout
+
+\begin_layout Standard
+Given in figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "absfun-proto"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide true
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Box Boxed
+position "t"
+hor_pos "c"
+has_inner_box 1
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "100text%"
+special "none"
+height "1in"
+height_special "totalheight"
+status open
+
+\begin_layout Plain Layout
+\begin_inset Formula 
+\begin{eqnarray*}
+\mathtt{get}\left(n,\mathtt{prototype}\right) & = & \Theta\ \lambda\alpha:AObjMem,\zeta:APrototype.\\
+ &  & \left\{ \alpha\left(x\right)\left(\mathtt{prototype}\right)\mid OBJ_{x}\in n\right\} \cup\left\{ \zeta\left(m\right)\mid\left\langle FP_{m},\_,\_\right\rangle \in n\right\} \\
+\mathtt{get}\left(n,id\right) & = & \Theta\ \lambda\alpha:AObjMem.\left\{ \alpha\left(x\right)\left(id\right)\mid OBJ_{x}\in n\right\} \\
+\mathtt{set}\left(n,\mathtt{prototype},v\right) & = & \Upsilon\ \lambda\alpha:AObjMem,\zeta:APrototype.\\
+ &  & \left\langle \begin{gathered}\left\{ x\mid{OBJ_{x}\in\alpha,x=\begin{cases}
+\alpha\left(x\right)\left[\mathtt{prototype}\mapsto v\right] & OBJ_{x}\in n\\
+\alpha\left(x\right) & \mbox{otherwise}
+\end{cases}}\right\} ,\\
+\left\{ x\mid{z\in\zeta,x=\begin{cases}
+\zeta\left(z\right)\cup\left\{ v\right\}  & \left\langle FP_{z},\_,\_\right\rangle \in n\\
+\zeta\left(z\right) & \mbox{otherwise}
+\end{cases}}\right\} 
+\end{gathered}
+\right\rangle \\
+\mathtt{newobj}\left(n\right) & = & \Psi\ \lambda\alpha:AObjMem.\left\langle \alpha\left[n\mapsto\phi\right],OBJ_{n}\right\rangle \ \mbox{where}\ n=N\left(\alpha\right)\\
+\mathtt{fundecl}\left(id,n\right) & = & \Upsilon\ \lambda\sigma:AVar,\zeta:APrototype.\\
+ &  & \left\langle \begin{gathered}\sigma\left[id\mapsto\left\langle FP_{n},\phi,n\right\rangle \right],\\
+\zeta\left[n\mapsto\zeta\left(n\right)\cup\phi\right]
+\end{gathered}
+\right\rangle 
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+Abstract functions
+\end_layout
+
+\end_inset
+
+
+\begin_inset CommandInset label
+LatexCommand label
+name "absfun-proto"
 
 \end_inset
 
