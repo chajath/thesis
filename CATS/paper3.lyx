@@ -437,7 +437,9 @@ Type constructor
 \begin_inset Formula 
 \begin{multline*}
 M\ a=Func\rightarrow\left(State\times StateCol\right)\rightarrow\\
-\left(State\times StateCol\times a\right)
+\left(State\times StateCol\times a\right)\\
+N=Func\rightarrow\left(State\times StateCol\right)\rightarrow\\
+\wp\left(State\times StateCol\right)
 \end{multline*}
 
 \end_inset
@@ -486,6 +488,24 @@ where
 \end_inset
 
 
+\end_layout
+
+\begin_layout Definition
+\begin_inset Formula $\left(\bind\right):N\rightarrow N\rightarrow N$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Definition
+\begin_inset Formula $T\ \bind\ U=\lambda f,r,s.\left\{ \begin{gathered}\mbox{if}\ isterm\left(d\right)\ \\
+\mbox{then}\ \left\langle d,s'\right\rangle \ \\
+\mbox{else}\ U\ f\ \left\langle d,s'\right\rangle 
+\end{gathered}
+\mid{\left\langle d,s'\right\rangle \in T\ f\ r\ s}\right\} $
+\end_inset
+
+ 
 \end_layout
 
 \end_deeper
@@ -1021,7 +1041,7 @@ status open
 \begin{align*}
  & F & = &  &  & Y\lambda f.\lambda n.\mathcal{S}\ \dd{\mathtt{Stmt}_{n}}\ \mathtt{sid}\left(\mathtt{Stmt}_{n}\right)\ f\\
  & \mathcal{S}\dd{S_{1};S_{2}} & = &  &  & T_{S}\ \left(\begin{aligned}\mathcal{S}\ \dd{S_{1}}\ \mathtt{sid}\left(S_{1}\right) & \bind\lambda r.\\
-\mathtt{isterm}\left(r,\mathcal{S}\ \dd{S_{2}}\ \mathtt{sid}\left(S_{2}\right)\right)
+\mathcal{S}\ \dd{S_{2}}\ \mathtt{sid}\left(S_{2}\right)
 \end{aligned}
 \right)\\
  & \mathcal{S}\dd{\mathtt{return}\ e} & = &  &  & T_{S}\ \left(\mathcal{E}\ \dd{e}\ \mathtt{eid}\left(e\right)\right)\\
@@ -1039,7 +1059,7 @@ I_{0}\ \mathtt{asg}\left(id,v\right)
 \right)\\
  & \mathcal{S}\dd{\mathtt{while}\left(e\right)S_{1}} & = &  &  & T_{S}\ \left(Y\lambda x.\lambda f,r,\gamma.\left(\begin{aligned}\mathcal{E}\ \dd{e}\ \mathtt{eid}\left(e\right)\bind\lambda v.\\
 {\scriptstyle \begin{gathered}\mathtt{cond}\left(\begin{gathered}v,\\
-\left(\mathcal{S}\ \dd{S_{1}}\ \mathtt{sid}\left(S_{1}\right)\right)\bind\lambda a.\mathtt{isterm}\left(a,x\right),\\
+\left(\mathcal{S}\ \dd{S_{1}}\ \mathtt{sid}\left(S_{1}\right)\right)\bind x,\\
 \left(I_{A}\ Void\right)
 \end{gathered}
 \right)\end{gathered}
@@ -1109,8 +1129,9 @@ Domain
 Value & = & \mathbb{Z}\cup\left\{ true,false\right\} \\
  &  & \cup FunctionPointer\\
 FunctionPointer & = & FP_{n}\\
-CState & = & Var\times IO\\
-Var & = & id\rightarrow Value
+Var & = & id\rightarrow Value\\
+Return & = & Value\cup\left\{ Void\right\} \\
+CState & = & Var\times IO\times Return
 \end{eqnarray*}
 
 \end_inset
@@ -1133,10 +1154,7 @@ Functions
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-\mathtt{isterm}\left(v,s\right) & = & \begin{cases}
-s & v=Void\\
-I_{A}\ v & \mbox{otherwise}
-\end{cases}\\
+\mathtt{isterm} & = & \Theta\ \lambda R:Return.\left(R=Void\right)\\
 \mathtt{cond}\left(v,s_{1},s_{2}\right) & = & \begin{cases}
 s_{1} & v=true\\
 s_{2} & v=false
@@ -1175,12 +1193,11 @@ Domain
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-AState & = & AVar\\
-P & = & \left\{ Number,Boolean\right\} \\
-FunPointer & = & FP_{n}\\
-AVal & = & P\cup FunPointer\\
-AVar & = & id\rightarrow\wp\left(AVal\right)\\
- &  & \mbox{where \emph{n} is a function identifier}
+FunPointer & = & Fid\\
+AVal & = & \left\{ Number,Boolean\right\} \cup FunPointer\\
+AVar & = & id\rightarrow AVal\\
+AReturn & = & AVal\cup\left\{ Void\right\} \\
+AState & = & AVar\times AReturn
 \end{eqnarray*}
 
 \end_inset
@@ -1226,28 +1243,22 @@ status open
 \begin_layout Plain Layout
 \begin_inset Formula 
 \begin{eqnarray*}
-\mathtt{isterm}\left(v,s\right) & = & \lambda f,\eta,\gamma.\begin{cases}
-s\ f\ \eta\ \gamma & v=\left\{ Void\right\} \\
-\left(s\ f\ \eta\ \gamma\right)\sqcup\left(I_{A}\ v\right) & Void\in v,N\left(v\right)>1\\
-I_{A}\ v & \mbox{otherwise}\left(\mbox{i.e.}\ Void\notin v\right)
-\end{cases}\\
-\mathtt{cond}\left(v,s_{1},s_{2}\right) & = & \lambda f,\eta,\gamma.\left(s_{1}\ f\ \eta\ \gamma\right)\sqcup\left(s_{2}\ f\ \eta\ \gamma\right)\\
+\mathtt{isterm} & = & \Theta\ \lambda R:AReturn.\left(R=Void\right)\\
+\mathtt{cond}\left(v,s_{1},s_{2}\right) & = & \lambda f,\eta,\gamma.\left(s_{1}\ f\ \eta\ \gamma\right)\cup\left(s_{2}\ f\ \eta\ \gamma\right)\\
 \mathtt{asg}\left(id,v\right) & = & \Upsilon\ \lambda\sigma:AVar.\sigma\left[id=v\right]\\
 \mathtt{val}\left(id,v\right) & = & \Upsilon\ \lambda\sigma:AVar.\sigma\left(id\right)\\
 \mathtt{conval}\left(con\right) & = & \begin{cases}
 Number & con\in\mathbb{N}\\
 Boolean & con\in\left\{ true,false\right\} 
 \end{cases}\\
-\mathtt{getinput} & = & \lambda\eta.\left\langle \eta,\left\{ Number\right\} \right\rangle \\
+\mathtt{getinput} & = & \lambda\eta.\left\langle \eta,Number\right\rangle \\
 \mathtt{dooutput}\left(v\right) & = & \lambda\eta.\eta\\
-\mathtt{call}\left(n,p\right) & = & \lambda f,\eta,\gamma.\underset{FP_{x}\in n}{\bigsqcup}\mathtt{scall}\left(FP_{x},p,f,\eta,\gamma\right)\\
-\mathtt{scall}\left(FP_{n},p,f,\eta,\gamma\right) & = & \left\langle \bar{\kappa}\ \eta\ \eta',r,\gamma'\right\rangle \ \mbox{where}\ \\
- &  & \left\langle \eta',r,\gamma'\right\rangle =f\ n\ \left(\kappa\ \eta\ p\right)\ \gamma\\
+\mathtt{call}\left(n,p\right) & = & \lambda f,\eta,\gamma.\left\{ \left\langle \bar{\kappa}\ \eta\ \eta',\gamma',r\right\rangle \mid\left\langle \eta',r,\gamma'\right\rangle \in f\ n\ \left(\kappa\ \eta\ p\right)\ \gamma\right\} \\
 \mathtt{bin}\left(binop,c_{0},c_{1}\right) & = & \begin{cases}
 \left\{ Number\right\}  & binop\in\left\{ '+','-','*','/'\right\} \\
 \left\{ Boolean\right\}  & \mbox{otherwise}
 \end{cases}\\
-\mathtt{fundecl}\left(id,n\right) & = & \Upsilon\ \lambda\sigma:AVar.\sigma\left[id\mapsto\left\{ FP_{n}\right\} \right]
+\mathtt{fundecl}\left(id,n\right) & = & \Upsilon\ \lambda\sigma:AVar.\sigma\left[id\mapsto n\right]
 \end{eqnarray*}
 
 \end_inset
