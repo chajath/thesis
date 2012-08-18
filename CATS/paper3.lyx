@@ -735,6 +735,40 @@ Monadic transformers
 
 \end_layout
 
+\begin_layout Definition
+Another commonly occurring pattern is that functions often return a singleton.
+ We define a function that takes a function returning a value and lifts
+ it to be a function that returns a singleton set.
+\end_layout
+
+\begin_layout Definition
+\begin_inset Formula 
+\begin{eqnarray*}
+\Gamma & : & \left(A\rightarrow B\right)\rightarrow\left(A\rightarrow\wp\left(B\right)\right)
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Definition
+We compose this function with the other transformers.
+\end_layout
+
+\begin_layout Definition
+\begin_inset Formula 
+\begin{eqnarray*}
+\bar{\Upsilon} & = & \Gamma\circ\Upsilon\\
+\bar{\Psi} & = & \Gamma\circ\Psi\\
+\bar{\Theta} & = & \Gamma\circ\Theta
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
 \end_deeper
 \begin_layout Standard
 We examine properties of the monad.
@@ -1303,19 +1337,19 @@ Functions
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-\mathtt{isterm} & = & \Theta\ \lambda R:Return.\left(R=Void\right)\\
+\mathtt{isterm} & = & \bar{\Theta}\ \lambda R:Return.\left(R=Void\right)\\
 \mathtt{cond}\left(v,s_{1},s_{2}\right) & = & \begin{cases}
 s_{1} & v=true\\
 s_{2} & v=false
 \end{cases}\\
-\mathtt{asg}\left(id,v\right) & = & \Upsilon\ \lambda V:Var.V\left[id\mapsto v\right]\\
-\mathtt{val}\left(id\right) & = & \Upsilon\ \lambda V:Var.V\left(id\right)\\
+\mathtt{asg}\left(id,v\right) & = & \bar{\Upsilon}\ \lambda V:Var.V\left[id\mapsto v\right]\\
+\mathtt{val}\left(id\right) & = & \bar{\Upsilon}\ \lambda V:Var.V\left(id\right)\\
 \mathtt{conval}\left(con\right) & = & con\\
-\mathtt{getinput\left(\rho\right)} & = & \Psi\ \lambda O:IO.\left\langle O',z\in\mathbb{N}\right\rangle \mbox{see note}\\
-\mathtt{dooutput}\left(v\right) & = & \Upsilon\ \lambda O:IO.O'\mbox{see note}\\
+\mathtt{getinput\left(\rho\right)} & = & \bar{\Psi}\ \lambda O:IO.\left\langle O',z\in\mathbb{N}\right\rangle \mbox{see note}\\
+\mathtt{dooutput}\left(v\right) & = & \bar{\Upsilon}\ \lambda O:IO.O'\mbox{see note}\\
 \mathtt{call}\left(FP_{n},p\right) & = & \lambda f,\rho,\gamma.\left\langle \bar{\kappa}\ \rho\ \rho',\gamma',r\right\rangle \ \mbox{where}\\
  &  & \left\langle \rho',\gamma',r\right\rangle =f\ n\ \left(\kappa\ \rho\ p\right)\ \gamma\\
-\mathtt{fundecl}(id,n) & = & \Upsilon\ \lambda V:Var.V\left[id\mapsto FP_{n}\right]\\
+\mathtt{fundecl}(id,n) & = & \bar{\Upsilon}\ \lambda V:Var.V\left[id\mapsto FP_{n}\right]\\
 \mathtt{bin}\left(binop,c_{0},c_{1}\right) & = & \mbox{perform binary operation }\\
  &  & \mbox{between two constants}
 \end{eqnarray*}
@@ -1392,22 +1426,22 @@ status open
 \begin_layout Plain Layout
 \begin_inset Formula 
 \begin{eqnarray*}
-\mathtt{isterm} & = & \Theta\ \lambda R:AReturn.\left(R=Void\right)\\
+\mathtt{isterm} & = & \bar{\Theta}\ \lambda R:AReturn.\left(R=Void\right)\\
 \mathtt{cond}\left(v,s_{1},s_{2}\right) & = & \lambda f,\eta,\gamma.\left(s_{1}\ f\ \eta\ \gamma\right)\cup\left(s_{2}\ f\ \eta\ \gamma\right)\\
-\mathtt{asg}\left(id,v\right) & = & \Upsilon\ \lambda\sigma:AVar.\sigma\left[id=v\right]\\
-\mathtt{val}\left(id,v\right) & = & \Upsilon\ \lambda\sigma:AVar.\sigma\left(id\right)\\
-\mathtt{conval}\left(con\right) & = & \begin{cases}
+\mathtt{asg}\left(id,v\right) & = & \bar{\Upsilon}\ \lambda\sigma:AVar.\sigma\left[id=v\right]\\
+\mathtt{val}\left(id,v\right) & = & \bar{\Upsilon}\ \lambda\sigma:AVar.\sigma\left(id\right)\\
+\mathtt{conval}\left(con\right) & = & \Gamma\ \begin{cases}
 Number & con\in\mathbb{N}\\
 Boolean & con\in\left\{ true,false\right\} 
 \end{cases}\\
-\mathtt{getinput} & = & \lambda\eta.\left\langle \eta,Number\right\rangle \\
-\mathtt{dooutput}\left(v\right) & = & \lambda\eta.\eta\\
+\mathtt{getinput} & = & \Gamma\ \lambda\eta.\left\langle \eta,Number\right\rangle \\
+\mathtt{dooutput}\left(v\right) & = & \Gamma\ \lambda\eta.\eta\\
 \mathtt{call}\left(n,p\right) & = & \lambda f,\eta.\left\{ \left\langle \bar{\kappa}\ \eta\ \eta',\gamma,r\right\rangle \mid\left\langle \eta',r,\gamma\right\rangle \in f\ n\ \left(\kappa\ \eta\ p\right)\ \gamma\right\} \\
-\mathtt{bin}\left(binop,c_{0},c_{1}\right) & = & \begin{cases}
+\mathtt{bin}\left(binop,c_{0},c_{1}\right) & = & \Gamma\ \begin{cases}
 \left\{ Number\right\}  & binop\in\left\{ '+','-','*','/'\right\} \\
 \left\{ Boolean\right\}  & \mbox{otherwise}
 \end{cases}\\
-\mathtt{fundecl}\left(id,n\right) & = & \Upsilon\ \lambda\sigma:AVar.\sigma\left[id\mapsto n\right]
+\mathtt{fundecl}\left(id,n\right) & = & \bar{\Upsilon}\ \lambda\sigma:AVar.\sigma\left[id\mapsto n\right]
 \end{eqnarray*}
 
 \end_inset
@@ -1503,7 +1537,7 @@ f\ n\ \left(\kappa\ \rho\ p\right)\ \gamma
 \\
 \left\langle \rho,\gamma,\left\langle FP_{n},\left[C|p\right]\right\rangle \right\rangle  & \mbox{otherwise}
 \end{cases}\\
-\mathtt{fundecl}(id,n)=\Upsilon\ \lambda V.V\left[id\mapsto\left\langle FP_{n},\phi\right\rangle \right]
+\mathtt{fundecl}(id,n)=\bar{\Upsilon}\ \lambda V.V\left[id\mapsto\left\langle FP_{n},\phi\right\rangle \right]
 \end{gather*}
 
 \end_inset
@@ -1668,7 +1702,7 @@ status open
 \\
 {\scriptstyle \left\langle \Upsilon\ \lambda\nu:Curried.\nu\left[\left\langle e,n,N\left(\left[C|p\right]\right)\right\rangle \mapsto\left[C|p\right]\right],\gamma,\left\langle FP_{n},\left[C|p\right],e\right\rangle \right\rangle } & \mbox{otherwise}
 \end{cases}\\
-\mathtt{fundecl}\left(id,n\right) & = & \Upsilon\ \lambda\sigma:AVar.\sigma\left[id\mapsto\left\langle FP_{n},\phi,n\right\rangle \right]
+\mathtt{fundecl}\left(id,n\right) & = & \bar{\Upsilon}\ \lambda\sigma:AVar.\sigma\left[id\mapsto\left\langle FP_{n},\phi,n\right\rangle \right]
 \end{eqnarray*}
 
 \end_inset
@@ -1937,10 +1971,10 @@ status open
 \begin_layout Plain Layout
 \begin_inset Formula 
 \begin{eqnarray*}
-\mathtt{get}\left(OBJ_{n},id\right) & = & \Theta\ \lambda OM:ObjMem.OM\left(n\right)\left(id\right)\\
-\mathtt{set}\left(OBJ_{n},id,v\right) & = & \Upsilon\ \lambda OM:ObjMem.OM\left[OBJ_{n}\left[id\mapsto v\right]\right]\\
-\mathtt{obj}\left(n\right) & = & \Theta\ \lambda OM:ObjMem.OM\left(n\right)\\
-\mathtt{getthis} & = & \Theta\ \lambda T:Object.T\\
+\mathtt{get}\left(OBJ_{n},id\right) & = & \bar{\Theta}\ \lambda OM:ObjMem.OM\left(n\right)\left(id\right)\\
+\mathtt{set}\left(OBJ_{n},id,v\right) & = & \bar{\Upsilon}\ \lambda OM:ObjMem.OM\left[OBJ_{n}\left[id\mapsto v\right]\right]\\
+\mathtt{obj}\left(n\right) & = & \bar{\Theta}\ \lambda OM:ObjMem.OM\left(n\right)\\
+\mathtt{getthis} & = & \bar{\Theta}\ \lambda T:Object.T\\
 \mathtt{call}\left(\left\langle FP_{n},C\right\rangle ,p,t,\_\right) & = & \lambda f,\rho,\gamma.\begin{cases}
 \begin{gathered}\left\langle \bar{\kappa}\ \rho\ \rho',\gamma',r\right\rangle \mbox{where}\left\langle \rho',\gamma',r\right\rangle =\\
 f\ n\ \left(\kappa\ \rho\ \left\langle p,t\right\rangle \ n\right)\ \gamma
@@ -1951,7 +1985,7 @@ f\ n\ \left(\kappa\ \rho\ \left\langle p,t\right\rangle \ n\right)\ \gamma
 \\
 \left\langle \rho,\gamma,\left\langle FP_{n},\left[C|p\right]\right\rangle \right\rangle  & \mbox{otherwise}
 \end{cases}\\
-\mathtt{newobj} & = & \Psi\ \lambda OM:ObjMem.\left\langle OM\left[n\mapsto\phi\right],OBJ_{n}\right\rangle \ \mbox{where}\ n=N\left(OM\right)
+\mathtt{newobj} & = & \bar{\Psi}\ \lambda OM:ObjMem.\left\langle OM\left[n\mapsto\phi\right],OBJ_{n}\right\rangle \ \mbox{where}\ n=N\left(OM\right)
 \end{eqnarray*}
 
 \end_inset
@@ -2093,14 +2127,14 @@ status open
 \begin_layout Plain Layout
 \begin_inset Formula 
 \begin{eqnarray*}
-\mathtt{get}\left(n,id\right) & = & \Theta\ \lambda\alpha:AObjMem.\left\{ \alpha\left(x\right)\mid OBJ_{x}\in n\right\} \\
-\mathtt{set}\left(n,id,v\right) & = & \Upsilon\ \lambda\alpha:AObjMem.\left\{ x\mid{OBJ_{x}\in\alpha,x=\begin{cases}
+\mathtt{get}\left(n,id\right) & = & \bar{\Theta}\ \lambda\alpha:AObjMem.\left\{ \alpha\left(x\right)\mid OBJ_{x}\in n\right\} \\
+\mathtt{set}\left(n,id,v\right) & = & \bar{\Upsilon}\ \lambda\alpha:AObjMem.\left\{ x\mid{OBJ_{x}\in\alpha,x=\begin{cases}
 \alpha\left(x\right)\left[id\mapsto v\right] & OBJ_{x}\in n\\
 \alpha\left(x\right) & \mbox{otherwise}
 \end{cases}}\right\} \\
-\mathtt{obj}\left(j\right) & = & \Theta\ \lambda\alpha:AObjMem.\alpha\left(j\right)\\
-\mathtt{getthis} & = & \Theta\ \lambda\tau:\wp\left(AObj\right).\tau\\
-\mathtt{newobj} & = & \Psi\ \lambda\alpha:AObjMem.\left\langle \alpha\left[n\mapsto\phi\right],OBJ_{n}\right\rangle \ \mbox{where}\ n=N\left(\alpha\right)\\
+\mathtt{obj}\left(j\right) & = & \bar{\Theta}\ \lambda\alpha:AObjMem.\alpha\left(j\right)\\
+\mathtt{getthis} & = & \bar{\Theta}\ \lambda\tau:\wp\left(AObj\right).\tau\\
+\mathtt{newobj} & = & \bar{\Psi}\ \lambda\alpha:AObjMem.\left\langle \alpha\left[n\mapsto\phi\right],OBJ_{n}\right\rangle \ \mbox{where}\ n=N\left(\alpha\right)\\
 \mathtt{call}\left(n,p,t,e\right) & = & \lambda f,\eta,\gamma.\underset{\left\langle FP_{x},C\right\rangle \in n}{\bigsqcup}\mathtt{scall}\left(\left\langle FP_{x},C\right\rangle ,p,t,f,\eta,\gamma,e\right)\\
 \mathtt{scall}\left(\left\langle FP_{n},C\right\rangle ,p,t,f,\eta,\gamma,e\right) & = & \begin{cases}
 \begin{gathered}\left\langle \bar{\kappa}\ \eta\ \eta',r',\gamma',\nu'\right\rangle \ \mbox{where}\\
@@ -2111,12 +2145,7 @@ status open
 \end{gathered}
 \\
 {\scriptstyle \left\langle \Upsilon\ \lambda\nu:Curried.\nu\left[\left\langle e,n,N\left(\left[C|p\right]\right)\right\rangle \mapsto\left[C|p\right]\right],\gamma,\left\langle FP_{n},\left[C|p\right],e\right\rangle \right\rangle } & \mbox{otherwise}
-\end{cases}\\
-\mathtt{bin}\left(binop,c_{0},c_{1}\right) & = & \begin{cases}
-\left\{ Number\right\}  & binop\in\left\{ '+','-','*','/'\right\} \\
-\left\{ Boolean\right\}  & \mbox{otherwise}
-\end{cases}\\
-\mathtt{fundecl}\left(id,n\right) & = & \Upsilon\ \lambda\sigma.\sigma\left[id\mapsto\left\langle FP_{n},\phi,n\right\rangle \right]
+\end{cases}
 \end{eqnarray*}
 
 \end_inset
@@ -2199,19 +2228,19 @@ Functions
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-{\scriptstyle \mathtt{get}\left(\left\langle FP_{n},\_\right\rangle ,\mathtt{prototype}\right)} & = & \Theta\ \lambda PT:Prototype.PT\left(n\right)\\
+{\scriptstyle \mathtt{get}\left(\left\langle FP_{n},\_\right\rangle ,\mathtt{prototype}\right)} & = & \bar{\Theta}\ \lambda PT:Prototype.PT\left(n\right)\\
 \mathtt{chain}\left(\left\langle OBJ_{n},f\right\rangle ,id,tr\right) & = & \lambda OM.PT.\\
  &  & \mbox{if}\ id\in OM\left(n\right),\ OM\left(n\right)\left(id\right)\\
  &  & \mbox{else if }f\notin tr\ \\
  &  & \mathtt{chain}\left(PT\left(f\right),id,\left[tr\mid f\right]\right)\\
  &  & \ OM\ PT\\
-\mathtt{get}\left(\left\langle OBJ_{n},f\right\rangle ,id\right) & = & \Theta\ \lambda{\scriptstyle OM:ObjMem,PT:Prototype}.\\
+\mathtt{get}\left(\left\langle OBJ_{n},f\right\rangle ,id\right) & = & \bar{\Theta}\ \lambda{\scriptstyle OM:ObjMem,PT:Prototype}.\\
  &  & \mbox{if}\ id\in OM\left(n\right)\ OM\left(n\right)\left(id\right)\\
  &  & \mbox{else}\ \mathtt{chain}\left(PT\left(f\right),id,\left[f\right]\right)\\
-{\scriptstyle \mathtt{set}\left(\left\langle FP_{n},\_\right\rangle ,\mathtt{prototype},v\right)} & = & \Upsilon\ \lambda PT:Prototype.PT\left[n\mapsto v\right]\\
-\mathtt{newobj}\left(\left\langle FP_{n},\_\right\rangle \right) & = & {\scriptstyle \Psi\ \lambda OM:ObjMem.\left\langle OM\left[n\mapsto\phi\right],OBJ_{n},f\right\rangle }\\
+{\scriptstyle \mathtt{set}\left(\left\langle FP_{n},\_\right\rangle ,\mathtt{prototype},v\right)} & = & \bar{\Upsilon}\ \lambda PT:Prototype.PT\left[n\mapsto v\right]\\
+\mathtt{newobj}\left(\left\langle FP_{n},\_\right\rangle \right) & = & {\scriptstyle \bar{\Psi}\ \lambda OM:ObjMem.\left\langle OM\left[n\mapsto\phi\right],OBJ_{n},f\right\rangle }\\
  &  & \ \mbox{where}\ n=N\left(OM\right)\\
-\mathtt{fundecl}(id,n) & = & \Upsilon\ \lambda V,PT:Prototype.\\
+\mathtt{fundecl}(id,n) & = & \bar{\Upsilon}\ \lambda V,PT:Prototype.\\
  &  & \left\langle V\left[id\mapsto\left\langle FP_{n},\phi\right\rangle \right],PT'\right\rangle \\
  &  & \mbox{where}\\
  &  & PT'=\begin{cases}
@@ -2285,11 +2314,11 @@ status open
 \begin_layout Plain Layout
 \begin_inset Formula 
 \begin{eqnarray*}
-\mathtt{get}\left(n,\mathtt{prototype}\right) & = & \Theta\ \lambda\alpha:AObjMem,\zeta:APrototype.\\
+\mathtt{get}\left(n,\mathtt{prototype}\right) & = & \bar{\Theta}\ \lambda\alpha:AObjMem,\zeta:APrototype.\\
  &  & \left\{ \alpha\left(x\right)\left(\mathtt{prototype}\right)\mid OBJ_{x}\in n\right\} \cup\left\{ \zeta\left(m\right)\mid\left\langle FP_{m},\_,\_\right\rangle \in n\right\} \\
-\mathtt{get}\left(n,id\right) & = & \Theta\ \lambda\alpha:AObjMem,\zeta:APrototype.\\
+\mathtt{get}\left(n,id\right) & = & \bar{\Theta}\ \lambda\alpha:AObjMem,\zeta:APrototype.\\
  &  & \left\{ \alpha\left(x\right)\left(id\right)\mid x\in\mathtt{reach}\left(\alpha,\zeta,n\right)\right\} \\
-\mathtt{set}\left(n,\mathtt{prototype},v\right) & = & \Upsilon\ \lambda\alpha:AObjMem,\zeta:APrototype.\\
+\mathtt{set}\left(n,\mathtt{prototype},v\right) & = & \bar{\Upsilon}\ \lambda\alpha:AObjMem,\zeta:APrototype.\\
  &  & \left\langle \begin{gathered}\left\{ x\mid{OBJ_{x}\in\alpha,x=\begin{cases}
 \alpha\left(x\right)\left[\mathtt{prototype}\mapsto v\right] & OBJ_{x}\in n\\
 \alpha\left(x\right) & \mbox{otherwise}
@@ -2300,8 +2329,8 @@ status open
 \end{cases}}\right\} 
 \end{gathered}
 \right\rangle \\
-\mathtt{newobj}\left(n\right) & = & \Psi\ \lambda\alpha:AObjMem.\left\langle \alpha\left[n\mapsto\phi\right],OBJ_{n}\right\rangle \ \mbox{where}\ n=N\left(\alpha\right)\\
-\mathtt{fundecl}\left(id,n\right) & = & \Upsilon\ \lambda\sigma:AVar,\zeta:APrototype.\\
+\mathtt{newobj}\left(n\right) & = & \bar{\Psi}\ \lambda\alpha:AObjMem.\left\langle \alpha\left[n\mapsto\phi\right],OBJ_{n}\right\rangle \ \mbox{where}\ n=N\left(\alpha\right)\\
+\mathtt{fundecl}\left(id,n\right) & = & \bar{\Upsilon}\ \lambda\sigma:AVar,\zeta:APrototype.\\
  &  & \left\langle \begin{gathered}\sigma\left[id\mapsto\left\langle FP_{n},\phi,n\right\rangle \right],\\
 \zeta\left[n\mapsto\zeta\left(n\right)\cup\phi\right]
 \end{gathered}
