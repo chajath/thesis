@@ -521,7 +521,11 @@ Type constructor
 \end_inset
 
  Type constructor 
-\begin_inset Formula $M$
+\begin_inset Formula $M_{E}$
+\end_inset
+
+ and 
+\begin_inset Formula $M_{S}$
 \end_inset
 
  gives the following polymorphic type.
@@ -542,7 +546,6 @@ M_{S}=\beta\rightarrow State\rightarrow\\
 \end_layout
 
 \begin_layout Definition
-Where 
 \begin_inset Formula $\beta$
 \end_inset
 
@@ -575,18 +578,21 @@ We define a bind operator
 \end_layout
 
 \begin_layout Definition
-\begin_inset Formula $T\ \bind\ U=\lambda f,r,s.U\ t\ f\ r'\ s'$
+\begin_inset Formula $\left(\bind\right):M_{E}\ a\rightarrow\left(a\rightarrow M_{S}\right)\rightarrow M_{S}$
 \end_inset
 
- 
+
 \end_layout
 
 \begin_layout Definition
-\begin_inset Formula $\ \ $
-\end_inset
+\begin_inset Formula 
+\begin{eqnarray*}
+T\ \bind\ U & = & \lambda f,s.let\ \left\langle S,\gamma\right\rangle =T\ f\ s\\
+ &  & Z=\left\{ U\ a\ f\ s'\mid{\left\langle s',a\right\rangle \in S}\right\} \\
+ &  & in\\
+ &  & \left\langle \left\{ s'\left|\left\langle s',\_\right\rangle \in Z\right|\right\} ,\left(\underset{\left\langle \_,\gamma'\right\rangle \in Z}{\bigcup}\gamma'\right)\cup\gamma\right\rangle 
+\end{eqnarray*}
 
-where 
-\begin_inset Formula $\left\langle r',s',t\right\rangle =T\ f\ r\ s$
 \end_inset
 
 
@@ -602,19 +608,19 @@ where
 \begin_layout Definition
 \begin_inset Formula 
 \begin{eqnarray*}
-T\ \bind\ U & = & \lambda f,s.let\ \left\langle S,c\right\rangle =T\ f\ s\\
+T\ \bind\ U & = & \lambda f,s.let\ \left\langle S,\gamma\right\rangle =T\ f\ s\\
  &  & Z=\left\{ \begin{gathered}\mbox{if}\ isterm\left(s'\right)\ \\
 \mbox{then}\ \left\{ \left\langle s',\phi\right\rangle \right\} \ \\
 \mbox{else}\ U\ f\ s'
 \end{gathered}
 \mid{s'\in S}\right\} \\
  &  & in\\
- &  & \left\langle \left\{ s'\left|\left\langle s',\_\right\rangle \in Z\right|\right\} ,\left(\underset{\left\langle \_,c'\right\rangle \in Z}{\bigcup}c'\right)\cup c\right\rangle 
+ &  & \left\langle \left\{ s'\left|\left\langle s',\_\right\rangle \in Z\right|\right\} ,\left(\underset{\left\langle \_,\gamma'\right\rangle \in Z}{\bigcup}\gamma'\right)\cup\gamma\right\rangle 
 \end{eqnarray*}
 
 \end_inset
 
- 
+
 \end_layout
 
 \end_deeper
@@ -653,8 +659,8 @@ We define following lift functions to incorporate non-monadic functions
 \begin_layout Standard
 \begin_inset Formula 
 \begin{gather*}
-I_{A}:a\rightarrow M\ a\\
-I_{A}\ v=\lambda f,r,\gamma.\left\langle r,\gamma,v\right\rangle 
+I_{A}:a\rightarrow M_{E}\ a\\
+I_{A}\ v=\lambda f,r,\gamma.\left\langle \left\{ r\right\} ,\gamma,v\right\rangle 
 \end{gather*}
 
 \end_inset
@@ -672,8 +678,8 @@ I_{A}\ v=\lambda f,r,\gamma.\left\langle r,\gamma,v\right\rangle
 \begin_layout Standard
 \begin_inset Formula 
 \begin{gather*}
-I_{T}:\left(State\rightarrow State\times a\right)\rightarrow M\ a\\
-I_{T}\ t=\lambda f,r,\gamma.\left\langle r',\gamma,a\right\rangle \ \mbox{where}\ \left\langle r',a\right\rangle =t\ r
+I_{T}:\left(State\rightarrow\wp\left(State\times a\right)\right)\rightarrow M_{E}\ a\\
+I_{T}\ t=\lambda f,r.\left\langle S,\phi\right\rangle \ \mbox{where}\ S=t\ r
 \end{gather*}
 
 \end_inset
@@ -691,31 +697,8 @@ I_{T}\ t=\lambda f,r,\gamma.\left\langle r',\gamma,a\right\rangle \ \mbox{where}
 \begin_layout Standard
 \begin_inset Formula 
 \begin{gather*}
-I_{V}:\left(State\rightarrow a\right)\rightarrow M\ a\\
-I_{V}\ t=\lambda f,r,\gamma.\left\langle r,\gamma,t\ r\right\rangle 
-\end{gather*}
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Itemize
-\begin_inset Formula $I_{0}$
-\end_inset
-
- takes a state transformation with no return value and attaches 
-\begin_inset Formula $Void$
-\end_inset
-
- return value to it
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula 
-\begin{gather*}
-I_{0}:\left(State\rightarrow State\right)\rightarrow M\ a\\
-I_{0}\ t=\lambda f,r,\gamma.\left\langle r',\gamma,Void\right\rangle \ \mbox{where}\ \left\langle r'\right\rangle =t\ r
+I_{V}:\left(State\rightarrow a\right)\rightarrow M_{E}\ a\\
+I_{V}\ t=\lambda f,r.\left\langle \left\{ \left\langle r,t\ r\right\rangle \right\} ,\phi\right\rangle 
 \end{gather*}
 
 \end_inset
@@ -742,9 +725,9 @@ Monadic transformers
 \begin_layout Definition
 \begin_inset Formula 
 \begin{eqnarray*}
-\Upsilon & : & \left(A\rightarrow A\right)\rightarrow\left(B\rightarrow B\right)\\
-\Psi & : & \left(A\rightarrow A\times a\right)\rightarrow\left(B\rightarrow B\times a\right)\\
-\Theta & : & \left(A\rightarrow a\right)\rightarrow\left(B\rightarrow a\right)
+\Upsilon & : & \left(A\rightarrow\wp\left(A\right)\right)\rightarrow\left(B\rightarrow\wp\left(B\right)\right)\\
+\Psi & : & \left(A\rightarrow\wp\left(A\times a\right)\right)\rightarrow\left(B\rightarrow\wp\left(B\times a\right)\right)\\
+\Theta & : & \left(A\rightarrow\wp\left(a\right)\right)\rightarrow\left(B\rightarrow\wp\left(a\right)\right)
 \end{eqnarray*}
 
 \end_inset
@@ -952,7 +935,7 @@ State collection helper function
 \begin_layout Standard
 \begin_inset Formula 
 \begin{alignat*}{2}
- & T_{S} & : & M\ a\rightarrow s\rightarrow M\ a\\
+ & T_{S} & : & M\ a\rightarrow Sid\rightarrow M\ a\\
  & T_{S}\ X\ z & = & \lambda f,r,s.\left\langle r',s'',a\right\rangle \\
  &  &  & \begin{aligned}\mbox{where} & \left\langle r',s',a\right\rangle =X\ f\ r\ s\\
  & s''=s'\left[z\times r\mapsto r'\right]
@@ -1160,6 +1143,27 @@ end{grammar}
 \end_layout
 
 \begin_layout Standard
+Semantic functions for the language is defined in figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "semantic"
+
+\end_inset
+
+.
+ We use auxiliary functions 
+\begin_inset Formula $\mathtt{evalParam}$
+\end_inset
+
+ and 
+\begin_inset Formula $\mathtt{call}$
+\end_inset
+
+ to describe a function call.
+ These functions are defined as following:
+\end_layout
+
+\begin_layout Standard
 \begin_inset Float figure
 wide true
 sideways false
@@ -1183,38 +1187,33 @@ status open
 \begin_inset Formula 
 \begin{align*}
  & F & = &  &  & Y\lambda f.\lambda n.\mathcal{S}\ \dd{\mathtt{Stmt}\left(n\right)}\ n\ f\\
- & \mathcal{S}\dd{S_{1};S_{2}} & = &  &  & T_{S}\ \left(\begin{aligned}\mathcal{S}\ \dd{S_{1}}\ \mathtt{sid}\left(S_{1}\right) & \bind\lambda r.\\
-\mathcal{S}\ \dd{S_{2}}\ \mathtt{sid}\left(S_{2}\right)
-\end{aligned}
+ & \mathcal{S}\dd{S_{1};S_{2}} & = &  &  & T_{S}\ \left(\begin{aligned}\mathcal{S}\ \dd{S_{1}}\ \mathtt{sid}\left(S_{1}\right) & \bind\mathcal{S}\ \dd{S_{2}}\ \mathtt{sid}\left(S_{2}\right)\end{aligned}
 \right)\\
  & \mathcal{S}\dd{\mathtt{return}\ e} & = &  &  & T_{S}\ \left(\mathcal{E}\ \dd{e}\ \mathtt{eid}\left(e\right)\right)\\
  & \mathcal{S}\dd{\mathtt{if}\left(e\right)S_{1}} & = &  &  & T_{S}\ \left(\begin{aligned}\mathcal{E}\ \dd{e}\ \mathtt{eid}\left(e\right) & \bind\lambda v.\\
-\mathtt{cond}\left(v,\mathcal{S}\ \dd{S_{1}}\ \mathtt{sid}\left(S_{1}\right),I_{A}\ Void\right)
+\mathtt{cond}\left(v,\mathcal{S}\ \dd{S_{1}}\ \mathtt{sid}\left(S_{1}\right),\mathtt{noop}\right)
 \end{aligned}
 \right)\\
  & \mathcal{S}\dd{\mathtt{if}\left(e\right)S_{1}\mathtt{else}S_{2}} & = &  &  & T_{S}\ \left(\begin{aligned}\mathcal{E}\ \dd{e}\ \mathtt{eid}\left(e\right) & \bind\lambda v.\\
 \mathtt{cond}\left(v,\mathcal{S}\ \dd{S_{1}}\ \mathtt{sid}\left(S_{1}\right),\mathcal{S}\ \dd{S_{2}}\ \mathtt{sid}\left(S_{2}\right)\right)
 \end{aligned}
 \right)\\
- & \mathcal{S}\dd{id=e} & = &  &  & T_{S}\ \left(\begin{aligned}\mathcal{E}\ \dd{e}\ \mathtt{eid}\left(e\right) & \bind\lambda v.\\
-I_{0}\ \mathtt{asg}\left(id,v\right)
-\end{aligned}
+ & \mathcal{S}\dd{id=e} & = &  &  & T_{S}\ \left(\begin{aligned}\mathcal{E}\ \dd{e}\ \mathtt{eid}\left(e\right) & \bind\lambda v.\mathtt{asg}\left(id,v\right)\end{aligned}
 \right)\\
- & \mathcal{S}\dd{\mathtt{while}\left(e\right)S_{1}} & = &  &  & T_{S}\ \left(Y\lambda x.\lambda f,r,\gamma.\left(\begin{aligned}\mathcal{E}\ \dd{e}\ \mathtt{eid}\left(e\right)\bind\lambda v.\\
+ & \mathcal{S}\dd{\mathtt{while}\left(e\right)S_{1}} & = &  &  & T_{S}\ \left(Y\lambda x.\lambda r,\gamma.\left(\begin{aligned}\mathcal{E}\ \dd{e}\ \mathtt{eid}\left(e\right)\bind\lambda v.\\
 {\scriptstyle \begin{gathered}\mathtt{cond}\left(\begin{gathered}v,\\
 \left(\mathcal{S}\ \dd{S_{1}}\ \mathtt{sid}\left(S_{1}\right)\right)\bind x,\\
-\left(I_{A}\ Void\right)
+\mathtt{noop}
 \end{gathered}
 \right)\end{gathered}
 }
 \end{aligned}
 \right)\right)\\
  & \mathcal{S}\dd{\mathtt{output}\ e} & = &  &  & T_{S}\ \left(\begin{aligned}\mathcal{E}\ \dd{e}\ eid\left(e\right) & \bind\lambda v.\\
-I_{0}\ \mathtt{output}\left(v\right)
+\mathtt{output}\left(v\right)
 \end{aligned}
 \right)\\
- & S\dd{{\scriptstyle \mathtt{function}}\ id\left(IDs\right)\ S_{1}}\ \mathtt{sid} & = &  &  & T_{S}\ \left(\begin{aligned}I_{0}\ \mathtt{fundecl}\left(id,\mathtt{sid}\right)\end{aligned}
-\right)\ \mathtt{sid}\\
+ & S\dd{{\scriptstyle \mathtt{function}}\ id\left(IDs\right)\ S_{1}}\ \mathtt{sid} & = &  &  & T_{S}\ \left(\mathtt{fundecl}\left(id,\mathtt{sid}\right)\right)\ \mathtt{sid}\\
  & \mathcal{E}\dd{con}\ \mathtt{eid} & = &  &  & I_{A}\ \mathtt{conval}\left(con\right)\\
  & \mathcal{E}\dd{L}\ \mathtt{eid} & = &  &  & \mathcal{L}\ \dd{L}\\
  & \mathcal{E}\dd{\mathtt{input}}\ \mathtt{eid} & = &  &  & I_{T}\ \mathtt{getinput}\\
@@ -1242,6 +1241,13 @@ I_{V}\ \mathtt{bin}\left(binop,c_{0},c_{1}\right)
 \end_layout
 
 \begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "semantic"
+
+\end_inset
+
+
 \begin_inset Caption
 
 \begin_layout Plain Layout
@@ -1396,7 +1402,7 @@ Boolean & con\in\left\{ true,false\right\}
 \end{cases}\\
 \mathtt{getinput} & = & \lambda\eta.\left\langle \eta,Number\right\rangle \\
 \mathtt{dooutput}\left(v\right) & = & \lambda\eta.\eta\\
-\mathtt{call}\left(n,p\right) & = & \lambda f,\eta,\gamma.\left\{ \left\langle \bar{\kappa}\ \eta\ \eta',\gamma',r\right\rangle \mid\left\langle \eta',r,\gamma'\right\rangle \in f\ n\ \left(\kappa\ \eta\ p\right)\ \gamma\right\} \\
+\mathtt{call}\left(n,p\right) & = & \lambda f,\eta.\left\{ \left\langle \bar{\kappa}\ \eta\ \eta',\gamma,r\right\rangle \mid\left\langle \eta',r,\gamma\right\rangle \in f\ n\ \left(\kappa\ \eta\ p\right)\ \gamma\right\} \\
 \mathtt{bin}\left(binop,c_{0},c_{1}\right) & = & \begin{cases}
 \left\{ Number\right\}  & binop\in\left\{ '+','-','*','/'\right\} \\
 \left\{ Boolean\right\}  & \mbox{otherwise}
