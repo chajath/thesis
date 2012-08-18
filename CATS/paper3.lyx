@@ -368,6 +368,100 @@ We first describe a monadic theory of language analysis.
 \end_layout
 
 \begin_layout Subsection
+Augmented syntax tree
+\end_layout
+
+\begin_layout Standard
+We use syntax nodes as references to various items constituting program
+ environment.
+ For that purpose, we define the following syntactic nodes and unique identifier
+ spaces.
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+\begin_inset Formula $Stmt$
+\end_inset
+
+ is a statement node.
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+\begin_inset Formula $Expr$
+\end_inset
+
+ is an expression node.
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+\begin_inset Formula $LExpr$
+\end_inset
+
+ is a left-expression node.
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+\begin_inset Formula $Sid$
+\end_inset
+
+ is a statement id.
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+\begin_inset Formula $Eid$
+\end_inset
+
+ is an expression id.
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+\begin_inset Formula $id$
+\end_inset
+
+ is an alphaneumeric identifier.
+\end_layout
+
+\begin_layout Standard
+We define following auxiliary functions to describe the use of the augmented
+ values.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\mathtt{sid} & : & Stmt\rightarrow Sid\\
+\mathtt{stmt} & : & Sid\rightarrow Stmt\\
+\mathtt{eid} & : & Expr\rightarrow Eid\\
+\mathtt{param} & : & Sid\rightarrow\left[id\right]\\
+\mathtt{arity} & : & Sid\rightarrow\mathbb{N}\cup\left\{ 0\right\} 
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Note that we use an sid of a function declaration statement as a reference
+ point for the function defined.
+ 
+\begin_inset Formula $\mathtt{param}$
+\end_inset
+
+ and 
+\begin_inset Formula $\mathtt{arity}$
+\end_inset
+
+ functions take such sid and returns a list of parameter names and the arity
+ of the function.
+\end_layout
+
+\begin_layout Subsection
 State collection
 \end_layout
 
@@ -393,7 +487,7 @@ State Collection
 \end_layout
 
 \begin_layout Definition
-\begin_inset Formula $StateCol:Stmt\rightarrow State\rightarrow State$
+\begin_inset Formula $StateCol:Sid\rightarrow State\rightarrow State$
 \end_inset
 
 
@@ -436,15 +530,23 @@ Type constructor
 \begin_layout Definition
 \begin_inset Formula 
 \begin{multline*}
-M\ a=Func\rightarrow\left(State\times StateCol\right)\rightarrow\\
-\left(State\times StateCol\times a\right)\\
-N=Func\rightarrow\left(State\times StateCol\right)\rightarrow\\
-\wp\left(State\times StateCol\right)
+M_{E}\ a=\beta\rightarrow State\rightarrow\\
+\wp\left(State\times a\right)\times StateCol\\
+M_{S}=\beta\rightarrow State\rightarrow\\
+\wp\left(State\right)\times StateCol
 \end{multline*}
 
 \end_inset
 
 
+\end_layout
+
+\begin_layout Definition
+Where 
+\begin_inset Formula $\beta$
+\end_inset
+
+ is a program-wide constant.
 \end_layout
 
 \begin_deeper
@@ -466,7 +568,7 @@ We define a bind operator
 \end_layout
 
 \begin_layout Definition
-\begin_inset Formula $\left(\bind\right):M\ a\rightarrow\left(a\rightarrow M\ b\right)\rightarrow M\ b$
+\begin_inset Formula $\left(\bind\right):M_{E}\ a\rightarrow\left(a\rightarrow M_{E}\ b\right)\rightarrow M_{E}\ b$
 \end_inset
 
 
@@ -491,18 +593,25 @@ where
 \end_layout
 
 \begin_layout Definition
-\begin_inset Formula $\left(\bind\right):N\rightarrow N\rightarrow N$
+\begin_inset Formula $\left(\bind\right):M_{S}\rightarrow M_{S}\rightarrow M_{S}$
 \end_inset
 
 
 \end_layout
 
 \begin_layout Definition
-\begin_inset Formula $T\ \bind\ U=\lambda f,r,s.\left\{ \begin{gathered}\mbox{if}\ isterm\left(d\right)\ \\
-\mbox{then}\ \left\langle d,s'\right\rangle \ \\
-\mbox{else}\ U\ f\ \left\langle d,s'\right\rangle 
+\begin_inset Formula 
+\begin{eqnarray*}
+T\ \bind\ U & = & \lambda f,s.let\ \left\langle S,c\right\rangle =T\ f\ s\\
+ &  & Z=\left\{ \begin{gathered}\mbox{if}\ isterm\left(s'\right)\ \\
+\mbox{then}\ \left\{ \left\langle s',\phi\right\rangle \right\} \ \\
+\mbox{else}\ U\ f\ s'
 \end{gathered}
-\mid{\left\langle d,s'\right\rangle \in T\ f\ r\ s}\right\} $
+\mid{s'\in S}\right\} \\
+ &  & in\\
+ &  & \left\langle \left\{ s'\left|\left\langle s',\_\right\rangle \in Z\right|\right\} ,\left(\underset{\left\langle \_,c'\right\rangle \in Z}{\bigcup}c'\right)\cup c\right\rangle 
+\end{eqnarray*}
+
 \end_inset
 
  
@@ -614,21 +723,6 @@ I_{0}\ t=\lambda f,r,\gamma.\left\langle r',\gamma,Void\right\rangle \ \mbox{whe
 
 \end_layout
 
-\end_deeper
-\begin_layout Standard
-Now we turn to examine properties of the monad.
- 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "Liang:phd1998"
-
-\end_inset
-
- gives a survey of mathematical properties that monadic constructs exhibit.
- For the purpose our discussion, we limit ourselves to the discussion of
- properties of monads that are crucial in proving correctness of the system.
-\end_layout
-
 \begin_layout Definition
 \begin_inset Argument
 status open
@@ -656,6 +750,21 @@ Monadic transformers
 \end_inset
 
 
+\end_layout
+
+\end_deeper
+\begin_layout Standard
+We examine properties of the monad.
+ 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Liang:phd1998"
+
+\end_inset
+
+ gives a survey of mathematical properties that monadic constructs exhibit.
+ For the purpose our discussion, we limit ourselves to the discussion of
+ properties of monads that are crucial in proving correctness of the system.
 \end_layout
 
 \begin_layout Theorem
@@ -861,6 +970,40 @@ We now have monadic constructs and auxiliary functions to describe a semantic
  functions of the model language.
 \end_layout
 
+\begin_layout Standard
+We define following semantic functions of the language.
+\end_layout
+
+\begin_layout Definition
+\begin_inset Argument
+status open
+
+\begin_layout Plain Layout
+Semantic functions
+\end_layout
+
+\end_inset
+
+The analytic framework contains following semantic functions
+\end_layout
+
+\begin_layout Definition
+\begin_inset Formula 
+\begin{eqnarray*}
+F & = & Sid\rightarrow State\rightarrow\wp\left(State\right)\times StateCol\\
+\mathcal{S} & : & Stmt\rightarrow Sid\rightarrow F\rightarrow State\rightarrow\\
+ &  & \wp\left(State\right)\times StateCol\\
+\mathcal{E} & : & Expr\rightarrow Eid\rightarrow F\rightarrow State\rightarrow\\
+ &  & \wp\left(State\times a\right)\times StateCol\\
+\mathcal{L} & : & LExpr\rightarrow F\rightarrow State\rightarrow\\
+ &  & \wp\left(State\times a\right)\times StateCol
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
 \begin_layout Section
 Model language
 \end_layout
@@ -1039,7 +1182,7 @@ status open
 \begin_layout Plain Layout
 \begin_inset Formula 
 \begin{align*}
- & F & = &  &  & Y\lambda f.\lambda n.\mathcal{S}\ \dd{\mathtt{Stmt}_{n}}\ \mathtt{sid}\left(\mathtt{Stmt}_{n}\right)\ f\\
+ & F & = &  &  & Y\lambda f.\lambda n.\mathcal{S}\ \dd{\mathtt{Stmt}\left(n\right)}\ n\ f\\
  & \mathcal{S}\dd{S_{1};S_{2}} & = &  &  & T_{S}\ \left(\begin{aligned}\mathcal{S}\ \dd{S_{1}}\ \mathtt{sid}\left(S_{1}\right) & \bind\lambda r.\\
 \mathcal{S}\ \dd{S_{2}}\ \mathtt{sid}\left(S_{2}\right)
 \end{aligned}
