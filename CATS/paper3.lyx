@@ -550,6 +550,25 @@ M_{S}=\beta\rightarrow State\rightarrow\\
 \end_inset
 
  is a program-wide constant.
+ In addition to these constructors, we define a helper function 
+\begin_inset Formula $\Omega$
+\end_inset
+
+ who can flatten multiple StateCol values.
+\end_layout
+
+\begin_layout Definition
+\begin_inset Formula $\Omega:\wp\left(State\times StateCol\right)\rightarrow\wp\left(State\right)\times StateCol$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Definition
+\begin_inset Formula $\Omega\ Z=\left\langle \left\{ s'\left|\left\langle s',\_\right\rangle \in Z\right|\right\} ,\left(\underset{\left\langle \_,\gamma'\right\rangle \in Z}{\bigcup}\gamma'\right)\cup\gamma\right\rangle $
+\end_inset
+
+
 \end_layout
 
 \begin_deeper
@@ -567,7 +586,7 @@ We define a bind operator
 \begin_inset Formula $\bind$
 \end_inset
 
- as following:
+.
 \end_layout
 
 \begin_layout Definition
@@ -590,7 +609,7 @@ We define a bind operator
 T\ \bind\ U & = & \lambda f,s.let\ \left\langle S,\gamma\right\rangle =T\ f\ s\\
  &  & Z=\left\{ U\ a\ f\ s'\mid{\left\langle s',a\right\rangle \in S}\right\} \\
  &  & in\\
- &  & \left\langle \left\{ s'\left|\left\langle s',\_\right\rangle \in Z\right|\right\} ,\left(\underset{\left\langle \_,\gamma'\right\rangle \in Z}{\bigcup}\gamma'\right)\cup\gamma\right\rangle 
+ &  & \Omega\ Z
 \end{eqnarray*}
 
 \end_inset
@@ -615,7 +634,7 @@ T\ \bind\ U & = & \lambda f,s.let\ \left\langle S,\gamma\right\rangle =T\ f\ s\\
 \end{gathered}
 \mid{s'\in S}\right\} \\
  &  & in\\
- &  & \left\langle \left\{ s'\left|\left\langle s',\_\right\rangle \in Z\right|\right\} ,\left(\underset{\left\langle \_,\gamma'\right\rangle \in Z}{\bigcup}\gamma'\right)\cup\gamma\right\rangle 
+ &  & \Omega\ Z
 \end{eqnarray*}
 
 \end_inset
@@ -1200,9 +1219,25 @@ reference "semantic"
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-\mathtt{call}\left(n,p\right) & = & \lambda f,\rho,\gamma.\left\langle \left\{ \bar{\kappa}\ \rho\ \rho'\mid\rho'\in S\right\} ,\gamma'\right\rangle \ \mbox{where}\\
+\mathtt{call}\left(n,p\right) & = & \lambda f,\rho,\gamma.\Omega\ \left\langle \left\{ \bar{\kappa}\ \rho\ \rho'\mid\rho'\in S\right\} ,\gamma'\right\rangle \ \mbox{where}\\
  &  & \left\langle S,\gamma'\right\rangle =f\ n\ \left(\kappa\ \rho\ p\right)\ \gamma
 \end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{gather*}
+\mathtt{evalParam}:\left[ID\right]\times\left[Expr\right]\times\left[a\right]\times F\times\\
+State\times StateCol\rightarrow\wp\left(State\times\left[a\right]\right)\times StateCol\\
+\mathtt{evalParam}\ \phi\ ps\ f\ \rho\ \sigma=\left\langle \rho,\sigma,ps\right\rangle \\
+\mathtt{evalParam}\ \left[e|Exprs\right]\ ps\ f\ \rho\ \sigma=\\
+\ \mathtt{evalParam}\ Exprs\ \left[ps|con\right]\ f\ \rho_{1}\ \sigma_{1}\\
+\ \ \mbox{where}\left\langle \rho_{1},\sigma_{1},con\right\rangle =\mathcal{E}\ e\ f\ \rho\ \sigma
+\end{gather*}
 
 \end_inset
 
@@ -1448,7 +1483,6 @@ Boolean & con\in\left\{ true,false\right\}
 \end{cases}\\
 \mathtt{getinput} & = & \Gamma\ \lambda\eta.\left\langle \eta,Number\right\rangle \\
 \mathtt{dooutput}\left(v\right) & = & \Gamma\ \lambda\eta.\eta\\
-\mathtt{call}\left(n,p\right) & = & \lambda f,\eta.\left\{ \left\langle \bar{\kappa}\ \eta\ \eta',\gamma,r\right\rangle \mid\left\langle \eta',r,\gamma\right\rangle \in f\ n\ \left(\kappa\ \eta\ p\right)\ \gamma\right\} \\
 \mathtt{bin}\left(binop,c_{0},c_{1}\right) & = & \Gamma\ \begin{cases}
 Number & binop\in\left\{ '+','-','*','/'\right\} \\
 Boolean & \mbox{otherwise}
@@ -1695,7 +1729,7 @@ status open
 =\mathtt{arity}\left(n\right)
 \end{gathered}
 \\
-{\scriptstyle \Upsilon\ \begin{gathered}\lambda\nu:Curried.\\
+I_{T}{\scriptstyle \begin{gathered}\Upsilon\ \lambda\nu:Curried.\\
 \left\{ \left\langle \nu\left[\left\langle n,N\left(\left[C|p\right]\right),e\right\rangle \mapsto\left[C|p\right]\right],\left\langle n,\left[C|p\right]\right\rangle \right\rangle \mid C\in\nu\left(n,c,e\right)\right\} 
 \end{gathered}
 } & \mbox{otherwise}
@@ -1836,20 +1870,20 @@ I_{0}\ \mathtt{set}\left(r,id,v\right)
  & \mathcal{E}\dd{\mathtt{this}}\ \mathtt{eid} & = &  &  & I_{V}\ \mathtt{getthis}\\
  & \mathcal{E}\dd{L\left(E*\right)}\ \mathtt{eid} & = &  &  & \left(\begin{aligned}\mathcal{L}\ \dd{L} & \bind\lambda n.\\
 \mathtt{evalParams}\ n\ E*\ \phi & \bind\lambda p.\\
-\mathtt{call}\left(n,p,\mathtt{obj}\left(0,\rho\right),\mathtt{eid}\right)
+\mathtt{apply}\left(n,p,\mathtt{obj}\left(0,\rho\right),\mathtt{eid}\right)
 \end{aligned}
 \right)\\
  & \mathcal{E}\dd{\mathtt{new}\ L\left(E*\right)}\ \mathtt{eid} & = &  &  & \left(\begin{aligned}\mathcal{L}\ \dd{L} & \bind\lambda n.\\
 \mathtt{evalParams}\ n\ E*\ \phi & \bind\lambda p.\\
-I_{T}\ \mathtt{newobj} & \bind\lambda m.\\
-\mathtt{call}\left(n,p,m,\mathtt{eid}\right) & \bind\lambda\_.\\
+I_{T}\ \mathtt{newobj}\left(\mathtt{eid}\right) & \bind\lambda m.\\
+\mathtt{apply}\left(n,p,m,\mathtt{eid}\right) & \bind\lambda\_.\\
 I_{A}\ m
 \end{aligned}
 \right)\\
  & \mathcal{E}\dd{e_{0}.L\left(E*\right)}\ \mathtt{eid} & = &  &  & \left(\begin{aligned}\mathcal{E}\ \dd{e_{0}}\ \mathtt{eid}\left(e_{0}\right) & \bind\lambda t.\\
 \mathcal{L}\ \dd{L} & \bind\lambda n.\\
 \mathtt{evalParams}\ n\ E*\ \phi & \bind\lambda p.\\
-\mathtt{call}\left(n,p,t,\mathtt{eid}\right)
+\mathtt{apply}\left(n,p,t,\mathtt{eid}\right)
 \end{aligned}
 \right)\\
  & \mathcal{L}\dd{e_{0}.id} & = &  &  & \left(\begin{aligned}\mathcal{E}\ \dd{e_{0}}\ \mathtt{eid}\left(e_{0}\right) & \bind\lambda v.\\
@@ -1892,6 +1926,24 @@ name "semmon-oo"
 
 \end_layout
 
+\begin_layout Standard
+We redefine 
+\begin_inset Formula $\mathtt{call}$
+\end_inset
+
+ function to include receiver object reference.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $\mathtt{call}\left(n,p,t\right)=\begin{gathered}\lambda f,\rho,\gamma.\Omega\ \left\langle \left\{ \bar{\kappa}\ \rho\ \rho'\mid\rho'\in S\right\} ,\gamma'\right\rangle \\
+\mbox{where}\left\langle S,\gamma'\right\rangle =f\ n\ \left(\kappa\ \rho\ \left\langle p,t\right\rangle \ n\right)\ \gamma
+\end{gathered}
+$
+\end_inset
+
+
+\end_layout
+
 \begin_layout Subsubsection
 Concrete interpretation
 \end_layout
@@ -1906,8 +1958,9 @@ Domain
 Value & = & \mathbb{Z}\cup\left\{ T,F\right\} \cup Object\cup\\
  &  & FunctionPointer\\
 Object & = & \left\{ OBJ_{n}\mid n\in\left\{ 0\right\} \cup\mathbb{N}\right\} \\
-CState & = & Var\times ObjMem\times Object\\
-ObjMem & = & n\rightarrow V
+ObjMem & = & n\rightarrow V\\
+CState & = & Var\times ObjMem\times\\
+ &  & Object\times Return
 \end{eqnarray*}
 
 \end_inset
@@ -1922,12 +1975,12 @@ Functions
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-\kappa & = & \lambda\left\langle \_,OM:ObjMem,\_\right\rangle ,\\
- &  & \left\langle P:\left[con\right],T':Object\right\rangle ,n:Fid.\\
- &  & \ \left\langle \left[param_{n,k}\mapsto P_{k}\right],OM,T'\right\rangle \\
-\bar{\kappa} & = & \lambda\left\langle V:Var,\_,T:Object\right\rangle ,\\
- &  & \left\langle \_,OM':ObjMem,\_\right\rangle .\\
- &  & \ \left\langle V,OM',T\right\rangle 
+\kappa & = & \lambda\left\langle \_,OM:ObjMem,\_,\_\right\rangle ,\\
+ &  & \left\langle P:\left[con\right],T':Object\right\rangle ,n:Sid.\\
+ &  & \ \left\langle \left[\mathtt{param}\left(n\right)_{k}\mapsto P_{k}\right],OM,T',Void\right\rangle \\
+\bar{\kappa} & = & \lambda\left\langle V:Var,\_,T:Object,\_\right\rangle ,\\
+ &  & \left\langle \_,OM':ObjMem,r:Return\right\rangle .\\
+ &  & \ \left\langle \left\langle V,OM',T,Void\right\rangle ,r\right\rangle 
 \end{eqnarray*}
 
 \end_inset
@@ -1973,17 +2026,14 @@ status open
 \mathtt{set}\left(OBJ_{n},id,v\right) & = & \bar{\Upsilon}\ \lambda OM:ObjMem.OM\left[OBJ_{n}\left[id\mapsto v\right]\right]\\
 \mathtt{obj}\left(n\right) & = & \bar{\Theta}\ \lambda OM:ObjMem.OM\left(n\right)\\
 \mathtt{getthis} & = & \bar{\Theta}\ \lambda T:Object.T\\
-\mathtt{call}\left(\left\langle FP_{n},C\right\rangle ,p,t,\_\right) & = & \lambda f,\rho,\gamma.\begin{cases}
-\begin{gathered}\left\langle \bar{\kappa}\ \rho\ \rho',\gamma',r\right\rangle \mbox{where}\left\langle \rho',\gamma',r\right\rangle =\\
-f\ n\ \left(\kappa\ \rho\ \left\langle p,t\right\rangle \ n\right)\ \gamma
-\end{gathered}
- & \begin{gathered}N\left(\left[C|p\right]\right)\\
-=arity_{n}
+\mathtt{apply}\left(\left\langle n,C\right\rangle ,p,t,\_\right) & = & \begin{cases}
+\mathtt{call}\left(n,\left[C|p\right],t\right) & \begin{gathered}N\left(\left[C|p\right]\right)\\
+=\mathtt{arity}\left(n\right)
 \end{gathered}
 \\
-\left\langle \rho,\gamma,\left\langle FP_{n},\left[C|p\right]\right\rangle \right\rangle  & \mbox{otherwise}
+\lambda f,\rho,\gamma.\left\langle \left\{ \left\langle \rho,\left\langle n,\left[C|p\right]\right\rangle \right\rangle \right\} ,\gamma\right\rangle  & \mbox{otherwise}
 \end{cases}\\
-\mathtt{newobj} & = & \bar{\Psi}\ \lambda OM:ObjMem.\left\langle OM\left[n\mapsto\phi\right],OBJ_{n}\right\rangle \ \mbox{where}\ n=N\left(OM\right)
+\mathtt{newobj}\left(\_\right) & = & \bar{\Psi}\ \lambda OM:ObjMem.\left\langle OM\left[n\mapsto\phi\right],OBJ_{n}\right\rangle \ \mbox{where}\ n=N\left(OM\right)
 \end{eqnarray*}
 
 \end_inset
@@ -2031,44 +2081,16 @@ Domain
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-AState & = & AVar\times AObjMem\times AObj\times Curried\\
 AObj & = & \left\{ 0\right\} \cup Eid\\
 AVal & = & P\cup AObj\cup FunPointer\\
-AObjMem & = & n\rightarrow AVar
+AObjMem & = & Eid\rightarrow AVar\\
+AState & = & AVar\times AObjMem\times\\
+ &  & AObj\times Curried\times AReturn
 \end{eqnarray*}
 
 \end_inset
 
 
-\end_layout
-
-\begin_layout Standard
-In 
-\begin_inset Formula $OBJ_{n}$
-\end_inset
-
-:
-\end_layout
-
-\begin_layout Standard
-We number each of the 
-\begin_inset Quotes eld
-\end_inset
-
-new
-\begin_inset Quotes erd
-\end_inset
-
- expressions as we parse the program.
- The number n corresponds to the 
-\begin_inset Quotes eld
-\end_inset
-
-new
-\begin_inset Quotes erd
-\end_inset
-
- expression number.
 \end_layout
 
 \begin_layout Paragraph
@@ -2081,9 +2103,9 @@ Functions
 \kappa & = & \lambda\left\langle \_,\alpha:AObjMem,\_,\nu:Curried\right\rangle ,\\
  &  & \left\langle P:\left[con\right],\tau':Object\right\rangle ,n:Sid.\\
  &  & \ \left\langle \left[\mathtt{param}\left(n\right)_{k}\mapsto P_{k}\right],\alpha,\tau',\nu\right\rangle \\
-\bar{\kappa} & = & \lambda\left\langle \sigma:AVar,\_,\tau:AObj,\_\right\rangle ,\\
- &  & \left\langle \_,\alpha':AObjMem,\_,\nu':Curried\right\rangle .\\
- &  & \ \left\langle \sigma,\alpha',\tau,\nu'\right\rangle 
+\bar{\kappa} & = & \lambda\left\langle \sigma:AVar,\_,\tau:AObj,\_,r:AReturn\right\rangle ,\\
+ &  & \left\langle \_,\alpha':AObjMem,\_,\nu':Curried,r':AReturn\right\rangle .\\
+ &  & \ \left\langle \left\langle \sigma,\alpha',\tau,\nu',r\right\rangle ,r'\right\rangle 
 \end{eqnarray*}
 
 \end_inset
@@ -2129,13 +2151,9 @@ status open
 \mathtt{set}\left(n,id,v\right) & = & \bar{\Upsilon}\ \lambda\alpha:AObjMem.\alpha\left(n\right)\left[id\mapsto v\right]\\
 \mathtt{obj}\left(j\right) & = & \bar{\Theta}\ \lambda\alpha:AObjMem.\alpha\left(j\right)\\
 \mathtt{getthis} & = & \bar{\Theta}\ \lambda\tau:AObj.\tau\\
-\mathtt{newobj} & = & \bar{\Psi}\ \lambda\alpha:AObjMem.\left\langle \alpha\left[n\mapsto\phi\right],OBJ_{n}\right\rangle \ \mbox{where}\ n=N\left(\alpha\right)\\
-\mathtt{call}\left(n,p,t,e\right) & = & \lambda f,\eta,\gamma.\underset{\left\langle FP_{x},C\right\rangle \in n}{\bigsqcup}\mathtt{scall}\left(\left\langle FP_{x},C\right\rangle ,p,t,f,\eta,\gamma,e\right)\\
-\mathtt{scall}\left(\left\langle FP_{n},C\right\rangle ,p,t,f,\eta,\gamma,e\right) & = & \begin{cases}
-\begin{gathered}\left\langle \bar{\kappa}\ \eta\ \eta',r',\gamma',\nu'\right\rangle \ \mbox{where}\\
-\left\langle \eta',r,\gamma',\nu'\right\rangle =f\ n\ \left(\kappa\ \eta\ \left\langle p,t\right\rangle \ n\right)\ \gamma
-\end{gathered}
- & \begin{gathered}N\left(\left[C|p\right]\right)\\
+\mathtt{newobj}\left(n\right) & = & \bar{\Psi}\ \lambda\alpha:AObjMem.\left\langle \alpha\left[n\mapsto\phi\right],n\right\rangle \\
+\mathtt{apply}\left(\left\langle n,C\right\rangle ,p,t,e\right) & = & \begin{cases}
+\mathtt{call}\left(n,\left[C|p\right],t\right) & \begin{gathered}N\left(\left[C|p\right]\right)\\
 =arity_{n}
 \end{gathered}
 \\
@@ -2185,7 +2203,7 @@ Prototype system
 \begin_inset Formula ${\scriptstyle \mathcal{E}\dd{\mathtt{new}\ L\left(E*\right)}\ \mathtt{eid}}={\scriptstyle \left(\begin{aligned}\mathcal{L}\ \dd{L} & \bind\lambda n.\\
 \mathtt{evalParams}\ n\ E*\ \phi & \bind\lambda p.\\
 I_{T}\ \mathtt{newobj\left(n\right)} & \bind\lambda m.\\
-\mathtt{call}\left(n,p,m,\mathtt{eid}\right) & \bind\lambda\_.\\
+\mathtt{apply}\left(n,p,m,\mathtt{eid}\right) & \bind\lambda\_.\\
 I_{A}\ m
 \end{aligned}
 \right)}$
@@ -2223,24 +2241,26 @@ Functions
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-{\scriptstyle \mathtt{get}\left(\left\langle FP_{n},\_\right\rangle ,\mathtt{prototype}\right)} & = & \bar{\Theta}\ \lambda PT:Prototype.PT\left(n\right)\\
-\mathtt{chain}\left(\left\langle OBJ_{n},f\right\rangle ,id,tr\right) & = & \lambda OM,PT.\\
+{\scriptstyle \mathtt{get}\left(\left\langle n,\_\right\rangle ,\mathtt{prototype}\right)} & = & \bar{\Theta}\ \lambda PT:Prototype.PT\left(n\right)\\
+\mathtt{chain}\left(\left\langle n,f\right\rangle ,id,tr\right) & = & \lambda OM,PT.\\
  &  & \mbox{if}\ id\in OM\left(n\right),\ OM\left(n\right)\left(id\right)\\
  &  & \mbox{else if }f\notin tr,\ \\
- &  & \mathtt{chain}\left(PT\left(f\right),id,\left[tr\mid f\right]\right)\ OM\ PT\\
-\mathtt{get}\left(\left\langle OBJ_{n},f\right\rangle ,id\right) & = & \bar{\Theta}\ \lambda{\scriptstyle OM:ObjMem,PT:Prototype}.\\
+ &  & \mathtt{chain}\left(PT\left(f\right),id,\left[tr\mid f\right]\right)\\
+ &  & \ \ OM\ PT\\
+\mathtt{get}\left(\left\langle n,f\right\rangle ,id\right) & = & \bar{\Theta}\ \lambda{\scriptstyle OM:ObjMem,PT:Prototype}.\\
  &  & \mbox{if}\ id\in OM\left(n\right)\ OM\left(n\right)\left(id\right)\\
  &  & \mbox{else}\ \mathtt{chain}\left(PT\left(f\right),id,\left[f\right]\right)\\
-{\scriptstyle \mathtt{set}\left(\left\langle FP_{n},\_\right\rangle ,\mathtt{prototype},v\right)} & = & \bar{\Upsilon}\ \lambda PT:Prototype.PT\left[n\mapsto v\right]\\
-\mathtt{newobj}\left(\left\langle FP_{n},\_\right\rangle \right) & = & {\scriptstyle \bar{\Psi}\ \lambda OM:ObjMem.\left\langle OM\left[n\mapsto\phi\right],OBJ_{n},f\right\rangle }\\
+{\scriptstyle \mathtt{set}\left(\left\langle n,\_\right\rangle ,\mathtt{prototype},v\right)} & = & \bar{\Upsilon}\ \lambda PT:Prototype.PT\left[n\mapsto v\right]\\
+\mathtt{newobj}\left(\left\langle n,\_\right\rangle \right) & = & \bar{\Psi}\ \lambda OM:ObjMem.\\
+ &  & \left\langle OM\left[n\mapsto\phi\right],OBJ_{n},f\right\rangle \\
  &  & \ \mbox{where}\ n=N\left(OM\right)\\
 \mathtt{fundecl}(id,n) & = & \bar{\Upsilon}\ \lambda V,PT:Prototype.\\
- &  & \left\langle V\left[id\mapsto\left\langle FP_{n},\phi\right\rangle \right],PT'\right\rangle \\
+ &  & \left\langle V\left[id\mapsto\left\langle n,\phi\right\rangle \right],PT'\right\rangle \\
  &  & \mbox{where}\\
- &  & PT'=\begin{cases}
+ &  & {\scriptstyle PT'=\begin{cases}
 PT\left[n\mapsto\phi\right] & n\notin PT\\
 PT & \mbox{otherwise}
-\end{cases}
+\end{cases}}
 \end{eqnarray*}
 
 \end_inset
