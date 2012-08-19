@@ -1198,6 +1198,18 @@ reference "semantic"
 \end_layout
 
 \begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\mathtt{call}\left(n,p\right) & = & \lambda f,\rho,\gamma.\left\langle \left\{ \bar{\kappa}\ \rho\ \rho'\mid\rho'\in S\right\} ,\gamma'\right\rangle \ \mbox{where}\\
+ &  & \left\langle S,\gamma'\right\rangle =f\ n\ \left(\kappa\ \rho\ p\right)\ \gamma
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
 \begin_inset Float figure
 wide true
 sideways false
@@ -1347,8 +1359,8 @@ s_{2} & v=false
 \mathtt{conval}\left(con\right) & = & con\\
 \mathtt{getinput\left(\rho\right)} & = & \bar{\Psi}\ \lambda O:IO.\left\langle O',z\in\mathbb{N}\right\rangle \mbox{see note}\\
 \mathtt{dooutput}\left(v\right) & = & \bar{\Upsilon}\ \lambda O:IO.O'\mbox{see note}\\
-\mathtt{call}\left(FP_{n},p\right) & = & \lambda f,\rho,\gamma.\left\langle \bar{\kappa}\ \rho\ \rho',\gamma',r\right\rangle \ \mbox{where}\\
- &  & \left\langle \rho',\gamma',r\right\rangle =f\ n\ \left(\kappa\ \rho\ p\right)\ \gamma\\
+\\
+\\
 \mathtt{fundecl}(id,n) & = & \bar{\Upsilon}\ \lambda V:Var.V\left[id\mapsto FP_{n}\right]\\
 \mathtt{bin}\left(binop,c_{0},c_{1}\right) & = & \mbox{perform binary operation }\\
  &  & \mbox{between two constants}
@@ -1376,7 +1388,7 @@ Domain
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-FunPointer & = & Fid\\
+FunPointer & = & Sid\\
 AVal & = & \left\{ Number,Boolean\right\} \cup FunPointer\\
 AVar & = & id\rightarrow AVal\\
 AReturn & = & AVal\cup\left\{ Void\right\} \\
@@ -1438,8 +1450,8 @@ Boolean & con\in\left\{ true,false\right\}
 \mathtt{dooutput}\left(v\right) & = & \Gamma\ \lambda\eta.\eta\\
 \mathtt{call}\left(n,p\right) & = & \lambda f,\eta.\left\{ \left\langle \bar{\kappa}\ \eta\ \eta',\gamma,r\right\rangle \mid\left\langle \eta',r,\gamma\right\rangle \in f\ n\ \left(\kappa\ \eta\ p\right)\ \gamma\right\} \\
 \mathtt{bin}\left(binop,c_{0},c_{1}\right) & = & \Gamma\ \begin{cases}
-\left\{ Number\right\}  & binop\in\left\{ '+','-','*','/'\right\} \\
-\left\{ Boolean\right\}  & \mbox{otherwise}
+Number & binop\in\left\{ '+','-','*','/'\right\} \\
+Boolean & \mbox{otherwise}
 \end{cases}\\
 \mathtt{fundecl}\left(id,n\right) & = & \bar{\Upsilon}\ \lambda\sigma:AVar.\sigma\left[id\mapsto n\right]
 \end{eqnarray*}
@@ -1494,7 +1506,7 @@ There is no inherent semantic function change required in this case.
 \begin_layout Standard
 \begin_inset Formula $\mathcal{E}\dd{L\left(E*\right)}\ \mathtt{eid}=\left(\begin{aligned}\mathcal{L}\ \dd{L} & \bind\lambda n.\\
 \mathtt{evalParams}\ n\ E*\ \phi & \bind\lambda p.\\
-\mathtt{call}\left(n,p,\mathtt{eid}\right)
+\mathtt{apply}\left(n,p,\mathtt{eid}\right)
 \end{aligned}
 \right)$
 \end_inset
@@ -1511,7 +1523,7 @@ Domain
 \end_layout
 
 \begin_layout Standard
-\begin_inset Formula $FunctionPointer=\left\langle FP_{n},\left[Value\right]\right\rangle $
+\begin_inset Formula $FunctionPointer=Sid\times\left[Value\right]$
 \end_inset
 
 
@@ -1524,20 +1536,15 @@ Functions
 \begin_layout Standard
 \begin_inset Formula 
 \begin{gather*}
-\mathtt{call}\left(\left\langle FP_{n},C\right\rangle ,p,\_\right)=\\
-\lambda f,\rho,\gamma.\begin{cases}
-\begin{gathered}\begin{gathered}\left\langle \bar{\kappa}\ \rho\ \rho',\gamma',r\right\rangle \mbox{where}\\
-\left\langle \rho',\gamma',r\right\rangle =\\
-f\ n\ \left(\kappa\ \rho\ p\right)\ \gamma
-\end{gathered}
-\end{gathered}
- & \begin{gathered}N\left(\left[C|p\right]\right)\\
-=arity_{n}
+\mathtt{apply}\left(\left\langle n,C\right\rangle ,p,\_\right)=\\
+\begin{cases}
+\mathtt{call}\left(n,\left[C|p\right]\right) & \begin{gathered}N\left(\left[C|p\right]\right)\\
+=\mathtt{arity}\left(n\right)
 \end{gathered}
 \\
-\left\langle \rho,\gamma,\left\langle FP_{n},\left[C|p\right]\right\rangle \right\rangle  & \mbox{otherwise}
+\lambda f,\rho,\gamma.\left\langle \left\langle \rho,\left\langle n,\left[C|p\right]\right\rangle \right\rangle ,\gamma\right\rangle  & \mbox{otherwise}
 \end{cases}\\
-\mathtt{fundecl}(id,n)=\bar{\Upsilon}\ \lambda V.V\left[id\mapsto\left\langle FP_{n},\phi\right\rangle \right]
+\mathtt{fundecl}(id,n)=\bar{\Upsilon}\ \lambda V.V\left[id\mapsto\left\langle n,\phi\right\rangle \right]
 \end{gather*}
 
 \end_inset
@@ -1624,7 +1631,7 @@ In this case, variable
  A solution to this problem is to have a curried function anchored to a
  particular language construct.
  In this case, we can use an eid of a currying expression as a point of
- reference.
+ reference (or '0' if not curried).
 \end_layout
 
 \begin_layout Paragraph
@@ -1634,18 +1641,10 @@ Domain
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-AState & = & AVar\times Curried\\
-FunPointer & = & FP_{fid}\times\left[\wp\left(\begin{gathered}\left(AVal-FunPointer\right)\\
-\cup FC\times n\times c\times eid
-\end{gathered}
-\right)\right]\\
-Curried & = & n\times c\times eid\rightarrow\\
- &  & \left[\wp\left(\begin{gathered}\left(AVal-FunPointer\right)\\
-\cup FC\times n\times c\times eid
-\end{gathered}
-\right)\right]\\
- &  & \mbox{where \emph{n} is a function identifier}\\
- &  & \ \ c\mbox{ is a number of parameters curried}
+FunPointer & = & Sid\times c\times\left(Eid\cup\left\{ 0\right\} \right)\\
+Curried & = & Sid\times c\times Eid\rightarrow\left[AVal\right]\\
+ &  & \mbox{where}c\mbox{ is a number of parameters curried}\\
+AState & = & AVar\times Curried\times AReturn
 \end{eqnarray*}
 
 \end_inset
@@ -1691,18 +1690,17 @@ status open
 \begin_layout Plain Layout
 \begin_inset Formula 
 \begin{eqnarray*}
-\mathtt{call}\left(n,p,e\right) & = & \lambda f,\eta,\gamma.\underset{\left\langle FP_{x},C\right\rangle \in n}{\bigsqcup}\mathtt{scall}\left(\left\langle FP_{x},C\right\rangle ,p,f,\eta,\gamma,e\right)\\
-\mathtt{scall}\left(\left\langle FP_{n},C\right\rangle ,p,f,\eta,\gamma,e\right) & = & \begin{cases}
-\begin{gathered}\left\langle \bar{\kappa}\ \eta\ \eta',r',\gamma',\nu'\right\rangle \ \mbox{where}\\
-\left\langle \eta',r,\gamma',\nu'\right\rangle =f\ n\ \left(\kappa\ \eta\ p\right)\ \gamma
-\end{gathered}
- & \begin{gathered}N\left(\left[C|p\right]\right)\\
-=arity_{n}
+\mathtt{apply}\left(\left\langle n,c,e\right\rangle ,p,e\right) & = & \begin{cases}
+\mathtt{call}\left(n,\left[C|p\right]\right) & \begin{gathered}c+N\left(p\right)\\
+=\mathtt{arity}\left(n\right)
 \end{gathered}
 \\
-{\scriptstyle \left\langle \Upsilon\ \lambda\nu:Curried.\nu\left[\left\langle e,n,N\left(\left[C|p\right]\right)\right\rangle \mapsto\left[C|p\right]\right],\gamma,\left\langle FP_{n},\left[C|p\right],e\right\rangle \right\rangle } & \mbox{otherwise}
+{\scriptstyle \Upsilon\ \begin{gathered}\lambda\nu:Curried.\\
+\left\{ \left\langle \nu\left[\left\langle n,N\left(\left[C|p\right]\right),e\right\rangle \mapsto\left[C|p\right]\right],\left\langle n,\left[C|p\right]\right\rangle \right\rangle \mid C\in\nu\left(n,c,e\right)\right\} 
+\end{gathered}
+} & \mbox{otherwise}
 \end{cases}\\
-\mathtt{fundecl}\left(id,n\right) & = & \bar{\Upsilon}\ \lambda\sigma:AVar.\sigma\left[id\mapsto\left\langle FP_{n},\phi,n\right\rangle \right]
+\mathtt{fundecl}\left(id,n\right) & = & \bar{\Upsilon}\ \lambda\sigma:AVar.\sigma\left[id\mapsto\left\langle n,0,0\right\rangle \right]
 \end{eqnarray*}
 
 \end_inset
@@ -2033,7 +2031,7 @@ Domain
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-AState & = & AVar\times AObjMem\times\wp\left(AObj\right)\times Curried\\
+AState & = & AVar\times AObjMem\times AObj\times Curried\\
 AObj & = & \left\{ 0\right\} \cup Eid\\
 AVal & = & P\cup AObj\cup FunPointer\\
 AObjMem & = & n\rightarrow AVar
@@ -2081,8 +2079,8 @@ Functions
 \begin_inset Formula 
 \begin{eqnarray*}
 \kappa & = & \lambda\left\langle \_,\alpha:AObjMem,\_,\nu:Curried\right\rangle ,\\
- &  & \left\langle P:\left[con\right],\tau':Object\right\rangle ,n:Fid.\\
- &  & \ \left\langle \left[param_{n,k}\mapsto P_{k}\right],\alpha,\tau',\nu\right\rangle \\
+ &  & \left\langle P:\left[con\right],\tau':Object\right\rangle ,n:Sid.\\
+ &  & \ \left\langle \left[\mathtt{param}\left(n\right)_{k}\mapsto P_{k}\right],\alpha,\tau',\nu\right\rangle \\
 \bar{\kappa} & = & \lambda\left\langle \sigma:AVar,\_,\tau:AObj,\_\right\rangle ,\\
  &  & \left\langle \_,\alpha':AObjMem,\_,\nu':Curried\right\rangle .\\
  &  & \ \left\langle \sigma,\alpha',\tau,\nu'\right\rangle 
@@ -2127,13 +2125,10 @@ status open
 \begin_layout Plain Layout
 \begin_inset Formula 
 \begin{eqnarray*}
-\mathtt{get}\left(n,id\right) & = & \bar{\Theta}\ \lambda\alpha:AObjMem.\left\{ \alpha\left(x\right)\mid OBJ_{x}\in n\right\} \\
-\mathtt{set}\left(n,id,v\right) & = & \bar{\Upsilon}\ \lambda\alpha:AObjMem.\left\{ x\mid{OBJ_{x}\in\alpha,x=\begin{cases}
-\alpha\left(x\right)\left[id\mapsto v\right] & OBJ_{x}\in n\\
-\alpha\left(x\right) & \mbox{otherwise}
-\end{cases}}\right\} \\
+\mathtt{get}\left(n,id\right) & = & \bar{\Theta}\ \lambda\alpha:AObjMem.\alpha\left(n\right)\\
+\mathtt{set}\left(n,id,v\right) & = & \bar{\Upsilon}\ \lambda\alpha:AObjMem.\alpha\left(n\right)\left[id\mapsto v\right]\\
 \mathtt{obj}\left(j\right) & = & \bar{\Theta}\ \lambda\alpha:AObjMem.\alpha\left(j\right)\\
-\mathtt{getthis} & = & \bar{\Theta}\ \lambda\tau:\wp\left(AObj\right).\tau\\
+\mathtt{getthis} & = & \bar{\Theta}\ \lambda\tau:AObj.\tau\\
 \mathtt{newobj} & = & \bar{\Psi}\ \lambda\alpha:AObjMem.\left\langle \alpha\left[n\mapsto\phi\right],OBJ_{n}\right\rangle \ \mbox{where}\ n=N\left(\alpha\right)\\
 \mathtt{call}\left(n,p,t,e\right) & = & \lambda f,\eta,\gamma.\underset{\left\langle FP_{x},C\right\rangle \in n}{\bigsqcup}\mathtt{scall}\left(\left\langle FP_{x},C\right\rangle ,p,t,f,\eta,\gamma,e\right)\\
 \mathtt{scall}\left(\left\langle FP_{n},C\right\rangle ,p,t,f,\eta,\gamma,e\right) & = & \begin{cases}
@@ -2229,11 +2224,10 @@ Functions
 \begin_inset Formula 
 \begin{eqnarray*}
 {\scriptstyle \mathtt{get}\left(\left\langle FP_{n},\_\right\rangle ,\mathtt{prototype}\right)} & = & \bar{\Theta}\ \lambda PT:Prototype.PT\left(n\right)\\
-\mathtt{chain}\left(\left\langle OBJ_{n},f\right\rangle ,id,tr\right) & = & \lambda OM.PT.\\
+\mathtt{chain}\left(\left\langle OBJ_{n},f\right\rangle ,id,tr\right) & = & \lambda OM,PT.\\
  &  & \mbox{if}\ id\in OM\left(n\right),\ OM\left(n\right)\left(id\right)\\
- &  & \mbox{else if }f\notin tr\ \\
- &  & \mathtt{chain}\left(PT\left(f\right),id,\left[tr\mid f\right]\right)\\
- &  & \ OM\ PT\\
+ &  & \mbox{else if }f\notin tr,\ \\
+ &  & \mathtt{chain}\left(PT\left(f\right),id,\left[tr\mid f\right]\right)\ OM\ PT\\
 \mathtt{get}\left(\left\langle OBJ_{n},f\right\rangle ,id\right) & = & \bar{\Theta}\ \lambda{\scriptstyle OM:ObjMem,PT:Prototype}.\\
  &  & \mbox{if}\ id\in OM\left(n\right)\ OM\left(n\right)\left(id\right)\\
  &  & \mbox{else}\ \mathtt{chain}\left(PT\left(f\right),id,\left[f\right]\right)\\
@@ -2319,14 +2313,11 @@ status open
 \mathtt{get}\left(n,id\right) & = & \bar{\Theta}\ \lambda\alpha:AObjMem,\zeta:APrototype.\\
  &  & \left\{ \alpha\left(x\right)\left(id\right)\mid x\in\mathtt{reach}\left(\alpha,\zeta,n\right)\right\} \\
 \mathtt{set}\left(n,\mathtt{prototype},v\right) & = & \bar{\Upsilon}\ \lambda\alpha:AObjMem,\zeta:APrototype.\\
- &  & \left\langle \begin{gathered}\left\{ x\mid{OBJ_{x}\in\alpha,x=\begin{cases}
-\alpha\left(x\right)\left[\mathtt{prototype}\mapsto v\right] & OBJ_{x}\in n\\
-\alpha\left(x\right) & \mbox{otherwise}
-\end{cases}}\right\} ,\\
-\left\{ x\mid{z\in\zeta,x=\begin{cases}
-\zeta\left(z\right)\cup\left\{ v\right\}  & \left\langle FP_{z},\_,\_\right\rangle \in n\\
-\zeta\left(z\right) & \mbox{otherwise}
-\end{cases}}\right\} 
+ &  & \left\langle \begin{gathered}\alpha\left(x\right)\left[\mathtt{prototype}\mapsto v\right],\\
+\begin{cases}
+\zeta\left[z\mapsto\zeta\left(z\right)\cup\left\{ v\right\} \right] & \left\langle z,\_,\_\right\rangle =n\\
+\zeta & \mbox{otherwise}
+\end{cases}
 \end{gathered}
 \right\rangle \\
 \mathtt{newobj}\left(n\right) & = & \bar{\Psi}\ \lambda\alpha:AObjMem.\left\langle \alpha\left[n\mapsto\phi\right],OBJ_{n}\right\rangle \ \mbox{where}\ n=N\left(\alpha\right)\\
