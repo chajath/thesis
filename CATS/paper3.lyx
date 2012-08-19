@@ -2242,19 +2242,19 @@ Functions
 \begin_inset Formula 
 \begin{eqnarray*}
 {\scriptstyle \mathtt{get}\left(\left\langle n,\_\right\rangle ,\mathtt{prototype}\right)} & = & \bar{\Theta}\ \lambda PT:Prototype.PT\left(n\right)\\
-\mathtt{chain}\left(\left\langle n,f\right\rangle ,id,tr\right) & = & \lambda OM,PT.\\
+{\scriptstyle \mathtt{chain}\left(\left\langle n,f\right\rangle ,id,tr\right)} & = & \lambda OM,PT.\\
  &  & \mbox{if}\ id\in OM\left(n\right),\ OM\left(n\right)\left(id\right)\\
  &  & \mbox{else if }f\notin tr,\ \\
  &  & \mathtt{chain}\left(PT\left(f\right),id,\left[tr\mid f\right]\right)\\
  &  & \ \ OM\ PT\\
-\mathtt{get}\left(\left\langle n,f\right\rangle ,id\right) & = & \bar{\Theta}\ \lambda{\scriptstyle OM:ObjMem,PT:Prototype}.\\
+{\scriptstyle \mathtt{get}\left(\left\langle n,f\right\rangle ,id\right)} & = & \bar{\Theta}\ \lambda{\scriptstyle OM:ObjMem,PT:Prototype}.\\
  &  & \mbox{if}\ id\in OM\left(n\right)\ OM\left(n\right)\left(id\right)\\
  &  & \mbox{else}\ \mathtt{chain}\left(PT\left(f\right),id,\left[f\right]\right)\\
 {\scriptstyle \mathtt{set}\left(\left\langle n,\_\right\rangle ,\mathtt{prototype},v\right)} & = & \bar{\Upsilon}\ \lambda PT:Prototype.PT\left[n\mapsto v\right]\\
-\mathtt{newobj}\left(\left\langle n,\_\right\rangle \right) & = & \bar{\Psi}\ \lambda OM:ObjMem.\\
+{\scriptstyle \mathtt{newobj}\left(\left\langle n,\_\right\rangle \right)} & = & \bar{\Psi}\ \lambda OM:ObjMem.\\
  &  & \left\langle OM\left[n\mapsto\phi\right],OBJ_{n},f\right\rangle \\
  &  & \ \mbox{where}\ n=N\left(OM\right)\\
-\mathtt{fundecl}(id,n) & = & \bar{\Upsilon}\ \lambda V,PT:Prototype.\\
+{\scriptstyle \mathtt{fundecl}(id,n)} & = & \bar{\Upsilon}\ \lambda V,PT:Prototype.\\
  &  & \left\langle V\left[id\mapsto\left\langle n,\phi\right\rangle \right],PT'\right\rangle \\
  &  & \mbox{where}\\
  &  & {\scriptstyle PT'=\begin{cases}
@@ -2279,10 +2279,10 @@ Domain
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-AState & = & AVar\times AObjMem\times\wp\left(AObj\right)\times\\
- &  & Curried\times APrototype\\
 AObj & = & \left\{ 0\right\} \cup Eid\times Fid\cup\left\{ null\right\} \\
-APrototype & = & Fid\rightarrow\wp\left(AObj\right)
+APrototype & = & Fid\rightarrow\wp\left(AObj\right)\\
+AState & = & AVar\times AObjMem\times\wp\left(AObj\right)\times\\
+ &  & Curried\times APrototype\times AReturn
 \end{eqnarray*}
 
 \end_inset
