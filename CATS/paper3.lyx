@@ -150,7 +150,7 @@ submittedstandard
 
 \begin_layout Standard
 \begin_inset FormulaMacro
-\renewcommand{\st}[2]{\left|#1\right|_{s_{#2}}}
+\newcommand{\st}[2]{\left|#1\right|_{s_{#2}}}
 {#1_{\left[s#2\right]}}
 \end_inset
 
@@ -159,7 +159,7 @@ submittedstandard
 
 \begin_layout Standard
 \begin_inset FormulaMacro
-\renewcommand{\ex}[2]{\left|#1\right|_{e_{#2}}}
+\newcommand{\ex}[2]{\left|#1\right|_{e_{#2}}}
 {#1_{\left[e#2\right]}}
 \end_inset
 
@@ -167,10 +167,9 @@ submittedstandard
 \end_layout
 
 \begin_layout Abstract
-We present a novel approach in construction and formalisation of a static
- analysis of a language, in which we formulate a polymorphic and parametric
- interpretation of a language common to both denotational semantics and
- static analysis.
+We present a novel approach in construction and formalisation of an analysis
+ of a language, in which we formulate a polymorphic and parametric interpretatio
+n of a language common to both denotational semantics and static analysis.
  We apply this in analysing a duck-typing, reflective and function currying
  language.
  We show the benefit of this new approach in term of its terseness and modularit
@@ -475,11 +474,11 @@ We define a bind operator
 \begin_inset Formula 
 \begin{eqnarray*}
 T\ \bind\ U & = & \lambda f,s.let\ S=T\ f\ s\ in\\
- &  & \left\{ \begin{gathered}\mbox{if}\ isterm\left(s'\right)\\
+ &  & \underset{\left\langle s',a\right\rangle \in S}{\bigcup}\left(\begin{gathered}\mbox{if}\ isterm\left(s'\right)\\
 \mbox{then}\ \left\{ \left\langle s',\bot\right\rangle \right\} \\
 \mbox{else}\ U\ a\ f\ s'
 \end{gathered}
-\mid{\left\langle s',a\right\rangle \in S}\right\} 
+\right)
 \end{eqnarray*}
 
 \end_inset
@@ -498,11 +497,11 @@ T\ \bind\ U & = & \lambda f,s.let\ S=T\ f\ s\ in\\
 \begin_inset Formula 
 \begin{eqnarray*}
 T\ \bind\ U & = & \lambda f,s.let\ S=T\ f\ s\ in\\
- &  & \left\{ \begin{gathered}\mbox{if}\ isterm\left(s'\right)\\
+ &  & \underset{\left\langle s',a\right\rangle \in S}{\bigcup}\left(\begin{gathered}\mbox{if}\ isterm\left(s'\right)\\
 \mbox{then}\ \left\{ s'\right\} \\
 \mbox{else}\ U\ a\ f\ s'
 \end{gathered}
-\mid{\left\langle s',a\right\rangle \in S}\right\} 
+\right)
 \end{eqnarray*}
 
 \end_inset
@@ -521,11 +520,11 @@ T\ \bind\ U & = & \lambda f,s.let\ S=T\ f\ s\ in\\
 \begin_inset Formula 
 \begin{eqnarray*}
 T\ \bind\ U & = & \lambda f,s.let\ S=T\ f\ s\\
- &  & \left\{ \begin{gathered}\mbox{if}\ isterm\left(s'\right)\ \\
+ &  & \underset{s'\in S}{\bigcup}\left(\begin{gathered}\mbox{if}\ isterm\left(s'\right)\ \\
 \mbox{then}\ \left\{ s'\right\} \ \\
 \mbox{else}\ U\ f\ s'
 \end{gathered}
-\mid{s'\in S}\right\} 
+\right)
 \end{eqnarray*}
 
 \end_inset
@@ -673,69 +672,6 @@ key "Liang:phd1998"
  gives a survey of mathematical properties that monadic constructs exhibit.
  For the purpose our discussion, we limit ourselves to the discussion of
  properties of monads that are crucial in proving correctness of the system.
-\end_layout
-
-\begin_layout Theorem
-\begin_inset CommandInset label
-LatexCommand label
-name "thm:bindmono"
-
-\end_inset
-
-
-\begin_inset Argument
-status open
-
-\begin_layout Plain Layout
-Monotonicity of bind operation
-\end_layout
-
-\end_inset
-
-Given two monotonous functions 
-\begin_inset Formula $F$
-\end_inset
-
- and 
-\begin_inset Formula $G$
-\end_inset
-
-, 
-\begin_inset Formula $F\bind G$
-\end_inset
-
- is also a monotonous function.
-\end_layout
-
-\begin_layout Proof
-For state and state collection arguments, 
-\begin_inset Formula $F\bind G$
-\end_inset
-
- is a series of monotonic transformation.
- Since the composition of two monotonic functions is also monotonic, state
- and state collection are monotonic.
-\end_layout
-
-\begin_layout Proof
-For the result of 
-\begin_inset Formula $F$
-\end_inset
-
- passed on to 
-\begin_inset Formula $G$
-\end_inset
-
- as a bound variable, a return value from 
-\begin_inset Formula $F$
-\end_inset
-
- is monotonous to the input.
- The return value, then becomes part of input to the 
-\begin_inset Formula $G$
-\end_inset
-
- function, whose return value is also monotonous.
 \end_layout
 
 \begin_layout Theorem
@@ -1463,7 +1399,7 @@ Currying loop
 
 \end_inset
 
- Consider the following SDTL program.
+ Consider the following program.
 \end_layout
 
 \begin_layout Standard
@@ -2199,6 +2135,131 @@ Functions
 \end_inset
 
 
+\end_layout
+
+\begin_layout Section
+Existence of fixed point
+\end_layout
+
+\begin_layout Standard
+In order to argue soundness of an analysis, we first argue finiteness of
+ the abstract domain.
+\end_layout
+
+\begin_layout Theorem
+\begin_inset Formula $AState$
+\end_inset
+
+ is a finite domain.
+\end_layout
+
+\begin_layout Standard
+We now define a partial ordering between abstract states
+\end_layout
+
+\begin_layout Definition
+\begin_inset Argument
+status open
+
+\begin_layout Plain Layout
+Partial ordering
+\end_layout
+
+\end_inset
+
+
+\begin_inset Formula $\forall\eta_{1},\eta_{2}\in AState,\eta_{1}\sqsubseteq\eta_{2}$
+\end_inset
+
+ if 
+\begin_inset Formula $AVar,AObjMem,Curried$
+\end_inset
+
+ components of 
+\begin_inset Formula $\eta_{1}$
+\end_inset
+
+ and 
+\begin_inset Formula $\eta_{2}$
+\end_inset
+
+ are point-wise ordered, and 
+\begin_inset Formula $AObj,AReturn,AEx$
+\end_inset
+
+ components are identical.
+\end_layout
+
+\begin_layout Standard
+We also define an ordering between powersets of abstract states.
+\end_layout
+
+\begin_layout Definition
+\begin_inset Argument
+status open
+
+\begin_layout Plain Layout
+Partial ordering of powersets
+\end_layout
+
+\end_inset
+
+
+\begin_inset Formula $\forall p_{1},p_{2}\in\wp\left(AState\right),p_{1}\sqsubseteq p_{2}$
+\end_inset
+
+ if 
+\begin_inset Formula $\forall\eta_{1}\in p_{1}\exists\eta_{2}\in p_{2}$
+\end_inset
+
+ such that 
+\begin_inset Formula $\eta_{1}\sqsubseteq\eta_{2}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Then we argue that the abstract interpretation is a monotonic framework.
+ First, observe that the bind operation preserves the monotonicity when
+ binding two monotonic functions.
+\end_layout
+
+\begin_layout Theorem
+\begin_inset CommandInset label
+LatexCommand label
+name "thm:bindmono"
+
+\end_inset
+
+
+\begin_inset Argument
+status open
+
+\begin_layout Plain Layout
+Monotonicity of bind operation
+\end_layout
+
+\end_inset
+
+Given two monotonous functions 
+\begin_inset Formula $F$
+\end_inset
+
+ and 
+\begin_inset Formula $G$
+\end_inset
+
+, 
+\begin_inset Formula $F\bind G$
+\end_inset
+
+ is also a monotonous function if subset ordering is implied in the ordering
+ of the resulting values
+\end_layout
+
+\begin_layout Section
+Correctness
 \end_layout
 
 \begin_layout Section
