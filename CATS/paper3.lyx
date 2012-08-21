@@ -15,6 +15,9 @@
 \AtBeginDocument{\catcode`\_=8}
 
 \newcommand{\dd}[1]{\llbracket#1\rrbracket}
+\newcommand{\ds}[1]{\llbracket\left|#1\right|_s\rrbracket}
+\newcommand{\de}[1]{\llbracket\left|#1\right|_e\rrbracket}
+
 \newcommand{\bind}{\Yright}
 
 \exhyphenpenalty=10000\hyphenpenalty=10000
@@ -54,6 +57,7 @@ figs-within-sections
 \output_sync 0
 \bibtex_command default
 \index_command default
+\float_placement !t
 \paperfontsize default
 \spacing single
 \use_hyperref true
@@ -139,6 +143,24 @@ status open
 submittedstandard
 \end_layout
 
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\renewcommand{\st}[2]{\left|#1\right|_{s_{#2}}}
+{#1_{\left[s#2\right]}}
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\renewcommand{\ex}[2]{\left|#1\right|_{e_{#2}}}
+{#1_{\left[e#2\right]}}
 \end_inset
 
 
@@ -368,132 +390,6 @@ We first describe a monadic theory of language analysis.
 \end_layout
 
 \begin_layout Subsection
-Augmented syntax tree
-\end_layout
-
-\begin_layout Standard
-We use syntax nodes as references to various items constituting program
- environment.
- For that purpose, we define the following syntactic nodes and unique identifier
- spaces.
-\end_layout
-
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
-\begin_inset Formula $Stmt$
-\end_inset
-
- is a statement node.
-\end_layout
-
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
-\begin_inset Formula $Expr$
-\end_inset
-
- is an expression node.
-\end_layout
-
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
-\begin_inset Formula $LExpr$
-\end_inset
-
- is a left-expression node.
-\end_layout
-
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
-\begin_inset Formula $Sid$
-\end_inset
-
- is a statement id.
-\end_layout
-
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
-\begin_inset Formula $Eid$
-\end_inset
-
- is an expression id.
-\end_layout
-
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
-\begin_inset Formula $id$
-\end_inset
-
- is an alphaneumeric identifier.
-\end_layout
-
-\begin_layout Standard
-We define following auxiliary functions to describe the use of the augmented
- values.
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula 
-\begin{eqnarray*}
-\mathtt{sid} & : & Stmt\rightarrow Sid\\
-\mathtt{stmt} & : & Sid\rightarrow Stmt\\
-\mathtt{eid} & : & Expr\rightarrow Eid\\
-\mathtt{param} & : & Sid\rightarrow\left[id\right]\\
-\mathtt{arity} & : & Sid\rightarrow\mathbb{N}\cup\left\{ 0\right\} 
-\end{eqnarray*}
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-Note that we use an sid of a function declaration statement as a reference
- point for the function defined.
- 
-\begin_inset Formula $\mathtt{param}$
-\end_inset
-
- and 
-\begin_inset Formula $\mathtt{arity}$
-\end_inset
-
- functions take such sid and returns a list of parameter names and the arity
- of the function.
-\end_layout
-
-\begin_layout Subsection
-State collection
-\end_layout
-
-\begin_layout Standard
-We design a system that collects state transitions from one to another,
- as has occurred in a particular execution point.
- We augment a syntax tree by giving each nodes its unique ID.
- Then, the type of the end product that the system is collecting can be
- described as thus:
-\end_layout
-
-\begin_layout Definition
-\begin_inset Argument
-status open
-
-\begin_layout Plain Layout
-State Collection
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Definition
-\begin_inset Formula $StateCol:Sid\rightarrow State\rightarrow State$
-\end_inset
-
-
-\end_layout
-
-\begin_layout Subsection
 Monad
 \end_layout
 
@@ -534,10 +430,8 @@ Type constructor
 \begin_layout Definition
 \begin_inset Formula 
 \begin{multline*}
-M_{E}\ a=\beta\rightarrow State\rightarrow\\
-\wp\left(State\times a\right)\times StateCol\\
-M_{S}=\beta\rightarrow State\rightarrow\\
-\wp\left(State\right)\times StateCol
+M_{E}\ a=\beta\rightarrow State\rightarrow\wp\left(State\times a\cup\left\{ \bot\right\} \right)\\
+M_{S}=\beta\rightarrow State\rightarrow\wp\left(State\right)
 \end{multline*}
 
 \end_inset
@@ -550,25 +444,6 @@ M_{S}=\beta\rightarrow State\rightarrow\\
 \end_inset
 
  is a program-wide constant.
- In addition to these constructors, we define a helper function 
-\begin_inset Formula $\Omega$
-\end_inset
-
- who can flatten multiple StateCol values.
-\end_layout
-
-\begin_layout Definition
-\begin_inset Formula $\Omega:\wp\left(State\times StateCol\right)\rightarrow\wp\left(State\right)\times StateCol$
-\end_inset
-
-
-\end_layout
-
-\begin_layout Definition
-\begin_inset Formula $\Omega\ Z=\left\langle \left\{ s'\left|\left\langle s',\_\right\rangle \in Z\right|\right\} ,\left(\underset{\left\langle \_,\gamma'\right\rangle \in Z}{\bigcup}\gamma'\right)\cup\gamma\right\rangle $
-\end_inset
-
-
 \end_layout
 
 \begin_deeper
@@ -597,6 +472,22 @@ We define a bind operator
 \end_layout
 
 \begin_layout Definition
+\begin_inset Formula 
+\begin{eqnarray*}
+T\ \bind\ U & = & \lambda f,s.let\ S=T\ f\ s\ in\\
+ &  & \left\{ \begin{gathered}\mbox{if}\ isterm\left(s'\right)\\
+\mbox{then}\ \left\{ \left\langle s',\bot\right\rangle \right\} \\
+\mbox{else}\ U\ a\ f\ s'
+\end{gathered}
+\mid{\left\langle s',a\right\rangle \in S}\right\} 
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Definition
 \begin_inset Formula $\left(\bind\right):M_{E}\ a\rightarrow\left(a\rightarrow M_{S}\right)\rightarrow M_{S}$
 \end_inset
 
@@ -606,10 +497,12 @@ We define a bind operator
 \begin_layout Definition
 \begin_inset Formula 
 \begin{eqnarray*}
-T\ \bind\ U & = & \lambda f,s.let\ \left\langle S,\gamma\right\rangle =T\ f\ s\\
- &  & Z=\left\{ U\ a\ f\ s'\mid{\left\langle s',a\right\rangle \in S}\right\} \\
- &  & in\\
- &  & \Omega\ Z
+T\ \bind\ U & = & \lambda f,s.let\ S=T\ f\ s\ in\\
+ &  & \left\{ \begin{gathered}\mbox{if}\ isterm\left(s'\right)\\
+\mbox{then}\ \left\{ s'\right\} \\
+\mbox{else}\ U\ a\ f\ s'
+\end{gathered}
+\mid{\left\langle s',a\right\rangle \in S}\right\} 
 \end{eqnarray*}
 
 \end_inset
@@ -627,14 +520,12 @@ T\ \bind\ U & = & \lambda f,s.let\ \left\langle S,\gamma\right\rangle =T\ f\ s\\
 \begin_layout Definition
 \begin_inset Formula 
 \begin{eqnarray*}
-T\ \bind\ U & = & \lambda f,s.let\ \left\langle S,\gamma\right\rangle =T\ f\ s\\
- &  & Z=\left\{ \begin{gathered}\mbox{if}\ isterm\left(s'\right)\ \\
-\mbox{then}\ \left\{ \left\langle s',\phi\right\rangle \right\} \ \\
+T\ \bind\ U & = & \lambda f,s.let\ S=T\ f\ s\\
+ &  & \left\{ \begin{gathered}\mbox{if}\ isterm\left(s'\right)\ \\
+\mbox{then}\ \left\{ s'\right\} \ \\
 \mbox{else}\ U\ f\ s'
 \end{gathered}
-\mid{s'\in S}\right\} \\
- &  & in\\
- &  & \Omega\ Z
+\mid{s'\in S}\right\} 
 \end{eqnarray*}
 
 \end_inset
@@ -679,26 +570,7 @@ We define following lift functions to incorporate non-monadic functions
 \begin_inset Formula 
 \begin{gather*}
 I_{A}:a\rightarrow M_{E}\ a\\
-I_{A}\ v=\lambda f,r,\gamma.\left\langle \left\{ r\right\} ,\gamma,v\right\rangle 
-\end{gather*}
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Itemize
-\begin_inset Formula $I_{T}$
-\end_inset
-
- lifts a state transformer with a return value to a monadic function
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula 
-\begin{gather*}
-I_{T}:\left(State\rightarrow\wp\left(State\times a\right)\right)\rightarrow M_{E}\ a\\
-I_{T}\ t=\lambda f,r.\left\langle S,\phi\right\rangle \ \mbox{where}\ S=t\ r
+I_{A}\ v=\lambda f,r.\left\{ \left\langle r,v\right\rangle \right\} 
 \end{gather*}
 
 \end_inset
@@ -744,9 +616,9 @@ Monadic transformers
 \begin_layout Definition
 \begin_inset Formula 
 \begin{eqnarray*}
-\Upsilon & : & \left(A\rightarrow\wp\left(A\right)\right)\rightarrow\left(B\rightarrow\wp\left(B\right)\right)\\
-\Psi & : & \left(A\rightarrow\wp\left(A\times a\right)\right)\rightarrow\left(B\rightarrow\wp\left(B\times a\right)\right)\\
-\Theta & : & \left(A\rightarrow\wp\left(a\right)\right)\rightarrow\left(B\rightarrow\wp\left(a\right)\right)
+\Upsilon & : & \left(A\rightarrow A\right)\rightarrow\left(B\rightarrow B\right)\\
+\Psi & : & \left(A\rightarrow A\times a\right)\rightarrow\left(B\rightarrow B\times a\right)\\
+\Theta & : & \left(A\rightarrow a\right)\rightarrow\left(B\rightarrow a\right)
 \end{eqnarray*}
 
 \end_inset
@@ -962,52 +834,109 @@ between two different domains that two pairs of functions are isomorphic
 \end_layout
 
 \begin_layout Standard
-Finally, we define a state collection helper function 
-\begin_inset Formula $T_{S}$
-\end_inset
-
-, which takes a state transformation and appends to the transformation a
- new association of state transformation from initial state to the final
- state for a given statement.
-\end_layout
-
-\begin_layout Definition
-\begin_inset Argument
-status open
-
-\begin_layout Plain Layout
-State collection helper function
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_deeper
-\begin_layout Standard
-\begin_inset Formula 
-\begin{alignat*}{2}
- & T_{S} & : & M\ a\rightarrow Sid\rightarrow M\ a\\
- & T_{S}\ X\ z & = & \lambda f,r,s.\left\langle r',s'',a\right\rangle \\
- &  &  & \begin{aligned}\mbox{where} & \left\langle r',s',a\right\rangle =X\ f\ r\ s\\
- & s''=s'\left[z\times r\mapsto r'\right]
-\end{aligned}
-\end{alignat*}
-
-\end_inset
-
-
-\end_layout
-
-\end_deeper
-\begin_layout Standard
 We now have monadic constructs and auxiliary functions to describe a semantic
  functions of the model language.
+ We can proceed to define following semantic functions of the language.
+\end_layout
+
+\begin_layout Section
+Language Analysis
+\end_layout
+
+\begin_layout Subsection
+Augmented syntax tree
 \end_layout
 
 \begin_layout Standard
-We define following semantic functions of the language.
+We use syntax nodes as references to various items constituting program
+ environment.
+ For that purpose, we define the following syntactic nodes and unique identifier
+ spaces.
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+\begin_inset Formula $Stmt$
+\end_inset
+
+ is a statement node.
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+\begin_inset Formula $Expr$
+\end_inset
+
+ is an expression node.
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+\begin_inset Formula $LExpr$
+\end_inset
+
+ is a left-expression node.
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+\begin_inset Formula $Sid$
+\end_inset
+
+ is a statement id.
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+\begin_inset Formula $Eid$
+\end_inset
+
+ is an expression id.
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+\begin_inset Formula $id$
+\end_inset
+
+ is an alphaneumeric identifier.
+\end_layout
+
+\begin_layout Standard
+We define following auxiliary functions to describe the use of the augmented
+ values.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\mathtt{stmt} & : & Sid\rightarrow Stmt\\
+\mathtt{param} & : & Sid\rightarrow\left[id\right]\\
+\mathtt{arity} & : & Sid\rightarrow\mathbb{N}\cup\left\{ 0\right\} 
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Note that we use an sid of a function declaration statement as a reference
+ point for the function defined.
+ 
+\begin_inset Formula $\mathtt{param}$
+\end_inset
+
+ and 
+\begin_inset Formula $\mathtt{arity}$
+\end_inset
+
+ functions take such sid and returns a list of parameter names and the arity
+ of the function.
+\end_layout
+
+\begin_layout Subsection
+Semantic functions
 \end_layout
 
 \begin_layout Definition
@@ -1026,27 +955,15 @@ The analytic framework contains following semantic functions
 \begin_layout Definition
 \begin_inset Formula 
 \begin{eqnarray*}
-F & = & Sid\rightarrow State\rightarrow\wp\left(State\right)\times StateCol\\
-\mathcal{S} & : & Stmt\rightarrow Sid\rightarrow F\rightarrow State\rightarrow\\
- &  & \wp\left(State\right)\times StateCol\\
-\mathcal{E} & : & Expr\rightarrow Eid\rightarrow F\rightarrow State\rightarrow\\
- &  & \wp\left(State\times a\right)\times StateCol\\
-\mathcal{L} & : & LExpr\rightarrow F\rightarrow State\rightarrow\\
- &  & \wp\left(State\times a\right)\times StateCol
+F & = & Sid\rightarrow State\rightarrow\wp\left(State\right)\\
+\mathcal{S} & : & Stmt\rightarrow F\rightarrow State\rightarrow\wp\left(State\right)\\
+\mathcal{E} & : & Expr\rightarrow F\rightarrow State\rightarrow\wp\left(State\times a\cup\left\{ \bot\right\} \right)\\
+\mathcal{L} & : & LExpr\rightarrow F\rightarrow State\rightarrow\wp\left(State\times a\cup\left\{ \bot\right\} \right)
 \end{eqnarray*}
 
 \end_inset
 
 
-\end_layout
-
-\begin_layout Section
-Model language
-\end_layout
-
-\begin_layout Standard
-In this section we gradually develop the model language from a simple procedural
- language to a full-blown duck-typing object-oriented language.
 \end_layout
 
 \begin_layout Subsection
@@ -1219,8 +1136,8 @@ reference "semantic"
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-\mathtt{call}\left(n,p\right) & = & \lambda f,\rho,\gamma.\Omega\ \left\langle \left\{ \bar{\kappa}\ \rho\ \rho'\mid\rho'\in S\right\} ,\gamma'\right\rangle \ \mbox{where}\\
- &  & \left\langle S,\gamma'\right\rangle =f\ n\ \left(\kappa\ \rho\ p\right)\ \gamma
+\mathtt{call}\left(n,p\right) & = & \lambda f,\rho.\left\{ \bar{\kappa}\ \rho\ \rho'\mid\rho'\in S\right\} \ \mbox{where}\\
+ &  & S=f\ n\ \left(\kappa\ \rho\ p\right)
 \end{eqnarray*}
 
 \end_inset
@@ -1231,14 +1148,20 @@ reference "semantic"
 \begin_layout Standard
 \begin_inset Formula 
 \begin{gather*}
-\mathtt{evalParam}:\left[ID\right]\times\left[Expr\right]\times\left[a\right]\times F\times\\
-State\times StateCol\rightarrow\wp\left(State\times\left[a\right]\right)\times StateCol\\
-\mathtt{evalParam}\ \phi\ ps\ f\ \rho\ \sigma=\left\langle \rho,\sigma,ps\right\rangle \\
-\mathtt{evalParam}\ \left[e|Exprs\right]\ ps\ f\ \rho\ \sigma=\\
-\ \mathtt{evalParam}\ Exprs\ \left[ps|con\right]\ f\ \rho_{1}\ \sigma_{1}\\
-\ \ \mbox{where}\left\langle \rho_{1},\sigma_{1},con\right\rangle =\mathcal{E}\ e\ f\ \rho\ \sigma
+\mathtt{evalParam}:\left[Expr\right]\times\left[a\right]\times F\times State\rightarrow\wp\left(State\times\left[a\right]\right)\\
+\mathtt{evalParam}\ \phi\ ps\ f\ \rho=\left\langle \rho,ps\right\rangle \\
+\mathtt{evalParam}\ \left[\ex E{}\mid Exprs\right]\ ps\ f\ \rho=\\
+\ \left\{ \mathtt{evalParam}\ Exprs\ \left[ps\mid con\right]\ f\ \rho'\mid\left\langle \rho',con\right\rangle \in S\right\} \\
+\ \ \mbox{where}S=\mathcal{E}\ \dd{\ex E{}}\ f\ \rho
 \end{gather*}
 
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $\mathtt{noop}=\lambda x.\left\{ x\right\} $
 \end_inset
 
 
@@ -1267,48 +1190,47 @@ status open
 \begin_layout Plain Layout
 \begin_inset Formula 
 \begin{align*}
- & F & = &  &  & Y\lambda f.\lambda n.\mathcal{S}\ \dd{\mathtt{Stmt}\left(n\right)}\ n\ f\\
- & \mathcal{S}\dd{S_{1};S_{2}} & = &  &  & T_{S}\ \left(\begin{aligned}\mathcal{S}\ \dd{S_{1}}\ \mathtt{sid}\left(S_{1}\right) & \bind\mathcal{S}\ \dd{S_{2}}\ \mathtt{sid}\left(S_{2}\right)\end{aligned}
+ & F & = & Y\lambda f.\lambda n.\mathcal{S}\ \dd{\mathtt{Stmt}\left(n\right)}\ n\ f\\
+ & \mathcal{S}\ds{\st{S_{1}}1;\st{S_{2}}2} & = & \left(\begin{aligned}\mathcal{S}\ \dd{\st{S_{1}}1} & \bind\mathcal{S}\ \dd{\st{S_{2}}2}\end{aligned}
 \right)\\
- & \mathcal{S}\dd{\mathtt{return}\ e} & = &  &  & T_{S}\ \left(\mathcal{E}\ \dd{e}\ \mathtt{eid}\left(e\right)\right)\\
- & \mathcal{S}\dd{\mathtt{if}\left(e\right)S_{1}} & = &  &  & T_{S}\ \left(\begin{aligned}\mathcal{E}\ \dd{e}\ \mathtt{eid}\left(e\right) & \bind\lambda v.\\
-\mathtt{cond}\left(v,\mathcal{S}\ \dd{S_{1}}\ \mathtt{sid}\left(S_{1}\right),\mathtt{noop}\right)
+ & \mathcal{S}\ds{\mathtt{return}\ \ex E1} & = & \left(\mathcal{E}\ \dd{\ex E1}\right)\\
+ & \mathcal{S}\ds{\mathtt{if}\left(\ex E1\right)\st{S_{1}}1} & = & \left(\begin{aligned}\mathcal{E}\ \dd{\ex E1} & \bind\lambda v.\\
+\mathtt{cond}\left(v,\mathcal{S}\ \dd{\st{S_{1}}1},\mathtt{noop}\right)
 \end{aligned}
 \right)\\
- & \mathcal{S}\dd{\mathtt{if}\left(e\right)S_{1}\mathtt{else}S_{2}} & = &  &  & T_{S}\ \left(\begin{aligned}\mathcal{E}\ \dd{e}\ \mathtt{eid}\left(e\right) & \bind\lambda v.\\
-\mathtt{cond}\left(v,\mathcal{S}\ \dd{S_{1}}\ \mathtt{sid}\left(S_{1}\right),\mathcal{S}\ \dd{S_{2}}\ \mathtt{sid}\left(S_{2}\right)\right)
+ & \mathcal{S}\ds{\mathtt{if}\left(\ex E1\right)\st{S_{1}}1\mathtt{else}\st{S_{2}}2} & = & \left(\begin{aligned}\mathcal{E}\ \dd{\ex E1} & \bind\lambda v.\\
+\mathtt{cond}\left(v,\mathcal{S}\ \dd{\st{S_{1}}1},\mathcal{S}\ \dd{\st{S_{1}}1}\right)
 \end{aligned}
 \right)\\
- & \mathcal{S}\dd{id=e} & = &  &  & T_{S}\ \left(\begin{aligned}\mathcal{E}\ \dd{e}\ \mathtt{eid}\left(e\right) & \bind\lambda v.\mathtt{asg}\left(id,v\right)\end{aligned}
+ & \mathcal{S}\ds{id=\ex E1} & = & \left(\begin{aligned}\mathcal{E}\ \dd{\ex e1} & \bind\lambda v.\mathtt{asg}\left(id,v\right)\end{aligned}
 \right)\\
- & \mathcal{S}\dd{\mathtt{while}\left(e\right)S_{1}} & = &  &  & T_{S}\ \left(Y\lambda x.\lambda r,\gamma.\left(\begin{aligned}\mathcal{E}\ \dd{e}\ \mathtt{eid}\left(e\right)\bind\lambda v.\\
-{\scriptstyle \begin{gathered}\mathtt{cond}\left(\begin{gathered}v,\\
-\left(\mathcal{S}\ \dd{S_{1}}\ \mathtt{sid}\left(S_{1}\right)\right)\bind x,\\
+ & \mathcal{S}\ds{\mathtt{while}\left(\ex E1\right)\st{S_{1}}1} & = & \left(Y\lambda x.\lambda r,\gamma.\left(\begin{aligned}\mathcal{E}\ \dd{\ex E1}\bind\lambda v.\\
+\mathtt{cond}\left(\begin{gathered}v,\\
+\left(\mathcal{S}\ \dd{\st{S_{1}}1}\right)\bind x,\\
 \mathtt{noop}
 \end{gathered}
-\right)\end{gathered}
-}
+\right)
 \end{aligned}
 \right)\right)\\
- & \mathcal{S}\dd{\mathtt{output}\ e} & = &  &  & T_{S}\ \left(\begin{aligned}\mathcal{E}\ \dd{e}\ eid\left(e\right) & \bind\lambda v.\\
+ & \mathcal{S}\ds{\mathtt{output}\ \ex E1} & = & \left(\begin{aligned}\mathcal{E}\ \dd{\ex E1} & \bind\lambda v.\\
 \mathtt{output}\left(v\right)
 \end{aligned}
 \right)\\
- & S\dd{{\scriptstyle \mathtt{function}}\ id\left(IDs\right)\ S_{1}}\ \mathtt{sid} & = &  &  & T_{S}\ \left(\mathtt{fundecl}\left(id,\mathtt{sid}\right)\right)\ \mathtt{sid}\\
- & \mathcal{E}\dd{con}\ \mathtt{eid} & = &  &  & I_{A}\ \mathtt{conval}\left(con\right)\\
- & \mathcal{E}\dd{L}\ \mathtt{eid} & = &  &  & \mathcal{L}\ \dd{L}\\
- & \mathcal{E}\dd{\mathtt{input}}\ \mathtt{eid} & = &  &  & I_{T}\ \mathtt{getinput}\\
- & \mathcal{E}\dd{L\left(E*\right)}\ \mathtt{eid} & = &  &  & \left(\begin{aligned}\mathcal{L}\ \dd{L} & \bind\lambda n.\\
-\mathtt{evalParams}\ n\ E*\ \phi & \bind\lambda p.\\
+ & S\ds{\mathtt{function}\ id\left(IDs\right)\ \st{S_{1}}1} & = & \mathtt{fundecl}\left(id,s\right)\\
+ & \mathcal{E}\de{con} & = & \mathtt{conval}\left(con\right)\\
+ & \mathcal{E}\de{L} & = & \mathcal{L}\ \dd{L}\\
+ & \mathcal{E}\de{\mathtt{input}} & = & I_{T}\ \mathtt{getinput}\\
+ & \mathcal{E}\de{L\left(E^{*}\right)} & = & \left(\begin{aligned}\mathcal{L}\ \dd L & \bind\lambda n.\\
+\mathtt{evalParams}\ n\ E^{*}\ \phi & \bind\lambda p.\\
 I_{A}\ \mathtt{call}\left(n,p\right)
 \end{aligned}
 \right)\\
- & \mathcal{E}\dd{e_{0}\ binop\ e_{1}}\ \mathtt{eid} & = &  &  & \left(\begin{aligned}\mathcal{E}\ \dd{e_{0}}\ \mathtt{eid}\left(e_{0}\right) & \bind\lambda c_{0}.\\
-\mathcal{E}\ \dd{e_{1}}\ \mathtt{eid}\left(e_{1}\right) & \bind\lambda c_{1}.\\
+ & \mathcal{E}\de{\ex{E_{1}}1\ binop\ \ex{E_{2}}2} & = & \left(\begin{aligned}\mathcal{E}\ \dd{\ex{E_{1}}1} & \bind\lambda c_{1}.\\
+\mathcal{E}\ \dd{\ex{E_{2}}2} & \bind\lambda c_{2}.\\
 I_{V}\ \mathtt{bin}\left(binop,c_{0},c_{1}\right)
 \end{aligned}
 \right)\\
- & \mathcal{L}\dd{id} & = &  &  & \left(I_{V}\ \mathtt{val}\left(id\right)\right)
+ & \mathcal{L}\dd{id} & = & \left(I_{V}\ \mathtt{val}\left(id\right)\right)
 \end{align*}
 
 \end_inset
@@ -1412,11 +1334,11 @@ We omit a detailed description of IO environment.
  given and produced during the execution of a program.
 \end_layout
 
-\begin_layout Subsubsection
+\begin_layout Paragraph
 Abstract interpretation
 \end_layout
 
-\begin_layout Paragraph
+\begin_layout Subparagraph
 Domain
 \end_layout
 
@@ -1435,92 +1357,29 @@ AState & = & AVar\times AReturn
 
 \end_layout
 
-\begin_layout Paragraph
+\begin_layout Subparagraph
 Functions
 \end_layout
 
 \begin_layout Standard
-Definitions are given in figure 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "absfun-proc"
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\begin_inset Float figure
-wide true
-sideways false
-status open
-
-\begin_layout Plain Layout
-\begin_inset Box Boxed
-position "t"
-hor_pos "c"
-has_inner_box 1
-inner_pos "t"
-use_parbox 0
-use_makebox 0
-width "100text%"
-special "none"
-height "1in"
-height_special "totalheight"
-status open
-
-\begin_layout Plain Layout
 \begin_inset Formula 
 \begin{eqnarray*}
 \mathtt{isterm} & = & \bar{\Theta}\ \lambda R:AReturn.\left(R=Void\right)\\
-\mathtt{cond}\left(v,s_{1},s_{2}\right) & = & \lambda f,\eta,\gamma.\left(s_{1}\ f\ \eta\ \gamma\right)\cup\left(s_{2}\ f\ \eta\ \gamma\right)\\
+\mathtt{cond}\left(v,s_{1},s_{2}\right) & = & \lambda f,\eta.\left(s_{1}\ f\ \eta\right)\cup\left(s_{2}\ f\ \eta\right)\\
 \mathtt{asg}\left(id,v\right) & = & \bar{\Upsilon}\ \lambda\sigma:AVar.\sigma\left[id=v\right]\\
 \mathtt{val}\left(id,v\right) & = & \bar{\Upsilon}\ \lambda\sigma:AVar.\sigma\left(id\right)\\
 \mathtt{conval}\left(con\right) & = & \Gamma\ \begin{cases}
 Number & con\in\mathbb{N}\\
-Boolean & con\in\left\{ true,false\right\} 
+Boolean & con\in\mathbb{B}
 \end{cases}\\
 \mathtt{getinput} & = & \Gamma\ \lambda\eta.\left\langle \eta,Number\right\rangle \\
 \mathtt{dooutput}\left(v\right) & = & \Gamma\ \lambda\eta.\eta\\
 \mathtt{bin}\left(binop,c_{0},c_{1}\right) & = & \Gamma\ \begin{cases}
-Number & binop\in\left\{ '+','-','*','/'\right\} \\
+Number & binop\in{\scriptstyle \left\{ +,-,*,/\right\} }\\
 Boolean & \mbox{otherwise}
 \end{cases}\\
 \mathtt{fundecl}\left(id,n\right) & = & \bar{\Upsilon}\ \lambda\sigma:AVar.\sigma\left[id\mapsto n\right]
 \end{eqnarray*}
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption
-
-\begin_layout Plain Layout
-Abstract functions for the procedural model language
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset CommandInset label
-LatexCommand label
-name "absfun-proc"
-
-\end_inset
-
-
-\end_layout
 
 \end_inset
 
@@ -1538,9 +1397,9 @@ There is no inherent semantic function change required in this case.
 \end_layout
 
 \begin_layout Standard
-\begin_inset Formula $\mathcal{E}\dd{L\left(E*\right)}\ \mathtt{eid}=\left(\begin{aligned}\mathcal{L}\ \dd{L} & \bind\lambda n.\\
-\mathtt{evalParams}\ n\ E*\ \phi & \bind\lambda p.\\
-\mathtt{apply}\left(n,p,\mathtt{eid}\right)
+\begin_inset Formula $\mathcal{E}\de{L\left(E^{*}\right)}=\left(\begin{aligned}\mathcal{L}\ \dd{L} & \bind\lambda n.\\
+\mathtt{evalParams}\ n\ E^{*}\ \phi & \bind\lambda p.\\
+\mathtt{apply}\left(n,p,e\right)
 \end{aligned}
 \right)$
 \end_inset
@@ -1572,13 +1431,13 @@ Functions
 \begin{gather*}
 \mathtt{apply}\left(\left\langle n,C\right\rangle ,p,\_\right)=\\
 \begin{cases}
-\mathtt{call}\left(n,\left[C|p\right]\right) & \begin{gathered}N\left(\left[C|p\right]\right)\\
+\mathtt{call}\left(n,\left[C\mid p\right]\right) & \begin{gathered}N\left(\left[C\mid p\right]\right)\\
 =\mathtt{arity}\left(n\right)
 \end{gathered}
 \\
-\lambda f,\rho,\gamma.\left\langle \left\langle \rho,\left\langle n,\left[C|p\right]\right\rangle \right\rangle ,\gamma\right\rangle  & \mbox{otherwise}
+\lambda f,\rho.\left\{ \left\langle \rho,\left\langle n,\left[C\mid p\right]\right\rangle \right\rangle \right\}  & \mbox{otherwise}
 \end{cases}\\
-\mathtt{fundecl}(id,n)=\bar{\Upsilon}\ \lambda V.V\left[id\mapsto\left\langle n,\phi\right\rangle \right]
+\mathtt{fundecl}(id,n)=\bar{\Upsilon}\ \lambda V:Aval.V\left[id\mapsto\left\langle n,\phi\right\rangle \right]
 \end{gather*}
 
 \end_inset
@@ -1613,17 +1472,14 @@ inline false
 status open
 
 \begin_layout Plain Layout
-
 function foo(a,b) {
 \end_layout
 
 \begin_layout Plain Layout
-
 	return a;
 \end_layout
 
 \begin_layout Plain Layout
-
 }
 \end_layout
 
@@ -1632,22 +1488,18 @@ function foo(a,b) {
 \end_layout
 
 \begin_layout Plain Layout
-
 x = 0;
 \end_layout
 
 \begin_layout Plain Layout
-
 while(input < 30) {
 \end_layout
 
 \begin_layout Plain Layout
-
 	x = foo(x);
 \end_layout
 
 \begin_layout Plain Layout
-
 }
 \end_layout
 
@@ -1725,14 +1577,11 @@ status open
 \begin_inset Formula 
 \begin{eqnarray*}
 \mathtt{apply}\left(\left\langle n,c,e\right\rangle ,p,e\right) & = & \begin{cases}
-\mathtt{call}\left(n,\left[C|p\right]\right) & \begin{gathered}c+N\left(p\right)\\
+\Theta\ \lambda\nu:Curried.\underset{C\in\nu\left(n,c,e\right)}{\bigcup}\mathtt{call}\left(n,\left[C\mid p\right]\right) & \begin{gathered}c+N\left(p\right)\\
 =\mathtt{arity}\left(n\right)
 \end{gathered}
 \\
-I_{T}{\scriptstyle \begin{gathered}\Upsilon\ \lambda\nu:Curried.\\
-\left\{ \left\langle \nu\left[\left\langle n,N\left(\left[C|p\right]\right),e\right\rangle \mapsto\left[C|p\right]\right],\left\langle n,\left[C|p\right]\right\rangle \right\rangle \mid C\in\nu\left(n,c,e\right)\right\} 
-\end{gathered}
-} & \mbox{otherwise}
+\bar{\Psi}\ \lambda\nu:Curried.\left\langle \nu\left[\left\langle n,c+N\left(p\right),e\right\rangle \mapsto\left[C\mid p\right]\right],\left\langle n,c+N\left(p\right),e\right\rangle \right\rangle  & \mbox{otherwise}
 \end{cases}\\
 \mathtt{fundecl}\left(id,n\right) & = & \bar{\Upsilon}\ \lambda\sigma:AVar.\sigma\left[id\mapsto\left\langle n,0,0\right\rangle \right]
 \end{eqnarray*}
@@ -1861,32 +1710,32 @@ status open
 \begin_layout Plain Layout
 \begin_inset Formula 
 \begin{align*}
- & \mathcal{S}\dd{e_{0}.id=e_{1}} & = &  &  & T_{S}\ \left(\begin{aligned}\mathcal{E}\ \dd{e_{0}}\ \mathtt{eid}\left(e_{0}\right) & \bind\lambda v.\\
-\mathcal{E}\ \dd{e_{1}}\ \mathtt{eid}\left(e_{1}\right) & \bind\lambda r.\\
+ & \mathcal{S}\ds{\ex{E_{1}}1.id=\ex{E_{2}}2} & = & T_{S}\ \left(\begin{aligned}\mathcal{E}\ \dd{\ex{E_{1}}1} & \bind\lambda v.\\
+\mathcal{E}\ \dd{\ex{E_{2}}2} & \bind\lambda r.\\
 I_{0}\ \mathtt{set}\left(r,id,v\right)
 \end{aligned}
 \right)\\
- & \mathcal{E}\dd{\mathtt{global}}\ \mathtt{eid} & = &  &  & I_{V}\ \mathtt{obj}\left(0\right)\\
- & \mathcal{E}\dd{\mathtt{this}}\ \mathtt{eid} & = &  &  & I_{V}\ \mathtt{getthis}\\
- & \mathcal{E}\dd{L\left(E*\right)}\ \mathtt{eid} & = &  &  & \left(\begin{aligned}\mathcal{L}\ \dd{L} & \bind\lambda n.\\
+ & \mathcal{E}\de{\mathtt{global}} & = & I_{V}\ \mathtt{obj}\left(0\right)\\
+ & \mathcal{E}\de{\mathtt{this}} & = & I_{V}\ \mathtt{getthis}\\
+ & \mathcal{E}\de{L\left(E*\right)} & = & \left(\begin{aligned}\mathcal{L}\ \dd L & \bind\lambda n.\\
 \mathtt{evalParams}\ n\ E*\ \phi & \bind\lambda p.\\
-\mathtt{apply}\left(n,p,\mathtt{obj}\left(0,\rho\right),\mathtt{eid}\right)
+\mathtt{apply}\left(n,p,\mathtt{obj}\left(0,\rho\right),e\right)
 \end{aligned}
 \right)\\
- & \mathcal{E}\dd{\mathtt{new}\ L\left(E*\right)}\ \mathtt{eid} & = &  &  & \left(\begin{aligned}\mathcal{L}\ \dd{L} & \bind\lambda n.\\
+ & \mathcal{E}\de{\mathtt{new}\ L\left(E*\right)} & = & \left(\begin{aligned}\mathcal{L}\ \dd L & \bind\lambda n.\\
 \mathtt{evalParams}\ n\ E*\ \phi & \bind\lambda p.\\
-I_{T}\ \mathtt{newobj}\left(\mathtt{eid}\right) & \bind\lambda m.\\
-\mathtt{apply}\left(n,p,m,\mathtt{eid}\right) & \bind\lambda\_.\\
+I_{T}\ \mathtt{newobj}\left(e\right) & \bind\lambda m.\\
+\mathtt{apply}\left(n,p,m,e\right) & \bind\lambda\_.\\
 I_{A}\ m
 \end{aligned}
 \right)\\
- & \mathcal{E}\dd{e_{0}.L\left(E*\right)}\ \mathtt{eid} & = &  &  & \left(\begin{aligned}\mathcal{E}\ \dd{e_{0}}\ \mathtt{eid}\left(e_{0}\right) & \bind\lambda t.\\
-\mathcal{L}\ \dd{L} & \bind\lambda n.\\
+ & \mathcal{E}\de{\ex{E_{1}}1.L\left(E*\right)} & = & \left(\begin{aligned}\mathcal{E}\ \dd{\ex{E_{1}}1} & \bind\lambda t.\\
+\mathcal{L}\ \dd L & \bind\lambda n.\\
 \mathtt{evalParams}\ n\ E*\ \phi & \bind\lambda p.\\
-\mathtt{apply}\left(n,p,t,\mathtt{eid}\right)
+\mathtt{apply}\left(n,p,t,e\right)
 \end{aligned}
 \right)\\
- & \mathcal{L}\dd{e_{0}.id} & = &  &  & \left(\begin{aligned}\mathcal{E}\ \dd{e_{0}}\ \mathtt{eid}\left(e_{0}\right) & \bind\lambda v.\\
+ & \mathcal{L}\dd{\ex{E_{1}}1.id} & = & \left(\begin{aligned}\mathcal{E}\ \dd{\ex{E_{1}}1} & \bind\lambda v.\\
 I_{V}\ \mathtt{get}\left(v,id\right)
 \end{aligned}
 \right)
@@ -2022,16 +1871,16 @@ status open
 \begin_layout Plain Layout
 \begin_inset Formula 
 \begin{eqnarray*}
-\mathtt{get}\left(OBJ_{n},id\right) & = & \bar{\Theta}\ \lambda OM:ObjMem.OM\left(n\right)\left(id\right)\\
-\mathtt{set}\left(OBJ_{n},id,v\right) & = & \bar{\Upsilon}\ \lambda OM:ObjMem.OM\left[OBJ_{n}\left[id\mapsto v\right]\right]\\
+\mathtt{get}\left(n,id\right) & = & \bar{\Theta}\ \lambda OM:ObjMem.OM\left(n\right)\left(id\right)\\
+\mathtt{set}\left(n,id,v\right) & = & \bar{\Upsilon}\ \lambda OM:ObjMem.OM\left[n\mapsto OM\left(n\right)\left[id\mapsto v\right]\right]\\
 \mathtt{obj}\left(n\right) & = & \bar{\Theta}\ \lambda OM:ObjMem.OM\left(n\right)\\
 \mathtt{getthis} & = & \bar{\Theta}\ \lambda T:Object.T\\
 \mathtt{apply}\left(\left\langle n,C\right\rangle ,p,t,\_\right) & = & \begin{cases}
-\mathtt{call}\left(n,\left[C|p\right],t\right) & \begin{gathered}N\left(\left[C|p\right]\right)\\
+\mathtt{call}\left(n,\left[C\mid p\right],t\right) & \begin{gathered}N\left(\left[C\mid p\right]\right)\\
 =\mathtt{arity}\left(n\right)
 \end{gathered}
 \\
-\lambda f,\rho,\gamma.\left\langle \left\{ \left\langle \rho,\left\langle n,\left[C|p\right]\right\rangle \right\rangle \right\} ,\gamma\right\rangle  & \mbox{otherwise}
+\Gamma\ \lambda f,\rho.\left\langle \rho,\left\langle n,\left[C\mid p\right]\right\rangle \right\rangle  & \mbox{otherwise}
 \end{cases}\\
 \mathtt{newobj}\left(\_\right) & = & \bar{\Psi}\ \lambda OM:ObjMem.\left\langle OM\left[n\mapsto\phi\right],OBJ_{n}\right\rangle \ \mbox{where}\ n=N\left(OM\right)
 \end{eqnarray*}
@@ -2050,7 +1899,7 @@ status open
 \begin_inset Caption
 
 \begin_layout Plain Layout
-Concrete functions for object-oriented function
+Concrete functions for object-oriented language
 \end_layout
 
 \end_inset
@@ -2152,12 +2001,12 @@ status open
 \mathtt{obj}\left(j\right) & = & \bar{\Theta}\ \lambda\alpha:AObjMem.\alpha\left(j\right)\\
 \mathtt{getthis} & = & \bar{\Theta}\ \lambda\tau:AObj.\tau\\
 \mathtt{newobj}\left(n\right) & = & \bar{\Psi}\ \lambda\alpha:AObjMem.\left\langle \alpha\left[n\mapsto\phi\right],n\right\rangle \\
-\mathtt{apply}\left(\left\langle n,C\right\rangle ,p,t,e\right) & = & \begin{cases}
-\mathtt{call}\left(n,\left[C|p\right],t\right) & \begin{gathered}N\left(\left[C|p\right]\right)\\
-=arity_{n}
+\mathtt{apply}\left(\left\langle n,c,e\right\rangle ,p,t,e\right) & = & \begin{cases}
+\Theta\ \lambda\nu:Curried.\underset{C\in\nu\left(n,c,e\right)}{\bigcup}\mathtt{call}\left(n,\left[C\mid p\right],t\right) & \begin{gathered}c+N\left(p\right)\\
+=\mathtt{arity}\left(n\right)
 \end{gathered}
 \\
-{\scriptstyle \left\langle \Upsilon\ \lambda\nu:Curried.\nu\left[\left\langle e,n,N\left(\left[C|p\right]\right)\right\rangle \mapsto\left[C|p\right]\right],\gamma,\left\langle FP_{n},\left[C|p\right],e\right\rangle \right\rangle } & \mbox{otherwise}
+\bar{\Psi}\ \lambda\nu:Curried.\left\langle \nu\left[\left\langle n,c+N\left(p\right),e\right\rangle \mapsto\left[C\mid p\right]\right],\left\langle n,c+N\left(p\right),e\right\rangle \right\rangle  & \mbox{otherwise}
 \end{cases}
 \end{eqnarray*}
 
@@ -2175,7 +2024,7 @@ status open
 \begin_inset Caption
 
 \begin_layout Plain Layout
-Abstract functions
+Abstract functions for object-oriented language
 \end_layout
 
 \end_inset
@@ -2196,24 +2045,74 @@ name "absfun-oo"
 \end_layout
 
 \begin_layout Subsection
-Prototype system
+Exception handling
 \end_layout
 
 \begin_layout Standard
-\begin_inset Formula ${\scriptstyle \mathcal{E}\dd{\mathtt{new}\ L\left(E*\right)}\ \mathtt{eid}}={\scriptstyle \left(\begin{aligned}\mathcal{L}\ \dd{L} & \bind\lambda n.\\
-\mathtt{evalParams}\ n\ E*\ \phi & \bind\lambda p.\\
-I_{T}\ \mathtt{newobj\left(n\right)} & \bind\lambda m.\\
-\mathtt{apply}\left(n,p,m,\mathtt{eid}\right) & \bind\lambda\_.\\
-I_{A}\ m
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{grammar}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+<Stmt> ::= `try' `{' <Stmt> `}' `catch' `(' id `)' `{' <Stmt> `}'
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+alt `throw' <Expr>
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{grammar}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $\mathcal{S}\ds{\mathtt{try}\ \st{S_{1}}1\ \mathtt{catch}\left(id\right)\ \st{S_{2}}2}=\left(\begin{aligned}\mathcal{S}\ \dd{\st{S_{1}}1} & \bind\\
+\mathtt{trycatch}\left(id,\mathcal{S}\ \dd{\st{S_{2}}2}\right)
 \end{aligned}
-\right)}$
+\right)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $\mathcal{S}\ds{\mathtt{throw}\ \ex E1}=\left(\begin{aligned}\mathcal{E}\ \dd{\ex E1} & \bind\lambda v.\\
+\mathtt{throw}\left(v\right)
+\end{aligned}
+\right)$
 \end_inset
 
 
 \end_layout
 
 \begin_layout Subsubsection
-Concrete
+Concrete interpretation
 \end_layout
 
 \begin_layout Paragraph
@@ -2223,10 +2122,9 @@ Domain
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-Object & = & Oid\times\left\{ null\right\} \cup Fid\\
-CState & = & Var\times ObjMem\times Object\\
- &  & \times Prototype\\
-Prototype & = & Fid\rightarrow Object
+Ex & = & Var\cup\left\{ Void\right\} \\
+CState & = & Var\times ObjMem\times\\
+ &  & Object\times Return\times Ex
 \end{eqnarray*}
 
 \end_inset
@@ -2241,26 +2139,16 @@ Functions
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-{\scriptstyle \mathtt{get}\left(\left\langle n,\_\right\rangle ,\mathtt{prototype}\right)} & = & \bar{\Theta}\ \lambda PT:Prototype.PT\left(n\right)\\
-{\scriptstyle \mathtt{chain}\left(\left\langle n,f\right\rangle ,id,tr\right)} & = & \lambda OM,PT.\\
- &  & \mbox{if}\ id\in OM\left(n\right),\ OM\left(n\right)\left(id\right)\\
- &  & \mbox{else if }f\notin tr,\ \\
- &  & \mathtt{chain}\left(PT\left(f\right),id,\left[tr\mid f\right]\right)\\
- &  & \ \ OM\ PT\\
-{\scriptstyle \mathtt{get}\left(\left\langle n,f\right\rangle ,id\right)} & = & \bar{\Theta}\ \lambda{\scriptstyle OM:ObjMem,PT:Prototype}.\\
- &  & \mbox{if}\ id\in OM\left(n\right)\ OM\left(n\right)\left(id\right)\\
- &  & \mbox{else}\ \mathtt{chain}\left(PT\left(f\right),id,\left[f\right]\right)\\
-{\scriptstyle \mathtt{set}\left(\left\langle n,\_\right\rangle ,\mathtt{prototype},v\right)} & = & \bar{\Upsilon}\ \lambda PT:Prototype.PT\left[n\mapsto v\right]\\
-{\scriptstyle \mathtt{newobj}\left(\left\langle n,\_\right\rangle \right)} & = & \bar{\Psi}\ \lambda OM:ObjMem.\\
- &  & \left\langle OM\left[n\mapsto\phi\right],OBJ_{n},f\right\rangle \\
- &  & \ \mbox{where}\ n=N\left(OM\right)\\
-{\scriptstyle \mathtt{fundecl}(id,n)} & = & \bar{\Upsilon}\ \lambda V,PT:Prototype.\\
- &  & \left\langle V\left[id\mapsto\left\langle n,\phi\right\rangle \right],PT'\right\rangle \\
- &  & \mbox{where}\\
- &  & {\scriptstyle PT'=\begin{cases}
-PT\left[n\mapsto\phi\right] & n\notin PT\\
-PT & \mbox{otherwise}
-\end{cases}}
+\mathtt{isterm} & = & \Theta\ \lambda R:Return,E:Ex.\\
+ &  & \left(R=Void\right)\wedge\left(E=Void\right)\\
+\mathtt{throw}\left(v\right) & = & \bar{\Upsilon}\ \lambda E:Ex.v\\
+\mathtt{trycatch}\left(id,s\right) & = & \Theta\ \lambda E:Ex.\\
+ &  & \begin{cases}
+\mathtt{noop} & E=Void\\
+\lambda f,r.s\ f\ \mathtt{exs}\left(\rho,id\right) & \mbox{otherwise}
+\end{cases}\\
+\mathtt{exs}\left(id\right) & = & \Upsilon\ \lambda V:Vars,E:Ex.\\
+ &  & \left\langle V\left[id\mapsto E\right],Void\right\rangle 
 \end{eqnarray*}
 
 \end_inset
@@ -2269,7 +2157,7 @@ PT & \mbox{otherwise}
 \end_layout
 
 \begin_layout Subsubsection
-Abstract
+Abstract interpretation
 \end_layout
 
 \begin_layout Paragraph
@@ -2279,10 +2167,9 @@ Domain
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-AObj & = & \left\{ 0\right\} \cup Eid\times Fid\cup\left\{ null\right\} \\
-APrototype & = & Fid\rightarrow\wp\left(AObj\right)\\
-AState & = & AVar\times AObjMem\times\wp\left(AObj\right)\times\\
- &  & Curried\times APrototype\times AReturn
+AEx & = & AVar\cup\left\{ Void\right\} \\
+AState & = & AVar\times AObjMem\times AObj\\
+ &  & Curried\times AReturn\times AEx
 \end{eqnarray*}
 
 \end_inset
@@ -2295,87 +2182,19 @@ Functions
 \end_layout
 
 \begin_layout Standard
-Given in figure 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "absfun-proto"
-
-\end_inset
-
-.
-\end_layout
-
-\begin_layout Standard
-\begin_inset Float figure
-wide true
-sideways false
-status open
-
-\begin_layout Plain Layout
-\begin_inset Box Boxed
-position "t"
-hor_pos "c"
-has_inner_box 1
-inner_pos "t"
-use_parbox 0
-use_makebox 0
-width "100text%"
-special "none"
-height "1in"
-height_special "totalheight"
-status open
-
-\begin_layout Plain Layout
 \begin_inset Formula 
 \begin{eqnarray*}
-\mathtt{get}\left(n,\mathtt{prototype}\right) & = & \bar{\Theta}\ \lambda\alpha:AObjMem,\zeta:APrototype.\\
- &  & \left\{ \alpha\left(x\right)\left(\mathtt{prototype}\right)\mid OBJ_{x}\in n\right\} \cup\left\{ \zeta\left(m\right)\mid\left\langle FP_{m},\_,\_\right\rangle \in n\right\} \\
-\mathtt{get}\left(n,id\right) & = & \bar{\Theta}\ \lambda\alpha:AObjMem,\zeta:APrototype.\\
- &  & \left\{ \alpha\left(x\right)\left(id\right)\mid x\in\mathtt{reach}\left(\alpha,\zeta,n\right)\right\} \\
-\mathtt{set}\left(n,\mathtt{prototype},v\right) & = & \bar{\Upsilon}\ \lambda\alpha:AObjMem,\zeta:APrototype.\\
- &  & \left\langle \begin{gathered}\alpha\left(x\right)\left[\mathtt{prototype}\mapsto v\right],\\
-\begin{cases}
-\zeta\left[z\mapsto\zeta\left(z\right)\cup\left\{ v\right\} \right] & \left\langle z,\_,\_\right\rangle =n\\
-\zeta & \mbox{otherwise}
-\end{cases}
-\end{gathered}
-\right\rangle \\
-\mathtt{newobj}\left(n\right) & = & \bar{\Psi}\ \lambda\alpha:AObjMem.\left\langle \alpha\left[n\mapsto\phi\right],OBJ_{n}\right\rangle \ \mbox{where}\ n=N\left(\alpha\right)\\
-\mathtt{fundecl}\left(id,n\right) & = & \bar{\Upsilon}\ \lambda\sigma:AVar,\zeta:APrototype.\\
- &  & \left\langle \begin{gathered}\sigma\left[id\mapsto\left\langle FP_{n},\phi,n\right\rangle \right],\\
-\zeta\left[n\mapsto\zeta\left(n\right)\cup\phi\right]
-\end{gathered}
-\right\rangle 
+\mathtt{isterm} & = & \Theta\ \lambda R:AReturn,E:AEx.\\
+ &  & \left(R=Void\right)\wedge\left(E=Void\right)\\
+\mathtt{throw}\left(v\right) & = & \bar{\Upsilon}\ \lambda E:AEx.v\\
+\mathtt{trycatch}\left(id,s\right) & = & \Theta\ \lambda E:AEx.\\
+ &  & \begin{cases}
+\mathtt{noop} & E=Void\\
+\lambda f,\eta.s\ f\ \mathtt{exs}\left(\eta,id\right) & \mbox{otherwise}
+\end{cases}\\
+\mathtt{exs}\left(id\right) & = & \Upsilon\ \lambda\sigma:AVars,E:AEx.\\
+ &  & \left\langle \sigma\left[id\mapsto E\right],Void\right\rangle 
 \end{eqnarray*}
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption
-
-\begin_layout Plain Layout
-Abstract functions
-\end_layout
-
-\end_inset
-
-
-\begin_inset CommandInset label
-LatexCommand label
-name "absfun-proto"
-
-\end_inset
-
-
-\end_layout
 
 \end_inset
 
