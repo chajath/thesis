@@ -1160,6 +1160,7 @@ status open
 \begin_inset Formula 
 \begin{align*}
  & F & = & Y\lambda f.\lambda n.\mathcal{S}\ \dd{\mathtt{Stmt}\left(n\right)}\ n\ f\\
+ & \mathcal{S}\ds{\epsilon} & = & \mathtt{noop}\\
  & \mathcal{S}\ds{\st{S_{1}}1;\st{S_{2}}2} & = & \left(\begin{aligned}\mathcal{S}\ \dd{\st{S_{1}}1} & \bind\mathcal{S}\ \dd{\st{S_{2}}2}\end{aligned}
 \right)\\
  & \mathcal{S}\ds{\mathtt{return}\ \ex E1} & = & \left(\mathcal{E}\ \dd{\ex E1}\right)\\
@@ -2455,7 +2456,16 @@ We define an abstraction relation
 \end_inset
 
 between concrete and abstract states.
- First, we define an abstraction between primitive values.
+ 
+\end_layout
+
+\begin_layout Subsection
+Definition of correct abstraction
+\end_layout
+
+\begin_layout Standard
+First, we define an abstraction between values and other components of the
+ states.
 \end_layout
 
 \begin_layout Definition
@@ -2476,13 +2486,14 @@ Abstraction of primitive values
 \begin_inset Formula $Boolean\succ\mathbb{B}$
 \end_inset
 
+, 
+\begin_inset Formula $Void\succ Void$
+\end_inset
+
 
 \end_layout
 
-\begin_layout Standard
-We now define abstraction between object values and symbol maps.
-\end_layout
-
+\begin_deeper
 \begin_layout Definition
 \begin_inset Argument
 status open
@@ -2494,7 +2505,7 @@ Abstraction of objects and symbol maps
 \end_inset
 
 
-\begin_inset Formula $n:AObject\succ m:Object$
+\begin_inset Formula $\alpha,OM\vdash n\succ m$
 \end_inset
 
  if 
@@ -2509,10 +2520,57 @@ Abstraction of objects and symbol maps
 \end_inset
 
  if 
-\begin_inset Formula $\forall id\in\sigma,\sigma\left(id\right)\succ V\left(id\right)$
+\begin_inset Formula $\forall id\in V,\sigma\left(id\right)\succ V\left(id\right)$
 \end_inset
 
 
+\end_layout
+
+\begin_deeper
+\begin_layout Definition
+\begin_inset Argument
+status open
+
+\begin_layout Plain Layout
+Function pointers
+\end_layout
+
+\end_inset
+
+
+\begin_inset Formula $C:Curried\vdash\left\langle n,c,e\right\rangle \succ\left\langle m,P\right\rangle $
+\end_inset
+
+ if 
+\end_layout
+
+\begin_layout Definition
+\begin_inset Formula $n=m$
+\end_inset
+
+, 
+\begin_inset Formula $c=N\left(P\right)$
+\end_inset
+
+ and 
+\end_layout
+
+\begin_layout Definition
+\begin_inset Formula $\exists A\in C\left(n,c,e\right),A_{k}\succ P_{k}$
+\end_inset
+
+ for 
+\begin_inset Formula $1\leq k\leq c$
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\end_deeper
+\begin_layout Standard
+Now we are ready to define an abstraction between concrete and abstract
+ states.
 \end_layout
 
 \begin_layout Definition
@@ -2537,55 +2595,214 @@ Given
 \begin_inset Formula $\eta\succ\rho$
 \end_inset
 
- if:
+ if
 \end_layout
 
 \begin_layout Definition
-\begin_inset Formula $Number\succ\mathbb{N}$
-\end_inset
-
-
+when 
 \end_layout
 
 \begin_layout Definition
-\begin_inset Formula $n:AObject\succ m:Object$
-\end_inset
-
- if 
-\begin_inset Formula $\alpha\left(n\right)\succ OM\left(m\right)$
+\begin_inset Formula $\rho=\left\langle \begin{gathered}V:Var,OM:ObjMem,T:Object,\\
+R:Return,E:Ex
+\end{gathered}
+\right\rangle $
 \end_inset
 
 
 \end_layout
 
 \begin_layout Definition
-functions:
-\begin_inset Formula $\left\langle n,c,e\right\rangle \succ\left\langle m,C\right\rangle $
+\begin_inset Formula $\eta=\left\langle \begin{gathered}\sigma:AVar,\alpha:AObjMem,\tau:AObj\\
+C:AObjCurried,r:AReturn,e:AEx
+\end{gathered}
+\right\rangle $
 \end_inset
 
- if 
+
 \end_layout
 
 \begin_layout Definition
-\begin_inset Formula $\ \ n=m$
+\begin_inset Formula 
+\begin{align*}
+\sigma\succ V & \wedge\\
+\forall m\in OM\exists n\in\alpha,OM\left(m\right)\succ\alpha\left(n\right) & \wedge\\
+\tau\succ T\wedge r\succ R\wedge e\succ E
+\end{align*}
+
 \end_inset
 
-, 
-\begin_inset Formula $c=N\left(C\right)$
+
+\end_layout
+
+\begin_deeper
+\begin_layout Definition
+\begin_inset Argument
+status open
+
+\begin_layout Plain Layout
+Abstraction between powersets
+\end_layout
+
+\end_inset
+
+Given 
+\begin_inset Formula $p\in\wp\left(AState\right),q\in\wp\left(CState\right),p\succ q$
+\end_inset
+
+ if
+\end_layout
+
+\begin_layout Definition
+\begin_inset Formula $\forall\rho\in q\exists\eta\in p,\eta\succ\rho$
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Subsection
+Morphism
+\end_layout
+
+\begin_layout Standard
+First, we observe that the bind operation preserves morphisms of the functions
+\end_layout
+
+\begin_layout Definition
+a pair of functions
+\begin_inset Formula $\left\langle F,F'\right\rangle $
+\end_inset
+
+ shows a morphism over 
+\begin_inset Formula $\succ$
+\end_inset
+
+ if the following condition is met
+\end_layout
+
+\begin_layout Definition
+\begin_inset Formula $a\succ b\implies F'\left(a\right)\succ F\left(b\right)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Theorem
+If 
+\begin_inset Formula $\left\langle F,F'\right\rangle $
 \end_inset
 
  and 
+\begin_inset Formula $\left\langle G,G'\right\rangle $
+\end_inset
+
+ are such pairs of functions that shows a morphism over 
+\begin_inset Formula $\succ$
+\end_inset
+
+, then 
+\begin_inset Formula $\left\langle F\bind G,F'\bind G'\right\rangle $
+\end_inset
+
+ is also such pair.
 \end_layout
 
-\begin_layout Definition
-\begin_inset Formula $\ \ \exists A\in C\left(n,c,e\right),A_{k}\succ C_{k}$
+\begin_layout Proof
+\begin_inset Formula $\forall\rho\in CState$
 \end_inset
 
- for 
-\begin_inset Formula $1\leq k\leq c$
+, let 
+\begin_inset Formula $p=F\left(\rho\right)$
+\end_inset
+
+,
+\begin_inset Formula $p'=F\bind G\left(\rho\right)$
+\end_inset
+
+, 
+\begin_inset Formula $\eta\in AState\mbox{ such that }\eta\succ\rho,$
 \end_inset
 
 
+\begin_inset Formula $q=F'\left(\eta\right)$
+\end_inset
+
+,
+\begin_inset Formula $q'=F'\bind G'\left(\eta\right)$
+\end_inset
+
+, 
+\begin_inset Formula $\forall p_{1}\in p,$
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+when 
+\begin_inset Formula $isterm\left(p_{1}\right)$
+\end_inset
+
+ is true, then the morphism and 
+\begin_inset Formula $\succ$
+\end_inset
+
+ relation imply that 
+\begin_inset Formula $\exists q_{1}\in q,isterm\left(q_{1}\right)$
+\end_inset
+
+.
+ Given the definition of 
+\begin_inset Formula $\bind$
+\end_inset
+
+ operation, 
+\begin_inset Formula $p_{1}$
+\end_inset
+
+ and 
+\begin_inset Formula $q_{1}$
+\end_inset
+
+are also elements of 
+\begin_inset Formula $p'$
+\end_inset
+
+ and 
+\begin_inset Formula $q'$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+otherwise, morphism of 
+\begin_inset Formula $\left\langle G,G'\right\rangle $
+\end_inset
+
+ gives that 
+\begin_inset Formula $\forall p_{2}\in G\left(p_{1}\right)\exists q_{2}\in G'\left(q_{1}\right)\mbox{ such that }q_{2}\succ p_{2}$
+\end_inset
+
+.
+ Such entities also exist in 
+\begin_inset Formula $q'$
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Standard
+Finally, we observe that operations resulting from abstract functions and
+ their corresponding concrete functions form such a morphism over 
+\begin_inset Formula $\succ$
+\end_inset
+
+.
+ As with the monotonicity argument, we omit function-by-function proof.
 \end_layout
 
 \begin_layout Section
