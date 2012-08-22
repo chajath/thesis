@@ -273,7 +273,7 @@ Related work
 \begin_layout Standard
 On a theoretical side, denotational semantics is the starting point of our
  development of a theoretical system.
- The idea of incorporating monads in the denotational semantics, as presented
+ The idea of incorporating monads in the denotational semantics is found
  in 
 \begin_inset CommandInset citation
 LatexCommand cite
@@ -281,8 +281,26 @@ key "Liang:phd1998,Liang_Hudak:ESOP1996"
 
 \end_inset
 
-, directly inspired the present work.
- We extend the idea to the static analysis of a language.
+.
+ Whereas these works modularise analytic framework by having multiple layers
+ of monadic transformations, we instead parametrise the very definition
+ of a program state.
+ 
+\end_layout
+
+\begin_layout Standard
+Action semantics, as advanced in 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Mosses1996TPA"
+
+\end_inset
+
+, shares the motivation that semantics ought to be pragmatic yet expressive
+ enough to analyse a non-trivial feature-rich languages.
+ While action semantics endeavour to devise a new semantics, we restrain
+ ourself to the language of denotational semantics, and seek to devise a
+ formalism whose idea is largely compatible with denotational semantics.
 \end_layout
 
 \begin_layout Standard
@@ -294,8 +312,8 @@ key "Wadler:1989:TF:99370.99404"
 \end_inset
 
 .
- This work is a special application of the parametricity in the field of
- language semantics and analysis.
+ The present work is a special application of the parametricity in the field
+ of language semantics and analysis.
 \end_layout
 
 \begin_layout Standard
@@ -382,10 +400,11 @@ Analytic framework
 \end_layout
 
 \begin_layout Standard
-We first describe a monadic theory of language analysis.
+We first describe a monadic framework for language analysis.
  In this section we produce a particular monadic construct, specifically
  designed for the purpose of analysis.
- We then examine key properties of such construct that is vital to our theory.
+ We then introduce polymorphic auxiliary functions that are useful in expending
+ theories in a modular manner.
 \end_layout
 
 \begin_layout Subsection
@@ -442,7 +461,16 @@ M_{S} & = & \beta\rightarrow State\rightarrow\wp\left(State\right)
 \begin_inset Formula $\beta$
 \end_inset
 
- is a program-wide constant.
+ is a program-wide invariant.
+ As we shall see in the next section, having a program-wide invariant in
+ this formula is vital in modelling function calls in a program.
+\end_layout
+
+\begin_layout Definition
+Note that we are essentially modelling a non-deterministic state transformation.
+ Allowing non-determinism helps (or enables) defining abstract interpretation
+ of a language in the exact same framework on which concrete interpretation
+ is defined.
 \end_layout
 
 \begin_deeper
@@ -473,8 +501,8 @@ We define a bind operator
 \begin_layout Definition
 \begin_inset Formula 
 \begin{eqnarray*}
-T\ \bind\ U & = & \lambda f,s.let\ S=T\ f\ s\ in\\
- &  & \underset{\left\langle s',a\right\rangle \in S}{\bigcup}\left(\begin{gathered}\mbox{if}\ isterm\left(s'\right)\\
+T\ \bind\ U & = & \lambda f,s.\mathbf{let}\ S=T\ f\ s\ \mathbf{in}\\
+ &  & \underset{\left\langle s',a\right\rangle \in S}{\bigcup}\left(\begin{gathered}\mbox{if}\ \mathtt{isterm}\left(s'\right)\\
 \mbox{then}\ \left\{ \left\langle s',\bot\right\rangle \right\} \\
 \mbox{else}\ U\ a\ f\ s'
 \end{gathered}
@@ -496,8 +524,8 @@ T\ \bind\ U & = & \lambda f,s.let\ S=T\ f\ s\ in\\
 \begin_layout Definition
 \begin_inset Formula 
 \begin{eqnarray*}
-T\ \bind\ U & = & \lambda f,s.let\ S=T\ f\ s\ in\\
- &  & \underset{\left\langle s',a\right\rangle \in S}{\bigcup}\left(\begin{gathered}\mbox{if}\ isterm\left(s'\right)\\
+T\ \bind\ U & = & \lambda f,s.\mathbf{let}\ S=T\ f\ s\ \mathbf{in}\\
+ &  & \underset{\left\langle s',a\right\rangle \in S}{\bigcup}\left(\begin{gathered}\mbox{if}\ \mathtt{isterm}\left(s'\right)\\
 \mbox{then}\ \left\{ s'\right\} \\
 \mbox{else}\ U\ a\ f\ s'
 \end{gathered}
@@ -519,8 +547,8 @@ T\ \bind\ U & = & \lambda f,s.let\ S=T\ f\ s\ in\\
 \begin_layout Definition
 \begin_inset Formula 
 \begin{eqnarray*}
-T\ \bind\ U & = & \lambda f,s.let\ S=T\ f\ s\\
- &  & \underset{s'\in S}{\bigcup}\left(\begin{gathered}\mbox{if}\ isterm\left(s'\right)\ \\
+T\ \bind\ U & = & \lambda f,s.\mathbf{let}\ S=T\ f\ s\ \mathbf{in}\\
+ &  & \underset{s'\in S}{\bigcup}\left(\begin{gathered}\mbox{if}\ \mathtt{isterm}\left(s'\right)\ \\
 \mbox{then}\ \left\{ s'\right\} \ \\
 \mbox{else}\ U\ f\ s'
 \end{gathered}
@@ -534,7 +562,7 @@ T\ \bind\ U & = & \lambda f,s.let\ S=T\ f\ s\\
 
 \end_deeper
 \begin_layout Standard
-Now we define a series of lift functions in order to provide modularity.
+Now we define monadic functions in order to provide modularity.
  For example, if a particular parametrised operation takes a state but only
  produces a value, it would be redundant to include a state as a part of
  returning type, to match the definition of monadic binding.
@@ -649,6 +677,7 @@ Polymorphic transformers
  defined for a subspace and transforms into an operator at a higher domain,
  where traces of transformations at a subspace is preserved while other
  orthogonal components remain identical.
+ 
 \end_layout
 
 \begin_layout Definition
@@ -662,6 +691,18 @@ Polymorphic transformers
 \end_inset
 
 
+\end_layout
+
+\begin_layout Definition
+where 
+\begin_inset Formula $A$
+\end_inset
+
+ is a subspace of 
+\begin_inset Formula $B$
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Definition
@@ -699,115 +740,6 @@ We compose this function with the other transformers.
 \end_layout
 
 \end_deeper
-\begin_layout Standard
-We examine properties of the monad.
- 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "Liang:phd1998"
-
-\end_inset
-
- gives a survey of mathematical properties that monadic constructs exhibit.
- For the purpose our discussion, we limit ourselves to the discussion of
- properties of monads that are crucial in proving correctness of the system.
-\end_layout
-
-\begin_layout Theorem
-Given two pairs of isomorphic functions 
-\begin_inset Formula $\left\langle F,F'\right\rangle $
-\end_inset
-
- and 
-\begin_inset Formula $\left\langle G,G'\right\rangle $
-\end_inset
-
-, 
-\begin_inset Formula $F\bind G$
-\end_inset
-
- and 
-\begin_inset Formula $F'\bind G'$
-\end_inset
-
- are also isomorphic.
-\end_layout
-
-\begin_layout Proof
-Let 
-\begin_inset Formula $F\left(\rho_{0}\right)=\left\langle \rho_{1},\alpha_{1}\right\rangle $
-\end_inset
-
-, 
-\begin_inset Formula $G\left(\rho_{1},\alpha_{1}\right)=\left\langle \rho_{2},\alpha_{2}\right\rangle $
-\end_inset
-
-, 
-\begin_inset Formula $F'\left(\eta_{0}\right)=\left\langle \eta_{1},\upsilon_{1}\right\rangle $
-\end_inset
-
-, 
-\begin_inset Formula $G'\left(\eta_{1},\upsilon_{1}\right)=\left\langle \eta_{2},\upsilon_{2}\right\rangle $
-\end_inset
-
-
-\end_layout
-
-\begin_layout Proof
-If there are defined relationship 
-\begin_inset Formula $\prec$
-\end_inset
-
-between two different domains that two pairs of functions are isomorphic
- with, isomorphicity of 
-\begin_inset Formula $F$
-\end_inset
-
- and 
-\begin_inset Formula $F'$
-\end_inset
-
- provides that 
-\begin_inset Formula $\rho_{0}\prec\eta_{0}$
-\end_inset
-
-, 
-\begin_inset Formula $\rho_{1}\prec\eta_{1}$
-\end_inset
-
- and 
-\begin_inset Formula $\alpha_{1}\prec\upsilon_{1}$
-\end_inset
-
-.
- Isomorphicity of 
-\begin_inset Formula $G$
-\end_inset
-
- and 
-\begin_inset Formula $G'$
-\end_inset
-
- gives 
-\begin_inset Formula $\rho_{2}\prec\eta_{2}$
-\end_inset
-
- and 
-\begin_inset Formula $\alpha_{2}\prec\upsilon_{2}$
-\end_inset
-
-.
- Therefore 
-\begin_inset Formula $F\bind G$
-\end_inset
-
- and 
-\begin_inset Formula $F'\bind G'$
-\end_inset
-
- are also isomorphic.
-\end_layout
-
 \begin_layout Standard
 We now have monadic constructs and auxiliary functions to describe a semantic
  functions of the model language.
@@ -910,6 +842,22 @@ Note that we use an sid of a function declaration statement as a reference
  of the function.
 \end_layout
 
+\begin_layout Standard
+We write 
+\begin_inset Formula $\ds{S}$
+\end_inset
+
+ to mean a statement 
+\begin_inset Formula $S$
+\end_inset
+
+ with sid 
+\begin_inset Formula $s$
+\end_inset
+
+.
+\end_layout
+
 \begin_layout Subsection
 Semantic functions
 \end_layout
@@ -924,7 +872,7 @@ Semantic functions
 
 \end_inset
 
-The analytic framework contains following semantic functions
+The analytic framework contains following semantic functions.
 \end_layout
 
 \begin_layout Definition
@@ -941,8 +889,49 @@ F & = & Sid\rightarrow State\rightarrow\wp\left(State\right)\\
 
 \end_layout
 
+\begin_layout Definition
+\begin_inset Formula $\mathcal{S},\mathcal{E},\mathcal{L}$
+\end_inset
+
+ functions are semantics functions for statements, expressions and left
+ expressions, respectively.
+ 
+\begin_inset Formula $F$
+\end_inset
+
+ is a function that models functions in a program, given the 
+\begin_inset Formula $Sid$
+\end_inset
+
+ of a function declaration site, it gives a state transformer.
+ Note that in this picture a function 
+\begin_inset Quotes eld
+\end_inset
+
+returns
+\begin_inset Quotes erd
+\end_inset
+
+ a value by giving a state transformation.
+ Incorporating such concept as a return value in a 
+\begin_inset Formula $State$
+\end_inset
+
+ itself provides a greater flexibility in describing the effects of executing
+ a statement or an expression at a particular program point.
+\end_layout
+
+\begin_layout Section
+Model language
+\end_layout
+
 \begin_layout Subsection
 Procedural language
+\end_layout
+
+\begin_layout Standard
+We start off with a procedural language with C-like syntax.
+ Notably, this language supports higher-order functions.
 \end_layout
 
 \begin_layout Standard
@@ -2817,9 +2806,9 @@ As we have noted in the introduction, this work is a snapshot of an ongoing
  We sought to modularise the theoretic framework so that we can take an
  evolutionary approach.
  We anticipate that, as a result of having such theory, adding new features
- to the current SDTL while maintaining formality and rigour will be considerably
- less laborious than to invent a new incarnation of a more feature-complete
- model language and produce theory for it.
+ to the current model language while maintaining formality and rigour will
+ be considerably less laborious than to invent a new incarnation of a more
+ feature-complete model language and produce theory for it.
 \end_layout
 
 \begin_layout Standard
