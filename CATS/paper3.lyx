@@ -428,10 +428,10 @@ Type constructor
 
 \begin_layout Definition
 \begin_inset Formula 
-\begin{multline*}
-M_{E}\ a=\beta\rightarrow State\rightarrow\wp\left(State\times a\cup\left\{ \bot\right\} \right)\\
-M_{S}=\beta\rightarrow State\rightarrow\wp\left(State\right)
-\end{multline*}
+\begin{eqnarray*}
+M_{E}\ a & = & \beta\rightarrow State\rightarrow\wp\left(State\times a\cup\left\{ \bot\right\} \right)\\
+M_{S} & = & \beta\rightarrow State\rightarrow\wp\left(State\right)
+\end{eqnarray*}
 
 \end_inset
 
@@ -547,17 +547,22 @@ Now we define a series of lift functions in order to provide modularity.
 status open
 
 \begin_layout Plain Layout
-Lift functions
+Monadic functions
 \end_layout
 
 \end_inset
 
-We define following lift functions to incorporate non-monadic functions
+We define following auxiliary functions to incorporate non-monadic functions
  as a part of monadic transformation:
 \end_layout
 
 \begin_deeper
 \begin_layout Itemize
+(return for 
+\begin_inset Formula $M_{E}$
+\end_inset
+
+) 
 \begin_inset Formula $I_{A}$
 \end_inset
 
@@ -565,43 +570,77 @@ We define following lift functions to incorporate non-monadic functions
  an identity state transformer with the constant as a return value
 \end_layout
 
+\begin_deeper
 \begin_layout Standard
-\begin_inset Formula 
-\begin{gather*}
-I_{A}:a\rightarrow M_{E}\ a\\
-I_{A}\ v=\lambda f,r.\left\{ \left\langle r,v\right\rangle \right\} 
-\end{gather*}
-
+\begin_inset Formula $I_{A}:a\rightarrow M_{E}\ a$
 \end_inset
 
 
 \end_layout
 
+\begin_layout Standard
+\begin_inset Formula $I_{A}\ v=\lambda f,r.\left\{ \left\langle r,v\right\rangle \right\} $
+\end_inset
+
+
+\end_layout
+
+\end_deeper
 \begin_layout Itemize
+(lift for 
+\begin_inset Formula $M_{E}$
+\end_inset
+
+) 
 \begin_inset Formula $I_{V}$
 \end_inset
 
  lifts a function that takes a state and returns a value to a monadic function
 \end_layout
 
+\begin_deeper
 \begin_layout Standard
-\begin_inset Formula 
-\begin{gather*}
-I_{V}:\left(State\rightarrow a\right)\rightarrow M_{E}\ a\\
-I_{V}\ t=\lambda f,r.\left\langle \left\{ \left\langle r,t\ r\right\rangle \right\} ,\phi\right\rangle 
-\end{gather*}
-
+\begin_inset Formula $I_{V}:\left(State\rightarrow a\right)\rightarrow M_{E}\ a$
 \end_inset
 
 
 \end_layout
 
+\begin_layout Standard
+\begin_inset Formula $I_{V}\ t=\lambda f,r.\left\langle \left\{ \left\langle r,t\ r\right\rangle \right\} ,\phi\right\rangle $
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+(unit operation for 
+\begin_inset Formula $M_{S}$
+\end_inset
+
+) 
+\begin_inset Formula $\mathtt{noop}$
+\end_inset
+
+ is a function that does nothing.
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+\begin_inset Formula $\mathtt{noop}=\lambda x.\left\{ x\right\} $
+\end_inset
+
+
+\end_layout
+
+\end_deeper
 \begin_layout Definition
 \begin_inset Argument
 status open
 
 \begin_layout Plain Layout
-Monadic transformers
+Polymorphic transformers
 \end_layout
 
 \end_inset
@@ -1084,20 +1123,14 @@ reference "semantic"
 \begin_layout Standard
 \begin_inset Formula 
 \begin{gather*}
-\mathtt{evalParam}:\left[Expr\right]\times\left[a\right]\times F\times State\rightarrow\wp\left(State\times\left[a\right]\right)\\
+\mathtt{evalParam}:\left[Expr\right]\times\left[a\right]\times F\times State\rightarrow\\
+\wp\left(State\times\left[a\right]\right)\\
 \mathtt{evalParam}\ \phi\ ps\ f\ \rho=\left\langle \rho,ps\right\rangle \\
-\mathtt{evalParam}\ \left[\ex E{}\mid Exprs\right]\ ps\ f\ \rho=\\
-\ \left\{ \mathtt{evalParam}\ Exprs\ \left[ps\mid con\right]\ f\ \rho'\mid\left\langle \rho',con\right\rangle \in S\right\} \\
+\mathtt{evalParam}\ \left[\dd{\ex E{}}\mid Exprs\right]\ ps\ f\ \rho=\\
+\underset{\left\langle \rho',con\right\rangle \in S}{\bigcup}\left\{ \mathtt{evalParam}\ Exprs\ \left[ps\mid con\right]\ f\ \rho'\right\} \\
 \ \ \mbox{where}S=\mathcal{E}\ \dd{\ex E{}}\ f\ \rho
 \end{gather*}
 
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula $\mathtt{noop}=\lambda x.\left\{ x\right\} $
 \end_inset
 
 
@@ -1153,20 +1186,20 @@ status open
 \end{aligned}
 \right)\\
  & S\ds{\mathtt{function}\ id\left(IDs\right)\ \st{S_{1}}1} & = & \mathtt{fundecl}\left(id,s\right)\\
- & \mathcal{E}\de{con} & = & \mathtt{conval}\left(con\right)\\
+ & \mathcal{E}\de{con} & = & I_{A}\ \mathtt{conval}\left(con\right)\\
  & \mathcal{E}\de{L} & = & \mathcal{L}\ \dd{L}\\
- & \mathcal{E}\de{\mathtt{input}} & = & I_{T}\ \mathtt{getinput}\\
+ & \mathcal{E}\de{\mathtt{input}} & = & I_{V}\ \mathtt{getinput}\\
  & \mathcal{E}\de{L\left(E^{*}\right)} & = & \left(\begin{aligned}\mathcal{L}\ \dd L & \bind\lambda n.\\
 \mathtt{evalParams}\ n\ E^{*}\ \phi & \bind\lambda p.\\
-I_{A}\ \mathtt{call}\left(n,p\right)
+\mathtt{call}\left(n,p\right)
 \end{aligned}
 \right)\\
  & \mathcal{E}\de{\ex{E_{1}}1\ binop\ \ex{E_{2}}2} & = & \left(\begin{aligned}\mathcal{E}\ \dd{\ex{E_{1}}1} & \bind\lambda c_{1}.\\
 \mathcal{E}\ \dd{\ex{E_{2}}2} & \bind\lambda c_{2}.\\
-I_{V}\ \mathtt{bin}\left(binop,c_{0},c_{1}\right)
+I_{A}\ \mathtt{bin}\left(binop,c_{0},c_{1}\right)
 \end{aligned}
 \right)\\
- & \mathcal{L}\dd{id} & = & \left(I_{V}\ \mathtt{val}\left(id\right)\right)
+ & \mathcal{L}\dd{id} & = & \left(I_{A}\ \mathtt{val}\left(id\right)\right)
 \end{align*}
 
 \end_inset
@@ -1190,7 +1223,7 @@ name "semantic"
 \begin_inset Caption
 
 \begin_layout Plain Layout
-Semantic functions
+Semantic functions for a procedural language
 \end_layout
 
 \end_inset
@@ -1216,7 +1249,7 @@ Domain
 \begin{eqnarray*}
 Value & = & \mathbb{Z}\cup\left\{ true,false\right\} \\
  &  & \cup FunctionPointer\\
-FunctionPointer & = & FP_{n}\\
+FunctionPointer & = & Sid\\
 Var & = & id\rightarrow Value\\
 Return & = & Value\cup\left\{ Void\right\} \\
 CState & = & Var\times IO\times Return
@@ -1270,11 +1303,11 @@ We omit a detailed description of IO environment.
  given and produced during the execution of a program.
 \end_layout
 
-\begin_layout Paragraph
+\begin_layout Subsubsection
 Abstract interpretation
 \end_layout
 
-\begin_layout Subparagraph
+\begin_layout Paragraph
 Domain
 \end_layout
 
@@ -1293,7 +1326,7 @@ AState & = & AVar\times AReturn
 
 \end_layout
 
-\begin_layout Subparagraph
+\begin_layout Paragraph
 Functions
 \end_layout
 
@@ -1408,14 +1441,17 @@ inline false
 status open
 
 \begin_layout Plain Layout
+
 function foo(a,b) {
 \end_layout
 
 \begin_layout Plain Layout
+
 	return a;
 \end_layout
 
 \begin_layout Plain Layout
+
 }
 \end_layout
 
@@ -1424,18 +1460,22 @@ function foo(a,b) {
 \end_layout
 
 \begin_layout Plain Layout
+
 x = 0;
 \end_layout
 
 \begin_layout Plain Layout
+
 while(input < 30) {
 \end_layout
 
 \begin_layout Plain Layout
+
 	x = foo(x);
 \end_layout
 
 \begin_layout Plain Layout
+
 }
 \end_layout
 
@@ -1465,7 +1505,8 @@ Domain
 \begin{eqnarray*}
 FunPointer & = & Sid\times c\times\left(Eid\cup\left\{ 0\right\} \right)\\
 Curried & = & Sid\times c\times Eid\rightarrow\left[AVal\right]\\
- &  & \mbox{where}c\mbox{ is a number of parameters curried}\\
+ &  & \mbox{where}\\
+ &  & c\mbox{ is a number of parameters curried}\\
 AState & = & AVar\times Curried\times AReturn
 \end{eqnarray*}
 
@@ -1646,9 +1687,9 @@ status open
 \begin_layout Plain Layout
 \begin_inset Formula 
 \begin{align*}
- & \mathcal{S}\ds{\ex{E_{1}}1.id=\ex{E_{2}}2} & = & T_{S}\ \left(\begin{aligned}\mathcal{E}\ \dd{\ex{E_{1}}1} & \bind\lambda v.\\
+ & \mathcal{S}\ds{\ex{E_{1}}1.id=\ex{E_{2}}2} & = & \left(\begin{aligned}\mathcal{E}\ \dd{\ex{E_{1}}1} & \bind\lambda v.\\
 \mathcal{E}\ \dd{\ex{E_{2}}2} & \bind\lambda r.\\
-I_{0}\ \mathtt{set}\left(r,id,v\right)
+\mathtt{set}\left(r,id,v\right)
 \end{aligned}
 \right)\\
  & \mathcal{E}\de{\mathtt{global}} & = & I_{V}\ \mathtt{obj}\left(0\right)\\
@@ -1660,7 +1701,7 @@ I_{0}\ \mathtt{set}\left(r,id,v\right)
 \right)\\
  & \mathcal{E}\de{\mathtt{new}\ L\left(E*\right)} & = & \left(\begin{aligned}\mathcal{L}\ \dd L & \bind\lambda n.\\
 \mathtt{evalParams}\ n\ E*\ \phi & \bind\lambda p.\\
-I_{T}\ \mathtt{newobj}\left(e\right) & \bind\lambda m.\\
+\mathtt{newobj}\left(e\right) & \bind\lambda m.\\
 \mathtt{apply}\left(n,p,m,e\right) & \bind\lambda\_.\\
 I_{A}\ m
 \end{aligned}
@@ -1691,7 +1732,7 @@ I_{V}\ \mathtt{get}\left(v,id\right)
 \begin_inset Caption
 
 \begin_layout Plain Layout
-Object-oriented extension of the model language
+Semantic functions for object-oriented extension of the language
 \end_layout
 
 \end_inset
@@ -1716,7 +1757,8 @@ We redefine
 \begin_inset Formula $\mathtt{call}$
 \end_inset
 
- function to include receiver object reference.
+ function to include receiver object reference, and to account for side-effects
+ that functions can have on object memories.
 \end_layout
 
 \begin_layout Standard
@@ -1818,7 +1860,7 @@ status open
 \\
 \Gamma\ \lambda f,\rho.\left\langle \rho,\left\langle n,\left[C\mid p\right]\right\rangle \right\rangle  & \mbox{otherwise}
 \end{cases}\\
-\mathtt{newobj}\left(\_\right) & = & \bar{\Psi}\ \lambda OM:ObjMem.\left\langle OM\left[n\mapsto\phi\right],OBJ_{n}\right\rangle \ \mbox{where}\ n=N\left(OM\right)
+\mathtt{newobj}\left(\_\right) & = & \bar{\Psi}\ \lambda OM:ObjMem.\left\langle OM\left[n\mapsto\phi\right],n\right\rangle \ \mbox{where}\ n=N\left(OM\right)
 \end{eqnarray*}
 
 \end_inset
@@ -2028,10 +2070,15 @@ end{grammar}
 \end_layout
 
 \begin_layout Standard
-\begin_inset Formula $\mathcal{S}\ds{\mathtt{try}\ \st{S_{1}}1\ \mathtt{catch}\left(id\right)\ \st{S_{2}}2}=\left(\begin{aligned}\mathcal{S}\ \dd{\st{S_{1}}1} & \bind\\
+\begin_inset Formula 
+\begin{gather*}
+\mathcal{S}\ds{\mathtt{try}\ \st{S_{1}}1\ \mathtt{catch}\left(id\right)\ \st{S_{2}}2}=\\
+\left(\begin{aligned}\mathcal{S}\ \dd{\st{S_{1}}1} & \bind\\
 \mathtt{trycatch}\left(id,\mathcal{S}\ \dd{\st{S_{2}}2}\right)
 \end{aligned}
-\right)$
+\right)
+\end{gather*}
+
 \end_inset
 
 
@@ -2216,6 +2263,19 @@ Partial ordering of powersets
 \begin_inset Formula $\eta_{1}\sqsubseteq\eta_{2}$
 \end_inset
 
+.
+ 
+\begin_inset Formula $\forall e_{1},e_{2}\in\wp\left(AState\times a\right),e_{1}\sqsubseteq e_{2}$
+\end_inset
+
+ if 
+\begin_inset Formula $\forall\left\langle \eta_{1},a_{1}\right\rangle \in e_{1}\exists\left\langle \eta_{2},a_{2}\right\rangle \in e_{2}$
+\end_inset
+
+ such that 
+\begin_inset Formula $\eta_{1}\sqsubseteq\eta_{2}\wedge a_{1}=a_{2}$
+\end_inset
+
 
 \end_layout
 
@@ -2254,12 +2314,278 @@ Given two monotonous functions
 \begin_inset Formula $F\bind G$
 \end_inset
 
- is also a monotonous function if subset ordering is implied in the ordering
- of the resulting values
+ is also a monotonous function.
+\end_layout
+
+\begin_layout Proof
+Let 
+\begin_inset Formula $p_{1}=F\ f\ \eta_{1}$
+\end_inset
+
+, 
+\begin_inset Formula $p_{2}=F\ f\ \eta_{2}$
+\end_inset
+
+ such that 
+\begin_inset Formula $\eta_{1}\sqsubseteq\eta_{2},p_{1}\sqsubseteq p_{2}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Proof
+\begin_inset Formula $q_{1}=F\bind G\ f\ \eta_{1}=\underset{s\in p_{1}}{\bigcup}\left(\begin{gathered}\mbox{if}\ isterm\left(s\right)\ \\
+\mbox{then}\ \left\{ s\right\} \ \\
+\mbox{else}\ G\ f\ s
+\end{gathered}
+\right)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Proof
+\begin_inset Formula $q_{2}=F\bind G\ f\ \eta_{2}=\underset{s\in p_{2}}{\bigcup}\left(\begin{gathered}\mbox{if}\ isterm\left(s\right)\ \\
+\mbox{then}\ \left\{ s\right\} \ \\
+\mbox{else}\ G\ f\ s
+\end{gathered}
+\right)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Proof
+\begin_inset Formula $\forall q\in q_{1}$
+\end_inset
+
+,
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+If 
+\begin_inset Formula $isterm\left(q\right)$
+\end_inset
+
+ is true, then it is immediately shown that 
+\begin_inset Formula $\exists q'\in q_{2},q\sqsubseteq q'$
+\end_inset
+
+ from the fact that 
+\begin_inset Formula $p_{1}\sqsubseteq p_{2}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Enumerate
+Otherwise, let 
+\begin_inset Formula $p$
+\end_inset
+
+ be an element in 
+\begin_inset Formula $p_{1}$
+\end_inset
+
+ such that 
+\begin_inset Formula $q\in G\ f\ p$
+\end_inset
+
+.
+ Monotonicity of 
+\begin_inset Formula $F$
+\end_inset
+
+ function provides the existence of 
+\begin_inset Formula $p'$
+\end_inset
+
+ such that 
+\begin_inset Formula $p\sqsubseteq p'$
+\end_inset
+
+.
+ Then, monotonicity of 
+\begin_inset Formula $G$
+\end_inset
+
+ provides the existence of 
+\begin_inset Formula $q'\in G\ f\ q$
+\end_inset
+
+ such that 
+\begin_inset Formula $q\sqsubseteq q'$
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Standard
+Now we turn to examine each of the abstract functions that we have devised.
+ We omit a detailed function-by-function argument.
+ Generally, observe that those functions can be categorised and argued as
+ thus:
+\end_layout
+
+\begin_layout Enumerate
+For the functions calculating values from given environment, an increase
+ in the environment implies that the resulting environment is also increased.
+\end_layout
+
+\begin_layout Enumerate
+For the functions that are updating environment, observe that an increase
+ in the environment implies an increase in the updated environment.
+\end_layout
+
+\begin_layout Standard
+With all the foregoing arguments, it stands to argue that the analytic framework
+ is a monotonic framework.
+ This result sufficiently proves the existence of the fixed point.
 \end_layout
 
 \begin_layout Section
 Correctness
+\end_layout
+
+\begin_layout Standard
+We define an abstraction relation 
+\begin_inset Formula $\succ$
+\end_inset
+
+between concrete and abstract states.
+ First, we define an abstraction between primitive values.
+\end_layout
+
+\begin_layout Definition
+\begin_inset Argument
+status open
+
+\begin_layout Plain Layout
+Abstraction of primitive values
+\end_layout
+
+\end_inset
+
+
+\begin_inset Formula $Number\succ\mathbb{N}$
+\end_inset
+
+, 
+\begin_inset Formula $Boolean\succ\mathbb{B}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+We now define abstraction between object values and symbol maps.
+\end_layout
+
+\begin_layout Definition
+\begin_inset Argument
+status open
+
+\begin_layout Plain Layout
+Abstraction of objects and symbol maps
+\end_layout
+
+\end_inset
+
+
+\begin_inset Formula $n:AObject\succ m:Object$
+\end_inset
+
+ if 
+\begin_inset Formula $\alpha\left(n\right)\succ OM\left(m\right)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Definition
+\begin_inset Formula $\sigma:AVars\succ V:Vars$
+\end_inset
+
+ if 
+\begin_inset Formula $\forall id\in\sigma,\sigma\left(id\right)\succ V\left(id\right)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Definition
+\begin_inset Argument
+status open
+
+\begin_layout Plain Layout
+Abstraction relation
+\end_layout
+
+\end_inset
+
+Given 
+\begin_inset Formula $\rho\in CState$
+\end_inset
+
+, 
+\begin_inset Formula $\eta\in AState$
+\end_inset
+
+, 
+\begin_inset Formula $\eta\succ\rho$
+\end_inset
+
+ if:
+\end_layout
+
+\begin_layout Definition
+\begin_inset Formula $Number\succ\mathbb{N}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Definition
+\begin_inset Formula $n:AObject\succ m:Object$
+\end_inset
+
+ if 
+\begin_inset Formula $\alpha\left(n\right)\succ OM\left(m\right)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Definition
+functions:
+\begin_inset Formula $\left\langle n,c,e\right\rangle \succ\left\langle m,C\right\rangle $
+\end_inset
+
+ if 
+\end_layout
+
+\begin_layout Definition
+\begin_inset Formula $\ \ n=m$
+\end_inset
+
+, 
+\begin_inset Formula $c=N\left(C\right)$
+\end_inset
+
+ and 
+\end_layout
+
+\begin_layout Definition
+\begin_inset Formula $\ \ \exists A\in C\left(n,c,e\right),A_{k}\succ C_{k}$
+\end_inset
+
+ for 
+\begin_inset Formula $1\leq k\leq c$
+\end_inset
+
+
 \end_layout
 
 \begin_layout Section
