@@ -560,6 +560,15 @@ T\ \bind\ U & = & \lambda f,s.\mathbf{let}\ S=T\ f\ s\ \mathbf{in}\\
 
 \end_layout
 
+\begin_layout Definition
+\begin_inset Formula $\mathtt{isterm}$
+\end_inset
+
+ is a parametrised function that returns true if a State is at a terminal
+ state (having encountered a return statement, for example).
+ 
+\end_layout
+
 \end_deeper
 \begin_layout Standard
 Now we define monadic functions in order to provide modularity.
@@ -1126,6 +1135,21 @@ reference "semantic"
 \end_layout
 
 \begin_layout Standard
+\begin_inset Formula $\kappa$
+\end_inset
+
+ is a parametrised function that takes a caller's state at the time of function
+ invocation and an id-to-constant value mapping, and constructs initial
+ state for a callee.
+ 
+\begin_inset Formula $\bar{\kappa}$
+\end_inset
+
+ takes both the caller's state and the resulting states of callee's, and
+ construct caller's states after the function call.
+\end_layout
+
+\begin_layout Standard
 \begin_inset Float figure
 wide true
 sideways false
@@ -1297,6 +1321,18 @@ We omit a detailed description of IO environment.
 Abstract interpretation
 \end_layout
 
+\begin_layout Standard
+At this stage, abstract interpretation looks largely similar to that of
+ concrete interpretation.
+ Notable differences are that we categorise constant by its type, and that
+ 
+\begin_inset Formula $\mathtt{cond}$
+\end_inset
+
+ is a non-deterministic transformation where it collects effects of both
+ branches at a branching point.
+\end_layout
+
 \begin_layout Paragraph
 Domain
 \end_layout
@@ -1366,8 +1402,35 @@ There is no inherent semantic function change required in this case.
 
 \end_layout
 
+\begin_layout Standard
+Here we introduce 
+\begin_inset Formula $\mathtt{apply}$
+\end_inset
+
+ function.
+ It invokes 
+\begin_inset Formula $\mathtt{call}$
+\end_inset
+
+ function when the function arguments are saturated, or it returns a pointer
+ to a curried function otherwise.
+\end_layout
+
 \begin_layout Subsubsection
 Concrete
+\end_layout
+
+\begin_layout Standard
+Obviously, we extend the definition of 
+\begin_inset Formula $FunctionPointer$
+\end_inset
+
+ to hold curried parameters.
+ This means that the 
+\begin_inset Formula $\mathtt{fundecl}$
+\end_inset
+
+ function also needs to be modified to match the new type signature.
 \end_layout
 
 \begin_layout Paragraph
@@ -1409,7 +1472,8 @@ Abstract
 \end_layout
 
 \begin_layout Standard
-Curried functions introduce an infinitely large concrete domain.
+Note that curried functions introduce a possibility of having an infinitely
+ large concrete domain.
 \end_layout
 
 \begin_layout Example
@@ -1592,6 +1656,10 @@ Object Oriented
 \end_layout
 
 \begin_layout Standard
+We now extend our language to support objects.
+\end_layout
+
+\begin_layout Standard
 \begin_inset ERT
 status open
 
@@ -1644,7 +1712,23 @@ end{grammar}
 \end_layout
 
 \begin_layout Standard
-Definitions for semantic functions are given in figure 
+\begin_inset Formula $\mathtt{global}$
+\end_inset
+
+ is a reference to a global object, and the reference to global object is
+ program invariant (akin to `window' in Client-side javascript or `global'
+ in Node.js).
+ 
+\begin_inset Formula $\mathtt{this}$
+\end_inset
+
+ is a usual reference to a receiver object of a method call.
+ 
+\end_layout
+
+\begin_layout Standard
+As this extension introduces new syntactic structure, extra definitions
+ for semantic functions are given in figure 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "semmon-oo"
@@ -1761,8 +1845,56 @@ $
 
 \end_layout
 
+\begin_layout Standard
+Note that by modelling function calls as an effect on a state, we can readily
+ model such concepts as mixins.
+ Compare this modelling of mixin functions with 
+\begin_inset Formula $\mbox{JS}_{0}$
+\end_inset
+
+ language, as developed and presented in 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Anderson:ECOOP2005,Anderson:ENTCS2005"
+
+\end_inset
+
+ where we attempt to contain a mixin creating behaviour in a functional
+ model language.
+ Similar approach has been taken in the discussion of 
+\begin_inset Formula $\lambda_{S}$
+\end_inset
+
+ language as devised in 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Guha:ESOP2011"
+
+\end_inset
+
+.
+ With the languages like JavaScript, it is in the nature of such language
+ that functions are side-effect causing, and much of the type operations
+ are being done with by the side-effects.
+ Hence our deviation from purely functional approach to devise a model language
+ that resembles real life language.
+\end_layout
+
 \begin_layout Subsubsection
 Concrete interpretation
+\end_layout
+
+\begin_layout Standard
+We extend the domain to include object memory (where object references are
+ mapped to a symbol mapping), and a reference to 
+\begin_inset Quotes eld
+\end_inset
+
+this
+\begin_inset Quotes erd
+\end_inset
+
+ object.
 \end_layout
 
 \begin_layout Paragraph
@@ -1790,6 +1922,18 @@ Functions
 \end_layout
 
 \begin_layout Standard
+We redefine 
+\begin_inset Formula $\kappa$
+\end_inset
+
+ and 
+\begin_inset Formula $\bar{\kappa}$
+\end_inset
+
+ functions to allow passing of a receiver object.
+\end_layout
+
+\begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
 \kappa & = & \lambda\left\langle \_,OM:ObjMem,\_,\_\right\rangle ,\\
@@ -1806,7 +1950,7 @@ Functions
 \end_layout
 
 \begin_layout Standard
-Functions are given in figure 
+Other functions are given in figure 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "concfunc-oo"
@@ -1891,6 +2035,14 @@ name "concfunc-oo"
 Abstract interpretation
 \end_layout
 
+\begin_layout Standard
+Similarly, we extend the abstract interpretation.
+ Note that, whereas in a concrete interpretation we generate a unique id
+ for each of the object instantiated in run-time, we use a reference to
+ allocation site of an object as a reference to a particular object, hence
+ we contain object memory in a finite domain.
+\end_layout
+
 \begin_layout Paragraph
 Domain
 \end_layout
@@ -1931,7 +2083,7 @@ Functions
 \end_layout
 
 \begin_layout Standard
-Defined in figure 
+Other functions are defined in figure 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "absfun-oo"
@@ -2017,6 +2169,12 @@ Exception handling
 \end_layout
 
 \begin_layout Standard
+As a final extension to the model language, we introduce exception throwing
+ and handling.
+ First, we introduce a familiar syntax for exception handling.
+\end_layout
+
+\begin_layout Standard
 \begin_inset ERT
 status open
 
@@ -2060,6 +2218,11 @@ end{grammar}
 \end_layout
 
 \begin_layout Standard
+Following functions are the semantic functions for the newly introduced
+ syntax.
+\end_layout
+
+\begin_layout Standard
 \begin_inset Formula 
 \begin{gather*}
 \mathcal{S}\ds{\mathtt{try}\ \st{S_{1}}1\ \mathtt{catch}\left(id\right)\ \st{S_{2}}2}=\\
@@ -2086,6 +2249,16 @@ end{grammar}
 
 \begin_layout Subsubsection
 Concrete interpretation
+\end_layout
+
+\begin_layout Standard
+As the flow control of the execution is abstracted out and parametrised
+ as a function 
+\begin_inset Formula $\mathtt{isterm}$
+\end_inset
+
+, it is not very surprising that introducing exceptions to a program does
+ not necessitates a heavy modification to an interpretation of the language.
 \end_layout
 
 \begin_layout Paragraph
@@ -2129,8 +2302,22 @@ Functions
 
 \end_layout
 
+\begin_layout Standard
+\begin_inset Formula $\mathtt{exs}$
+\end_inset
+
+ helps constructing an entering state to a catch block if an exception was
+ caught.
+ As we do not support lexical scoping, an exception variable enters a variable
+ mapping as we enter the block.
+\end_layout
+
 \begin_layout Subsubsection
 Abstract interpretation
+\end_layout
+
+\begin_layout Standard
+Abstract definitions are largely similar to that of concrete ones.
 \end_layout
 
 \begin_layout Paragraph
@@ -2179,8 +2366,9 @@ Existence of fixed point
 \end_layout
 
 \begin_layout Standard
-In order to argue soundness of an analysis, we first argue finiteness of
- the abstract domain.
+Now we turn to examine key characteristic of the abstract interpretation.
+ First, in order to argue soundness of an analysis, we argue finiteness
+ of the abstract domain.
 \end_layout
 
 \begin_layout Theorem
