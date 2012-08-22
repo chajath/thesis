@@ -940,7 +940,7 @@ Procedural language
 
 \begin_layout Standard
 We start off with a procedural language with C-like syntax.
- Notably, this language supports higher-order functions.
+ 
 \end_layout
 
 \begin_layout Standard
@@ -1086,7 +1086,15 @@ end{grammar}
 \end_layout
 
 \begin_layout Standard
-Semantic functions for the language is defined in figure 
+Notably, this language supports higher-order functions, which allows functions
+ to be recursively referenced.
+ Hence, we formulate meaning of a function as a fixed point (see the definition
+ of 
+\begin_inset Formula $F$
+\end_inset
+
+).
+ Semantic functions for the language is defined in figure 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "semantic"
@@ -2367,15 +2375,9 @@ Existence of fixed point
 
 \begin_layout Standard
 Now we turn to examine key characteristic of the abstract interpretation.
- First, in order to argue soundness of an analysis, we argue finiteness
- of the abstract domain.
-\end_layout
-
-\begin_layout Theorem
-\begin_inset Formula $AState$
-\end_inset
-
- is a finite domain.
+ First, observe that the abstract domain is finite.
+ Finiteness of the domain has been argued in various stages of development
+ when such argument was necessary.
 \end_layout
 
 \begin_layout Standard
