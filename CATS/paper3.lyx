@@ -2077,12 +2077,12 @@ Functions
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-\kappa & = & \lambda\left\langle \_,\alpha:AObjMem,\_,\nu:Curried\right\rangle ,\\
+\kappa & = & \lambda\left\langle \_,\alpha:AObjMem,\_,\nu:Curried,\_\right\rangle ,\\
  &  & \left\langle P:\left[con\right],\tau':Object\right\rangle ,n:Sid.\\
- &  & \ \left\langle \left[\mathtt{param}\left(n\right)_{k}\mapsto P_{k}\right],\alpha,\tau',\nu\right\rangle \\
-\bar{\kappa} & = & \lambda\left\langle \sigma:AVar,\_,\tau:AObj,\_,r:AReturn\right\rangle ,\\
- &  & \left\langle \_,\alpha':AObjMem,\_,\nu':Curried,r':AReturn\right\rangle .\\
- &  & \ \left\langle \left\langle \sigma,\alpha',\tau,\nu',r\right\rangle ,r'\right\rangle 
+ &  & \ \left\langle \left[\mathtt{param}\left(n\right)_{k}\mapsto P_{k}\right],\alpha,\tau',\nu,Void\right\rangle \\
+\bar{\kappa} & = & \lambda\left\langle \sigma:AVar,\_,\tau:AObj,\_,\_\right\rangle ,\\
+ &  & \left\langle \_,\alpha':AObjMem,\_,\nu':Curried,r:AReturn\right\rangle .\\
+ &  & \ \left\langle \left\langle \sigma,\alpha',\tau,\nu',Void\right\rangle ,r\right\rangle 
 \end{eqnarray*}
 
 \end_inset
@@ -2293,6 +2293,22 @@ Functions
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
+\kappa & = & \lambda\left\langle \_,OM:ObjMem,\_,\_,\_\right\rangle ,\\
+ &  & \left\langle P:\left[con\right],T':Object\right\rangle ,n:Sid.\\
+ &  & \ \left\langle \left[\mathtt{param}\left(n\right)_{k}\mapsto P_{k}\right],OM,T',Void,Void\right\rangle \\
+\bar{\kappa} & = & \lambda\left\langle V:Var,\_,T:Object,\_,\_\right\rangle ,\\
+ &  & \left\langle \_,OM':ObjMem,r:Return,e:Ex\right\rangle .\\
+ &  & \ \left\langle \left\langle V,OM',T,Void,e\right\rangle ,r\right\rangle 
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
 \mathtt{isterm} & = & \Theta\ \lambda R:Return,E:Ex.\\
  &  & \left(R=Void\right)\wedge\left(E=Void\right)\\
 \mathtt{throw}\left(v\right) & = & \bar{\Upsilon}\ \lambda E:Ex.v\\
@@ -2326,6 +2342,8 @@ Abstract interpretation
 
 \begin_layout Standard
 Abstract definitions are largely similar to that of concrete ones.
+ Notice that we carry on modified exception state returned from a function
+ call, thereby allowing exception propagating.
 \end_layout
 
 \begin_layout Paragraph
@@ -2347,6 +2365,25 @@ AState & = & AVar\times AObjMem\times AObj\\
 
 \begin_layout Paragraph
 Functions
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\kappa & = & \lambda\left\langle \_,\alpha:AObjMem,\_,\nu:Curried,\_,\_\right\rangle ,\\
+ &  & \left\langle P:\left[con\right],\tau':Object\right\rangle ,n:Sid.\\
+ &  & \ \left\langle \left[\mathtt{param}\left(n\right)_{k}\mapsto P_{k}\right],\alpha,\tau',\nu,Void,Void\right\rangle \\
+\bar{\kappa} & = & \lambda\left\langle \sigma:AVar,\_,\tau:AObj,\_,\_,\_\right\rangle ,\\
+ &  & \left\langle \begin{gathered}\_,\alpha':AObjMem,\_,\nu':Curried,\\
+r:AReturn,e:AEx
+\end{gathered}
+\right\rangle .\\
+ &  & \ \left\langle \left\langle \sigma,\alpha',\tau,\nu',Void,e\right\rangle ,r\right\rangle 
+\end{eqnarray*}
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
