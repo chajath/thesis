@@ -1103,7 +1103,7 @@ reference "semantic"
 
 .
  We use auxiliary functions 
-\begin_inset Formula $\mathtt{evalParam}$
+\begin_inset Formula $\mathtt{evalParams}$
 \end_inset
 
  and 
@@ -1129,11 +1129,11 @@ reference "semantic"
 \begin_layout Standard
 \begin_inset Formula 
 \begin{gather*}
-\mathtt{evalParam}:\left[Expr\right]\times\left[a\right]\times F\times State\rightarrow\\
+\mathtt{evalParams}:\left[Expr\right]\times\left[a\right]\times F\times State\rightarrow\\
 \wp\left(State\times\left[a\right]\right)\\
-\mathtt{evalParam}\ \phi\ ps\ f\ \rho=\left\langle \rho,ps\right\rangle \\
-\mathtt{evalParam}\ \left[\dd{\ex E{}}\mid Exprs\right]\ ps\ f\ \rho=\\
-\underset{\left\langle \rho',con\right\rangle \in S}{\bigcup}\left\{ \mathtt{evalParam}\ Exprs\ \left[ps\mid con\right]\ f\ \rho'\right\} \\
+\mathtt{evalParams}\ \phi\ ps\ f\ \rho=\left\langle \rho,ps\right\rangle \\
+\mathtt{evalParams}\ \left[\dd{\ex E{}}\mid Exprs\right]\ ps\ f\ \rho=\\
+\underset{\left\langle \rho',con\right\rangle \in S}{\bigcup}\left\{ \mathtt{evalParams}\ Exprs\ \left[ps\mid con\right]\ f\ \rho'\right\} \\
 \ \ \mbox{where}S=\mathcal{E}\ \dd{\ex E{}}\ f\ \rho
 \end{gather*}
 
@@ -1182,9 +1182,10 @@ status open
 \begin{align*}
  & F & = & Y\lambda f.\lambda n.\mathcal{S}\ \dd{\mathtt{Stmt}\left(n\right)}\ n\ f\\
  & \mathcal{S}\ds{\epsilon} & = & \mathtt{noop}\\
- & \mathcal{S}\ds{\st{S_{1}}1;\st{S_{2}}2} & = & \left(\begin{aligned}\mathcal{S}\ \dd{\st{S_{1}}1} & \bind\mathcal{S}\ \dd{\st{S_{2}}2}\end{aligned}
-\right)\\
- & \mathcal{S}\ds{\mathtt{return}\ \ex E1} & = & \left(\mathcal{E}\ \dd{\ex E1}\right)\\
+ & \mathcal{S}\ds{\st{S_{1}}1;\st{S_{2}}2} & = & \begin{aligned}\mathcal{S}\ \dd{\st{S_{1}}1} & \bind\mathcal{S}\ \dd{\st{S_{2}}2}\end{aligned}
+\\
+ & \mathcal{S}\ds{\ex E1} & = & \mathcal{E}\ \dd{\ex E1}\\
+ & \mathcal{S}\ds{\mathtt{return}\ \ex E1} & = & \mathcal{E}\ \dd{\ex E1}\\
  & \mathcal{S}\ds{\mathtt{if}\left(\ex E1\right)\st{S_{1}}1} & = & \left(\begin{aligned}\mathcal{E}\ \dd{\ex E1} & \bind\lambda v.\\
 \mathtt{cond}\left(v,\mathcal{S}\ \dd{\st{S_{1}}1},\mathtt{noop}\right)
 \end{aligned}
@@ -1193,26 +1194,23 @@ status open
 \mathtt{cond}\left(v,\mathcal{S}\ \dd{\st{S_{1}}1},\mathcal{S}\ \dd{\st{S_{1}}1}\right)
 \end{aligned}
 \right)\\
- & \mathcal{S}\ds{id=\ex E1} & = & \left(\begin{aligned}\mathcal{E}\ \dd{\ex e1} & \bind\lambda v.\mathtt{asg}\left(id,v\right)\end{aligned}
-\right)\\
- & \mathcal{S}\ds{\mathtt{while}\left(\ex E1\right)\st{S_{1}}1} & = & \left(Y\lambda x.\lambda r,\gamma.\left(\begin{aligned}\mathcal{E}\ \dd{\ex E1}\bind\lambda v.\\
+ & \mathcal{S}\ds{id=\ex E1} & = & \begin{aligned}\mathcal{E}\ \dd{\ex e1} & \bind\lambda v.\mathtt{asg}\left(id,v\right)\end{aligned}
+\\
+ & \mathcal{S}\ds{\mathtt{while}\left(\ex E1\right)\st{S_{1}}1} & = & Y\lambda x.\lambda r,\gamma.\left(\begin{aligned}\mathcal{E}\ \dd{\ex E1}\bind\lambda v.\\
 \mathtt{cond}\left(\begin{gathered}v,\\
 \left(\mathcal{S}\ \dd{\st{S_{1}}1}\right)\bind x,\\
 \mathtt{noop}
 \end{gathered}
 \right)
 \end{aligned}
-\right)\right)\\
- & \mathcal{S}\ds{\mathtt{output}\ \ex E1} & = & \left(\begin{aligned}\mathcal{E}\ \dd{\ex E1} & \bind\lambda v.\\
-\mathtt{output}\left(v\right)
-\end{aligned}
 \right)\\
+ & \mathcal{S}\ds{\mathtt{output}\ \ex E1} & = & \mathcal{E}\ \dd{\ex E1}\bind\lambda v.\mathtt{output}\left(v\right)\\
  & S\ds{\mathtt{function}\ id\left(IDs\right)\ \st{S_{1}}1} & = & \mathtt{fundecl}\left(id,s\right)\\
  & \mathcal{E}\de{con} & = & I_{A}\ \mathtt{conval}\left(con\right)\\
  & \mathcal{E}\de{L} & = & \mathcal{L}\ \dd{L}\\
  & \mathcal{E}\de{\mathtt{input}} & = & I_{V}\ \mathtt{getinput}\\
- & \mathcal{E}\de{L\left(E^{*}\right)} & = & \left(\begin{aligned}\mathcal{L}\ \dd L & \bind\lambda n.\\
-\mathtt{evalParams}\ n\ E^{*}\ \phi & \bind\lambda p.\\
+ & \mathcal{E}\de{L\left(\vec{E}\right)} & = & \left(\begin{aligned}\mathcal{L}\ \dd L & \bind\lambda n.\\
+\mathtt{evalParams}\ \vec{E}\ \phi & \bind\lambda p.\\
 \mathtt{call}\left(n,p\right)
 \end{aligned}
 \right)\\
@@ -1221,7 +1219,7 @@ status open
 I_{A}\ \mathtt{bin}\left(binop,c_{0},c_{1}\right)
 \end{aligned}
 \right)\\
- & \mathcal{L}\dd{id} & = & \left(I_{A}\ \mathtt{val}\left(id\right)\right)
+ & \mathcal{L}\dd{id} & = & I_{A}\ \mathtt{val}\left(id\right)
 \end{align*}
 
 \end_inset
@@ -1297,6 +1295,20 @@ Functions
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
+\kappa & = & \lambda\left\langle \_,IO,\_\right\rangle ,P,n.\\
+ &  & \ \left\langle \left[\mathtt{param}\left(n\right)_{k}\mapsto P_{k}\right],IO,Void\right\rangle \\
+\bar{\kappa} & = & \lambda\left\langle V,\_,\_\right\rangle ,\left\langle \_,IO',R\right\rangle .\\
+ &  & \ \left\langle \left\langle V,IO',Void\right\rangle ,R\right\rangle 
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
 \mathtt{isterm} & = & \bar{\Theta}\ \lambda R:Return.\left(R=Void\right)\\
 \mathtt{cond}\left(v,s_{1},s_{2}\right) & = & \begin{cases}
 s_{1} & v=true\\
@@ -1362,6 +1374,19 @@ AState & = & AVar\times AReturn
 
 \begin_layout Paragraph
 Functions
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\kappa & = & \lambda\left\langle \_,\_\right\rangle ,P,n.\\
+ &  & \ \left\langle \left[\mathtt{param}\left(n\right)_{k}\mapsto P_{k}\right],Void\right\rangle \\
+\bar{\kappa} & = & \lambda\left\langle V,\_\right\rangle ,\left\langle \_,R\right\rangle .\left\langle \left\langle V,Void\right\rangle ,R\right\rangle 
+\end{eqnarray*}
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -1776,21 +1801,21 @@ status open
 \right)\\
  & \mathcal{E}\de{\mathtt{global}} & = & I_{V}\ \mathtt{obj}\left(0\right)\\
  & \mathcal{E}\de{\mathtt{this}} & = & I_{V}\ \mathtt{getthis}\\
- & \mathcal{E}\de{L\left(E*\right)} & = & \left(\begin{aligned}\mathcal{L}\ \dd L & \bind\lambda n.\\
-\mathtt{evalParams}\ n\ E*\ \phi & \bind\lambda p.\\
+ & \mathcal{E}\de{L\left(\vec{E}\right)} & = & \left(\begin{aligned}\mathcal{L}\ \dd L & \bind\lambda n.\\
+\mathtt{evalParams}\ \vec{E}\ \phi & \bind\lambda p.\\
 \mathtt{apply}\left(n,p,\mathtt{obj}\left(0,\rho\right),e\right)
 \end{aligned}
 \right)\\
- & \mathcal{E}\de{\mathtt{new}\ L\left(E*\right)} & = & \left(\begin{aligned}\mathcal{L}\ \dd L & \bind\lambda n.\\
-\mathtt{evalParams}\ n\ E*\ \phi & \bind\lambda p.\\
+ & \mathcal{E}\de{\mathtt{new}\ L\left(\vec{E}\right)} & = & \left(\begin{aligned}\mathcal{L}\ \dd L & \bind\lambda n.\\
+\mathtt{evalParams}\ \vec{E}\ \phi & \bind\lambda p.\\
 \mathtt{newobj}\left(e\right) & \bind\lambda m.\\
 \mathtt{apply}\left(n,p,m,e\right) & \bind\lambda\_.\\
 I_{A}\ m
 \end{aligned}
 \right)\\
- & \mathcal{E}\de{\ex{E_{1}}1.L\left(E*\right)} & = & \left(\begin{aligned}\mathcal{E}\ \dd{\ex{E_{1}}1} & \bind\lambda t.\\
+ & \mathcal{E}\de{\ex{E_{1}}1.L\left(\vec{E}\right)} & = & \left(\begin{aligned}\mathcal{E}\ \dd{\ex{E_{1}}1} & \bind\lambda t.\\
 \mathcal{L}\ \dd L & \bind\lambda n.\\
-\mathtt{evalParams}\ n\ E*\ \phi & \bind\lambda p.\\
+\mathtt{evalParams}\ \vec{E}\ \phi & \bind\lambda p.\\
 \mathtt{apply}\left(n,p,t,e\right)
 \end{aligned}
 \right)\\
@@ -1948,7 +1973,7 @@ We redefine
  &  & \left\langle P:\left[con\right],T':Object\right\rangle ,n:Sid.\\
  &  & \ \left\langle \left[\mathtt{param}\left(n\right)_{k}\mapsto P_{k}\right],OM,T',Void\right\rangle \\
 \bar{\kappa} & = & \lambda\left\langle V:Var,\_,T:Object,\_\right\rangle ,\\
- &  & \left\langle \_,OM':ObjMem,r:Return\right\rangle .\\
+ &  & \left\langle \_,OM':ObjMem,\_,r:Return\right\rangle .\\
  &  & \ \left\langle \left\langle V,OM',T,Void\right\rangle ,r\right\rangle 
 \end{eqnarray*}
 
@@ -2297,7 +2322,7 @@ Functions
  &  & \left\langle P:\left[con\right],T':Object\right\rangle ,n:Sid.\\
  &  & \ \left\langle \left[\mathtt{param}\left(n\right)_{k}\mapsto P_{k}\right],OM,T',Void,Void\right\rangle \\
 \bar{\kappa} & = & \lambda\left\langle V:Var,\_,T:Object,\_,\_\right\rangle ,\\
- &  & \left\langle \_,OM':ObjMem,r:Return,e:Ex\right\rangle .\\
+ &  & \left\langle \_,OM':ObjMem,\_,r:Return,e:Ex\right\rangle .\\
  &  & \ \left\langle \left\langle V,OM',T,Void,e\right\rangle ,r\right\rangle 
 \end{eqnarray*}
 
@@ -2958,7 +2983,7 @@ If
 \begin_deeper
 \begin_layout Enumerate
 when 
-\begin_inset Formula $isterm\left(p_{1}\right)$
+\begin_inset Formula $\mathtt{isterm}\left(p_{1}\right)$
 \end_inset
 
  is true, then the morphism and 
@@ -2966,7 +2991,7 @@ when
 \end_inset
 
  relation imply that 
-\begin_inset Formula $\exists q_{1}\in q,isterm\left(q_{1}\right)$
+\begin_inset Formula $\exists q_{1}\in q,\mathtt{isterm}\left(q_{1}\right)$
 \end_inset
 
 .
