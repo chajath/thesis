@@ -1425,8 +1425,8 @@ There is no inherent semantic function change required in this case.
 \end_layout
 
 \begin_layout Standard
-\begin_inset Formula $\mathcal{E}\de{L\left(E^{*}\right)}=\left(\begin{aligned}\mathcal{L}\ \dd{L} & \bind\lambda n.\\
-\mathtt{evalParams}\ n\ E^{*}\ \phi & \bind\lambda p.\\
+\begin_inset Formula $\mathcal{E}\de{L\left(\vec{E}\right)}=\left(\begin{aligned}\mathcal{L}\ \dd{L} & \bind\lambda n.\\
+\mathtt{evalParams}\ \vec{E}\ \phi & \bind\lambda p.\\
 \mathtt{apply}\left(n,p,e\right)
 \end{aligned}
 \right)$
@@ -1969,11 +1969,9 @@ We redefine
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-\kappa & = & \lambda\left\langle \_,OM:ObjMem,\_,\_\right\rangle ,\\
- &  & \left\langle P:\left[con\right],T':Object\right\rangle ,n:Sid.\\
+\kappa & = & \lambda\left\langle \_,OM,\_,\_\right\rangle ,\left\langle P,T'\right\rangle ,n.\\
  &  & \ \left\langle \left[\mathtt{param}\left(n\right)_{k}\mapsto P_{k}\right],OM,T',Void\right\rangle \\
-\bar{\kappa} & = & \lambda\left\langle V:Var,\_,T:Object,\_\right\rangle ,\\
- &  & \left\langle \_,OM':ObjMem,\_,r:Return\right\rangle .\\
+\bar{\kappa} & = & \lambda\left\langle V,\_,T,\_\right\rangle ,\left\langle \_,OM',\_,r\right\rangle .\\
  &  & \ \left\langle \left\langle V,OM',T,Void\right\rangle ,r\right\rangle 
 \end{eqnarray*}
 
@@ -2102,11 +2100,9 @@ Functions
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-\kappa & = & \lambda\left\langle \_,\alpha:AObjMem,\_,\nu:Curried,\_\right\rangle ,\\
- &  & \left\langle P:\left[con\right],\tau':Object\right\rangle ,n:Sid.\\
+\kappa & = & \lambda\left\langle \_,\alpha,\_,\nu,\_\right\rangle ,\left\langle P,\tau'\right\rangle ,n.\\
  &  & \ \left\langle \left[\mathtt{param}\left(n\right)_{k}\mapsto P_{k}\right],\alpha,\tau',\nu,Void\right\rangle \\
-\bar{\kappa} & = & \lambda\left\langle \sigma:AVar,\_,\tau:AObj,\_,\_\right\rangle ,\\
- &  & \left\langle \_,\alpha':AObjMem,\_,\nu':Curried,r:AReturn\right\rangle .\\
+\bar{\kappa} & = & \lambda\left\langle \sigma,\_,\tau,\_,\_\right\rangle ,\left\langle \_,\alpha',\_,\nu',r\right\rangle .\\
  &  & \ \left\langle \left\langle \sigma,\alpha',\tau,\nu',Void\right\rangle ,r\right\rangle 
 \end{eqnarray*}
 
@@ -2318,11 +2314,9 @@ Functions
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-\kappa & = & \lambda\left\langle \_,OM:ObjMem,\_,\_,\_\right\rangle ,\\
- &  & \left\langle P:\left[con\right],T':Object\right\rangle ,n:Sid.\\
+\kappa & = & \lambda\left\langle \_,OM,\_,\_,\_\right\rangle ,\left\langle P,T'\right\rangle ,n.\\
  &  & \ \left\langle \left[\mathtt{param}\left(n\right)_{k}\mapsto P_{k}\right],OM,T',Void,Void\right\rangle \\
-\bar{\kappa} & = & \lambda\left\langle V:Var,\_,T:Object,\_,\_\right\rangle ,\\
- &  & \left\langle \_,OM':ObjMem,\_,r:Return,e:Ex\right\rangle .\\
+\bar{\kappa} & = & \lambda\left\langle V,\_,T,\_,\_\right\rangle ,\left\langle \_,OM',\_,r,e\right\rangle .\\
  &  & \ \left\langle \left\langle V,OM',T,Void,e\right\rangle ,r\right\rangle 
 \end{eqnarray*}
 
@@ -2395,14 +2389,9 @@ Functions
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-\kappa & = & \lambda\left\langle \_,\alpha:AObjMem,\_,\nu:Curried,\_,\_\right\rangle ,\\
- &  & \left\langle P:\left[con\right],\tau':Object\right\rangle ,n:Sid.\\
+\kappa & = & \lambda\left\langle \_,\alpha,\_,\nu,\_,\_\right\rangle ,\left\langle P,\tau'\right\rangle ,n.\\
  &  & \ \left\langle \left[\mathtt{param}\left(n\right)_{k}\mapsto P_{k}\right],\alpha,\tau',\nu,Void,Void\right\rangle \\
-\bar{\kappa} & = & \lambda\left\langle \sigma:AVar,\_,\tau:AObj,\_,\_,\_\right\rangle ,\\
- &  & \left\langle \begin{gathered}\_,\alpha':AObjMem,\_,\nu':Curried,\\
-r:AReturn,e:AEx
-\end{gathered}
-\right\rangle .\\
+\bar{\kappa} & = & \lambda\left\langle \sigma,\_,\tau,\_,\_,\_\right\rangle ,\left\langle \_,\alpha',\_,\nu',r,e\right\rangle .\\
  &  & \ \left\langle \left\langle \sigma,\alpha',\tau,\nu',Void,e\right\rangle ,r\right\rangle 
 \end{eqnarray*}
 
