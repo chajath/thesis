@@ -396,6 +396,466 @@ key "Jensen:SAS2009"
 \end_layout
 
 \begin_layout Section
+Overview
+\end_layout
+
+\begin_layout Standard
+Our semantic framework is comprised of two components.
+ One for the syntactic structure, and the other for giving meanings to the
+ primitive operations.
+ What divides the two are the following separation of concern:
+\end_layout
+
+\begin_layout Enumerate
+What is the semantic operations entailed in a particular syntactic structure?
+ For example, syntactic structure 
+\begin_inset Formula $\ds{a=30}$
+\end_inset
+
+ entails a primitive operation 
+\begin_inset Formula $\mathtt{assign}\left(a,30\right)$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Enumerate
+How do we interpret such semantic operations in a particular point of view?
+ If we were to give a concrete interpretation, we would interpret 
+\begin_inset Formula $\mathtt{assign}\left(a,30\right)$
+\end_inset
+
+ as updating an environment with a newly defined variable e.g.
+ 
+\begin_inset Formula $Env\left[a=30\right]$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+Observe that an interpretation of syntactic structure can remain agnostic
+ of the view of a program state at a given point.
+ Therefore, once we remove the actual interpretation of primitive operations,
+ what is remaining in a semantics can be re-used for multiple interpretations
+ of a language.
+ Hence, not only the primitive operations parametrised, but also the whole
+ definition of a domain of a program state is parametrised.
+ Now we give a formal definition of our framework.
+ Such separation of concern also helps to define an extensible formulae,
+ to which adding a new feature takes as little effort as possible.
+\end_layout
+
+\begin_layout Definition
+\begin_inset Argument
+status open
+
+\begin_layout Plain Layout
+Parametric semantics
+\end_layout
+
+\end_inset
+
+ Parametric semantics 
+\begin_inset Formula $P$
+\end_inset
+
+ is a quintuple 
+\begin_inset Formula $\left(X,D,d,M\right)$
+\end_inset
+
+ where 
+\begin_inset Formula $X$
+\end_inset
+
+ is a collection of semantic functions for syntactic structures, 
+\begin_inset Formula $D$
+\end_inset
+
+ is a definition of a 
+\begin_inset Formula $State$
+\end_inset
+
+, 
+\begin_inset Formula $d$
+\end_inset
+
+ is an initial state of a program and 
+\begin_inset Formula $M$
+\end_inset
+
+ is an interpretation of primitive operations.
+\end_layout
+
+\begin_layout Standard
+Throughout the analysis, we introduce following primitive operations:
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\mathtt{isterm}$
+\end_inset
+
+ takes a state and reports whether a particular state is in a terminal state
+ (i.e.
+ we would not progress to the successor statement)
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\mathtt{cond}$
+\end_inset
+
+ is a branching point
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\mathtt{asg}$
+\end_inset
+
+ takes an identifier and a value, and performs assignment
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\mathtt{val}$
+\end_inset
+
+ takes an identifier and interpret its value
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\mathtt{conval}$
+\end_inset
+
+ takes a constant and interpret its value
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\mathtt{getinput}$
+\end_inset
+
+ and 
+\begin_inset Formula $\mathtt{dooutput}$
+\end_inset
+
+ interprets a meaning of console I/O
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\mathtt{bin}$
+\end_inset
+
+ interprets a binary operation given for two values
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\mathtt{ret}$
+\end_inset
+
+ interprets a meaning of a return statement when a particular value is given
+ in such statement
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\mathtt{fundecl}$
+\end_inset
+
+ interprets a meaning of an execution point stepping through a function
+ declaration site
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\mathtt{apply}$
+\end_inset
+
+ interprets a meaning of applying a function to a list of values (might
+ very well be a partial application)
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\mathtt{get}$
+\end_inset
+
+ and 
+\begin_inset Formula $\mathtt{set}$
+\end_inset
+
+ interpret a meaning of getting or setting a member to an object.
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\mathtt{getglobal}$
+\end_inset
+
+ and 
+\begin_inset Formula $\mathtt{getthis}$
+\end_inset
+
+ interpret a meaning of such keyword as it occur in a particular state.
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\mathtt{newobj}$
+\end_inset
+
+ interpret a meaning of instantiating a new object from a particular allocation
+ site.
+\end_layout
+
+\begin_layout Standard
+Our model language, as evolves along with the framework, shall have a set
+ of features found common in scripting languages.
+ Here is an example of the model language.
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+function fact(f,x) {
+\end_layout
+
+\begin_layout Plain Layout
+
+	if(x < 2) { return 1; }
+\end_layout
+
+\begin_layout Plain Layout
+
+	return x * f(f,x-1);
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+output fact(fact,input);
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+fa=fact(fact);
+\end_layout
+
+\begin_layout Plain Layout
+
+output fa(input);
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+function Fruit(v) {
+\end_layout
+
+\begin_layout Plain Layout
+
+	this.value = v;
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+global.answer = 0;
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+function juicible(fruit, juice) {
+\end_layout
+
+\begin_layout Plain Layout
+
+	function juiceMe(j,x) {
+\end_layout
+
+\begin_layout Plain Layout
+
+		return this.value + j + x;
+\end_layout
+
+\begin_layout Plain Layout
+
+	}
+\end_layout
+
+\begin_layout Plain Layout
+
+	fruit.juice = juiceMe(juice); #currying
+\end_layout
+
+\begin_layout Plain Layout
+
+	global.answer=42;
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+# Juicibles
+\end_layout
+
+\begin_layout Plain Layout
+
+apple = new Fruit(15);
+\end_layout
+
+\begin_layout Plain Layout
+
+juicible(apple, 20);
+\end_layout
+
+\begin_layout Plain Layout
+
+grape = new Fruit(30);
+\end_layout
+
+\begin_layout Plain Layout
+
+juicible(grape, 50);
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+# Non-juicibles
+\end_layout
+
+\begin_layout Plain Layout
+
+banana = new Fruit(20);
+\end_layout
+
+\begin_layout Plain Layout
+
+watermelon = new Fruit(25);
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+output apple.juice(10); # 15 + 20 + 10
+\end_layout
+
+\begin_layout Plain Layout
+
+output grape.juice(10); # 30 + 50 + 10
+\end_layout
+
+\begin_layout Plain Layout
+
+output global.answer; # 42
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+try {
+\end_layout
+
+\begin_layout Plain Layout
+
+	if(input > 42) {throw 42;}
+\end_layout
+
+\begin_layout Plain Layout
+
+} catch(e) {
+\end_layout
+
+\begin_layout Plain Layout
+
+	output e;
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Locally-scoped procedural language with a support for higher order functions
+ (lines 1 to 5) is introduced in 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:Procedural-language"
+
+\end_inset
+
+.
+ Function currying (lines 7, 8 and 20) is introduced in 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:Function-currying"
+
+\end_inset
+
+.
+ Object oriented programming, with duck-typing and reflection, is introduced
+ in 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:Object-Oriented"
+
+\end_inset
+
+.
+ Finally, exception handling (lines 38 to 42) is introduced in 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:Exception-handling"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Section
 Analytic framework
 \end_layout
 
@@ -438,7 +898,7 @@ Type constructor
 \begin_inset Formula $M$
 \end_inset
 
- the following polymorphic type.
+ has the following polymorphic definition.
  
 \begin_inset Formula $\beta$
 \end_inset
@@ -915,6 +1375,12 @@ Model language
 \end_layout
 
 \begin_layout Subsection
+\begin_inset CommandInset label
+LatexCommand label
+name "sub:Procedural-language"
+
+\end_inset
+
 Procedural language
 \end_layout
 
@@ -1249,6 +1715,18 @@ where
  is a function identifier.
 \end_layout
 
+\begin_layout Standard
+Initial state of a program is 
+\begin_inset Formula $\left\langle \phi,io,Void\right\rangle $
+\end_inset
+
+ where 
+\begin_inset Formula $io$
+\end_inset
+
+ is an initial IO state.
+\end_layout
+
 \begin_layout Paragraph
 Functions
 \end_layout
@@ -1332,6 +1810,14 @@ AState & = & AVar\times AReturn
 
 \end_layout
 
+\begin_layout Standard
+Initial state of a program is 
+\begin_inset Formula $\left\langle \phi,Void\right\rangle $
+\end_inset
+
+
+\end_layout
+
 \begin_layout Paragraph
 Functions
 \end_layout
@@ -1362,12 +1848,12 @@ Boolean & \mbox{if}\ con\in\mathbb{B}
 \end{cases}\\
 \mathtt{getinput} & = & \Gamma\ \lambda\eta.\left\langle \eta,Number\right\rangle \\
 \mathtt{dooutput}\left(v\right) & = & \Gamma\ \lambda\eta.\eta\\
+\mathtt{fundecl}\left(id,n\right) & = & \bar{\Upsilon}\ \lambda\sigma:AVar.\sigma\left[id\mapsto n\right]\\
+\mathtt{ret}\left(v\right) & = & \bar{\Upsilon}\ \lambda R:AReturn.v\\
 \mathtt{bin}\left(op,c_{0},c_{1}\right) & = & \Gamma\ \begin{cases}
 Number & \mbox{if}\ op\in{\scriptstyle \left\{ +,-,*,/\right\} }\\
 Boolean & \mbox{otherwise}
-\end{cases}\\
-\mathtt{ret}\left(v\right) & = & \bar{\Upsilon}\ \lambda R:AReturn.v\\
-\mathtt{fundecl}\left(id,n\right) & = & \bar{\Upsilon}\ \lambda\sigma:AVar.\sigma\left[id\mapsto n\right]
+\end{cases}
 \end{eqnarray*}
 
 \end_inset
@@ -1376,6 +1862,12 @@ Boolean & \mbox{otherwise}
 \end_layout
 
 \begin_layout Subsection
+\begin_inset CommandInset label
+LatexCommand label
+name "sub:Function-currying"
+
+\end_inset
+
 Function currying
 \end_layout
 
@@ -1411,7 +1903,7 @@ Here we introduce
 \end_layout
 
 \begin_layout Subsubsection
-Concrete
+Concrete interpretation
 \end_layout
 
 \begin_layout Standard
@@ -1438,6 +1930,10 @@ Domain
 
 \end_layout
 
+\begin_layout Standard
+Initial state of a program does not change.
+\end_layout
+
 \begin_layout Paragraph
 Functions
 \end_layout
@@ -1462,7 +1958,7 @@ Functions
 \end_layout
 
 \begin_layout Subsubsection
-Abstract
+Abstract interpretation
 \end_layout
 
 \begin_layout Standard
@@ -1563,6 +2059,14 @@ AState & = & AVar\times Curried\times AReturn
 
 \end_layout
 
+\begin_layout Standard
+Initial state of a program is 
+\begin_inset Formula $\left\langle \phi,\phi,Void\right\rangle $
+\end_inset
+
+
+\end_layout
+
 \begin_layout Paragraph
 Functions
 \end_layout
@@ -1643,6 +2147,12 @@ name "absfun-curry"
 \end_layout
 
 \begin_layout Subsection
+\begin_inset CommandInset label
+LatexCommand label
+name "sub:Object-Oriented"
+
+\end_inset
+
 Object Oriented
 \end_layout
 
@@ -1753,7 +2263,7 @@ status open
 \begin_inset Formula 
 \begin{align*}
  & \mathcal{S}\ds{\ex{E_{1}}1.id=\ex{E_{2}}2} & = & \mathcal{E}\ \dd{\ex{E_{1}}1}\bind\lambda v.\mathcal{E}\ \dd{\ex{E_{2}}2}\bind\lambda r.I_{S}\ \mathtt{set}\left(r,id,v\right)\\
- & \mathcal{E}\de{\mathtt{global}} & = & I_{V}\ \mathtt{obj}\left(0\right)\\
+ & \mathcal{E}\de{\mathtt{global}} & = & I_{V}\ \mathtt{getglobal}\\
  & \mathcal{E}\de{\mathtt{this}} & = & I_{V}\ \mathtt{getthis}\\
  & \mathcal{E}\de{L\left(\vec{E}\right)} & = & \mathcal{L}\ \dd L\bind\lambda n.\left(\mathtt{evalParams}\ \vec{E}\ \phi\right)\bind\lambda p.\mathtt{apply}\left(n,p,\mathtt{obj}\left(0,\rho\right),e\right)\\
  & \mathcal{E}\de{\mathtt{new}\ L\left(\vec{E}\right)} & = & \left(\begin{aligned}\mathcal{L}\ \dd L & \bind\lambda n.\\
@@ -1897,6 +2407,19 @@ CState & = & Var\times ObjMem\times\\
 
 \end_layout
 
+\begin_layout Standard
+Initial state of a program is 
+\begin_inset Formula $\left\langle \phi,\left\{ 0\mapsto\phi\right\} ,0,Void\right\rangle $
+\end_inset
+
+.
+ 
+\begin_inset Formula $0$
+\end_inset
+
+ is a unique id referring to the global object.
+\end_layout
+
 \begin_layout Paragraph
 Functions
 \end_layout
@@ -1963,7 +2486,7 @@ status open
 \begin{eqnarray*}
 \mathtt{get}\left(n,id\right) & = & \bar{\Theta}\ \lambda OM:ObjMem.OM\left(n\right)\left(id\right)\\
 \mathtt{set}\left(n,id,v\right) & = & \bar{\Upsilon}\ \lambda OM:ObjMem.OM\left[n\mapsto OM\left(n\right)\left[id\mapsto v\right]\right]\\
-\mathtt{obj}\left(n\right) & = & \bar{\Theta}\ \lambda OM:ObjMem.OM\left(n\right)\\
+\mathtt{getglobal} & = & \bar{\Theta}\ \lambda OM:ObjMem.OM\left(0\right)\\
 \mathtt{getthis} & = & \bar{\Theta}\ \lambda T:Object.T\\
 \mathtt{apply}\left(\left\langle n,C\right\rangle ,p,t,\_\right) & = & \begin{cases}
 \mathtt{call}\left(n,\left[C\mid p\right],t\right) & \mbox{if}\ N\left(\left[C\mid p\right]\right)=\mathtt{arity}\left(n\right)\\
@@ -2035,6 +2558,19 @@ AState & = & AVar\times AObjMem\times\\
 \end_inset
 
 
+\end_layout
+
+\begin_layout Standard
+Initial state of a program is 
+\begin_inset Formula $\left\langle \phi,\left\{ 0\mapsto\phi\right\} ,0,\phi,Void\right\rangle $
+\end_inset
+
+.
+ 
+\begin_inset Formula $0$
+\end_inset
+
+ is a unique id referring to the global object.
 \end_layout
 
 \begin_layout Paragraph
@@ -2136,6 +2672,12 @@ name "absfun-oo"
 \end_layout
 
 \begin_layout Subsection
+\begin_inset CommandInset label
+LatexCommand label
+name "sub:Exception-handling"
+
+\end_inset
+
 Exception handling
 \end_layout
 
@@ -2249,6 +2791,14 @@ CState & = & Var\times ObjMem\times\\
 
 \end_layout
 
+\begin_layout Standard
+Initial state of a program is 
+\begin_inset Formula $\left\langle \phi,\left\{ 0\mapsto\phi\right\} ,0,Void,Void\right\rangle $
+\end_inset
+
+.
+\end_layout
+
 \begin_layout Paragraph
 Functions
 \end_layout
@@ -2322,6 +2872,14 @@ AState & = & AVar\times AObjMem\times AObj\\
 \end_inset
 
 
+\end_layout
+
+\begin_layout Standard
+Initial state of a program is 
+\begin_inset Formula $\left\langle \phi,\left\{ 0\mapsto\phi\right\} ,0,\phi,Void,Void\right\rangle $
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Paragraph
