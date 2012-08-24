@@ -435,39 +435,42 @@ Type constructor
 \end_inset
 
  Type constructor 
-\begin_inset Formula $M_{E}$
+\begin_inset Formula $M$
 \end_inset
 
- and 
-\begin_inset Formula $M_{S}$
-\end_inset
-
- gives the following polymorphic type.
-\end_layout
-
-\begin_layout Definition
-\begin_inset Formula 
-\begin{eqnarray*}
-M_{E}\ a & = & \beta\rightarrow State\rightarrow\wp\left(State\times a\cup\left\{ \bot\right\} \right)\\
-M_{S} & = & \beta\rightarrow State\rightarrow\wp\left(State\right)
-\end{eqnarray*}
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Definition
+ the following polymorphic type.
+ 
 \begin_inset Formula $\beta$
 \end_inset
 
- is a program-wide invariant.
+, in this formulation, is a program-wide invariant.
  As we shall see in the next section, having a program-wide invariant in
  this formula is vital in modelling function calls in a program.
+ 
+\begin_inset Formula $a$
+\end_inset
+
+ is a parametrised 
+\begin_inset Quotes eld
+\end_inset
+
+value
+\begin_inset Quotes erd
+\end_inset
+
+ type, which means different things in different context, as we shall see
+ in a formulation of semantics.
 \end_layout
 
 \begin_layout Definition
-Note that we are essentially modelling a non-deterministic state transformation.
+\begin_inset Formula $M\ a=\beta\rightarrow State\rightarrow\wp\left(State\times a\cup\left\{ \bot\right\} \right)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Definition
+We are essentially modelling a non-deterministic state transformation.
  Allowing non-determinism helps (or enables) defining abstract interpretation
  of a language in the exact same framework on which concrete interpretation
  is defined.
@@ -492,7 +495,7 @@ We define a bind operator
 \end_layout
 
 \begin_layout Definition
-\begin_inset Formula $\left(\bind\right):M_{E}\ a\rightarrow\left(a\rightarrow M_{E}\ b\right)\rightarrow M_{E}\ b$
+\begin_inset Formula $\left(\bind\right):M\ a\rightarrow\left(a\rightarrow M\ b\right)\rightarrow M\ b$
 \end_inset
 
 
@@ -501,56 +504,10 @@ We define a bind operator
 \begin_layout Definition
 \begin_inset Formula 
 \begin{eqnarray*}
-T\ \bind\ U & = & \lambda f,s.\mathbf{let}\ S=T\ f\ s\ \mathbf{in}\\
+T\ \bind\ U & = & \lambda f\lambda s.\mathbf{let}\ S=T\ f\ s\ \mathbf{in}\\
  &  & \underset{\left\langle s',a\right\rangle \in S}{\bigcup}\left(\begin{gathered}\mbox{if}\ \mathtt{isterm}\left(s'\right)\\
 \mbox{then}\ \left\{ \left\langle s',\bot\right\rangle \right\} \\
 \mbox{else}\ U\ a\ f\ s'
-\end{gathered}
-\right)
-\end{eqnarray*}
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Definition
-\begin_inset Formula $\left(\bind\right):M_{E}\ a\rightarrow\left(a\rightarrow M_{S}\right)\rightarrow M_{S}$
-\end_inset
-
-
-\end_layout
-
-\begin_layout Definition
-\begin_inset Formula 
-\begin{eqnarray*}
-T\ \bind\ U & = & \lambda f,s.\mathbf{let}\ S=T\ f\ s\ \mathbf{in}\\
- &  & \underset{\left\langle s',a\right\rangle \in S}{\bigcup}\left(\begin{gathered}\mbox{if}\ \mathtt{isterm}\left(s'\right)\\
-\mbox{then}\ \left\{ s'\right\} \\
-\mbox{else}\ U\ a\ f\ s'
-\end{gathered}
-\right)
-\end{eqnarray*}
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Definition
-\begin_inset Formula $\left(\bind\right):M_{S}\rightarrow M_{S}\rightarrow M_{S}$
-\end_inset
-
-
-\end_layout
-
-\begin_layout Definition
-\begin_inset Formula 
-\begin{eqnarray*}
-T\ \bind\ U & = & \lambda f,s.\mathbf{let}\ S=T\ f\ s\ \mathbf{in}\\
- &  & \underset{s'\in S}{\bigcup}\left(\begin{gathered}\mbox{if}\ \mathtt{isterm}\left(s'\right)\ \\
-\mbox{then}\ \left\{ s'\right\} \ \\
-\mbox{else}\ U\ f\ s'
 \end{gathered}
 \right)
 \end{eqnarray*}
@@ -596,7 +553,7 @@ We define following auxiliary functions to incorporate non-monadic functions
 \begin_deeper
 \begin_layout Itemize
 (return for 
-\begin_inset Formula $M_{E}$
+\begin_inset Formula $M$
 \end_inset
 
 ) 
@@ -609,14 +566,14 @@ We define following auxiliary functions to incorporate non-monadic functions
 
 \begin_deeper
 \begin_layout Standard
-\begin_inset Formula $I_{A}:a\rightarrow M_{E}\ a$
+\begin_inset Formula $I_{A}:a\rightarrow M\ a$
 \end_inset
 
 
 \end_layout
 
 \begin_layout Standard
-\begin_inset Formula $I_{A}\ v=\lambda f,r.\left\{ \left\langle r,v\right\rangle \right\} $
+\begin_inset Formula $I_{A}\ v=\lambda f\lambda s.\left\{ \left\langle r,v\right\rangle \right\} $
 \end_inset
 
 
@@ -625,7 +582,7 @@ We define following auxiliary functions to incorporate non-monadic functions
 \end_deeper
 \begin_layout Itemize
 (lift for 
-\begin_inset Formula $M_{E}$
+\begin_inset Formula $M$
 \end_inset
 
 ) 
@@ -637,14 +594,37 @@ We define following auxiliary functions to incorporate non-monadic functions
 
 \begin_deeper
 \begin_layout Standard
-\begin_inset Formula $I_{V}:\left(State\rightarrow a\right)\rightarrow M_{E}\ a$
+\begin_inset Formula $I_{V}:\left(State\rightarrow a\right)\rightarrow M\ a$
 \end_inset
 
 
 \end_layout
 
 \begin_layout Standard
-\begin_inset Formula $I_{V}\ t=\lambda f,r.\left\langle \left\{ \left\langle r,t\ r\right\rangle \right\} ,\phi\right\rangle $
+\begin_inset Formula $I_{V}\ t=\lambda f\lambda s.\left\langle \left\{ \left\langle r,t\ r\right\rangle \right\} ,\phi\right\rangle $
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+\begin_inset Formula $I_{S}$
+\end_inset
+
+ takes a non-deterministic transformation and lifts it to a monadic function
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+\begin_inset Formula $I_{S}:\left(State\rightarrow\wp\left(State\right)\right)\rightarrow M\ a$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $I_{S}\ T=\lambda f\lambda s.\left\{ \left\langle s,\bot\right\rangle \mid s\in T\ r\right\} $
 \end_inset
 
 
@@ -653,7 +633,7 @@ We define following auxiliary functions to incorporate non-monadic functions
 \end_deeper
 \begin_layout Itemize
 (unit operation for 
-\begin_inset Formula $M_{S}$
+\begin_inset Formula $M$
 \end_inset
 
 ) 
@@ -665,7 +645,7 @@ We define following auxiliary functions to incorporate non-monadic functions
 
 \begin_deeper
 \begin_layout Standard
-\begin_inset Formula $\mathtt{noop}=\lambda x.\left\{ x\right\} $
+\begin_inset Formula $\mathtt{noop}=\lambda f\lambda x.\left\{ \left\langle x,\bot\right\rangle \right\} $
 \end_inset
 
 
@@ -815,7 +795,7 @@ We use syntax nodes as references to various items constituting program
 \begin_inset Formula $id$
 \end_inset
 
- is an alphaneumeric identifier.
+ is an alphanumeric identifier.
 \end_layout
 
 \begin_layout Standard
@@ -888,7 +868,7 @@ The analytic framework contains following semantic functions.
 \begin_inset Formula 
 \begin{eqnarray*}
 F & = & Sid\rightarrow State\rightarrow\wp\left(State\right)\\
-\mathcal{S} & : & Stmt\rightarrow F\rightarrow State\rightarrow\wp\left(State\right)\\
+\mathcal{S} & : & Stmt\rightarrow F\rightarrow State\rightarrow\wp\left(State\times\left\{ \bot\right\} \right)\\
 \mathcal{E} & : & Expr\rightarrow F\rightarrow State\rightarrow\wp\left(State\times a\cup\left\{ \bot\right\} \right)\\
 \mathcal{L} & : & LExpr\rightarrow F\rightarrow State\rightarrow\wp\left(State\times a\cup\left\{ \bot\right\} \right)
 \end{eqnarray*}
@@ -1117,7 +1097,7 @@ reference "semantic"
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-\mathtt{call}\left(n,p\right) & = & \lambda f,\rho.\left\{ \bar{\kappa}\ \rho\ \rho'\mid\rho'\in S\right\} \ \mbox{where}\\
+\mathtt{call}\left(n,p\right) & = & \lambda f\lambda\rho.\left\{ \bar{\kappa}\ \rho\ \rho'\mid\rho'\in S\right\} \ \mbox{where}\\
  &  & S=f\ n\ \left(\kappa\ \rho\ p\right)
 \end{eqnarray*}
 
@@ -1129,10 +1109,10 @@ reference "semantic"
 \begin_layout Standard
 \begin_inset Formula 
 \begin{gather*}
-\mathtt{evalParams}:\left[Expr\right]\times\left[a\right]\times F\times State\rightarrow\\
-\wp\left(State\times\left[a\right]\right)\\
-\mathtt{evalParams}\ \phi\ ps\ f\ \rho=\left\langle \rho,ps\right\rangle \\
-\mathtt{evalParams}\ \left[\dd{\ex E{}}\mid Exprs\right]\ ps\ f\ \rho=\\
+\mathtt{evalParams}:\left[Expr\right]\times\left[a\right]\rightarrow\\
+\ \ F\rightarrow State\rightarrow\wp\left(State\times\left[a\right]\right)\\
+\mathtt{evalParams}\ \phi\ ps\ f\ \rho=\lambda f\lambda\rho.\left\langle \rho,ps\right\rangle \\
+\mathtt{evalParams}\ \left[\dd{\ex E{}}\mid Exprs\right]\ ps=\lambda f\lambda\rho.\\
 \underset{\left\langle \rho',con\right\rangle \in S}{\bigcup}\left\{ \mathtt{evalParams}\ Exprs\ \left[ps\mid con\right]\ f\ \rho'\right\} \\
 \ \ \mbox{where}S=\mathcal{E}\ \dd{\ex E{}}\ f\ \rho
 \end{gather*}
@@ -1182,10 +1162,10 @@ status open
 \begin{align*}
  & F & = & Y\lambda f.\lambda n.\mathcal{S}\ \dd{\mathtt{Stmt}\left(n\right)}\ n\ f\\
  & \mathcal{S}\ds{\epsilon} & = & \mathtt{noop}\\
- & \mathcal{S}\ds{\st{S_{1}}1;\st{S_{2}}2} & = & \begin{aligned}\mathcal{S}\ \dd{\st{S_{1}}1} & \bind\mathcal{S}\ \dd{\st{S_{2}}2}\end{aligned}
+ & \mathcal{S}\ds{\st{S_{1}}1;\st{S_{2}}2} & = & \begin{aligned}\mathcal{S}\ \dd{\st{S_{1}}1}\bind\lambda\_.\mathcal{S}\ \dd{\st{S_{2}}2}\end{aligned}
 \\
- & \mathcal{S}\ds{\ex E1} & = & \mathcal{E}\ \dd{\ex E1}\\
- & \mathcal{S}\ds{\mathtt{return}\ \ex E1} & = & \mathcal{E}\ \dd{\ex E1}\\
+ & \mathcal{S}\ds{\ex E1} & = & \mathcal{E}\ \dd{\ex E1}\bind\lambda\_.\mathtt{noop}\\
+ & \mathcal{S}\ds{\mathtt{return}\ \ex E1} & = & \mathcal{E}\ \dd{\ex E1}\bind\lambda v.I_{S}\ \mathtt{ret}\left(V\right)\\
  & \mathcal{S}\ds{\mathtt{if}\left(\ex E1\right)\st{S_{1}}1} & = & \left(\begin{aligned}\mathcal{E}\ \dd{\ex E1} & \bind\lambda v.\\
 \mathtt{cond}\left(v,\mathcal{S}\ \dd{\st{S_{1}}1},\mathtt{noop}\right)
 \end{aligned}
@@ -1194,18 +1174,18 @@ status open
 \mathtt{cond}\left(v,\mathcal{S}\ \dd{\st{S_{1}}1},\mathcal{S}\ \dd{\st{S_{1}}1}\right)
 \end{aligned}
 \right)\\
- & \mathcal{S}\ds{id=\ex E1} & = & \begin{aligned}\mathcal{E}\ \dd{\ex e1} & \bind\lambda v.\mathtt{asg}\left(id,v\right)\end{aligned}
+ & \mathcal{S}\ds{id=\ex E1} & = & \begin{aligned}\mathcal{E}\ \dd{\ex e1} & \bind\lambda v.I_{S}\ \mathtt{asg}\left(id,v\right)\end{aligned}
 \\
- & \mathcal{S}\ds{\mathtt{while}\left(\ex E1\right)\st{S_{1}}1} & = & Y\lambda x.\lambda r,\gamma.\left(\begin{aligned}\mathcal{E}\ \dd{\ex E1}\bind\lambda v.\\
+ & \mathcal{S}\ds{\mathtt{while}\left(\ex E1\right)\st{S_{1}}1} & = & Y\lambda x.\lambda f\lambda r.\left(\begin{aligned}\mathcal{E}\ \dd{\ex E1}\bind\lambda v.\\
 \mathtt{cond}\left(\begin{gathered}v,\\
-\left(\mathcal{S}\ \dd{\st{S_{1}}1}\right)\bind x,\\
+\left(\mathcal{S}\ \dd{\st{S_{1}}1}\right)\bind\lambda\_.x,\\
 \mathtt{noop}
 \end{gathered}
 \right)
 \end{aligned}
 \right)\\
- & \mathcal{S}\ds{\mathtt{output}\ \ex E1} & = & \mathcal{E}\ \dd{\ex E1}\bind\lambda v.\mathtt{output}\left(v\right)\\
- & S\ds{\mathtt{function}\ id\left(IDs\right)\ \st{S_{1}}1} & = & \mathtt{fundecl}\left(id,s\right)\\
+ & \mathcal{S}\ds{\mathtt{output}\ \ex E1} & = & \mathcal{E}\ \dd{\ex E1}\bind\lambda v.I_{S}\ \mathtt{output}\left(v\right)\\
+ & S\ds{\mathtt{function}\ id\left(IDs\right)\ \st{S_{1}}1} & = & I_{S}\ \mathtt{fundecl}\left(id,s\right)\\
  & \mathcal{E}\de{con} & = & I_{A}\ \mathtt{conval}\left(con\right)\\
  & \mathcal{E}\de{L} & = & \mathcal{L}\ \dd{L}\\
  & \mathcal{E}\de{\mathtt{input}} & = & I_{V}\ \mathtt{getinput}\\
@@ -1322,7 +1302,8 @@ s_{2} & v=false
 \\
 \\
 \mathtt{fundecl}(id,n) & = & \bar{\Upsilon}\ \lambda V:Var.V\left[id\mapsto FP_{n}\right]\\
-\mathtt{bin}\left(binop,c_{0},c_{1}\right) & = & \mbox{perform binary operation }\\
+\mathtt{ret}\left(v\right) & = & \bar{\Upsilon}\ \lambda R:Return.v\\
+\mathtt{bin}\left(op,c_{0},c_{1}\right) & = & \mbox{perform binary operation }\\
  &  & \mbox{between two constants}
 \end{eqnarray*}
 
@@ -1393,7 +1374,7 @@ Functions
 \begin_inset Formula 
 \begin{eqnarray*}
 \mathtt{isterm} & = & \bar{\Theta}\ \lambda R:AReturn.\left(R=Void\right)\\
-\mathtt{cond}\left(v,s_{1},s_{2}\right) & = & \lambda f,\eta.\left(s_{1}\ f\ \eta\right)\cup\left(s_{2}\ f\ \eta\right)\\
+\mathtt{cond}\left(v,s_{1},s_{2}\right) & = & \lambda f\lambda\eta.\left(s_{1}\ f\ \eta\right)\cup\left(s_{2}\ f\ \eta\right)\\
 \mathtt{asg}\left(id,v\right) & = & \bar{\Upsilon}\ \lambda\sigma:AVar.\sigma\left[id=v\right]\\
 \mathtt{val}\left(id,v\right) & = & \bar{\Upsilon}\ \lambda\sigma:AVar.\sigma\left(id\right)\\
 \mathtt{conval}\left(con\right) & = & \Gamma\ \begin{cases}
@@ -1402,10 +1383,11 @@ Boolean & con\in\mathbb{B}
 \end{cases}\\
 \mathtt{getinput} & = & \Gamma\ \lambda\eta.\left\langle \eta,Number\right\rangle \\
 \mathtt{dooutput}\left(v\right) & = & \Gamma\ \lambda\eta.\eta\\
-\mathtt{bin}\left(binop,c_{0},c_{1}\right) & = & \Gamma\ \begin{cases}
-Number & binop\in{\scriptstyle \left\{ +,-,*,/\right\} }\\
+\mathtt{bin}\left(op,c_{0},c_{1}\right) & = & \Gamma\ \begin{cases}
+Number & op\in{\scriptstyle \left\{ +,-,*,/\right\} }\\
 Boolean & \mbox{otherwise}
 \end{cases}\\
+\mathtt{ret}\left(v\right) & = & \bar{\Upsilon}\ \lambda R:AReturn.v\\
 \mathtt{fundecl}\left(id,n\right) & = & \bar{\Upsilon}\ \lambda\sigma:AVar.\sigma\left[id\mapsto n\right]
 \end{eqnarray*}
 
@@ -1796,7 +1778,7 @@ status open
 \begin{align*}
  & \mathcal{S}\ds{\ex{E_{1}}1.id=\ex{E_{2}}2} & = & \left(\begin{aligned}\mathcal{E}\ \dd{\ex{E_{1}}1} & \bind\lambda v.\\
 \mathcal{E}\ \dd{\ex{E_{2}}2} & \bind\lambda r.\\
-\mathtt{set}\left(r,id,v\right)
+I_{S}\ \mathtt{set}\left(r,id,v\right)
 \end{aligned}
 \right)\\
  & \mathcal{E}\de{\mathtt{global}} & = & I_{V}\ \mathtt{obj}\left(0\right)\\
@@ -1869,7 +1851,7 @@ We redefine
 \end_layout
 
 \begin_layout Standard
-\begin_inset Formula $\mathtt{call}\left(n,p,t\right)=\begin{gathered}\lambda f,\rho,\gamma.\Omega\ \left\langle \left\{ \bar{\kappa}\ \rho\ \rho'\mid\rho'\in S\right\} ,\gamma'\right\rangle \\
+\begin_inset Formula $\mathtt{call}\left(n,p,t\right)=\begin{gathered}\lambda f\lambda\rho,\gamma.\Omega\ \left\langle \left\{ \bar{\kappa}\ \rho\ \rho'\mid\rho'\in S\right\} ,\gamma'\right\rangle \\
 \mbox{where}\left\langle S,\gamma'\right\rangle =f\ n\ \left(\kappa\ \rho\ \left\langle p,t\right\rangle \ n\right)\ \gamma
 \end{gathered}
 $
@@ -2023,7 +2005,7 @@ status open
 =\mathtt{arity}\left(n\right)
 \end{gathered}
 \\
-\Gamma\ \lambda f,\rho.\left\langle \rho,\left\langle n,\left[C\mid p\right]\right\rangle \right\rangle  & \mbox{otherwise}
+\Gamma\ \lambda\rho.\left\langle \rho,\left\langle n,\left[C\mid p\right]\right\rangle \right\rangle  & \mbox{otherwise}
 \end{cases}\\
 \mathtt{newobj}\left(\_\right) & = & \bar{\Psi}\ \lambda OM:ObjMem.\left\langle OM\left[n\mapsto\phi\right],n\right\rangle \ \mbox{where}\ n=N\left(OM\right)
 \end{eqnarray*}
@@ -2256,7 +2238,7 @@ Following functions are the semantic functions for the newly introduced
 \begin{gather*}
 \mathcal{S}\ds{\mathtt{try}\ \st{S_{1}}1\ \mathtt{catch}\left(id\right)\ \st{S_{2}}2}=\\
 \left(\begin{aligned}\mathcal{S}\ \dd{\st{S_{1}}1} & \bind\\
-\mathtt{trycatch}\left(id,\mathcal{S}\ \dd{\st{S_{2}}2}\right)
+\lambda f\lambda r.\mathtt{trycatch}\left(id,\mathcal{S}\ \dd{\st{S_{2}}2}\right)\ f\ r
 \end{aligned}
 \right)
 \end{gather*}
@@ -2409,7 +2391,7 @@ Functions
 \mathtt{trycatch}\left(id,s\right) & = & \Theta\ \lambda E:AEx.\\
  &  & \begin{cases}
 \mathtt{noop} & E=Void\\
-\lambda f,\eta.s\ f\ \mathtt{exs}\left(\eta,id\right) & \mbox{otherwise}
+\lambda f\lambda\eta.s\ f\ \mathtt{exs}\left(\eta,id\right) & \mbox{otherwise}
 \end{cases}\\
 \mathtt{exs}\left(id\right) & = & \Upsilon\ \lambda\sigma:AVars,E:AEx.\\
  &  & \left\langle \sigma\left[id\mapsto E\right],Void\right\rangle 
@@ -2469,7 +2451,8 @@ Partial ordering
 \end_layout
 
 \begin_layout Standard
-We also define an ordering between powersets of abstract states.
+We also define an ordering between powersets of abstract states and associated
+ values.
 \end_layout
 
 \begin_layout Definition
@@ -2483,19 +2466,6 @@ Partial ordering of powersets
 \end_inset
 
 
-\begin_inset Formula $\forall p_{1},p_{2}\in\wp\left(AState\right),p_{1}\sqsubseteq p_{2}$
-\end_inset
-
- if 
-\begin_inset Formula $\forall\eta_{1}\in p_{1}\exists\eta_{2}\in p_{2}$
-\end_inset
-
- such that 
-\begin_inset Formula $\eta_{1}\sqsubseteq\eta_{2}$
-\end_inset
-
-.
- 
 \begin_inset Formula $\forall e_{1},e_{2}\in\wp\left(AState\times a\right),e_{1}\sqsubseteq e_{2}$
 \end_inset
 
@@ -2565,9 +2535,9 @@ Let
 \end_layout
 
 \begin_layout Proof
-\begin_inset Formula $q_{1}=F\bind G\ f\ \eta_{1}=\underset{s\in p_{1}}{\bigcup}\left(\begin{gathered}\mbox{if}\ isterm\left(s\right)\ \\
-\mbox{then}\ \left\{ s\right\} \ \\
-\mbox{else}\ G\ f\ s
+\begin_inset Formula $q_{1}=F\bind G\ f\ \eta_{1}=\underset{\left\langle s,a\right\rangle \in p_{1}}{\bigcup}\left(\begin{gathered}\mbox{if}\ \mathtt{isterm}\left(s\right)\ \\
+\mbox{then}\ \left\{ \left\langle s,a\right\rangle \right\} \ \\
+\mbox{else}\ G\ a\ f\ s
 \end{gathered}
 \right)$
 \end_inset
@@ -2576,9 +2546,9 @@ Let
 \end_layout
 
 \begin_layout Proof
-\begin_inset Formula $q_{2}=F\bind G\ f\ \eta_{2}=\underset{s\in p_{2}}{\bigcup}\left(\begin{gathered}\mbox{if}\ isterm\left(s\right)\ \\
-\mbox{then}\ \left\{ s\right\} \ \\
-\mbox{else}\ G\ f\ s
+\begin_inset Formula $q_{2}=F\bind G\ f\ \eta_{2}=\underset{\left\langle s,a\right\rangle \in p_{2}}{\bigcup}\left(\begin{gathered}\mbox{if}\ \mathtt{isterm}\left(s\right)\ \\
+\mbox{then}\ \left\{ \left\langle s,a\right\rangle \right\} \ \\
+\mbox{else}\ G\ a\ f\ s
 \end{gathered}
 \right)$
 \end_inset
@@ -2596,7 +2566,7 @@ Let
 \begin_deeper
 \begin_layout Enumerate
 If 
-\begin_inset Formula $isterm\left(q\right)$
+\begin_inset Formula $\mathtt{isterm}\left(q\right)$
 \end_inset
 
  is true, then it is immediately shown that 
@@ -2877,14 +2847,14 @@ Abstraction between powersets
 \end_inset
 
 Given 
-\begin_inset Formula $p\in\wp\left(AState\right),q\in\wp\left(CState\right),p\succ q$
+\begin_inset Formula $p\in\wp\left(AState\times a\right),q\in\wp\left(CState\times c\right),p\succ q$
 \end_inset
 
  if
 \end_layout
 
 \begin_layout Definition
-\begin_inset Formula $\forall\rho\in q\exists\eta\in p,\eta\succ\rho$
+\begin_inset Formula $\forall\rho\in q\exists\eta\in p,\left(\eta\succ\rho\right)\wedge\left(\rho,\eta\vdash a\succ c\right)$
 \end_inset
 
 
