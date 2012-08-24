@@ -1166,39 +1166,20 @@ status open
 \\
  & \mathcal{S}\ds{\ex E1} & = & \mathcal{E}\ \dd{\ex E1}\bind\lambda\_.\mathtt{noop}\\
  & \mathcal{S}\ds{\mathtt{return}\ \ex E1} & = & \mathcal{E}\ \dd{\ex E1}\bind\lambda v.I_{S}\ \mathtt{ret}\left(V\right)\\
- & \mathcal{S}\ds{\mathtt{if}\left(\ex E1\right)\st{S_{1}}1} & = & \left(\begin{aligned}\mathcal{E}\ \dd{\ex E1} & \bind\lambda v.\\
-\mathtt{cond}\left(v,\mathcal{S}\ \dd{\st{S_{1}}1},\mathtt{noop}\right)
-\end{aligned}
-\right)\\
- & \mathcal{S}\ds{\mathtt{if}\left(\ex E1\right)\st{S_{1}}1\mathtt{else}\st{S_{2}}2} & = & \left(\begin{aligned}\mathcal{E}\ \dd{\ex E1} & \bind\lambda v.\\
-\mathtt{cond}\left(v,\mathcal{S}\ \dd{\st{S_{1}}1},\mathcal{S}\ \dd{\st{S_{1}}1}\right)
-\end{aligned}
-\right)\\
+ & \mathcal{S}\ds{\mathtt{if}\left(\ex E1\right)\st{S_{1}}1} & = & \mathcal{E}\ \dd{\ex E1}\bind\lambda v.\mathtt{cond}\left(v,\mathcal{S}\ \dd{\st{S_{1}}1},\mathtt{noop}\right)\\
+ & \mathcal{S}\ds{\mathtt{if}\left(\ex E1\right)\st{S_{1}}1\mathtt{else}\st{S_{2}}2} & = & \mathcal{E}\ \dd{\ex E1}\bind\lambda v.\mathtt{cond}\left(v,\mathcal{S}\ \dd{\st{S_{1}}1},\mathcal{S}\ \dd{\st{S_{1}}1}\right)\\
  & \mathcal{S}\ds{id=\ex E1} & = & \begin{aligned}\mathcal{E}\ \dd{\ex e1} & \bind\lambda v.I_{S}\ \mathtt{asg}\left(id,v\right)\end{aligned}
 \\
- & \mathcal{S}\ds{\mathtt{while}\left(\ex E1\right)\st{S_{1}}1} & = & Y\lambda x.\lambda f\lambda r.\left(\begin{aligned}\mathcal{E}\ \dd{\ex E1}\bind\lambda v.\\
-\mathtt{cond}\left(\begin{gathered}v,\\
-\left(\mathcal{S}\ \dd{\st{S_{1}}1}\right)\bind\lambda\_.x,\\
-\mathtt{noop}
-\end{gathered}
-\right)
-\end{aligned}
+ & \mathcal{S}\ds{\mathtt{while}\left(\ex E1\right)\st{S_{1}}1} & = & Y\lambda x.\lambda f\lambda r.\left(\begin{aligned}\mathcal{E}\ \dd{\ex E1}\bind\lambda v.\mathtt{cond}\left(\begin{gathered}v,\left(\mathcal{S}\ \dd{\st{S_{1}}1}\right)\bind\lambda\_.x,\mathtt{noop}\end{gathered}
+\right)\end{aligned}
 \right)\\
  & \mathcal{S}\ds{\mathtt{output}\ \ex E1} & = & \mathcal{E}\ \dd{\ex E1}\bind\lambda v.I_{S}\ \mathtt{output}\left(v\right)\\
  & S\ds{\mathtt{function}\ id\left(IDs\right)\ \st{S_{1}}1} & = & I_{S}\ \mathtt{fundecl}\left(id,s\right)\\
  & \mathcal{E}\de{con} & = & I_{A}\ \mathtt{conval}\left(con\right)\\
  & \mathcal{E}\de{L} & = & \mathcal{L}\ \dd{L}\\
  & \mathcal{E}\de{\mathtt{input}} & = & I_{V}\ \mathtt{getinput}\\
- & \mathcal{E}\de{L\left(\vec{E}\right)} & = & \left(\begin{aligned}\mathcal{L}\ \dd L & \bind\lambda n.\\
-\mathtt{evalParams}\ \vec{E}\ \phi & \bind\lambda p.\\
-\mathtt{call}\left(n,p\right)
-\end{aligned}
-\right)\\
- & \mathcal{E}\de{\ex{E_{1}}1\ binop\ \ex{E_{2}}2} & = & \left(\begin{aligned}\mathcal{E}\ \dd{\ex{E_{1}}1} & \bind\lambda c_{1}.\\
-\mathcal{E}\ \dd{\ex{E_{2}}2} & \bind\lambda c_{2}.\\
-I_{A}\ \mathtt{bin}\left(binop,c_{0},c_{1}\right)
-\end{aligned}
-\right)\\
+ & \mathcal{E}\de{L\left(\vec{E}\right)} & = & \mathcal{L}\ \dd L\bind\lambda n.\left(\mathtt{evalParams}\ \vec{E}\ \phi\right)\bind\lambda p.\mathtt{call}\left(n,p\right)\\
+ & \mathcal{E}\de{\ex{E_{1}}1\ binop\ \ex{E_{2}}2} & = & \mathcal{E}\ \dd{\ex{E_{1}}1}\bind\lambda c_{1}.\mathcal{E}\ \dd{\ex{E_{2}}2}\bind\lambda c_{2}.I_{A}\ \mathtt{bin}\left(binop,c_{0},c_{1}\right)\\
  & \mathcal{L}\dd{id} & = & I_{A}\ \mathtt{val}\left(id\right)
 \end{align*}
 
@@ -1291,16 +1272,14 @@ Functions
 \begin{eqnarray*}
 \mathtt{isterm} & = & \bar{\Theta}\ \lambda R:Return.\left(R=Void\right)\\
 \mathtt{cond}\left(v,s_{1},s_{2}\right) & = & \begin{cases}
-s_{1} & v=true\\
-s_{2} & v=false
+s_{1} & \mbox{if}\ v=true\\
+s_{2} & \mbox{if}\ v=false
 \end{cases}\\
 \mathtt{asg}\left(id,v\right) & = & \bar{\Upsilon}\ \lambda V:Var.V\left[id\mapsto v\right]\\
 \mathtt{val}\left(id\right) & = & \bar{\Upsilon}\ \lambda V:Var.V\left(id\right)\\
 \mathtt{conval}\left(con\right) & = & con\\
 \mathtt{getinput\left(\rho\right)} & = & \bar{\Psi}\ \lambda O:IO.\left\langle O',z\in\mathbb{N}\right\rangle \mbox{see note}\\
 \mathtt{dooutput}\left(v\right) & = & \bar{\Upsilon}\ \lambda O:IO.O'\mbox{see note}\\
-\\
-\\
 \mathtt{fundecl}(id,n) & = & \bar{\Upsilon}\ \lambda V:Var.V\left[id\mapsto FP_{n}\right]\\
 \mathtt{ret}\left(v\right) & = & \bar{\Upsilon}\ \lambda R:Return.v\\
 \mathtt{bin}\left(op,c_{0},c_{1}\right) & = & \mbox{perform binary operation }\\
@@ -1378,13 +1357,13 @@ Functions
 \mathtt{asg}\left(id,v\right) & = & \bar{\Upsilon}\ \lambda\sigma:AVar.\sigma\left[id=v\right]\\
 \mathtt{val}\left(id,v\right) & = & \bar{\Upsilon}\ \lambda\sigma:AVar.\sigma\left(id\right)\\
 \mathtt{conval}\left(con\right) & = & \Gamma\ \begin{cases}
-Number & con\in\mathbb{N}\\
-Boolean & con\in\mathbb{B}
+Number & \mbox{if}\ con\in\mathbb{N}\\
+Boolean & \mbox{if}\ con\in\mathbb{B}
 \end{cases}\\
 \mathtt{getinput} & = & \Gamma\ \lambda\eta.\left\langle \eta,Number\right\rangle \\
 \mathtt{dooutput}\left(v\right) & = & \Gamma\ \lambda\eta.\eta\\
 \mathtt{bin}\left(op,c_{0},c_{1}\right) & = & \Gamma\ \begin{cases}
-Number & op\in{\scriptstyle \left\{ +,-,*,/\right\} }\\
+Number & \mbox{if}\ op\in{\scriptstyle \left\{ +,-,*,/\right\} }\\
 Boolean & \mbox{otherwise}
 \end{cases}\\
 \mathtt{ret}\left(v\right) & = & \bar{\Upsilon}\ \lambda R:AReturn.v\\
@@ -1468,8 +1447,8 @@ Functions
 \begin{gather*}
 \mathtt{apply}\left(\left\langle n,C\right\rangle ,p,\_\right)=\\
 \begin{cases}
-\mathtt{call}\left(n,\left[C\mid p\right]\right) & \begin{gathered}N\left(\left[C\mid p\right]\right)\\
-=\mathtt{arity}\left(n\right)
+\mathtt{call}\left(n,\left[C\mid p\right]\right) & \mbox{if}\begin{gathered}N\left(\left[C\mid p\right]\right)=\\
+\mathtt{arity}\left(n\right)
 \end{gathered}
 \\
 \lambda f,\rho.\left\{ \left\langle \rho,\left\langle n,\left[C\mid p\right]\right\rangle \right\rangle \right\}  & \mbox{otherwise}
@@ -1623,11 +1602,8 @@ status open
 \begin_inset Formula 
 \begin{eqnarray*}
 \mathtt{apply}\left(\left\langle n,c,e\right\rangle ,p,e\right) & = & \begin{cases}
-\Theta\ \lambda\nu:Curried.\underset{C\in\nu\left(n,c,e\right)}{\bigcup}\mathtt{call}\left(n,\left[C\mid p\right]\right) & \begin{gathered}c+N\left(p\right)\\
-=\mathtt{arity}\left(n\right)
-\end{gathered}
-\\
-\bar{\Psi}\ \lambda\nu:Curried.\left\langle \nu\left[\left\langle n,c+N\left(p\right),e\right\rangle \mapsto\left[C\mid p\right]\right],\left\langle n,c+N\left(p\right),e\right\rangle \right\rangle  & \mbox{otherwise}
+\Theta\ \lambda\nu:Curried.\underset{C\in\nu\left(n,c,e\right)}{\bigcup}\mathtt{call}\left(n,\left[C\mid p\right]\right)\ \mbox{if }c+N\left(p\right)=\mathtt{arity}\left(n\right)\\
+\bar{\Psi}\ \lambda\nu:Curried.\left\langle \nu\left[\left\langle n,c+N\left(p\right),e\right\rangle \mapsto\left[C\mid p\right]\right],\left\langle n,c+N\left(p\right),e\right\rangle \right\rangle \ \mbox{otherwise}
 \end{cases}\\
 \mathtt{fundecl}\left(id,n\right) & = & \bar{\Upsilon}\ \lambda\sigma:AVar.\sigma\left[id\mapsto\left\langle n,0,0\right\rangle \right]
 \end{eqnarray*}
@@ -1776,18 +1752,10 @@ status open
 \begin_layout Plain Layout
 \begin_inset Formula 
 \begin{align*}
- & \mathcal{S}\ds{\ex{E_{1}}1.id=\ex{E_{2}}2} & = & \left(\begin{aligned}\mathcal{E}\ \dd{\ex{E_{1}}1} & \bind\lambda v.\\
-\mathcal{E}\ \dd{\ex{E_{2}}2} & \bind\lambda r.\\
-I_{S}\ \mathtt{set}\left(r,id,v\right)
-\end{aligned}
-\right)\\
+ & \mathcal{S}\ds{\ex{E_{1}}1.id=\ex{E_{2}}2} & = & \mathcal{E}\ \dd{\ex{E_{1}}1}\bind\lambda v.\mathcal{E}\ \dd{\ex{E_{2}}2}\bind\lambda r.I_{S}\ \mathtt{set}\left(r,id,v\right)\\
  & \mathcal{E}\de{\mathtt{global}} & = & I_{V}\ \mathtt{obj}\left(0\right)\\
  & \mathcal{E}\de{\mathtt{this}} & = & I_{V}\ \mathtt{getthis}\\
- & \mathcal{E}\de{L\left(\vec{E}\right)} & = & \left(\begin{aligned}\mathcal{L}\ \dd L & \bind\lambda n.\\
-\mathtt{evalParams}\ \vec{E}\ \phi & \bind\lambda p.\\
-\mathtt{apply}\left(n,p,\mathtt{obj}\left(0,\rho\right),e\right)
-\end{aligned}
-\right)\\
+ & \mathcal{E}\de{L\left(\vec{E}\right)} & = & \mathcal{L}\ \dd L\bind\lambda n.\left(\mathtt{evalParams}\ \vec{E}\ \phi\right)\bind\lambda p.\mathtt{apply}\left(n,p,\mathtt{obj}\left(0,\rho\right),e\right)\\
  & \mathcal{E}\de{\mathtt{new}\ L\left(\vec{E}\right)} & = & \left(\begin{aligned}\mathcal{L}\ \dd L & \bind\lambda n.\\
 \mathtt{evalParams}\ \vec{E}\ \phi & \bind\lambda p.\\
 \mathtt{newobj}\left(e\right) & \bind\lambda m.\\
@@ -1801,10 +1769,7 @@ I_{A}\ m
 \mathtt{apply}\left(n,p,t,e\right)
 \end{aligned}
 \right)\\
- & \mathcal{L}\dd{\ex{E_{1}}1.id} & = & \left(\begin{aligned}\mathcal{E}\ \dd{\ex{E_{1}}1} & \bind\lambda v.\\
-I_{V}\ \mathtt{get}\left(v,id\right)
-\end{aligned}
-\right)
+ & \mathcal{L}\dd{\ex{E_{1}}1.id} & = & \mathcal{E}\ \dd{\ex{E_{1}}1}\bind\lambda v.I_{V}\ \mathtt{get}\left(v,id\right)
 \end{align*}
 
 \end_inset
@@ -2001,10 +1966,7 @@ status open
 \mathtt{obj}\left(n\right) & = & \bar{\Theta}\ \lambda OM:ObjMem.OM\left(n\right)\\
 \mathtt{getthis} & = & \bar{\Theta}\ \lambda T:Object.T\\
 \mathtt{apply}\left(\left\langle n,C\right\rangle ,p,t,\_\right) & = & \begin{cases}
-\mathtt{call}\left(n,\left[C\mid p\right],t\right) & \begin{gathered}N\left(\left[C\mid p\right]\right)\\
-=\mathtt{arity}\left(n\right)
-\end{gathered}
-\\
+\mathtt{call}\left(n,\left[C\mid p\right],t\right) & \mbox{if}\ N\left(\left[C\mid p\right]\right)=\mathtt{arity}\left(n\right)\\
 \Gamma\ \lambda\rho.\left\langle \rho,\left\langle n,\left[C\mid p\right]\right\rangle \right\rangle  & \mbox{otherwise}
 \end{cases}\\
 \mathtt{newobj}\left(\_\right) & = & \bar{\Psi}\ \lambda OM:ObjMem.\left\langle OM\left[n\mapsto\phi\right],n\right\rangle \ \mbox{where}\ n=N\left(OM\right)
@@ -2133,11 +2095,9 @@ status open
 \mathtt{getthis} & = & \bar{\Theta}\ \lambda\tau:AObj.\tau\\
 \mathtt{newobj}\left(n\right) & = & \bar{\Psi}\ \lambda\alpha:AObjMem.\left\langle \alpha\left[n\mapsto\phi\right],n\right\rangle \\
 \mathtt{apply}\left(\left\langle n,c,e\right\rangle ,p,t,e\right) & = & \begin{cases}
-\Theta\ \lambda\nu:Curried.\underset{C\in\nu\left(n,c,e\right)}{\bigcup}\mathtt{call}\left(n,\left[C\mid p\right],t\right) & \begin{gathered}c+N\left(p\right)\\
-=\mathtt{arity}\left(n\right)
-\end{gathered}
+\Theta\ \lambda\nu:Curried.\underset{C\in\nu\left(n,c,e\right)}{\bigcup}\mathtt{call}\left(n,\left[C\mid p\right],t\right)\ \mbox{if}\ c+N\left(p\right)=\mathtt{arity}\left(n\right) & \begin{gathered}\end{gathered}
 \\
-\bar{\Psi}\ \lambda\nu:Curried.\left\langle \nu\left[\left\langle n,c+N\left(p\right),e\right\rangle \mapsto\left[C\mid p\right]\right],\left\langle n,c+N\left(p\right),e\right\rangle \right\rangle  & \mbox{otherwise}
+\bar{\Psi}\ \lambda\nu:Curried.\left\langle \nu\left[\left\langle n,c+N\left(p\right),e\right\rangle \mapsto\left[C\mid p\right]\right],\left\langle n,c+N\left(p\right),e\right\rangle \right\rangle \ \mbox{otherwise}
 \end{cases}
 \end{eqnarray*}
 
@@ -2238,7 +2198,7 @@ Following functions are the semantic functions for the newly introduced
 \begin{gather*}
 \mathcal{S}\ds{\mathtt{try}\ \st{S_{1}}1\ \mathtt{catch}\left(id\right)\ \st{S_{2}}2}=\\
 \left(\begin{aligned}\mathcal{S}\ \dd{\st{S_{1}}1} & \bind\\
-\lambda f\lambda r.\mathtt{trycatch}\left(id,\mathcal{S}\ \dd{\st{S_{2}}2}\right)\ f\ r
+\lambda f\lambda r.\mathtt{catch}\left(id,\mathcal{S}\ \dd{\st{S_{2}}2}\right)\ f\ r
 \end{aligned}
 \right)
 \end{gather*}
@@ -2313,9 +2273,9 @@ Functions
 \mathtt{isterm} & = & \Theta\ \lambda R:Return,E:Ex.\\
  &  & \left(R=Void\right)\wedge\left(E=Void\right)\\
 \mathtt{throw}\left(v\right) & = & \bar{\Upsilon}\ \lambda E:Ex.v\\
-\mathtt{trycatch}\left(id,s\right) & = & \Theta\ \lambda E:Ex.\\
+\mathtt{catch}\left(id,s\right) & = & \Theta\ \lambda E:Ex.\\
  &  & \begin{cases}
-\mathtt{noop} & E=Void\\
+\mathtt{noop} & \mbox{if}\ E=Void\\
 \lambda f,r.s\ f\ \mathtt{exs}\left(\rho,id\right) & \mbox{otherwise}
 \end{cases}\\
 \mathtt{exs}\left(id\right) & = & \Upsilon\ \lambda V:Vars,E:Ex.\\
@@ -2388,9 +2348,9 @@ Functions
 \mathtt{isterm} & = & \Theta\ \lambda R:AReturn,E:AEx.\\
  &  & \left(R=Void\right)\wedge\left(E=Void\right)\\
 \mathtt{throw}\left(v\right) & = & \bar{\Upsilon}\ \lambda E:AEx.v\\
-\mathtt{trycatch}\left(id,s\right) & = & \Theta\ \lambda E:AEx.\\
+\mathtt{catch}\left(id,s\right) & = & \Theta\ \lambda E:AEx.\\
  &  & \begin{cases}
-\mathtt{noop} & E=Void\\
+\mathtt{noop} & \mbox{if}\ E=Void\\
 \lambda f\lambda\eta.s\ f\ \mathtt{exs}\left(\eta,id\right) & \mbox{otherwise}
 \end{cases}\\
 \mathtt{exs}\left(id\right) & = & \Upsilon\ \lambda\sigma:AVars,E:AEx.\\
