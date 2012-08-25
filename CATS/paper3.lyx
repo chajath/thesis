@@ -563,6 +563,29 @@ Throughout the analysis, we introduce following primitive operations:
 \end_layout
 
 \begin_layout Itemize
+\begin_inset Formula $\kappa$
+\end_inset
+
+ and 
+\begin_inset Formula $\bar{\kappa}$
+\end_inset
+
+ are the packing / unpacking operation.
+ 
+\begin_inset Formula $\kappa$
+\end_inset
+
+ takes caller's state and parameter information and constructs an initial
+ state for a callee function.
+ 
+\begin_inset Formula $\bar{\kappa}$
+\end_inset
+
+ interprets the end state of a function call and transforms caller's state
+ accordingly.
+\end_layout
+
+\begin_layout Itemize
 \begin_inset Formula $\mathtt{apply}$
 \end_inset
 
@@ -1557,6 +1580,12 @@ reference "semantic"
 \end_inset
 
  to describe a function call.
+ 
+\begin_inset Formula $\mathtt{evalParams}$
+\end_inset
+
+ collects the parameter values as evaluations of expressions successively
+ update the state.
  These functions are defined as following:
 \end_layout
 
