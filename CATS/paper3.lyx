@@ -167,14 +167,15 @@ submittedstandard
 \end_layout
 
 \begin_layout Abstract
-We present a novel approach in construction and formalisation of an analysis
- of a language, in which we formulate a polymorphic and parametric interpretatio
-n of a language common to both denotational semantics and static analysis.
- We apply this in analysing a duck-typing, reflective and function currying
- language.
- We show the benefit of this new approach in term of its terseness and modularit
-y, and a new research methodology in which we gradually build language features
- and analysis on top of a previous incarnation of the theory.
+We present a novel approach to construction of a formal semantics for a
+ programming language.
+ Our approach, using a parametric monadic semantics, allows the semantics
+ to be easily extended to support new language features, and abstracted
+ to define program analyses.
+ We apply this in analysing a duck-typed, reflective, curried dynamic language.
+ The benefits of this approach include its terseness and modularity, and
+ the ease with which one can gradually build language features and analyses
+ on top of a previous incarnation of a semantics.
 \end_layout
 
 \begin_layout Section
@@ -182,21 +183,20 @@ Introduction
 \end_layout
 
 \begin_layout Standard
-There are two distinct needs for the development of the present work.
- First, there is a theoretician's need to have a simple and elegant way
- of presenting a formalised argument of a static analysis which enables
- one to focus on what is at the heart of the analysis - definitions of abstract
- domain and their relations to the concrete domain of a language semantics.
- Denotational semantics is a step towards such direction.
- In this paper we endeavour to further modularise the system to the point
- where formal presentation of semantics and analysis can share a common
- framework that mostly deals with linguistic aspects of a programming language.
+Two distinct needs motivated the development of the present work.
+ First, there is the theoretician's need for a simple, concise, elegant
+ way of presenting a formal semantics for a programming language and of
+ developing that into various static analyses.
+ We base our approach on a monadic denotational semantics that is modularised
+ to allow the concrete semantics and the abstract interpretation to share
+ a common framework that uniformly handles most aspects of the programming
+ language.
 \end_layout
 
 \begin_layout Standard
-Second, there is a practical need of analysing dynamic languages that are
- finding more popularity in recent years.
- Traditionally these languages were termed 
+Second, there is a practical need for program analyses suitable for the
+ dynamic languages that have been growing in popularity in recent years.
+ Traditionally these languages were called 
 \begin_inset Quotes eld
 \end_inset
 
@@ -206,54 +206,56 @@ scripting
 
  languages, as they were mainly used for automating tasks and processing
  strings.
- However, with the advent of Web environment, languages such as Perl and
+ However, with the advent of web applications, languages such as Perl and
  PHP gained popularity as languages for web application development.
- On a client side, web pages make heavy use of JavaScript, a dynamic typing
- language, to deliver dynamic contents to the browser.
- Recent years have seen an increasing use of JavaScript in a server side
- environment as well.
+ On the client side, web pages make heavy use of JavaScript, a dynamically
+ typed language, to deliver dynamic contents to the browser.
+ Recent years have seen an increasing use of JavaScript on the server side,
+ as well.
 \end_layout
 
 \begin_layout Standard
 What these languages provide is an ability to rapidly prototype and validate
- application models in a real time REPL environment.
+ application models in a real time read-eval-print loop.
  Another strength comes from the fact that programmers do not need to have
  a class structure defined upfront.
  Rather, class structures and types of variables in general are dynamically
  built.
- This reduces an initial overhead of software design.
+ This reduces the initial overhead of software design.
 \end_layout
 
 \begin_layout Standard
 However, these features come at a cost.
- Lacking formal and static definition of type information makes dynamically
- typing languages harder to analyse.
+ Lacking a formal, static definition of type information makes dynamically
+ typed languages harder to analyse.
  This difficulty causes several practical problems.
  
 \end_layout
 
 \begin_layout Itemize
 As applications become more mature, more efforts are devoted to program
- unit testing or assertions to ensure type safety of systems.
- These extra overheads can sometimes outweigh the benefit of having a dynamicall
-y typing language.
+ unit testing and writing assertions to ensure type safety of systems.
+ This extra effort can sometimes outweigh the benefit of having a dynamically
+ typed language.
 \end_layout
 
 \begin_layout Itemize
-Whereas programmers writing statically typed languages enjoy the abundance
- of development tools, choices of tools for aiding development of dynamically
- typed languages are limited, and lacking much of the power, largely due
- to the difficulty and sometimes infeasibility of conduct a type analysis.
+Whereas programmers using statically typed languages enjoy an abundance
+ of development tools, choices of tools for development in dynamically typed
+ languages are limited, and the tools that do exist lack much of the power
+ of the tools for statically typed languages, largely due to the difficulty
+ or infeasibility of type analysis for such languages.
 \end_layout
 
 \begin_layout Itemize
-Not having a static type structure has a significant performance implication.
+Lack of static type structure has a significant performance impact on dynamicall
+y typed languages.
 \end_layout
 
 \begin_layout Standard
-With these problems in mind, we design a model language that has a dynamism
- comparable to those in the aforementioned scripting languages, such as
- duck-typing, reflection and function currying.
+With these problems in mind, we designed a model language that has a dynamism
+ comparable to that of the aforementioned scripting languages, such as duck
+ typing, reflection, and function currying.
  A notable omission is a closure scoping.
  However, allowing function currying gives enough expressive power to the
  language.
@@ -261,9 +263,9 @@ With these problems in mind, we design a model language that has a dynamism
 
 \begin_layout Standard
 The two concerns are not distinct ones, but an interconnected dialectic.
- Theoretical need is there because of a difficulty of describing abstract
- and concrete meaning of dynamic languages which often allow side-effect
- causing, type-altering functions.
+ The theoretical need is there because of the difficulty of describing the
+ abstract and concrete meaning of dynamic languages, which often allow side-effe
+ct causing, type-altering functions.
 \end_layout
 
 \begin_layout Section
@@ -271,10 +273,10 @@ Related work
 \end_layout
 
 \begin_layout Standard
-On a theoretical side, denotational semantics is the starting point of our
- development of a theoretical system.
- The idea of incorporating monads in the denotational semantics is found
- in 
+On the theoretical side, denotational semantics is the starting point of
+ our development of a theoretical system.
+ The idea of incorporating monads into the denotational semantics was developed
+ by 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "Liang:phd1998,Liang_Hudak:ESOP1996"
@@ -282,29 +284,30 @@ key "Liang:phd1998,Liang_Hudak:ESOP1996"
 \end_inset
 
 .
- Whereas these works modularise analytic framework by having multiple layers
- of monadic transformations, we instead parametrise the very definition
+ Whereas these works modularise an analytic framework by having multiple
+ layers of monadic transformations, we instead parametrise the definition
  of a program state.
  
 \end_layout
 
 \begin_layout Standard
-Action semantics, as advanced in 
+Action semantics, as advanced by 
 \begin_inset CommandInset citation
 LatexCommand citet
 key "Mosses1996TPA"
 
 \end_inset
 
-, shares the motivation that semantics ought to be pragmatic yet expressive
- enough to analyse a non-trivial feature-rich languages.
- While action semantics endeavour to devise a new semantics, we restrain
+, shares the motivation that semantics ought to be pragmatic, yet expressive
+ enough to analyse a non-trivial, feature-rich languages.
+ While action semantics endeavours to devise a new semantics, we constrain
  ourself to the language of denotational semantics, and seek to devise a
- formalism whose idea is largely compatible with denotational semantics.
+ formalism largely compatible with denotational semantics.
 \end_layout
 
 \begin_layout Standard
-An idea of constructing formulae with parametric types can be found in 
+The idea of constructing formulae with parametric types can be found in
+ 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "Wadler:1989:TF:99370.99404"
@@ -328,8 +331,8 @@ key "Anderson:ECOOP2005,Anderson:ENTCS2005,Guha:ESOP2011,Wrigstad:POPL2010"
  of dynamic languages.
  A major difference between them and the model language presented in this
  paper is that our model language is designed to capture the feature of
- real world languages that functions alter types through a side-effect causing
- statements.
+ real world languages that allow functions to alter types through side-effect
+ causing statements.
  Similarities and differences of this work compared to the cited works are
  given as we encounter them in this paper.
 \end_layout
@@ -344,14 +347,14 @@ key "Ancona:2007:RST:1297081.1297091,Dufour:2006"
 
 \end_inset
 
- design restricted versions of a scripting language so that a static inference
+ design restricted versions of a scripting languages so that static inference
  of types can be performed.
- Some techniques employed in those projects can also be found in this paper,
+ Some techniques employed in those projects can also be found in this paper;
  the use of allocation sites as static references is an example.
 \end_layout
 
 \begin_layout Standard
-An important use case of functions in dynamic typing language is 
+An important use case of functions in dynamically typed language is 
 \begin_inset Quotes eld
 \end_inset
 
@@ -359,26 +362,27 @@ mixin
 \begin_inset Quotes erd
 \end_inset
 
- (
+ functions (
 \begin_inset CommandInset citation
 LatexCommand cite
 key "Bracha:1990:MI:97946.97982"
 
 \end_inset
 
-) functions, where, by passing argument to such function the variable, the
- object is extended with extra methods.
- There are model languages and formalisations of mixin functions (
+), where, by passing arguments to such function, objects can be extended
+ with extra methods.
+ There are model languages and formalisations of mixin functions, such as
+ 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "Anderson:ECOOP2005,Vub-prog-tr96aformalisation"
 
 \end_inset
 
-).
- Where those works seek to find a functional models for mixins, we model
- a language with side-effect causing functions that is expressive enough
- to program a mixin inheritance.
+.
+ Where those works seek to find functional models for mixins, we model a
+ language with side-effect causing functions that is expressive enough to
+ program mixin inheritance.
 \end_layout
 
 \begin_layout Standard
@@ -388,11 +392,11 @@ key "Jensen:SAS2009"
 
 \end_inset
 
- built a feature-complete analyser for JavaScript language.
+ built a feature-complete analyser for the JavaScript language.
  Our work can be progressed further to become a theoretical counterpart
- of the analyser.
- Furthermore, such attempt at formalising the analysis might pave a way
- for a further refinement and improvement.
+ for the analyser.
+ Furthermore, such an attempt to formalise the analysis might pave the way
+ for further refinement and improvement.
 \end_layout
 
 \begin_layout Section
@@ -400,10 +404,9 @@ Overview
 \end_layout
 
 \begin_layout Standard
-Our semantic framework is comprised of two components.
- One for the syntactic structure, and the other for giving meanings to the
- primitive operations.
- What divides the two are the following separation of concern:
+Our semantic framework is comprised of two components: one for the syntactic
+ structure, and the other for giving meanings to the primitive operations.
+ What divides the two is the following separation of concerns:
 \end_layout
 
 \begin_layout Enumerate
@@ -437,26 +440,27 @@ How do we interpret such semantic operations in a particular point of view?
 Observe that an interpretation of syntactic structure can remain agnostic
  of the view of a program state at a given point.
  Therefore, once we remove the actual interpretation of primitive operations,
- what is remaining in a semantics can be re-used for multiple interpretations
- of a language.
- Hence, not only the primitive operations parametrised, but also the whole
- definition of a domain of a program state is parametrised.
+ what remains in a semantics can be re-used for multiple interpretations
+ of the language.
+ Hence, not only are the primitive operations parametrised, but so is the
+ whole definition of the domain of the program state.
  Now we give a formal definition of our framework.
- Such separation of concern also helps to define an extensible formulae,
+ Such a separation of concerns also helps to define an extensible semantics,
  to which adding a new feature takes as little effort as possible.
 \end_layout
 
 \begin_layout Definition
+A 
 \begin_inset Argument
 status open
 
 \begin_layout Plain Layout
-Parametric semantics
+parametric semantics
 \end_layout
 
 \end_inset
 
- Parametric semantics 
+ parametric semantics 
 \begin_inset Formula $P$
 \end_inset
 
@@ -480,31 +484,51 @@ Parametric semantics
 \begin_inset Formula $d$
 \end_inset
 
- is an initial state of a program and 
+ is an initial program state, and 
 \begin_inset Formula $M$
 \end_inset
 
  is an interpretation of primitive operations.
+ 
+\begin_inset Note Greyedout
+status open
+
+\begin_layout Plain Layout
+Mention that state includes a return value.
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
-Throughout the analysis, we introduce following primitive operations:
+Throughout the analysis, we use following primitive operations:
 \end_layout
 
 \begin_layout Itemize
 \begin_inset Formula $\mathtt{isterm}$
 \end_inset
 
- takes a state and reports whether a particular state is in a terminal state
- (i.e.
- we would not progress to the successor statement)
+ takes a state and reports whether a particular state is terminal (i.e.
+ whether or not we would progress to execute the successor statement)
 \end_layout
 
 \begin_layout Itemize
 \begin_inset Formula $\mathtt{cond}$
 \end_inset
 
- is a branching point
+ is a branching point 
+\begin_inset Note Greyedout
+status open
+
+\begin_layout Plain Layout
+Explain
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Itemize
@@ -518,14 +542,14 @@ Throughout the analysis, we introduce following primitive operations:
 \begin_inset Formula $\mathtt{val}$
 \end_inset
 
- takes an identifier and interpret its value
+ takes an identifier and produces its value
 \end_layout
 
 \begin_layout Itemize
 \begin_inset Formula $\mathtt{conval}$
 \end_inset
 
- takes a constant and interpret its value
+ takes a constant and produces its value
 \end_layout
 
 \begin_layout Itemize
@@ -536,38 +560,47 @@ Throughout the analysis, we introduce following primitive operations:
 \begin_inset Formula $\mathtt{dooutput}$
 \end_inset
 
- interprets a meaning of console I/O
+ defines the meanings of console I/O operations
+\begin_inset Note Greyedout
+status open
+
+\begin_layout Plain Layout
+Can we combine this item with the next to specify semantics of all language
+ primitive operations?
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Itemize
 \begin_inset Formula $\mathtt{bin}$
 \end_inset
 
- interprets a binary operation given for two values
+ defines the meaning of all binary operations given two values
 \end_layout
 
 \begin_layout Itemize
 \begin_inset Formula $\mathtt{ret}$
 \end_inset
 
- interprets a meaning of a return statement when a particular value is given
- in such statement
+ defines the meaning of a return statement given the value to be returned
 \end_layout
 
 \begin_layout Itemize
 \begin_inset Formula $\mathtt{fundecl}$
 \end_inset
 
- interprets a meaning of an execution point stepping through a function
- declaration site
+ defines the meaning of dynamic execution of a function declaration
 \end_layout
 
 \begin_layout Itemize
 \begin_inset Formula $\mathtt{apply}$
 \end_inset
 
- interprets a meaning of applying a function to a list of values (might
- very well be a partial application)
+ defines the meaning of (possibly partially) applying a function to a list
+ of values
 \end_layout
 
 \begin_layout Itemize
@@ -578,7 +611,7 @@ Throughout the analysis, we introduce following primitive operations:
 \begin_inset Formula $\mathtt{set}$
 \end_inset
 
- interpret a meaning of getting or setting a member to an object.
+ defines the meaning of getting or setting a member to an object.
 \end_layout
 
 \begin_layout Itemize
@@ -589,21 +622,31 @@ Throughout the analysis, we introduce following primitive operations:
 \begin_inset Formula $\mathtt{getthis}$
 \end_inset
 
- interpret a meaning of such keyword as it occur in a particular state.
+ define the meaning of such keyword as it occur in a particular state.
+\begin_inset Note Greyedout
+status open
+
+\begin_layout Plain Layout
+Please clarify
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Itemize
 \begin_inset Formula $\mathtt{newobj}$
 \end_inset
 
- interpret a meaning of instantiating a new object from a particular allocation
+ defines the meaning of instantiating a new object from a particular allocation
  site.
 \end_layout
 
 \begin_layout Standard
-Our model language, as evolves along with the framework, shall have a set
- of features found common in scripting languages.
- Here is an example of the model language.
+Our model language, as it evolves along with the framework, has a set of
+ features found common in scripting languages.
+ Here is an example of the model language:
 \end_layout
 
 \begin_layout Standard
@@ -819,8 +862,8 @@ try {
 \end_layout
 
 \begin_layout Standard
-Locally-scoped procedural language with a support for higher order functions
- (lines 1 to 5) is introduced in 
+Locally-scoped procedural languages with support for higher order functions
+ (lines 1 to 5) are introduced in 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sub:Procedural-language"
@@ -2343,7 +2386,7 @@ end{grammar}
 \end_inset
 
  is a reference to a global object, and the reference to global object is
- program invariant (akin to `window' in Client-side javascript or `global'
+ program invariant (akin to `window' in Client-side JavaScript or `global'
  in Node.js).
  
 \begin_inset Formula $\mathtt{this}$
