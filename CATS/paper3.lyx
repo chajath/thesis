@@ -2911,7 +2911,7 @@ Domain
 \begin{eqnarray*}
 Ex & = & Var\cup\left\{ Void\right\} \\
 CState & = & Var\times ObjMem\times\\
- &  & Object\times Return\times Ex
+ &  & This\times Return\times Ex
 \end{eqnarray*}
 
 \end_inset
@@ -2992,7 +2992,7 @@ Domain
 \begin_inset Formula 
 \begin{eqnarray*}
 AEx & = & AVar\cup\left\{ Void\right\} \\
-AState & = & AVar\times AObjMem\times AObj\\
+AState & = & AVar\times AObjMem\times AThis\\
  &  & Curried\times AReturn\times AEx
 \end{eqnarray*}
 
