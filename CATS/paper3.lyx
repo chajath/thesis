@@ -476,7 +476,7 @@ Parametric semantics
 \begin_inset Formula $State$
 \end_inset
 
-, 
+ record, 
 \begin_inset Formula $d$
 \end_inset
 
@@ -560,29 +560,6 @@ Throughout the analysis, we introduce following primitive operations:
 
  interprets a meaning of an execution point stepping through a function
  declaration site
-\end_layout
-
-\begin_layout Itemize
-\begin_inset Formula $\kappa$
-\end_inset
-
- and 
-\begin_inset Formula $\bar{\kappa}$
-\end_inset
-
- are the packing / unpacking operation.
- 
-\begin_inset Formula $\kappa$
-\end_inset
-
- takes caller's state and parameter information and constructs an initial
- state for a callee function.
- 
-\begin_inset Formula $\bar{\kappa}$
-\end_inset
-
- interprets the end state of a function call and transforms caller's state
- accordingly.
 \end_layout
 
 \begin_layout Itemize
@@ -1136,28 +1113,151 @@ We define following auxiliary functions to incorporate non-monadic functions
 
 \end_deeper
 \begin_layout Definition
+\begin_inset CommandInset label
+LatexCommand label
+name "recup"
+
+\end_inset
+
+
 \begin_inset Argument
 status open
 
 \begin_layout Plain Layout
-Polymorphic transformers
+Record updater
 \end_layout
 
 \end_inset
 
- We define following polymorphic transformers that takes a monadic operators
- defined for a subspace and transforms into an operator at a higher domain,
- where traces of transformations at a subspace is preserved while other
- orthogonal components remain identical.
+ We model a state as a record, with named columns.
+ In this way, an update operation written for a particular set of columns
+ can be reused without redefining it when we add extra dimension to a 
+\begin_inset Formula $State$
+\end_inset
+
+ domain to accommodate extra feature orthogonal to the previous version.
+\end_layout
+
+\begin_layout Definition
+When we have a record 
+\begin_inset Formula $\rho$
+\end_inset
+
+ with named columns 
+\begin_inset Formula $\left\langle c_{1},\ldots,c_{k}\right\rangle $
+\end_inset
+
+, and when an updater function 
+\begin_inset Formula $U$
+\end_inset
+
+ updates columns 
+\begin_inset Formula $c_{i},\ldots,c_{j}$
+\end_inset
+
+, we define a function 
+\begin_inset Formula $\Upsilon$
+\end_inset
+
+ that takes a record, project its columns into an n-tuple corresponding
+ to the selected columns, let 
+\begin_inset Formula $U$
+\end_inset
+
+ update the tuple, and finally update the whole record with the updated
+ tuple.
+\end_layout
+
+\begin_layout Definition
+\begin_inset Formula $P_{c_{i},\ldots,c_{j}}=\lambda\rho.\left\langle a_{i},\ldots,a_{j}\right\rangle $
+\end_inset
+
+ where 
+\begin_inset Formula $a_{i}$
+\end_inset
+
+ is a value for the column 
+\begin_inset Formula $c_{i}$
+\end_inset
+
+ of a record 
+\begin_inset Formula $\rho$
+\end_inset
+
  
+\end_layout
+
+\begin_layout Definition
+\begin_inset Formula $J_{c_{i},\ldots,c_{j}}=\lambda\left\langle a_{i},\ldots,a_{j}\right\rangle \lambda\rho.\rho\left[c_{n}=a_{n},n\in\left\{ i,\ldots,j\right\} \right]$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Definition
+\begin_inset Formula $\Upsilon_{c_{i},\ldots,c_{j}}\ U=J_{c_{i},\ldots,c_{j}}\circ U\circ P_{c_{i},\ldots,c_{j}}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Definition
+Similarly, we define an operation to update a record and return a value.
+\end_layout
+
+\begin_layout Definition
+\begin_inset Formula $\Psi_{c_{i},\ldots,c_{j}}\ U=\lambda\rho.\left\langle \rho',a\right\rangle $
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Definition
+where 
+\begin_inset Formula $\left\langle \upsilon,a\right\rangle =U\ \left(P_{c_{i},\ldots,c_{j}}\ \rho\right)$
+\end_inset
+
+ and 
+\begin_inset Formula $\rho'=J_{c_{i},\ldots,c_{j}}\ \upsilon$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Definition
+Finally, we define a value extractor, that takes a record and selects a
+ value from it.
+\end_layout
+
+\begin_layout Definition
+\begin_inset Formula $\Theta{}_{c_{i},\ldots,c_{j}}\ U=U\circ P_{c_{i},\ldots,c_{j}}$
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Definition
+When 
+\begin_inset Formula $c$
+\end_inset
+
+ is an n-tuple space for chosen columns and 
+\begin_inset Formula $r$
+\end_inset
+
+ is a domain of a 
+\begin_inset Formula $State$
+\end_inset
+
+ record, functions defined here have the following type signature.
 \end_layout
 
 \begin_layout Definition
 \begin_inset Formula 
 \begin{eqnarray*}
-\Upsilon & : & \left(A\rightarrow A\right)\rightarrow\left(B\rightarrow B\right)\\
-\Psi & : & \left(A\rightarrow A\times a\right)\rightarrow\left(B\rightarrow B\times a\right)\\
-\Theta & : & \left(A\rightarrow a\right)\rightarrow\left(B\rightarrow a\right)
+\Upsilon & : & \left(c\rightarrow r\right)\rightarrow\left(r\rightarrow r\right)\\
+\Psi & : & \left(c\rightarrow c\times a\right)\rightarrow\left(r\rightarrow r\times a\right)\\
+\Theta & : & \left(c\rightarrow a\right)\rightarrow\left(r\rightarrow a\right)
 \end{eqnarray*}
 
 \end_inset
@@ -1165,19 +1265,17 @@ Polymorphic transformers
 
 \end_layout
 
+\begin_deeper
 \begin_layout Definition
-where 
-\begin_inset Formula $A$
-\end_inset
+\begin_inset Argument
+status open
 
- is a subspace of 
-\begin_inset Formula $B$
-\end_inset
-
-.
+\begin_layout Plain Layout
+Singleton operation
 \end_layout
 
-\begin_layout Definition
+\end_inset
+
 Another commonly occurring pattern is that functions often return a singleton.
  We define a function that takes a function returning a value and lifts
  it to be a function that returns a singleton set.
@@ -1186,7 +1284,7 @@ Another commonly occurring pattern is that functions often return a singleton.
 \begin_layout Definition
 \begin_inset Formula 
 \begin{eqnarray*}
-\Gamma & : & \left(A\rightarrow B\right)\rightarrow\left(A\rightarrow\wp\left(B\right)\right)
+\Gamma & : & \left(a\rightarrow b\right)\rightarrow\left(a\rightarrow\wp\left(b\right)\right)
 \end{eqnarray*}
 
 \end_inset
@@ -1195,7 +1293,15 @@ Another commonly occurring pattern is that functions often return a singleton.
 \end_layout
 
 \begin_layout Definition
-We compose this function with the other transformers.
+For simplicity of notation, we compose this function with the other functions
+ defined in Definition 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "recup"
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Definition
@@ -1212,6 +1318,7 @@ We compose this function with the other transformers.
 \end_layout
 
 \end_deeper
+\end_deeper
 \begin_layout Standard
 We now have monadic constructs and auxiliary functions to describe a semantic
  functions of the model language.
@@ -1220,10 +1327,6 @@ We now have monadic constructs and auxiliary functions to describe a semantic
 
 \begin_layout Section
 Language Analysis
-\end_layout
-
-\begin_layout Subsection
-Augmented syntax tree
 \end_layout
 
 \begin_layout Standard
@@ -1580,12 +1683,6 @@ reference "semantic"
 \end_inset
 
  to describe a function call.
- 
-\begin_inset Formula $\mathtt{evalParams}$
-\end_inset
-
- collects the parameter values as evaluations of expressions successively
- update the state.
  These functions are defined as following:
 \end_layout
 
@@ -1777,18 +1874,18 @@ Functions
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-\mathtt{isterm} & = & \bar{\Theta}\ \lambda R:Return.\left(R=Void\right)\\
+\mathtt{isterm} & = & \bar{\Theta}_{Return}\ \lambda R.\left(R=Void\right)\\
 \mathtt{cond}\left(v,s_{1},s_{2}\right) & = & \begin{cases}
 s_{1} & \mbox{if}\ v=true\\
 s_{2} & \mbox{if}\ v=false
 \end{cases}\\
-\mathtt{asg}\left(id,v\right) & = & \bar{\Upsilon}\ \lambda V:Var.V\left[id\mapsto v\right]\\
-\mathtt{val}\left(id\right) & = & \bar{\Upsilon}\ \lambda V:Var.V\left(id\right)\\
-\mathtt{conval}\left(con\right) & = & con\\
-\mathtt{getinput\left(\rho\right)} & = & \bar{\Psi}\ \lambda O:IO.\left\langle O',z\in\mathbb{N}\right\rangle \mbox{see note}\\
-\mathtt{dooutput}\left(v\right) & = & \bar{\Upsilon}\ \lambda O:IO.O'\mbox{see note}\\
-\mathtt{fundecl}(id,n) & = & \bar{\Upsilon}\ \lambda V:Var.V\left[id\mapsto FP_{n}\right]\\
-\mathtt{ret}\left(v\right) & = & \bar{\Upsilon}\ \lambda R:Return.v\\
+\mathtt{asg}\left(id,v\right) & = & \bar{\Upsilon}_{Var}\ \lambda V.V\left[id\mapsto v\right]\\
+\mathtt{val}\left(id\right) & = & \bar{\Upsilon}_{Var}\ \lambda V.V\left(id\right)\\
+\mathtt{conval}\left(con\right) & = & \left\{ con\right\} \\
+\mathtt{getinput\left(\rho\right)} & = & \bar{\Psi}_{IO}\ \lambda O.\left\langle O',z\in\mathbb{N}\right\rangle \mbox{see note}\\
+\mathtt{dooutput}\left(v\right) & = & \bar{\Upsilon}_{IO}\ \lambda O.O'\mbox{see note}\\
+\mathtt{fundecl}(id,n) & = & \bar{\Upsilon}_{Var}\ \lambda V.V\left[id\mapsto FP_{n}\right]\\
+\mathtt{ret}\left(v\right) & = & \bar{\Upsilon}_{Return}\ \lambda R.v\\
 \mathtt{bin}\left(op,c_{0},c_{1}\right) & = & \mbox{perform binary operation }\\
  &  & \mbox{between two constants}
 \end{eqnarray*}
@@ -1867,18 +1964,18 @@ Functions
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-\mathtt{isterm} & = & \bar{\Theta}\ \lambda R:AReturn.\left(R=Void\right)\\
+\mathtt{isterm} & = & \bar{\Theta}_{AReturn}\ \lambda R.\left(R=Void\right)\\
 \mathtt{cond}\left(v,s_{1},s_{2}\right) & = & \lambda f\lambda\eta.\left(s_{1}\ f\ \eta\right)\cup\left(s_{2}\ f\ \eta\right)\\
-\mathtt{asg}\left(id,v\right) & = & \bar{\Upsilon}\ \lambda\sigma:AVar.\sigma\left[id=v\right]\\
-\mathtt{val}\left(id,v\right) & = & \bar{\Upsilon}\ \lambda\sigma:AVar.\sigma\left(id\right)\\
+\mathtt{asg}\left(id,v\right) & = & \bar{\Upsilon}_{AVar}\ \lambda\sigma.\sigma\left[id=v\right]\\
+\mathtt{val}\left(id,v\right) & = & \bar{\Upsilon}_{AVar}\ \lambda\sigma.\sigma\left(id\right)\\
 \mathtt{conval}\left(con\right) & = & \Gamma\ \begin{cases}
 Number & \mbox{if}\ con\in\mathbb{N}\\
 Boolean & \mbox{if}\ con\in\mathbb{B}
 \end{cases}\\
 \mathtt{getinput} & = & \Gamma\ \lambda\eta.\left\langle \eta,Number\right\rangle \\
 \mathtt{dooutput}\left(v\right) & = & \Gamma\ \lambda\eta.\eta\\
-\mathtt{fundecl}\left(id,n\right) & = & \bar{\Upsilon}\ \lambda\sigma:AVar.\sigma\left[id\mapsto n\right]\\
-\mathtt{ret}\left(v\right) & = & \bar{\Upsilon}\ \lambda R:AReturn.v\\
+\mathtt{fundecl}\left(id,n\right) & = & \bar{\Upsilon}_{AVar}\ \lambda\sigma.\sigma\left[id\mapsto n\right]\\
+\mathtt{ret}\left(v\right) & = & \bar{\Upsilon}_{AReturn}\ \lambda R:AReturn.v\\
 \mathtt{bin}\left(op,c_{0},c_{1}\right) & = & \Gamma\ \begin{cases}
 Number & \mbox{if}\ op\in{\scriptstyle \left\{ +,-,*,/\right\} }\\
 Boolean & \mbox{otherwise}
@@ -1978,7 +2075,7 @@ Functions
 \\
 \lambda f,\rho.\left\{ \left\langle \rho,\left\langle n,\left[C\mid p\right]\right\rangle \right\rangle \right\}  & \mbox{otherwise}
 \end{cases}\\
-\mathtt{fundecl}(id,n)=\bar{\Upsilon}\ \lambda V:Aval.V\left[id\mapsto\left\langle n,\phi\right\rangle \right]
+\mathtt{fundecl}(id,n)=\bar{\Upsilon}_{Var}\ \lambda V.V\left[id\mapsto\left\langle n,\phi\right\rangle \right]
 \end{gather*}
 
 \end_inset
@@ -2135,10 +2232,10 @@ status open
 \begin_inset Formula 
 \begin{eqnarray*}
 \mathtt{apply}\left(\left\langle n,c,e\right\rangle ,p,e\right) & = & \begin{cases}
-\Theta\ \lambda\nu:Curried.\underset{C\in\nu\left(n,c,e\right)}{\bigcup}\mathtt{call}\left(n,\left[C\mid p\right]\right)\ \mbox{if }c+N\left(p\right)=\mathtt{arity}\left(n\right)\\
-\bar{\Psi}\ \lambda\nu:Curried.\left\langle \nu\left[\left\langle n,c+N\left(p\right),e\right\rangle \mapsto\left[C\mid p\right]\right],\left\langle n,c+N\left(p\right),e\right\rangle \right\rangle \ \mbox{otherwise}
+\Theta_{Curried}\ \lambda\nu.\underset{C\in\nu\left(n,c,e\right)}{\bigcup}\mathtt{call}\left(n,\left[C\mid p\right]\right)\ \mbox{if }c+N\left(p\right)=\mathtt{arity}\left(n\right)\\
+\bar{\Psi}_{Curried}\ \lambda\nu.\left\langle \nu\left[\left\langle n,c+N\left(p\right),e\right\rangle \mapsto\left[C\mid p\right]\right],\left\langle n,c+N\left(p\right),e\right\rangle \right\rangle \ \mbox{otherwise}
 \end{cases}\\
-\mathtt{fundecl}\left(id,n\right) & = & \bar{\Upsilon}\ \lambda\sigma:AVar.\sigma\left[id\mapsto\left\langle n,0,0\right\rangle \right]
+\mathtt{fundecl}\left(id,n\right) & = & \bar{\Upsilon}_{AVar}\ \lambda\sigma.\sigma\left[id\mapsto\left\langle n,0,0\right\rangle \right]
 \end{eqnarray*}
 
 \end_inset
@@ -2427,8 +2524,9 @@ Value & = & \mathbb{Z}\cup\left\{ T,F\right\} \cup Object\cup\\
  &  & FunctionPointer\\
 Object & = & \left\{ OBJ_{n}\mid n\in\left\{ 0\right\} \cup\mathbb{N}\right\} \\
 ObjMem & = & n\rightarrow V\\
+This & = & Object\\
 CState & = & Var\times ObjMem\times\\
- &  & Object\times Return
+ &  & This\times Return
 \end{eqnarray*}
 
 \end_inset
@@ -2513,15 +2611,15 @@ status open
 \begin_layout Plain Layout
 \begin_inset Formula 
 \begin{eqnarray*}
-\mathtt{get}\left(n,id\right) & = & \bar{\Theta}\ \lambda OM:ObjMem.OM\left(n\right)\left(id\right)\\
-\mathtt{set}\left(n,id,v\right) & = & \bar{\Upsilon}\ \lambda OM:ObjMem.OM\left[n\mapsto OM\left(n\right)\left[id\mapsto v\right]\right]\\
-\mathtt{getglobal} & = & \bar{\Theta}\ \lambda OM:ObjMem.OM\left(0\right)\\
-\mathtt{getthis} & = & \bar{\Theta}\ \lambda T:Object.T\\
+\mathtt{get}\left(n,id\right) & = & \bar{\Theta}_{ObjMem}\ \lambda OM.OM\left(n\right)\left(id\right)\\
+\mathtt{set}\left(n,id,v\right) & = & \bar{\Upsilon}_{ObjMem}\ \lambda OM.OM\left[n\mapsto OM\left(n\right)\left[id\mapsto v\right]\right]\\
+\mathtt{getglobal} & = & \bar{\Theta}_{ObjMem}\ \lambda OM.OM\left(0\right)\\
+\mathtt{getthis} & = & \bar{\Theta}_{This}\ \lambda T.T\\
 \mathtt{apply}\left(\left\langle n,C\right\rangle ,p,t,\_\right) & = & \begin{cases}
 \mathtt{call}\left(n,\left[C\mid p\right],t\right) & \mbox{if}\ N\left(\left[C\mid p\right]\right)=\mathtt{arity}\left(n\right)\\
 \Gamma\ \lambda\rho.\left\langle \rho,\left\langle n,\left[C\mid p\right]\right\rangle \right\rangle  & \mbox{otherwise}
 \end{cases}\\
-\mathtt{newobj}\left(\_\right) & = & \bar{\Psi}\ \lambda OM:ObjMem.\left\langle OM\left[n\mapsto\phi\right],n\right\rangle \ \mbox{where}\ n=N\left(OM\right)
+\mathtt{newobj}\left(\_\right) & = & \bar{\Psi}_{ObjMem}\ \lambda OM.\left\langle OM\left[n\mapsto\phi\right],n\right\rangle \ \mbox{where}\ n=N\left(OM\right)
 \end{eqnarray*}
 
 \end_inset
@@ -2580,8 +2678,9 @@ Domain
 AObj & = & \left\{ 0\right\} \cup Eid\\
 AVal & = & P\cup AObj\cup FunPointer\\
 AObjMem & = & Eid\rightarrow AVar\\
+AThis & = & AObj\\
 AState & = & AVar\times AObjMem\times\\
- &  & AObj\times Curried\times AReturn
+ &  & AThis\times Curried\times AReturn
 \end{eqnarray*}
 
 \end_inset
@@ -2654,15 +2753,15 @@ status open
 \begin_layout Plain Layout
 \begin_inset Formula 
 \begin{eqnarray*}
-\mathtt{get}\left(n,id\right) & = & \bar{\Theta}\ \lambda\alpha:AObjMem.\alpha\left(n\right)\\
-\mathtt{set}\left(n,id,v\right) & = & \bar{\Upsilon}\ \lambda\alpha:AObjMem.\alpha\left(n\right)\left[id\mapsto v\right]\\
-\mathtt{obj}\left(j\right) & = & \bar{\Theta}\ \lambda\alpha:AObjMem.\alpha\left(j\right)\\
-\mathtt{getthis} & = & \bar{\Theta}\ \lambda\tau:AObj.\tau\\
-\mathtt{newobj}\left(n\right) & = & \bar{\Psi}\ \lambda\alpha:AObjMem.\left\langle \alpha\left[n\mapsto\phi\right],n\right\rangle \\
+\mathtt{get}\left(n,id\right) & = & \bar{\Theta}_{AObjMem}\ \lambda\alpha.\alpha\left(n\right)\\
+\mathtt{set}\left(n,id,v\right) & = & \bar{\Upsilon}_{AObjMem}\ \lambda\alpha.\alpha\left(n\right)\left[id\mapsto v\right]\\
+\mathtt{obj}\left(j\right) & = & \bar{\Theta}_{AObjMem}\ \lambda\alpha.\alpha\left(j\right)\\
+\mathtt{getthis} & = & \bar{\Theta}_{AThis}\ \lambda\tau.\tau\\
+\mathtt{newobj}\left(n\right) & = & \bar{\Psi}_{AObjMem}\ \lambda\alpha.\left\langle \alpha\left[n\mapsto\phi\right],n\right\rangle \\
 \mathtt{apply}\left(\left\langle n,c,e\right\rangle ,p,t,e\right) & = & \begin{cases}
-\Theta\ \lambda\nu:Curried.\underset{C\in\nu\left(n,c,e\right)}{\bigcup}\mathtt{call}\left(n,\left[C\mid p\right],t\right)\ \mbox{if}\ c+N\left(p\right)=\mathtt{arity}\left(n\right) & \begin{gathered}\end{gathered}
+\Theta_{Curried}\ \lambda\nu.\underset{C\in\nu\left(n,c,e\right)}{\bigcup}\mathtt{call}\left(n,\left[C\mid p\right],t\right)\ \mbox{if}\ c+N\left(p\right)=\mathtt{arity}\left(n\right) & \begin{gathered}\end{gathered}
 \\
-\bar{\Psi}\ \lambda\nu:Curried.\left\langle \nu\left[\left\langle n,c+N\left(p\right),e\right\rangle \mapsto\left[C\mid p\right]\right],\left\langle n,c+N\left(p\right),e\right\rangle \right\rangle \ \mbox{otherwise}
+\bar{\Psi}_{Curried}\ \lambda\nu.\left\langle \nu\left[\left\langle n,c+N\left(p\right),e\right\rangle \mapsto\left[C\mid p\right]\right],\left\langle n,c+N\left(p\right),e\right\rangle \right\rangle \ \mbox{otherwise}
 \end{cases}
 \end{eqnarray*}
 
@@ -2849,16 +2948,15 @@ Functions
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-\mathtt{isterm} & = & \Theta\ \lambda R:Return,E:Ex.\\
+\mathtt{isterm} & = & \Theta_{Returnm,Ex}\ \lambda R,E.\\
  &  & \left(R=Void\right)\wedge\left(E=Void\right)\\
-\mathtt{throw}\left(v\right) & = & \bar{\Upsilon}\ \lambda E:Ex.v\\
-\mathtt{catch}\left(id,s\right) & = & \Theta\ \lambda E:Ex.\\
+\mathtt{throw}\left(v\right) & = & \bar{\Upsilon}_{Ex}\ \lambda E.v\\
+\mathtt{catch}\left(id,s\right) & = & \Theta_{Ex}\ \lambda E.\\
  &  & \begin{cases}
 \mathtt{noop} & \mbox{if}\ E=Void\\
 \lambda f,r.s\ f\ \mathtt{exs}\left(\rho,id\right) & \mbox{otherwise}
 \end{cases}\\
-\mathtt{exs}\left(id\right) & = & \Upsilon\ \lambda V:Vars,E:Ex.\\
- &  & \left\langle V\left[id\mapsto E\right],Void\right\rangle 
+\mathtt{exs}\left(id\right) & = & \Upsilon_{Vars,Ex}\ \lambda V,E.\left\langle V\left[id\mapsto E\right],Void\right\rangle 
 \end{eqnarray*}
 
 \end_inset
@@ -2932,15 +3030,15 @@ Functions
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-\mathtt{isterm} & = & \Theta\ \lambda R:AReturn,E:AEx.\\
+\mathtt{isterm} & = & \Theta_{AReturn,AEx}\ \lambda R,E.\\
  &  & \left(R=Void\right)\wedge\left(E=Void\right)\\
-\mathtt{throw}\left(v\right) & = & \bar{\Upsilon}\ \lambda E:AEx.v\\
-\mathtt{catch}\left(id,s\right) & = & \Theta\ \lambda E:AEx.\\
+\mathtt{throw}\left(v\right) & = & \bar{\Upsilon}_{AEx}\ \lambda E.v\\
+\mathtt{catch}\left(id,s\right) & = & \Theta_{AEx}\ \lambda E.\\
  &  & \begin{cases}
 \mathtt{noop} & \mbox{if}\ E=Void\\
 \lambda f\lambda\eta.s\ f\ \mathtt{exs}\left(\eta,id\right) & \mbox{otherwise}
 \end{cases}\\
-\mathtt{exs}\left(id\right) & = & \Upsilon\ \lambda\sigma:AVars,E:AEx.\\
+\mathtt{exs}\left(id\right) & = & \Upsilon_{AVars,AEx}\ \lambda\sigma,E.\\
  &  & \left\langle \sigma\left[id\mapsto E\right],Void\right\rangle 
 \end{eqnarray*}
 
