@@ -374,8 +374,8 @@ key "Bracha:1990:MI:97946.97982"
  There are model languages and formalisations of mixin functions, such as
  
 \begin_inset CommandInset citation
-LatexCommand cite
-key "Anderson:ECOOP2005,Vub-prog-tr96aformalisation"
+LatexCommand citet
+key "Anderson:ECOOP2005,Mens:TR1996"
 
 \end_inset
 
@@ -2040,9 +2040,11 @@ Function currying
 \end_layout
 
 \begin_layout Standard
-There is no inherent semantic function change required in this case.
- However, we do extend call function to include an eid as an input, for
- the reason explained in the abstract domain paragraph.
+Introduction of a function currying does not change the syntactic structure
+ of the language.
+ Therefore, there is no inherent reason for changing semantic functions.
+ However, we do redefine semantics for calling functions to include an eid
+ as an input, for the reason explained in the abstract domain paragraph.
 \end_layout
 
 \begin_layout Standard
