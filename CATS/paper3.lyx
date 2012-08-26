@@ -226,7 +226,7 @@ What these languages provide is an ability to rapidly prototype and validate
 
 \begin_layout Standard
 However, these features come at a cost.
- Lacking a formal, static definition of type information makes dynamically
+ The lack of a formal, static definition of type information makes dynamically
  typed languages harder to analyse.
  This difficulty causes several practical problems.
  
@@ -243,7 +243,7 @@ As applications become more mature, more efforts are devoted to program
 Whereas programmers using statically typed languages enjoy an abundance
  of development tools, choices of tools for development in dynamically typed
  languages are limited, and the tools that do exist lack much of the power
- of the tools for statically typed languages, largely due to the difficulty
+ of the tools for statically typed languages, owing largely to the difficulty
  or infeasibility of type analysis for such languages.
 \end_layout
 
@@ -255,7 +255,7 @@ y typed languages.
 \begin_layout Standard
 With these problems in mind, we designed a model language that has a dynamism
  comparable to that of the aforementioned scripting languages, such as duck
- typing, reflection, and function currying.
+ typing, reflection, and partial function application.
  A notable omission is a closure scoping.
  However, allowing function currying gives enough expressive power to the
  language.
@@ -299,7 +299,7 @@ key "Mosses1996TPA"
 \end_inset
 
 , shares the motivation that semantics ought to be pragmatic, yet expressive
- enough to analyse a non-trivial, feature-rich languages.
+ enough to deal with non-trivial, feature-rich languages.
  While action semantics endeavours to devise a new semantics, we constrain
  ourself to the language of denotational semantics, and seek to devise a
  formalism largely compatible with denotational semantics.
@@ -320,21 +320,21 @@ key "Wadler:1989:TF:99370.99404"
 \end_layout
 
 \begin_layout Standard
-On the type analysis of dynamic languages, 
+Regarding the type analysis of dynamic languages, 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "Anderson:ECOOP2005,Anderson:ENTCS2005,Guha:ESOP2011,Wrigstad:POPL2010"
 
 \end_inset
 
- devise model languages and their semantics for the purpose of static analysis
+ study simple languages and their semantics for the purpose of static analysis
  of dynamic languages.
- A major difference between them and the model language presented in this
- paper is that our model language is designed to capture the feature of
- real world languages that allow functions to alter types through side-effect
- causing statements.
- Similarities and differences of this work compared to the cited works are
- given as we encounter them in this paper.
+ A major difference between those languages and the model language presented
+ in this paper is that our language is designed to capture the critical
+ feature of real world languages which allow functions to alter types through
+ side-effect causing statements.
+ We point out similarities and differences of this work compared to the
+ cited works as we encounter them in this paper.
 \end_layout
 
 \begin_layout Standard
@@ -349,12 +349,12 @@ key "Ancona:2007:RST:1297081.1297091,Dufour:2006"
 
  design restricted versions of a scripting languages so that static inference
  of types can be performed.
- Some techniques employed in those projects can also be found in this paper;
- the use of allocation sites as static references is an example.
+ We adopt several techniques employed in those projects , such as the use
+ of named memory allocation sites as static references.
 \end_layout
 
 \begin_layout Standard
-An important use case of functions in dynamically typed language is 
+An important use case of functions in dynamically typed languages is 
 \begin_inset Quotes eld
 \end_inset
 
@@ -369,8 +369,9 @@ key "Bracha:1990:MI:97946.97982"
 
 \end_inset
 
-), where, by passing arguments to such function, objects can be extended
- with extra methods.
+).
+ By passing arguments to a mixin function, objects can be extended with
+ extra methodsthat is, functionality can be added dynamically.
  There are model languages and formalisations of mixin functions, such as
  
 \begin_inset CommandInset citation
@@ -380,9 +381,9 @@ key "Anderson:ECOOP2005,Mens:TR1996"
 \end_inset
 
 .
- Where those works seek to find functional models for mixins, we model a
- language with side-effect causing functions that is expressive enough to
- program mixin inheritance.
+ Where those works seek to find functional models for mixins, we define
+ instead a language (with side-effect causing functions) that is expressive
+ enough to program mixin inheritance.
 \end_layout
 
 \begin_layout Standard
@@ -392,11 +393,11 @@ key "Jensen:SAS2009"
 
 \end_inset
 
- built a feature-complete analyser for the JavaScript language.
- Our work can be progressed further to become a theoretical counterpart
- for the analyser.
- Furthermore, such an attempt to formalise the analysis might pave the way
- for further refinement and improvement.
+ describe a feature-complete analyser for the JavaScript language.
+ Our work can be progressed further to provide the semantic foundation for
+ such an analyser.
+ Such an attempt to formalise the analysis might pave the way for further
+ refinement and improvement.
 \end_layout
 
 \begin_layout Section
@@ -416,7 +417,7 @@ What is the semantic operations entailed in a particular syntactic structure?
 \end_inset
 
  entails a primitive operation 
-\begin_inset Formula $\mathtt{assign}\left(a,30\right)$
+\begin_inset Formula $\mathtt{asg}\left(a,30\right)$
 \end_inset
 
 .
@@ -425,11 +426,10 @@ What is the semantic operations entailed in a particular syntactic structure?
 \begin_layout Enumerate
 How do we interpret such semantic operations in a particular point of view?
  If we were to give a concrete interpretation, we would interpret 
-\begin_inset Formula $\mathtt{assign}\left(a,30\right)$
+\begin_inset Formula $\mathtt{asg}\left(a,30\right)$
 \end_inset
 
- as updating an environment with a newly defined variable e.g.
- 
+ as updating an environment with a newly defined variable e.g., 
 \begin_inset Formula $Env\left[a=30\right]$
 \end_inset
 
@@ -490,11 +490,36 @@ parametric semantics
  is an interpretation of primitive operations.
 \end_layout
 
-\begin_layout Definition
+\begin_layout Standard
 Every statement is understood as a series of non-deterministic state transformat
-ion, including return statement and function calls.
- When a function returns, the return statement transforms a state into a
- returning state.
+ions.
+ We dictinguish between 
+\begin_inset Quotes eld
+\end_inset
+
+normal
+\begin_inset Quotes erd
+\end_inset
+
+ and 
+\begin_inset Quotes eld
+\end_inset
+
+escaping
+\begin_inset Quotes erd
+\end_inset
+
+ statements, the latter yielding an 
+\begin_inset Quotes eld
+\end_inset
+
+escape
+\begin_inset Quotes erd
+\end_inset
+
+ state.
+ For example, when a function returns, the return statement transforms the
+ current state into an escape state.
  Our 
 \begin_inset Quotes eld
 \end_inset
@@ -503,25 +528,26 @@ bind
 \begin_inset Quotes erd
 \end_inset
 
- operator incorporates a parametric operation 
+ operator relies on a parametric operation 
 \begin_inset Formula $\mathtt{isterm}$
 \end_inset
 
- which defines when to terminate a particular program execution flow.
- Such modelling of a control flow provides a more general formalisation
- of a control flow, and allows handling of exceptions as well.
+ to spell out the precise mechanism for escaping a current program execution
+ flow.
+ This provides a flexibale and general formalisation of a control flow,
+ and it allows the handling of exceptions as well as function return statements.
 \end_layout
 
 \begin_layout Standard
-Throughout the analysis, we use following primitive operations:
+Throughout the analysis, we use the following primitive operations:
 \end_layout
 
 \begin_layout Itemize
 \begin_inset Formula $\mathtt{isterm}$
 \end_inset
 
- takes a state and reports whether a particular state is terminal (i.e.
- whether or not we would progress to execute the successor statement)
+ takes a state and reports whether a particular state is terminal (i.e., whether
+ or not control flow reaches the successor statement)
 \end_layout
 
 \begin_layout Itemize
@@ -529,7 +555,7 @@ Throughout the analysis, we use following primitive operations:
 \end_inset
 
  interprets the meaning of a branching point when a value and two transformation
-s (one for true and another for false) are given.
+s (one for true and another for false) are given
 \end_layout
 
 \begin_layout Itemize
@@ -561,7 +587,7 @@ s (one for true and another for false) are given.
 \begin_inset Formula $\mathtt{dooutput}$
 \end_inset
 
- defines the meanings of console I/O operations
+ define the meanings of console I/O operations 
 \begin_inset Note Greyedout
 status open
 
@@ -612,7 +638,7 @@ Can we combine this item with the next to specify semantics of all language
 \begin_inset Formula $\mathtt{set}$
 \end_inset
 
- defines the meaning of getting or setting a member to an object.
+ defines the meaning of getting or setting a member of an object
 \end_layout
 
 \begin_layout Itemize
@@ -631,7 +657,7 @@ Can we combine this item with the next to specify semantics of all language
 \begin_inset Formula $\mathtt{this}$
 \end_inset
 
-, respectively.
+, respectively
 \end_layout
 
 \begin_layout Itemize
@@ -639,13 +665,13 @@ Can we combine this item with the next to specify semantics of all language
 \end_inset
 
  defines the meaning of instantiating a new object from a particular allocation
- site.
+ site
 \end_layout
 
 \begin_layout Standard
 Our model language, as it evolves along with the framework, has a set of
- features found common in scripting languages.
- Here is an example of the model language:
+ features found commonly in scripting languages.
+ Below is an example of a program written in the model language:
 \end_layout
 
 \begin_layout Standard
@@ -861,8 +887,18 @@ try {
 \end_layout
 
 \begin_layout Standard
-Locally-scoped procedural languages with support for higher order functions
- (lines 1 to 5) are introduced in 
+In the remainder of the paper we provide the semantics for a language with
+ many different features.
+ We introduce the components of the language step by step.
+ The aim is to demonstrate that the semantic formalism enables such a stepwise
+ development, each step being incremental in the sense that it does not
+ require revision of the semantic equations developed before the step.
+ 
+\end_layout
+
+\begin_layout Standard
+A locally-scoped procedural language with support for higher order functions
+ (lines 1 to 5) is introduced in Section 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sub:Procedural-language"
@@ -870,7 +906,7 @@ reference "sub:Procedural-language"
 \end_inset
 
 .
- Function currying (lines 7, 8 and 20) is introduced in 
+ Function currying (lines 7, 8 and 20) is introduced in Section 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sub:Function-currying"
@@ -878,8 +914,8 @@ reference "sub:Function-currying"
 \end_inset
 
 .
- Object oriented programming, with duck-typing and reflection, is introduced
- in 
+ Object oriented features, including duck-typing and reflection, are introduced
+ in Section 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sub:Object-Oriented"
@@ -887,7 +923,7 @@ reference "sub:Object-Oriented"
 \end_inset
 
 .
- Finally, exception handling (lines 38 to 42) is introduced in 
+ Finally, exception handling (lines 38 to 42) is introduced in Section 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sub:Exception-handling"
@@ -1807,7 +1843,7 @@ status open
  & \mathcal{S}\ds{\mathtt{while}\left(\ex E1\right)\st{S_{1}}1} & = & Y\lambda x.\lambda f\lambda r.\left(\begin{aligned}\mathcal{E}\ \dd{\ex E1}\bind\lambda v.\mathtt{cond}\left(\begin{gathered}v,\left(\mathcal{S}\ \dd{\st{S_{1}}1}\right)\bind\lambda\_.x,\mathtt{noop}\end{gathered}
 \right)\end{aligned}
 \right)\\
- & \mathcal{S}\ds{\mathtt{output}\ \ex E1} & = & \mathcal{E}\ \dd{\ex E1}\bind\lambda v.I_{S}\ \mathtt{output}\left(v\right)\\
+ & \mathcal{S}\ds{\mathtt{output}\ \ex E1} & = & \mathcal{E}\ \dd{\ex E1}\bind\lambda v.I_{S}\ \mathtt{dooutput}\left(v\right)\\
  & S\ds{\mathtt{function}\ id\left(IDs\right)\ \st{S_{1}}1} & = & I_{S}\ \mathtt{fundecl}\left(id,s\right)\\
  & \mathcal{E}\de{con} & = & I_{A}\ \mathtt{conval}\left(con\right)\\
  & \mathcal{E}\de{L} & = & \mathcal{L}\ \dd{L}\\
@@ -3700,7 +3736,7 @@ Conclusion and Future Direction
 
 \begin_layout Standard
 As we have noted in the introduction, this work is a snapshot of an ongoing
- dialect between theory and practice, positively informing each other to
+ dialogue between theory and practice, positively informing each other to
  gradually move towards a better theorisation (and practical implementation)
  of a difficult task of analysing dynamic languages.
  We sought to modularise the theoretic framework so that we can take an
