@@ -464,7 +464,7 @@ parametric semantics
 \begin_inset Formula $P$
 \end_inset
 
- is a quintuple 
+ is a quadruple 
 \begin_inset Formula $\left(X,D,d,M\right)$
 \end_inset
 
@@ -489,17 +489,28 @@ parametric semantics
 \end_inset
 
  is an interpretation of primitive operations.
- 
-\begin_inset Note Greyedout
-status open
-
-\begin_layout Plain Layout
-Mention that state includes a return value.
 \end_layout
 
+\begin_layout Definition
+Every statement is understood as a series of non-deterministic state transformat
+ion, including return statement and function calls.
+ When a function returns, the return statement transforms a state into a
+ returning state.
+ Our 
+\begin_inset Quotes eld
 \end_inset
 
+bind
+\begin_inset Quotes erd
+\end_inset
 
+ operator incorporates a parametric operation 
+\begin_inset Formula $\mathtt{isterm}$
+\end_inset
+
+ which defines when to terminate a particular program execution flow.
+ Such modelling of a control flow provides a more general formalisation
+ of a control flow, and allows handling of exceptions as well.
 \end_layout
 
 \begin_layout Standard
