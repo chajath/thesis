@@ -518,17 +518,8 @@ Throughout the analysis, we use following primitive operations:
 \begin_inset Formula $\mathtt{cond}$
 \end_inset
 
- is a branching point 
-\begin_inset Note Greyedout
-status open
-
-\begin_layout Plain Layout
-Explain
-\end_layout
-
-\end_inset
-
-
+ interprets the meaning of a branching point when a value and two transformation
+s (one for true and another for false) are given.
 \end_layout
 
 \begin_layout Itemize
@@ -622,17 +613,15 @@ Can we combine this item with the next to specify semantics of all language
 \begin_inset Formula $\mathtt{getthis}$
 \end_inset
 
- define the meaning of such keyword as it occur in a particular state.
-\begin_inset Note Greyedout
-status open
-
-\begin_layout Plain Layout
-Please clarify
-\end_layout
-
+ define the meaning of keywords 
+\begin_inset Formula $\mathtt{global}$
 \end_inset
 
+ and 
+\begin_inset Formula $\mathtt{this}$
+\end_inset
 
+, respectively.
 \end_layout
 
 \begin_layout Itemize
