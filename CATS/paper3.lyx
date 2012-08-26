@@ -112,8 +112,8 @@ figs-within-sections
 \begin_body
 
 \begin_layout Title
-Monadic Theory of Language Analysis and its Application in Type Analysis
- of Dynamic Language
+Parametric Denotational Semantics for Extensible Language Definition and
+ Program Analysis
 \end_layout
 
 \begin_layout Author
@@ -169,7 +169,7 @@ submittedstandard
 \begin_layout Abstract
 We present a novel approach to construction of a formal semantics for a
  programming language.
- Our approach, using a parametric monadic semantics, allows the semantics
+ Our approach, using a parametric denotational semantics, allows the semantics
  to be easily extended to support new language features, and abstracted
  to define program analyses.
  We apply this in analysing a duck-typed, reflective, curried dynamic language.
@@ -187,7 +187,7 @@ Two distinct needs motivated the development of the present work.
  First, there is the theoretician's need for a simple, concise, elegant
  way of presenting a formal semantics for a programming language and of
  developing that into various static analyses.
- We base our approach on a monadic denotational semantics that is modularised
+ We base our approach on a parametric denotational semantics that is modularised
  to allow the concrete semantics and the abstract interpretation to share
  a common framework that uniformly handles most aspects of the programming
  language.
@@ -450,7 +450,6 @@ Observe that an interpretation of syntactic structure can remain agnostic
 \end_layout
 
 \begin_layout Definition
-A 
 \begin_inset Argument
 status open
 
@@ -460,7 +459,7 @@ parametric semantics
 
 \end_inset
 
- parametric semantics 
+ A parametric semantics 
 \begin_inset Formula $P$
 \end_inset
 
