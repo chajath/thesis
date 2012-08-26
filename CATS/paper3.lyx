@@ -1592,7 +1592,7 @@ begin{grammar}
 
 \begin_layout Plain Layout
 
-<Expr> ::= <con> | <Lexpr>
+<Expr> ::= <con> | <Lexpr> | `input'
 \end_layout
 
 \begin_layout Plain Layout
