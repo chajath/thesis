@@ -627,26 +627,31 @@ status open
 
 \begin_layout Plain Layout
 
+\lang english
 function fact(f,x) {
 \end_layout
 
 \begin_layout Plain Layout
 
+\lang english
 	if(x < 2) { return 1; }
 \end_layout
 
 \begin_layout Plain Layout
 
+\lang english
 	return x * f(f,x-1);
 \end_layout
 
 \begin_layout Plain Layout
 
+\lang english
 }
 \end_layout
 
 \begin_layout Plain Layout
 
+\lang english
 output fact(fact,input);
 \end_layout
 
@@ -656,11 +661,13 @@ output fact(fact,input);
 
 \begin_layout Plain Layout
 
+\lang english
 fa=fact(fact);
 \end_layout
 
 \begin_layout Plain Layout
 
+\lang english
 output fa(input);
 \end_layout
 
@@ -670,16 +677,19 @@ output fa(input);
 
 \begin_layout Plain Layout
 
+\lang english
 function Fruit(v) {
 \end_layout
 
 \begin_layout Plain Layout
 
+\lang english
 	this.value = v;
 \end_layout
 
 \begin_layout Plain Layout
 
+\lang english
 }
 \end_layout
 
@@ -689,6 +699,7 @@ function Fruit(v) {
 
 \begin_layout Plain Layout
 
+\lang english
 global.answer = 0;
 \end_layout
 
@@ -698,36 +709,43 @@ global.answer = 0;
 
 \begin_layout Plain Layout
 
+\lang english
 function juicible(fruit, juice) {
 \end_layout
 
 \begin_layout Plain Layout
 
+\lang english
 	function juiceMe(j,x) {
 \end_layout
 
 \begin_layout Plain Layout
 
+\lang english
 		return this.value + j + x;
 \end_layout
 
 \begin_layout Plain Layout
 
+\lang english
 	}
 \end_layout
 
 \begin_layout Plain Layout
 
+\lang english
 	fruit.juice = juiceMe(juice); #currying
 \end_layout
 
 \begin_layout Plain Layout
 
+\lang english
 	global.answer=42;
 \end_layout
 
 \begin_layout Plain Layout
 
+\lang english
 }
 \end_layout
 
@@ -737,26 +755,31 @@ function juicible(fruit, juice) {
 
 \begin_layout Plain Layout
 
+\lang english
 # Juicibles
 \end_layout
 
 \begin_layout Plain Layout
 
+\lang english
 apple = new Fruit(15);
 \end_layout
 
 \begin_layout Plain Layout
 
+\lang english
 juicible(apple, 20);
 \end_layout
 
 \begin_layout Plain Layout
 
+\lang english
 grape = new Fruit(30);
 \end_layout
 
 \begin_layout Plain Layout
 
+\lang english
 juicible(grape, 50);
 \end_layout
 
@@ -766,16 +789,19 @@ juicible(grape, 50);
 
 \begin_layout Plain Layout
 
+\lang english
 # Non-juicibles
 \end_layout
 
 \begin_layout Plain Layout
 
+\lang english
 banana = new Fruit(20);
 \end_layout
 
 \begin_layout Plain Layout
 
+\lang english
 watermelon = new Fruit(25);
 \end_layout
 
@@ -785,16 +811,19 @@ watermelon = new Fruit(25);
 
 \begin_layout Plain Layout
 
+\lang english
 output apple.juice(10); # 15 + 20 + 10
 \end_layout
 
 \begin_layout Plain Layout
 
+\lang english
 output grape.juice(10); # 30 + 50 + 10
 \end_layout
 
 \begin_layout Plain Layout
 
+\lang english
 output global.answer; # 42
 \end_layout
 
@@ -804,26 +833,31 @@ output global.answer; # 42
 
 \begin_layout Plain Layout
 
+\lang english
 try {
 \end_layout
 
 \begin_layout Plain Layout
 
+\lang english
 	if(input > 42) {throw 42;}
 \end_layout
 
 \begin_layout Plain Layout
 
+\lang english
 } catch(e) {
 \end_layout
 
 \begin_layout Plain Layout
 
+\lang english
 	output e;
 \end_layout
 
 \begin_layout Plain Layout
 
+\lang english
 }
 \end_layout
 
@@ -1429,7 +1463,7 @@ We use syntax nodes as references to various items constituting program
 
 \begin_layout Labeling
 \labelwidthstring 00.00.0000
-\begin_inset Formula $id$
+\begin_inset Formula $Id$
 \end_inset
 
  is an alphanumeric identifier.
@@ -1444,7 +1478,7 @@ We define following auxiliary functions to describe the use of the augmented
 \begin_inset Formula 
 \begin{eqnarray*}
 \mathtt{stm} & : & Sid\rightarrow Stm\\
-\mathtt{param} & : & Sid\rightarrow\left[id\right]\\
+\mathtt{param} & : & Sid\rightarrow\left[Id\right]\\
 \mathtt{arity} & : & Sid\rightarrow\mathbb{N}\cup\left\{ 0\right\} 
 \end{eqnarray*}
 
@@ -1504,9 +1538,9 @@ The analytic framework contains the following semantic functions:
 \begin_inset Formula 
 \begin{eqnarray*}
 F & = & Sid\rightarrow State\rightarrow\wp\left(State\right)\\
-\mathcal{S} & : & Stmt\rightarrow F\rightarrow State\rightarrow\wp\left(State\times\left\{ \bot\right\} \right)\\
-\mathcal{E} & : & Expr\rightarrow F\rightarrow State\rightarrow\wp\left(State\times a\cup\left\{ \bot\right\} \right)\\
-\mathcal{L} & : & LExpr\rightarrow F\rightarrow State\rightarrow\wp\left(State\times a\cup\left\{ \bot\right\} \right)
+\mathcal{S} & : & Stm\rightarrow F\rightarrow State\rightarrow\wp\left(State\times\left\{ \bot\right\} \right)\\
+\mathcal{E} & : & Exp\rightarrow F\rightarrow State\rightarrow\wp\left(State\times a\cup\left\{ \bot\right\} \right)\\
+\mathcal{L} & : & Lexp\rightarrow F\rightarrow State\rightarrow\wp\left(State\times a\cup\left\{ \bot\right\} \right)
 \end{eqnarray*}
 
 \end_inset
@@ -1515,7 +1549,11 @@ F & = & Sid\rightarrow State\rightarrow\wp\left(State\right)\\
 \end_layout
 
 \begin_layout Definition
-\begin_inset Formula $\mathcal{S},\mathcal{E},\mathcal{L}$
+\begin_inset Formula $\mathcal{S},\mathcal{E}$
+\end_inset
+
+ and 
+\begin_inset Formula $\mathcal{L}$
 \end_inset
 
  are semantic functions for statements, expressions and left expressions,
@@ -1599,7 +1637,7 @@ begin{grammar}
 
 \begin_layout Plain Layout
 
-<con> ::= Number | Boolean
+<con> ::= <Num> | <Bool>
 \end_layout
 
 \begin_layout Plain Layout
@@ -1698,7 +1736,7 @@ alt `while' `(' <Exp> `)' `{' <Stm> `}'
 
 
 \backslash
-alt `function' ID `(' [ID [, ID]*]? `)' `{' <Stm> `}'
+alt `function' Id `(' [Id [, Id]*]? `)' `{' <Stm> `}'
 \end_layout
 
 \begin_layout Plain Layout
@@ -1722,6 +1760,11 @@ end{grammar}
 \end_inset
 
 
+\end_layout
+
+\begin_layout Standard
+Here Num and Bool are the syntactic categories for integers and boolean
+ values.
 \end_layout
 
 \begin_layout Standard
@@ -1798,8 +1841,8 @@ reference "semantic"
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-\mathtt{call}\left(n,p\right) & = & \lambda f\lambda\rho.\left\{ \bar{\kappa}\ \rho\ \rho'\mid\rho'\in S\right\} \ \mbox{where}\\
- &  & S=f\ n\ \left(\kappa\ \rho\ p\right)
+\mathtt{call}\left(n,p\right) & = & \lambda f\lambda\rho.\left\{ \mathtt{leave}\ \rho\ \rho'\mid\rho'\in S\right\} \ \mbox{where}\\
+ &  & S=f\ n\ \left(\mathtt{enter}\ \rho\ p\right)
 \end{eqnarray*}
 
 \end_inset
@@ -1815,7 +1858,7 @@ reference "semantic"
 \mathtt{evalParams}\ \epsilon\ ps\ f\ \rho=\lambda f\lambda\rho.\left\langle \rho,ps\right\rangle \\
 \mathtt{evalParams}\ \dd{E}\smallfrown Exps\ ps=\lambda f\lambda\rho.\\
 \underset{\left\langle \rho',con\right\rangle \in S}{\bigcup}\left\{ \mathtt{evalParams}\ Exps\ ps\smallfrown con\ f\ \rho'\right\} \\
-\ \ \mbox{where}\; S=\mathcal{E}\ \dd{\ex E{}}\ f\ \rho
+\ \ \mbox{where}\; S=\mathcal{E}\ \dd{E}\ f\ \rho
 \end{gather*}
 
 \end_inset
@@ -1824,14 +1867,14 @@ reference "semantic"
 \end_layout
 
 \begin_layout Standard
-\begin_inset Formula $\kappa$
+\begin_inset Formula $\mathtt{enter}$
 \end_inset
 
  is a parametrised function that takes a caller's state at the time of function
  invocation and an id-to-constant value mapping, and constructs initial
  state for a callee.
  
-\begin_inset Formula $\bar{\kappa}$
+\begin_inset Formula $\mathtt{leave}$
 \end_inset
 
  takes both the caller's state and the resulting states of callee's, and
@@ -1861,7 +1904,7 @@ status open
 \begin_layout Plain Layout
 \begin_inset Formula 
 \begin{align*}
- & F & = & Y\lambda f.\lambda n.\mathcal{S}\ \dd{\mathtt{stm}\left(n\right)}\ n\ f\\
+ & \mathcal{F} & = & Y\left(\lambda f.\lambda n.\mathcal{S}\ \dd{\mathtt{stm}\left(n\right)}\ f\right)\\
  & \mathcal{S}\dd{\epsilon} & = & I_{A}\bot\\
  & \mathcal{S}\dd{S_{1};S_{2}} & = & \begin{aligned}\mathcal{S}\ \dd{S_{1}}\bind\lambda\_.\mathcal{S}\ \dd{S_{2}}\end{aligned}
 \\
@@ -1875,13 +1918,13 @@ status open
 \right)\end{aligned}
 \right)\\
  & \mathcal{S}\dd{\mathtt{output}\ E} & = & \mathcal{E}\ \dd{E}\bind\lambda v.I_{S}\ \mathtt{dooutput}\left(v\right)\\
- & S\ds{\mathtt{function}\ id\left(IDs\right)\ S_{1}} & = & I_{S}\ \mathtt{fundecl}\left(id,s\right)\\
+ & S\ds{\mathtt{function}\ Id_{1}\left(\vec{Id}\right)\ S_{1}} & = & I_{S}\ \mathtt{fundecl}\left(Id_{1},s\right)\\
  & \mathcal{E}\dd{con} & = & I_{A}\ \mathtt{conval}\left(con\right)\\
  & \mathcal{E}\dd{L} & = & \mathcal{L}\ \dd{L}\\
  & \mathcal{E}\dd{\mathtt{input}} & = & I_{V}\ \mathtt{getinput}\\
  & \mathcal{E}\dd{L\left(\vec{E}\right)} & = & \mathcal{L}\ \dd L\bind\lambda n.\left(\mathtt{evalParams}\ \vec{E}\ \phi\right)\bind\lambda p.\mathtt{call}\left(n,p\right)\\
  & \mathcal{E}\dd{E_{1}\ binop\ E_{2}} & = & \mathcal{E}\ \dd{E_{1}}\bind\lambda c_{1}.\mathcal{E}\ \dd{E_{2}}\bind\lambda c_{2}.I_{A}\ \mathtt{bin}\left(binop,c_{1},c_{2}\right)\\
- & \mathcal{L}\dd{id} & = & I_{A}\ \mathtt{val}\left(id\right)
+ & \mathcal{L}\dd{Id} & = & I_{A}\ \mathtt{val}\left(Id\right)
 \end{align*}
 
 \end_inset
@@ -1944,9 +1987,9 @@ Domain
 \begin{eqnarray*}
 Value & = & \mathbb{Z}\cup\left\{ true,false\right\} \cup\: FunPointer\\
 FunPointer & = & Sid\\
-Var & = & id\rightarrow Value\\
+Env & = & id\rightarrow Value\\
 Return & = & Value\cup\left\{ Void\right\} \\
-CState & = & Var\times IO\times Return
+CState & = & Env\times IO\times Return
 \end{eqnarray*}
 
 \end_inset
@@ -1981,9 +2024,9 @@ Functions
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-\kappa & = & \lambda\left\langle \_,IO,\_\right\rangle ,P,n.\\
+\mathtt{enter} & = & \lambda\left\langle \_,IO,\_\right\rangle ,P,n.\\
  &  & \ \left\langle \left[\mathtt{param}\left(n\right)_{k}\mapsto P_{k}\right],IO,Void\right\rangle \\
-\bar{\kappa} & = & \lambda\left\langle V,\_,\_\right\rangle ,\left\langle \_,IO',R\right\rangle .\\
+\mathtt{leave} & = & \lambda\left\langle V,\_,\_\right\rangle ,\left\langle \_,IO',R\right\rangle .\\
  &  & \ \left\langle \left\langle V,IO',Void\right\rangle ,R\right\rangle 
 \end{eqnarray*}
 
@@ -2000,12 +2043,12 @@ Functions
 s_{1} & \mbox{if}\ v=true\\
 s_{2} & \mbox{if}\ v=false
 \end{cases}\\
-\mathtt{asg}\left(id,v\right) & = & \bar{\Upsilon}_{Var}\ \lambda V.V\left[id\mapsto v\right]\\
-\mathtt{val}\left(id\right) & = & \bar{\Upsilon}_{Var}\ \lambda V.V\left(id\right)\\
+\mathtt{asg}\left(id,v\right) & = & \bar{\Upsilon}_{Env}\ \lambda V.V\left[id\mapsto v\right]\\
+\mathtt{val}\left(id\right) & = & \bar{\Upsilon}_{Env}\ \lambda V.V\left(id\right)\\
 \mathtt{conval}\left(con\right) & = & \left\{ con\right\} \\
 \mathtt{getinput\left(\rho\right)} & = & \bar{\Psi}_{IO}\ \lambda O.\left\langle O',z\in\mathbb{N}\right\rangle \mbox{see note}\\
 \mathtt{dooutput}\left(v\right) & = & \bar{\Upsilon}_{IO}\ \lambda O.O'\mbox{see note}\\
-\mathtt{fundecl}(id,n) & = & \bar{\Upsilon}_{Var}\ \lambda V.V\left[id\mapsto FP_{n}\right]\\
+\mathtt{fundecl}(id,n) & = & \bar{\Upsilon}_{Env}\ \lambda V.V\left[id\mapsto FP_{n}\right]\\
 \mathtt{ret}\left(v\right) & = & \bar{\Upsilon}_{Return}\ \lambda R.v\\
 \mathtt{bin}\left(op,c_{1},c_{2}\right) & = & \mbox{perform binary operation }\\
  &  & \mbox{between two constants}
@@ -2046,10 +2089,10 @@ Domain
 \begin_inset Formula 
 \begin{eqnarray*}
 FunPointer & = & Sid\\
-AVal & = & \left\{ Number,Boolean\right\} \cup\: FunPointer\\
-AVar & = & id\rightarrow AVal\\
+AVal & = & \left\{ Num,Bool\right\} \cup\: FunPointer\\
+AEnv & = & id\rightarrow AVal\\
 AReturn & = & AVal\cup\left\{ Void\right\} \\
-AState & = & AVar\times AReturn
+AState & = & AEnv\times AReturn
 \end{eqnarray*}
 
 \end_inset
@@ -2072,9 +2115,9 @@ Functions
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-\kappa & = & \lambda\left\langle \_,\_\right\rangle ,P,n.\\
+\mathtt{enter} & = & \lambda\left\langle \_,\_\right\rangle ,P,n.\\
  &  & \ \left\langle \left[\mathtt{param}\left(n\right)_{k}\mapsto P_{k}\right],Void\right\rangle \\
-\bar{\kappa} & = & \lambda\left\langle V,\_\right\rangle ,\left\langle \_,R\right\rangle .\left\langle \left\langle V,Void\right\rangle ,R\right\rangle 
+\mathtt{leave} & = & \lambda\left\langle V,\_\right\rangle ,\left\langle \_,R\right\rangle .\left\langle \left\langle V,Void\right\rangle ,R\right\rangle 
 \end{eqnarray*}
 
 \end_inset
@@ -2087,19 +2130,19 @@ Functions
 \begin{eqnarray*}
 \mathtt{esc} & = & \bar{\Theta}_{AReturn}\ \lambda R.\left(R=Void\right)\\
 \mathtt{cond}\left(v,s_{1},s_{2}\right) & = & \lambda f\lambda\eta.\left(s_{1}\ f\ \eta\right)\cup\left(s_{2}\ f\ \eta\right)\\
-\mathtt{asg}\left(id,v\right) & = & \bar{\Upsilon}_{AVar}\ \lambda\sigma.\sigma\left[id=v\right]\\
-\mathtt{val}\left(id,v\right) & = & \bar{\Upsilon}_{AVar}\ \lambda\sigma.\sigma\left(id\right)\\
+\mathtt{asg}\left(id,v\right) & = & \bar{\Upsilon}_{AEnv}\ \lambda\sigma.\sigma\left[id=v\right]\\
+\mathtt{val}\left(id,v\right) & = & \bar{\Upsilon}_{AEnv}\ \lambda\sigma.\sigma\left(id\right)\\
 \mathtt{conval}\left(con\right) & = & \begin{cases}
-\Gamma\ Number & \mbox{if}\ con\in\mathbb{N}\\
-\Gamma\ Boolean & \mbox{if}\ con\in\mathbb{B}
+\Gamma\ Num & \mbox{if}\ con\in\mathbb{N}\\
+\Gamma\ Bool & \mbox{if}\ con\in\mathbb{B}
 \end{cases}\\
-\mathtt{getinput} & = & \Gamma\ \lambda\eta.\left\langle \eta,Number\right\rangle \\
+\mathtt{getinput} & = & \Gamma\ \lambda\eta.\left\langle \eta,Num\right\rangle \\
 \mathtt{dooutput}\left(v\right) & = & \Gamma\ \lambda\eta.\eta\\
-\mathtt{fundecl}\left(id,n\right) & = & \bar{\Upsilon}_{AVar}\ \lambda\sigma.\sigma\left[id\mapsto n\right]\\
+\mathtt{fundecl}\left(id,n\right) & = & \bar{\Upsilon}_{AEnv}\ \lambda\sigma.\sigma\left[id\mapsto n\right]\\
 \mathtt{ret}\left(v\right) & = & \bar{\Upsilon}_{AReturn}\ \lambda R:AReturn.v\\
 \mathtt{bin}\left(op,c_{1},c_{2}\right) & = & \begin{cases}
-\Gamma\ Number & \mbox{if}\ op\in{\scriptstyle \left\{ +,-,*,/\right\} }\\
-\Gamma\ Boolean & \mbox{otherwise}
+\Gamma\ Num & \mbox{if}\ op\in{\scriptstyle \left\{ +,-,*,/\right\} }\\
+\Gamma\ Bool & \mbox{otherwise}
 \end{cases}
 \end{eqnarray*}
 
@@ -2196,7 +2239,7 @@ Functions
 \\
 \lambda f,\rho.\left\{ \left\langle \rho,\left\langle n,C\smallfrown p\right\rangle \right\rangle \right\} \ \mbox{otherwise}
 \end{cases}\\
-\mathtt{fundecl}(id,n)=\bar{\Upsilon}_{Var}\ \lambda V.V\left[id\mapsto\left\langle n,\emptyset\right\rangle \right]
+\mathtt{fundecl}(id,n)=\bar{\Upsilon}_{Env}\ \lambda V.V\left[id\mapsto\left\langle n,\emptyset\right\rangle \right]
 \end{gather*}
 
 \end_inset
@@ -2233,16 +2276,19 @@ status open
 
 \begin_layout Plain Layout
 
+\lang english
 function foo(a,b) {
 \end_layout
 
 \begin_layout Plain Layout
 
+\lang english
 	return a;
 \end_layout
 
 \begin_layout Plain Layout
 
+\lang english
 }
 \end_layout
 
@@ -2252,21 +2298,25 @@ function foo(a,b) {
 
 \begin_layout Plain Layout
 
+\lang english
 x = 0;
 \end_layout
 
 \begin_layout Plain Layout
 
+\lang english
 while(true) {
 \end_layout
 
 \begin_layout Plain Layout
 
+\lang english
 	x = foo(x);
 \end_layout
 
 \begin_layout Plain Layout
 
+\lang english
 }
 \end_layout
 
@@ -2298,7 +2348,7 @@ FunPointer & = & Sid\times c\times\left(Eid\cup\left\{ 0\right\} \right)\\
 Curried & = & Sid\times c\times Eid\rightarrow\left[AVal\right]\\
  &  & \mbox{where}\\
  &  & c\mbox{ is a number of parameters given}\\
-AState & = & AVar\times Curried\times AReturn
+AState & = & AEnv\times Curried\times AReturn
 \end{eqnarray*}
 
 \end_inset
@@ -2352,11 +2402,11 @@ status open
 \begin_layout Plain Layout
 \begin_inset Formula 
 \begin{eqnarray*}
-\mathtt{apply}\left(\left\langle n,c,e\right\rangle ,p,e\right) & = & \begin{cases}
+\mathtt{apply}\left(\left\langle n,c,e\right\rangle ,p,e'\right) & = & \begin{cases}
 \Theta_{Curried}\ \lambda\nu.\underset{C\in\nu\left(n,c,e\right)}{\bigcup}\mathtt{call}\left(n,C\smallfrown p\right)\ \mbox{if }c+N\left(p\right)=\mathtt{{arity}\left(n\right)}\\
-\bar{\Psi}_{Curried}\ \lambda\nu.\left\langle \nu\left[\left\langle n,c+N\left(p\right),e\right\rangle \mapsto C\smallfrown p\right],\left\langle n,c+N\left(p\right),e\right\rangle \right\rangle \ \mbox{otherwise}
+\Psi_{Curried}\ \lambda\nu.\underset{C\in\nu\left(n,c,e\right)}{\bigcup}\left\langle \nu\left[\left\langle n,c+N\left(p\right),e'\right\rangle \mapsto C\smallfrown p\right],\left\langle n,c+N\left(p\right),e'\right\rangle \right\rangle \ \mbox{otherwise}
 \end{cases}\\
-\mathtt{fundecl}\left(id,n\right) & = & \bar{\Upsilon}_{AVar}\ \lambda\sigma.\sigma\left[id\mapsto\left\langle n,0,0\right\rangle \right]
+\mathtt{fundecl}\left(id,n\right) & = & \bar{\Upsilon}_{AEnv}\ \lambda\sigma.\sigma\left[id\mapsto\left\langle n,0,0\right\rangle \right]
 \end{eqnarray*}
 
 \end_inset
@@ -2574,10 +2624,15 @@ We redefine
 \end_layout
 
 \begin_layout Standard
-\begin_inset Formula $\mathtt{call}\left(n,p,t\right)=\begin{gathered}\lambda f\lambda\rho,\gamma.\Omega\ \left\langle \left\{ \bar{\kappa}\ \rho\ \rho'\mid\rho'\in S\right\} ,\gamma'\right\rangle \\
-\mbox{where}\left\langle S,\gamma'\right\rangle =f\ n\ \left(\kappa\ \rho\ \left\langle p,t\right\rangle \ n\right)\ \gamma
-\end{gathered}
-$
+
+\lang english
+\begin_inset Formula 
+\begin{multline*}
+\mathtt{call}\left(n,p,t\right)=\\
+\ \ \ \lambda f\lambda\rho,\gamma.\Theta\ \left\langle \left\{ \mathtt{leave}\ \rho\ \rho'\mid\rho'\in S\right\} ,\gamma'\right\rangle \\
+\mbox{where}\left\langle S,\gamma'\right\rangle =f\ n\ \left(\mathtt{enter}\ \rho\ \left\langle p,t\right\rangle \ n\right)\ \gamma
+\end{multline*}
+
 \end_inset
 
 
@@ -2644,9 +2699,9 @@ Domain
 Value & = & \mathbb{Z}\cup\left\{ T,F\right\} \cup Object\cup\\
  &  & FunctionPointer\\
 Object & = & \left\{ OBJ_{n}\mid n\in\mathbb{N}\right\} \\
-ObjMem & = & n\rightarrow Var\\
+ObjMem & = & n\rightarrow Env\\
 This & = & Object\\
-CState & = & Var\times ObjMem\times\\
+CState & = & Env\times ObjMem\times\\
  &  & This\times Return
 \end{eqnarray*}
 
@@ -2674,11 +2729,11 @@ Functions
 
 \begin_layout Standard
 We redefine 
-\begin_inset Formula $\kappa$
+\begin_inset Formula $\mathtt{enter}$
 \end_inset
 
  and 
-\begin_inset Formula $\bar{\kappa}$
+\begin_inset Formula $\mathtt{leave}$
 \end_inset
 
  functions to allow passing of a receiver object.
@@ -2687,9 +2742,9 @@ We redefine
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-\kappa & = & \lambda\left\langle \_,OM,\_,\_\right\rangle ,\left\langle P,T'\right\rangle ,n.\\
+\mathtt{enter} & = & \lambda\left\langle \_,OM,\_,\_\right\rangle ,\left\langle P,T'\right\rangle ,n.\\
  &  & \ \left\langle \left[\mathtt{param}\left(n\right)_{k}\mapsto P_{k}\right],OM,T',Void\right\rangle \\
-\bar{\kappa} & = & \lambda\left\langle V,\_,T,\_\right\rangle ,\left\langle \_,OM',\_,r\right\rangle .\\
+\mathtt{leave} & = & \lambda\left\langle V,\_,T,\_\right\rangle ,\left\langle \_,OM',\_,r\right\rangle .\\
  &  & \ \left\langle \left\langle V,OM',T,Void\right\rangle ,r\right\rangle 
 \end{eqnarray*}
 
@@ -2798,9 +2853,9 @@ Domain
 \begin{eqnarray*}
 AObj & = & \left\{ 0\right\} \cup Eid\\
 AVal & = & P\cup AObj\cup FunPointer\\
-AObjMem & = & Eid\rightarrow AVar\\
+AObjMem & = & Eid\rightarrow AEnv\\
 AThis & = & AObj\\
-AState & = & AVar\times AObjMem\times\\
+AState & = & AEnv\times AObjMem\times\\
  &  & AThis\times Curried\times AReturn
 \end{eqnarray*}
 
@@ -2829,9 +2884,9 @@ Functions
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-\kappa & = & \lambda\left\langle \_,\alpha,\_,\nu,\_\right\rangle ,\left\langle P,\tau'\right\rangle ,n.\\
+\mathtt{enter} & = & \lambda\left\langle \_,\alpha,\_,\nu,\_\right\rangle ,\left\langle P,\tau'\right\rangle ,n.\\
  &  & \ \left\langle \left[\mathtt{param}\left(n\right)_{k}\mapsto P_{k}\right],\alpha,\tau',\nu,Void\right\rangle \\
-\bar{\kappa} & = & \lambda\left\langle \sigma,\_,\tau,\_,\_\right\rangle ,\left\langle \_,\alpha',\_,\nu',r\right\rangle .\\
+\mathtt{leave} & = & \lambda\left\langle \sigma,\_,\tau,\_,\_\right\rangle ,\left\langle \_,\alpha',\_,\nu',r\right\rangle .\\
  &  & \ \left\langle \left\langle \sigma,\alpha',\tau,\nu',Void\right\rangle ,r\right\rangle 
 \end{eqnarray*}
 
@@ -2987,9 +3042,9 @@ Following functions are the semantic functions for the newly introduced
 \begin_layout Standard
 \begin_inset Formula 
 \begin{gather*}
-\mathcal{S}\ds{\mathtt{try}\ \st{S_{1}}1\ \mathtt{catch}\left(id\right)\ \st{S_{2}}2}=\\
-\left(\begin{aligned}\mathcal{S}\ \dd{\st{S_{1}}1} & \bind\\
-\mathtt{catch}\left(id,\mathcal{S}\ \dd{\st{S_{2}}2}\right)
+\mathcal{S}\dd{\mathtt{try}\ S_{1}\ \mathtt{catch}\left(Id\right)\ S_{2}}=\\
+\left(\begin{aligned}\mathcal{S}\ \dd{S_{1}} & \bind\\
+\mathtt{catch}\left(id,\mathcal{S}\ \dd{S_{2}}\right)
 \end{aligned}
 \right)
 \end{gather*}
@@ -3000,7 +3055,7 @@ Following functions are the semantic functions for the newly introduced
 \end_layout
 
 \begin_layout Standard
-\begin_inset Formula $\mathcal{S}\ds{\mathtt{throw}\ \ex E1}=\mathcal{E}\ \dd{\ex E1}\bind\mathtt{throw}$
+\begin_inset Formula $\mathcal{S}\dd{\mathtt{throw}\ E}=\mathcal{E}\ \dd{E}\bind\mathtt{throw}$
 \end_inset
 
 
@@ -3028,7 +3083,7 @@ Domain
 \begin_inset Formula 
 \begin{eqnarray*}
 Ex & = & Value\cup\left\{ Void\right\} \\
-CState & = & Var\times ObjMem\times\\
+CState & = & Env\times ObjMem\times\\
  &  & This\times Return\times Ex
 \end{eqnarray*}
 
@@ -3052,9 +3107,9 @@ Functions
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-\kappa & = & \lambda\left\langle \_,OM,\_,\_,\_\right\rangle ,\left\langle P,T'\right\rangle ,n.\\
+\mathtt{enter} & = & \lambda\left\langle \_,OM,\_,\_,\_\right\rangle ,\left\langle P,T'\right\rangle ,n.\\
  &  & \ \left\langle \left[\mathtt{param}\left(n\right)_{k}\mapsto P_{k}\right],OM,T',Void,Void\right\rangle \\
-\bar{\kappa} & = & \lambda\left\langle V,\_,T,\_,\_\right\rangle ,\left\langle \_,OM',\_,r,e\right\rangle .\\
+\mathtt{leave} & = & \lambda\left\langle V,\_,T,\_,\_\right\rangle ,\left\langle \_,OM',\_,r,e\right\rangle .\\
  &  & \ \left\langle \left\langle V,OM',T,Void,e\right\rangle ,r\right\rangle 
 \end{eqnarray*}
 
@@ -3071,10 +3126,10 @@ Functions
 \mathtt{throw}\left(v\right) & = & \bar{\Upsilon}_{Ex}\ \lambda E.v\\
 \mathtt{catch}\left(id,s\right) & = & \Theta_{Ex}\ \lambda E.\\
  &  & \begin{cases}
-\mathtt{noop} & \mbox{if}\ E=Void\\
+I_{A}\bot & \mbox{if}\ E=Void\\
 \lambda f,r.s\ f\ \mathtt{exs}\left(\rho,id\right) & \mbox{otherwise}
 \end{cases}\\
-\mathtt{exs}\left(id\right) & = & \Upsilon_{Vars,Ex}\ \lambda V,E.\left\langle V\left[id\mapsto E\right],Void\right\rangle 
+\mathtt{exs}\left(id\right) & = & \Upsilon_{Env,Ex}\ \lambda V,E.\left\langle V\left[id\mapsto E\right],Void\right\rangle 
 \end{eqnarray*}
 
 \end_inset
@@ -3109,8 +3164,8 @@ Domain
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-AEx & = & AVar\cup\left\{ Void\right\} \\
-AState & = & AVar\times AObjMem\times AThis\\
+AEx & = & AVal\cup\left\{ Void\right\} \\
+AState & = & AEnv\times AObjMem\times AThis\\
  &  & Curried\times AReturn\times AEx
 \end{eqnarray*}
 
@@ -3134,9 +3189,9 @@ Functions
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-\kappa & = & \lambda\left\langle \_,\alpha,\_,\nu,\_,\_\right\rangle ,\left\langle P,\tau'\right\rangle ,n.\\
+\mathtt{enter} & = & \lambda\left\langle \_,\alpha,\_,\nu,\_,\_\right\rangle ,\left\langle P,\tau'\right\rangle ,n.\\
  &  & \ \left\langle \left[\mathtt{param}\left(n\right)_{k}\mapsto P_{k}\right],\alpha,\tau',\nu,Void,Void\right\rangle \\
-\bar{\kappa} & = & \lambda\left\langle \sigma,\_,\tau,\_,\_,\_\right\rangle ,\left\langle \_,\alpha',\_,\nu',r,e\right\rangle .\\
+\mathtt{leave} & = & \lambda\left\langle \sigma,\_,\tau,\_,\_,\_\right\rangle ,\left\langle \_,\alpha',\_,\nu',r,e\right\rangle .\\
  &  & \ \left\langle \left\langle \sigma,\alpha',\tau,\nu',Void,e\right\rangle ,r\right\rangle 
 \end{eqnarray*}
 
@@ -3153,10 +3208,10 @@ Functions
 \mathtt{throw}\left(v\right) & = & \bar{\Upsilon}_{AEx}\ \lambda E.v\\
 \mathtt{catch}\left(id,s\right) & = & \Theta_{AEx}\ \lambda E.\\
  &  & \begin{cases}
-\mathtt{noop} & \mbox{if}\ E=Void\\
+I_{A}\bot & \mbox{if}\ E=Void\\
 \lambda f\lambda\eta.s\ f\ \mathtt{exs}\left(\eta,id\right) & \mbox{otherwise}
 \end{cases}\\
-\mathtt{exs}\left(id\right) & = & \Upsilon_{AVars,AEx}\ \lambda\sigma,E.\\
+\mathtt{exs}\left(id\right) & = & \Upsilon_{AEnv,AEx}\ \lambda\sigma,E.\\
  &  & \left\langle \sigma\left[id\mapsto E\right],Void\right\rangle 
 \end{eqnarray*}
 
@@ -3166,7 +3221,7 @@ Functions
 \end_layout
 
 \begin_layout Section
-Existence of a fixed point
+Well-definedness
 \end_layout
 
 \begin_layout Standard
@@ -3177,7 +3232,7 @@ Now we turn to examine key characteristic of the abstract interpretation.
 \end_layout
 
 \begin_layout Standard
-We now define a partial ordering on abstract states
+We now define a partial ordering on abstract states.
 \end_layout
 
 \begin_layout Definition
@@ -3190,27 +3245,25 @@ Partial ordering
 
 \end_inset
 
-
-\begin_inset Formula $\forall\eta_{1},\eta_{2}\in AState,\eta_{1}\sqsubseteq\eta_{2}$
+For all 
+\begin_inset Formula $a_{1},a_{2}\in AVal,a_{1}\sqsubseteq a_{2}$
 \end_inset
 
- if 
-\begin_inset Formula $AVar,AObjMem,Curried$
+ iff 
+\begin_inset Formula $a_{1}=a_{2}$
 \end_inset
 
- components of 
-\begin_inset Formula $\eta_{1}$
+.
+ Likewise, 
+\begin_inset Formula $AThis,AReturn,AEx$
 \end_inset
 
- and 
-\begin_inset Formula $\eta_{2}$
+ are ordered by identity.
+ 
+\begin_inset Formula $AEnv,AObjMem,Curried$
 \end_inset
 
- are point-wise ordered, and 
-\begin_inset Formula $AObj,AReturn,AEx$
-\end_inset
-
- components are identical.
+ are ordered point-wise.
 \end_layout
 
 \begin_layout Standard
@@ -3223,21 +3276,21 @@ We also define an ordering between powersets of abstract states and associated
 status open
 
 \begin_layout Plain Layout
-Partial ordering of powersets
+Partial ordering on powersets
 \end_layout
 
 \end_inset
 
-
-\begin_inset Formula $\forall e_{1},e_{2}\in\wp\left(AState\times a\right),e_{1}\sqsubseteq e_{2}$
+For all 
+\begin_inset Formula $e_{1},e_{2}\in\wp\left(AState\times a\right),e_{1}\sqsubseteq e_{2}$
 \end_inset
 
- if 
-\begin_inset Formula $\forall\left\langle \eta_{1},a_{1}\right\rangle \in e_{1}\exists\left\langle \eta_{2},a_{2}\right\rangle \in e_{2}$
+ iff 
+\begin_inset Formula $\forall\left\langle \eta_{1},x\right\rangle \in e_{1}\exists\left\langle \eta_{2},x\right\rangle \in e_{2}$
 \end_inset
 
  such that 
-\begin_inset Formula $\eta_{1}\sqsubseteq\eta_{2}\wedge a_{1}=a_{2}$
+\begin_inset Formula $\eta_{1}\sqsubseteq\eta_{2}$
 \end_inset
 
 
@@ -3266,7 +3319,7 @@ Monotonicity of bind operation
 
 \end_inset
 
-Given two monotonous functions 
+Given two monotonic functions 
 \begin_inset Formula $F$
 \end_inset
 
@@ -3278,11 +3331,15 @@ Given two monotonous functions
 \begin_inset Formula $F\bind G$
 \end_inset
 
- is also a monotonous function.
+ is also a monotonic function.
 \end_layout
 
 \begin_layout Proof
-Let 
+Assume 
+\begin_inset Formula $\eta_{1}\sqsubseteq\eta_{2}$
+\end_inset
+
+, let 
 \begin_inset Formula $p_{1}=F\ f\ \eta_{1}$
 \end_inset
 
@@ -3290,11 +3347,17 @@ Let
 \begin_inset Formula $p_{2}=F\ f\ \eta_{2}$
 \end_inset
 
- such that 
-\begin_inset Formula $\eta_{1}\sqsubseteq\eta_{2},p_{1}\sqsubseteq p_{2}$
+.
+ By monotonicity of 
+\begin_inset Formula $F$
+\end_inset
+
+, we have 
+\begin_inset Formula $p_{1}\sqsubseteq p_{2}$
 \end_inset
 
 .
+ Now,
 \end_layout
 
 \begin_layout Proof
@@ -3320,93 +3383,65 @@ Let
 \end_layout
 
 \begin_layout Proof
-\begin_inset Formula $\forall q\in q_{1}$
+Note that, from the definition of 
+\begin_inset Formula $\sqsubseteq$
 \end_inset
 
-,
-\end_layout
-
-\begin_deeper
-\begin_layout Enumerate
-If 
-\begin_inset Formula $\mathtt{esc}\left(q\right)$
-\end_inset
-
- is true, then it is immediately shown that 
-\begin_inset Formula $\exists q'\in q_{2},q\sqsubseteq q'$
-\end_inset
-
- from the fact that 
-\begin_inset Formula $p_{1}\sqsubseteq p_{2}$
-\end_inset
-
-.
-\end_layout
-
-\begin_layout Enumerate
-Otherwise, let 
-\begin_inset Formula $p$
-\end_inset
-
- be an element in 
-\begin_inset Formula $p_{1}$
+, 
+\begin_inset Formula $\forall\left\langle s_{1},a\right\rangle \in p_{1}\exists\left\langle s_{2},a\right\rangle \in p_{2}$
 \end_inset
 
  such that 
-\begin_inset Formula $q\in G\ f\ p$
+\begin_inset Formula $s_{1}\sqsubseteq s_{2}$
 \end_inset
 
 .
- Monotonicity of 
-\begin_inset Formula $F$
+ Observe that 
+\begin_inset Formula $AReturn$
 \end_inset
 
- function provides the existence of 
-\begin_inset Formula $p'$
+ and 
+\begin_inset Formula $AEx$
 \end_inset
 
- such that 
-\begin_inset Formula $p\sqsubseteq p'$
+ are ordered by identity.
+ Therefore, 
+\begin_inset Formula $\mathtt{esc}\left(s_{1}\right)=\mathtt{esc}\left(s_{2}\right)$
 \end_inset
 
 .
- Then, monotonicity of 
-\begin_inset Formula $G$
-\end_inset
-
- provides the existence of 
-\begin_inset Formula $q'\in G\ f\ q$
+ It follows that 
+\begin_inset Formula $\forall q\in q_{1}\exists q'\in q_{2}$
 \end_inset
 
  such that 
 \begin_inset Formula $q\sqsubseteq q'$
 \end_inset
 
-
-\end_layout
-
-\end_deeper
-\begin_layout Standard
-Now we turn to examine each of the abstract functions that we have devised.
- We omit a detailed function-by-function argument.
- Generally, observe that those functions can be categorised and argued as
- thus:
-\end_layout
-
-\begin_layout Enumerate
-For the functions calculating values from given environment, an increase
- in the environment implies that the resulting environment is also increased.
-\end_layout
-
-\begin_layout Enumerate
-For the functions that are updating environment, observe that an increase
- in the environment implies an increase in the updated environment.
+.
 \end_layout
 
 \begin_layout Standard
-With all the foregoing arguments, it stands to argue that the analytic framework
- is a monotonic framework.
- This result sufficiently proves the existence of the fixed point.
+We omit a function-by-function argument for the monotonicity of each primitive
+ operation, as the argument would be a mechanical exercise.
+ It follows that 
+\begin_inset Formula $\mathcal{S}$
+\end_inset
+
+, 
+\begin_inset Formula $\mathcal{E}$
+\end_inset
+
+ and 
+\begin_inset Formula $\mathcal{L}$
+\end_inset
+
+ in the abstract interpretation are monotonic.
+ Then, it is trivial to argue that 
+\begin_inset Formula $\mathtt{cond}$
+\end_inset
+
+ is also monotonic.
 \end_layout
 
 \begin_layout Section
@@ -3479,7 +3514,7 @@ Abstraction of objects and symbol maps
 \end_layout
 
 \begin_layout Definition
-\begin_inset Formula $\sigma:AVars\succ V:Vars$
+\begin_inset Formula $\sigma:AEnv\succ V:Env$
 \end_inset
 
  if 
@@ -3566,7 +3601,7 @@ when
 \end_layout
 
 \begin_layout Definition
-\begin_inset Formula $\rho=\left\langle \begin{gathered}V:Var,OM:ObjMem,T:Object,\\
+\begin_inset Formula $\rho=\left\langle \begin{gathered}V:Env,OM:ObjMem,T:Object,\\
 R:Return,E:Ex
 \end{gathered}
 \right\rangle $
@@ -3576,7 +3611,7 @@ R:Return,E:Ex
 \end_layout
 
 \begin_layout Definition
-\begin_inset Formula $\eta=\left\langle \begin{gathered}\sigma:AVar,\alpha:AObjMem,\tau:AObj\\
+\begin_inset Formula $\eta=\left\langle \begin{gathered}\sigma:AEnv,\alpha:AObjMem,\tau:AObj\\
 C:AObjCurried,r:AReturn,e:AEx
 \end{gathered}
 \right\rangle $
