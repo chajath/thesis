@@ -120,7 +120,7 @@ Parametric Denotational Semantics for Extensible Language Definition and
 \end_layout
 
 \begin_layout Author
-In-Ho Yi, Peter Schachte and Harald Søndergaard
+In-Ho Yi and Peter Schachte
 \begin_inset Newline newline
 \end_inset
 
@@ -132,7 +132,7 @@ Department of Computing and Information Systems
 \begin_inset Newline newline
 \end_inset
 
- i.yi@student.unimelb.edu.au, schachte@unimelb.edu.au, harald@unimelb.edu.au
+ i.yi@student.unimelb.edu.au, schachte@unimelb.edu.au
 \end_layout
 
 \begin_layout Standard
@@ -153,7 +153,7 @@ submittedstandard
 
 \begin_layout Standard
 \begin_inset FormulaMacro
-\newcommand{\st}[2]{\left|#1\right|_{s_{#2}}}
+\renewcommand{\st}[2]{\left|#1\right|_{s_{#2}}}
 {#1_{\left[s#2\right]}}
 \end_inset
 
@@ -162,7 +162,7 @@ submittedstandard
 
 \begin_layout Standard
 \begin_inset FormulaMacro
-\newcommand{\ex}[2]{\left|#1\right|_{e_{#2}}}
+\renewcommand{\ex}[2]{\left|#1\right|_{e_{#2}}}
 {#1_{\left[e#2\right]}}
 \end_inset
 
@@ -237,23 +237,23 @@ However, these features come at a cost.
 \end_layout
 
 \begin_layout Itemize
-As applications become more mature, more efforts are devoted to program
- unit testing and writing assertions to ensure type safety of systems.
+As applications become more mature, more effort is devoted to program unit
+ testing and writing assertions to ensure type safety of systems.
  This extra effort can sometimes outweigh the benefit of having a dynamically
  typed language.
 \end_layout
 
 \begin_layout Itemize
 Whereas programmers using statically typed languages enjoy an abundance
- of development tools, choices of tools for development in dynamically typed
- languages are limited, and the tools that do exist lack much of the power
- of the tools for statically typed languages, owing largely to the difficulty
- or infeasibility of type analysis for such languages.
+ of development tools, the choice of tools for development in dynamically
+ typed languages is limited, and the tools that do exist lack much of the
+ power of the tools for statically typed languages, owing largely to the
+ difficulty or infeasibility of type analysis for such languages.
 \end_layout
 
 \begin_layout Itemize
-Lack of static type structure has a significant performance impact on dynamicall
-y typed languages.
+Lack of static type structure has a significant impact on the performance
+ of dynamically typed languages.
 \end_layout
 
 \begin_layout Standard
@@ -277,13 +277,20 @@ Related work
 \end_layout
 
 \begin_layout Standard
-On the theoretical side, denotational semantics is the starting point of
- our development of a theoretical system.
+Denotational semantics is the starting point of our development of a theoretical
+ system.
  The idea of incorporating monads into the denotational semantics was developed
  by 
 \begin_inset CommandInset citation
-LatexCommand cite
-key "Liang:phd1998,Liang_Hudak:ESOP1996"
+LatexCommand citet
+key "Liang:phd1998"
+
+\end_inset
+
+ and 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Liang_Hudak:ESOP1996"
 
 \end_inset
 
@@ -326,8 +333,29 @@ key "Wadler:1989:TF:99370.99404"
 \begin_layout Standard
 Regarding the type analysis of dynamic languages, 
 \begin_inset CommandInset citation
-LatexCommand cite
-key "Anderson:ECOOP2005,Anderson:ENTCS2005,Guha:ESOP2011,Wrigstad:POPL2010"
+LatexCommand citet
+key "Anderson:ECOOP2005"
+
+\end_inset
+
+, 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Anderson:ENTCS2005"
+
+\end_inset
+
+, 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Guha:ESOP2011"
+
+\end_inset
+
+ and 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Wrigstad:POPL2010"
 
 \end_inset
 
@@ -335,7 +363,7 @@ key "Anderson:ECOOP2005,Anderson:ENTCS2005,Guha:ESOP2011,Wrigstad:POPL2010"
  of dynamic languages.
  A major difference between those languages and the model language presented
  in this paper is that our language is designed to capture the critical
- feature of real world languages which allow functions to alter types through
+ feature of real world languages which allows functions to alter types through
  side-effect causing statements.
  We point out similarities and differences of this work compared to the
  cited works as we encounter them in this paper.
@@ -346,14 +374,21 @@ Type analysis plays a crucial part in compiling scripting languages, mainly
  to improve performance.
  
 \begin_inset CommandInset citation
-LatexCommand cite
-key "Ancona:2007:RST:1297081.1297091,Dufour:2006"
+LatexCommand citet
+key "Ancona:2007:RST:1297081.1297091"
+
+\end_inset
+
+ and 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Dufour:2006"
 
 \end_inset
 
  design restricted versions of a scripting languages so that static inference
  of types can be performed.
- We adopt several techniques employed in those projects , such as the use
+ We adopt several techniques employed in those projects, such as the use
  of named memory allocation sites as static references.
 \end_layout
 
@@ -380,7 +415,14 @@ key "Bracha:1990:MI:97946.97982"
  
 \begin_inset CommandInset citation
 LatexCommand citet
-key "Anderson:ECOOP2005,Mens:TR1996"
+key "Anderson:ECOOP2005"
+
+\end_inset
+
+ and 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Mens:TR1996"
 
 \end_inset
 
@@ -398,7 +440,7 @@ key "Jensen:SAS2009"
 \end_inset
 
  describe a feature-complete analyser for the JavaScript language.
- Our work can be progressed further to provide the semantic foundation for
+ Our work can be extended further to provide the semantic foundation for
  such an analyser.
  Such an attempt to formalise the analysis might pave the way for further
  refinement and improvement.
@@ -476,22 +518,21 @@ Parametric semantics
 \end_inset
 
  is a collection of semantic functions for syntactic structures, as outlined
- below.
- 
+ below; 
 \begin_inset Formula $State$
 \end_inset
 
  is a set of representations of computation state, which can be anything
- to suit a particular analysis, 
+ to suit a particular analysis; 
 \begin_inset Formula $s$
 \end_inset
 
- is an initial program state, and 
+ is an initial program state; and 
 \begin_inset Formula $P$
 \end_inset
 
  is the set of primitive operations of the semantics.
- We assumption throughout that 
+ We assume throughout that 
 \begin_inset Formula $State$
 \end_inset
 
@@ -876,7 +917,7 @@ In the remainder of the paper we provide the semantics for a language with
  We introduce the components of the language step by step.
  The aim is to demonstrate that the semantic formalism enables such a stepwise
  development, each step being incremental in the sense that it does not
- require revision of the semantic equations developed before the step.
+ require revision of the semantic equations developed in earlier steps.
  
 \end_layout
 
@@ -952,7 +993,7 @@ Type constructor
 
 \end_inset
 
- Type constructor 
+ The type constructor 
 \begin_inset Formula $M$
 \end_inset
 
@@ -961,7 +1002,7 @@ Type constructor
 \begin_inset Formula $F$
 \end_inset
 
-, in this formulation, is an approximation of a meaning of all the functions
+, in this formulation, is an approximation of the meaning of all the functions
  in the program.
  This is necessary to determine the semantics of many of the program constructs.
  The 
@@ -973,7 +1014,11 @@ Type constructor
 \end_layout
 
 \begin_layout Definition
-\begin_inset Formula $M\ a=F\rightarrow State\rightarrow\wp\left(State\times a\cup\left\{ \bot\right\} \right)$
+\begin_inset Formula 
+\[
+M\ a=F\rightarrow State\rightarrow\wp\left(State\times a\cup\left\{ \bot\right\} \right)
+\]
+
 \end_inset
 
 
@@ -1028,7 +1073,7 @@ bind
 \begin_inset Formula $\mathtt{esc}$
 \end_inset
 
- to spell out the precise mechanism for escaping a current program execution
+ to spell out the precise mechanism for escaping the current program execution
  flow.
  The 
 \begin_inset Formula $\mathtt{esc}$
@@ -1179,12 +1224,8 @@ Assume
 \end_layout
 
 \begin_layout Proof
-Note that, from the definition of 
-\begin_inset Formula $\sqsubseteq$
-\end_inset
-
-, 
-\begin_inset Formula $\forall\left\langle s_{1},a\right\rangle \in p_{1}\exists\left\langle s_{2},a\right\rangle \in p_{2}$
+Since we assume the identity ordering, it follows that 
+\begin_inset Formula $\forall\left\langle s_{1},a\right\rangle \in p_{1},\exists\left\langle s_{2},a\right\rangle \in p_{2}$
 \end_inset
 
  such that 
@@ -1213,7 +1254,7 @@ Note that, from the definition of
 \end_layout
 
 \begin_layout Standard
-Now we define monadic functions in order to provide modularity.
+Having a monadic structure helps provide modularity.
  For example, if a particular parametrised operation takes a state but only
  produces a value, it would be redundant to include a state as a part of
  returning type, to match the definition of monadic binding.
@@ -1612,7 +1653,7 @@ We define following auxiliary functions to describe the use of the augmented
 \begin_layout Standard
 Note that we use an sid of a function declaration statement as a reference
  point for the function defined.
- The
+ The 
 \begin_inset Formula $\mathtt{param}$
 \end_inset
 
@@ -1684,11 +1725,8 @@ F & = & Sid\rightarrow State\rightarrow\wp\left(State\right)\\
 \begin_inset Formula $F$
 \end_inset
 
- is a function that models functions in a program, given the 
-\begin_inset Formula $Sid$
-\end_inset
-
- of a function declaration site, it gives a state transformer.
+ is a function space to model functions in a program.
+ Given the sid of a function declaration site, it gives a state transformer.
  Note that in this picture a function 
 \begin_inset Quotes eld
 \end_inset
@@ -2000,7 +2038,7 @@ reference "semantic"
 \end_inset
 
  takes both the caller's state and the resulting states of callee's, and
- construct caller's states after the function call.
+ constructs the caller's states after the function call.
 \end_layout
 
 \begin_layout Standard
@@ -2070,7 +2108,7 @@ name "semantic"
 \begin_inset Caption
 
 \begin_layout Plain Layout
-Semantic functions for a procedural core of 
+Semantic equations for a procedural core of 
 \begin_inset ERT
 status open
 
@@ -2109,7 +2147,7 @@ Domain
 \begin{eqnarray*}
 Value & = & \mathbb{Z}\cup\left\{ true,false\right\} \cup\: FunPointer\\
 FunPointer & = & Sid\\
-Env & = & id\rightarrow Value\\
+Env & = & Id\rightarrow Value\\
 Return & = & Value\cup\left\{ Void\right\} \\
 CState & = & Env\times IO\times Return
 \end{eqnarray*}
@@ -2212,7 +2250,7 @@ Domain
 \begin{eqnarray*}
 FunPointer & = & Sid\\
 AVal & = & \left\{ Num,Bool\right\} \cup\: FunPointer\\
-AEnv & = & id\rightarrow AVal\\
+AEnv & = & Id\rightarrow AVal\\
 AReturn & = & AVal\cup\left\{ Void\right\} \\
 AState & = & AEnv\times AReturn
 \end{eqnarray*}
@@ -2308,7 +2346,7 @@ Here we introduce the
 \end_inset
 
  function.
- It invokes the
+ It invokes the 
 \begin_inset Formula $\mathtt{call}$
 \end_inset
 
@@ -2367,6 +2405,18 @@ Functions
 \end_inset
 
 
+\end_layout
+
+\begin_layout Standard
+Here, 
+\begin_inset Formula $N\left(s\right)$
+\end_inset
+
+ is the length of a sequence 
+\begin_inset Formula $s$
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Subsubsection
@@ -2716,7 +2766,7 @@ I_{A}\ m
 \begin_inset Caption
 
 \begin_layout Plain Layout
-Semantic functions for object-oriented extension of the language
+Semantic equations for the object-oriented extension of the language
 \end_layout
 
 \end_inset
@@ -2763,18 +2813,25 @@ We redefine
 \begin_layout Standard
 Note that by modelling function calls as an effect on a state, we can readily
  model such concepts as mixins.
- Compared to the mixin functions in the 
+ In the 
 \begin_inset Formula $\mbox{JS}_{0}$
 \end_inset
 
  language (
 \begin_inset CommandInset citation
-LatexCommand cite
-key "Anderson:ECOOP2005,Anderson:ENTCS2005"
+LatexCommand citet
+key "Anderson:ECOOP2005"
 
 \end_inset
 
-), we attempt to enable mixin creating behaviour in a functional model language.
+ and 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Anderson:ENTCS2005"
+
+\end_inset
+
+), mixin creating behaviour is modelled in a functional model language.
  A similar approach has been taken in the discussion of 
 \begin_inset Formula $\lambda_{S}$
 \end_inset
@@ -2787,9 +2844,9 @@ key "Guha:ESOP2011"
 \end_inset
 
 .
- With languages like JavaScript, it is in the nature of such language that
- functions are side-effect causing, and much of the type operations are
- being done with by the side-effects.
+ However, with languages like JavaScript, it is in the nature of such language
+ that functions are side-effect causing, and much of the type operations
+ are being done with by the side-effects.
  Hence our deviation from a purely functional approach to devise a model
  language that resembles a real-life language.
 \end_layout
@@ -2819,8 +2876,8 @@ Domain
 \begin_inset Formula 
 \begin{eqnarray*}
 Value & = & \mathbb{Z}\cup\left\{ T,F\right\} \cup Object\cup\\
- &  & FunctionPointer\\
-Object & = & \left\{ OBJ_{n}\mid n\in\mathbb{N}\right\} \\
+ &  & FunPointer\\
+Object & = & \mathbb{N}\\
 ObjMem & = & n\rightarrow Env\\
 This & = & Object\\
 CState & = & Env\times ObjMem\times\\
@@ -3059,7 +3116,7 @@ status open
 \mathtt{apply}\left(\left\langle n,c,e\right\rangle ,p,t,e\right) & = & \begin{cases}
 \Theta_{Curried}\ \lambda\nu.\underset{C\in\nu\left(n,c,e\right)}{\bigcup}\mathtt{call}\left(n,C\smallfrown p,t\right)\ \mbox{if}\ c+N\left(p\right)=\mathtt{arity}\left(n\right) & \begin{gathered}\end{gathered}
 \\
-\bar{\Psi}_{Curried}\ \lambda\nu.\left\langle \nu\left[\left\langle n,c+N\left(p\right),e\right\rangle \mapsto C\smallfrown p\right],\left\langle n,c+N\left(p\right),e\right\rangle \right\rangle \ \mbox{otherwise}
+\Psi_{Curried}\ \lambda\nu.\underset{C\in\nu\left(n,c,e\right)}{\bigcup}\left\langle \nu\left[\left\langle n,c+N\left(p\right),e\right\rangle \mapsto C\smallfrown p\right],\left\langle n,c+N\left(p\right),e\right\rangle \right\rangle \ \mbox{otherwise}
 \end{cases}
 \end{eqnarray*}
 
@@ -3108,8 +3165,20 @@ Exception handling
 \end_layout
 
 \begin_layout Standard
-As a final extension to the model language, we introduce exception throwing
- and handling.
+As a final extension to 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+sdtl
+\end_layout
+
+\end_inset
+
+, we introduce exception throwing and handling.
  First, we introduce a familiar syntax for exception handling.
 \end_layout
 
@@ -3347,9 +3416,8 @@ Well-definedness
 \end_layout
 
 \begin_layout Standard
-For the purpose of the argument, we assume that all the functions appearing
- in both concrete and abstract versions of interpretations are ordered point-wis
-e.
+We assume that all the functions appearing in both concrete and abstract
+ versions of interpretations are ordered point-wise.
  Recall that the bind operation preserves the monotonicity when binding
  two monotonic functions.
  Observe that all of the primitive operations that yield a state transformer,
@@ -3731,17 +3799,17 @@ Finally, we observe that operations resulting from abstract functions and
 \end_layout
 
 \begin_layout Section
-Conclusion and Future Direction
+Conclusion and future direction
 \end_layout
 
 \begin_layout Standard
 As we have noted in the introduction, this work is a snapshot of an ongoing
  dialogue between theory and practice, positively informing each other to
  gradually move towards a better theorisation (and practical implementation)
- of a difficult task of analysing dynamic languages.
- We sought to modularise the theoretic framework so that we can take an
- evolutionary approach.
- We anticipate that, as a result of having such theory, adding new features
+ of the difficult task of analysing dynamic languages.
+ We have sought to modularise the theoretical framework so that we can take
+ an evolutionary approach.
+ We anticipate that, as a result of having such a theory, adding new features
  to the current model language while maintaining formality and rigour will
  be considerably less laborious than to invent a new incarnation of a more
  feature-complete model language and produce theory for it.
