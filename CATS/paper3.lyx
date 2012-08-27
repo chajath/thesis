@@ -411,7 +411,7 @@ Our semantic framework is comprised of two components: one for the syntactic
 \end_layout
 
 \begin_layout Enumerate
-What is the semantic operations entailed in a particular syntactic structure?
+What are the semantic operations entailed in a particular syntactic structure?
  For example, syntactic structure 
 \begin_inset Formula $\ds{a=30}$
 \end_inset
@@ -454,7 +454,7 @@ Observe that an interpretation of syntactic structure can remain agnostic
 status open
 
 \begin_layout Plain Layout
-parametric semantics
+Parametric semantics
 \end_layout
 
 \end_inset
@@ -529,7 +529,7 @@ bind
 \end_inset
 
  operator relies on a parametric operation 
-\begin_inset Formula $\mathtt{isterm}$
+\begin_inset Formula $\mathtt{esc}$
 \end_inset
 
  to spell out the precise mechanism for escaping a current program execution
@@ -543,11 +543,11 @@ Throughout the analysis, we use the following primitive operations:
 \end_layout
 
 \begin_layout Itemize
-\begin_inset Formula $\mathtt{isterm}$
+\begin_inset Formula $\mathtt{esc}$
 \end_inset
 
- takes a state and reports whether a particular state is terminal (i.e., whether
- or not control flow reaches the successor statement)
+ takes a state and reports whether it is escaping (i.e., whether or not control
+ flow reaches the successor statement)
 \end_layout
 
 \begin_layout Itemize
@@ -938,19 +938,14 @@ Analytic framework
 \end_layout
 
 \begin_layout Standard
-We first describe a monadic framework for language analysis.
- In this section we produce a particular monadic construct, specifically
- designed for the purpose of analysis.
+In this section we introduce a monadic construct specifically designed for
+ the purpose of program analysis.
  We then introduce polymorphic auxiliary functions that are useful in extending
  theories in a modular manner.
 \end_layout
 
-\begin_layout Subsection
-Monad
-\end_layout
-
 \begin_layout Standard
-We define the monadic constructions.
+First we define the monadic constructions.
  We define a type constructor 
 \begin_inset Formula $M$
 \end_inset
@@ -1033,7 +1028,7 @@ First say that the powerset above simulates nondeterminism.
 \end_inset
 
 helps (or enables) defining abstract interpretation of a language in the
- exact same framework on which concrete interpretation is defined.
+ exact same framework in which concrete interpretation is defined.
 \begin_inset Note Greyedout
 status open
 
@@ -1074,7 +1069,7 @@ We define a bind operator
 \begin_layout Definition
 \begin_inset Formula 
 \begin{eqnarray*}
-T\ \bind\ U & = & \lambda f\lambda s.\mathbf{let}\ S=T\ f\ s\ \mathbf{in}\\
+T\ \bind\ U & = & \lambda f\lambda s.\:\mathbf{let}\ S=T\ f\ s\ \mathbf{in}\\
  &  & \underset{\left\langle s',a\right\rangle \in S}{\bigcup}\left(\begin{gathered}\mbox{if}\ \mathtt{isterm}\left(s'\right)\\
 \mbox{then}\ \left\{ \left\langle s',\bot\right\rangle \right\} \\
 \mbox{else}\ U\ a\ f\ s'
@@ -1088,7 +1083,7 @@ T\ \bind\ U & = & \lambda f\lambda s.\mathbf{let}\ S=T\ f\ s\ \mathbf{in}\\
 \end_layout
 
 \begin_layout Definition
-\begin_inset Formula $\mathtt{isterm}$
+\begin_inset Formula $\mathtt{esc}$
 \end_inset
 
  is a parametrised function that returns true if a State is at a terminal
@@ -2003,7 +1998,7 @@ Functions
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-\mathtt{isterm} & = & \bar{\Theta}_{Return}\ \lambda R.\left(R=Void\right)\\
+\mathtt{esc} & = & \bar{\Theta}_{Return}\ \lambda R.\left(R=Void\right)\\
 \mathtt{cond}\left(v,s_{1},s_{2}\right) & = & \begin{cases}
 s_{1} & \mbox{if}\ v=true\\
 s_{2} & \mbox{if}\ v=false
@@ -2093,7 +2088,7 @@ Functions
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-\mathtt{isterm} & = & \bar{\Theta}_{AReturn}\ \lambda R.\left(R=Void\right)\\
+\mathtt{esc} & = & \bar{\Theta}_{AReturn}\ \lambda R.\left(R=Void\right)\\
 \mathtt{cond}\left(v,s_{1},s_{2}\right) & = & \lambda f\lambda\eta.\left(s_{1}\ f\ \eta\right)\cup\left(s_{2}\ f\ \eta\right)\\
 \mathtt{asg}\left(id,v\right) & = & \bar{\Upsilon}_{AVar}\ \lambda\sigma.\sigma\left[id=v\right]\\
 \mathtt{val}\left(id,v\right) & = & \bar{\Upsilon}_{AVar}\ \lambda\sigma.\sigma\left(id\right)\\
@@ -3026,7 +3021,7 @@ Concrete interpretation
 \begin_layout Standard
 As the flow control of the execution is abstracted out and parametrised
  as a function 
-\begin_inset Formula $\mathtt{isterm}$
+\begin_inset Formula $\mathtt{esc}$
 \end_inset
 
 , it is not very surprising that introducing exceptions to a program does
@@ -3079,7 +3074,7 @@ Functions
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-\mathtt{isterm} & = & \Theta_{Returnm,Ex}\ \lambda R,E.\\
+\mathtt{esc} & = & \Theta_{Returnm,Ex}\ \lambda R,E.\\
  &  & \left(R=Void\right)\wedge\left(E=Void\right)\\
 \mathtt{throw}\left(v\right) & = & \bar{\Upsilon}_{Ex}\ \lambda E.v\\
 \mathtt{catch}\left(id,s\right) & = & \Theta_{Ex}\ \lambda E.\\
@@ -3161,7 +3156,7 @@ Functions
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-\mathtt{isterm} & = & \Theta_{AReturn,AEx}\ \lambda R,E.\\
+\mathtt{esc} & = & \Theta_{AReturn,AEx}\ \lambda R,E.\\
  &  & \left(R=Void\right)\wedge\left(E=Void\right)\\
 \mathtt{throw}\left(v\right) & = & \bar{\Upsilon}_{AEx}\ \lambda E.v\\
 \mathtt{catch}\left(id,s\right) & = & \Theta_{AEx}\ \lambda E.\\
@@ -3311,7 +3306,7 @@ Let
 \end_layout
 
 \begin_layout Proof
-\begin_inset Formula $q_{1}=F\bind G\ f\ \eta_{1}=\underset{\left\langle s,a\right\rangle \in p_{1}}{\bigcup}\left(\begin{gathered}\mbox{if}\ \mathtt{isterm}\left(s\right)\ \\
+\begin_inset Formula $q_{1}=F\bind G\ f\ \eta_{1}=\underset{\left\langle s,a\right\rangle \in p_{1}}{\bigcup}\left(\begin{gathered}\mbox{if}\ \mathtt{esc}\left(s\right)\ \\
 \mbox{then}\ \left\{ \left\langle s,a\right\rangle \right\} \ \\
 \mbox{else}\ G\ a\ f\ s
 \end{gathered}
@@ -3322,7 +3317,7 @@ Let
 \end_layout
 
 \begin_layout Proof
-\begin_inset Formula $q_{2}=F\bind G\ f\ \eta_{2}=\underset{\left\langle s,a\right\rangle \in p_{2}}{\bigcup}\left(\begin{gathered}\mbox{if}\ \mathtt{isterm}\left(s\right)\ \\
+\begin_inset Formula $q_{2}=F\bind G\ f\ \eta_{2}=\underset{\left\langle s,a\right\rangle \in p_{2}}{\bigcup}\left(\begin{gathered}\mbox{if}\ \mathtt{esc}\left(s\right)\ \\
 \mbox{then}\ \left\{ \left\langle s,a\right\rangle \right\} \ \\
 \mbox{else}\ G\ a\ f\ s
 \end{gathered}
@@ -3342,7 +3337,7 @@ Let
 \begin_deeper
 \begin_layout Enumerate
 If 
-\begin_inset Formula $\mathtt{isterm}\left(q\right)$
+\begin_inset Formula $\mathtt{esc}\left(q\right)$
 \end_inset
 
  is true, then it is immediately shown that 
@@ -3718,7 +3713,7 @@ If
 \begin_deeper
 \begin_layout Enumerate
 when 
-\begin_inset Formula $\mathtt{isterm}\left(p_{1}\right)$
+\begin_inset Formula $\mathtt{esc}\left(p_{1}\right)$
 \end_inset
 
  is true, then the morphism and 
@@ -3726,7 +3721,7 @@ when
 \end_inset
 
  relation imply that 
-\begin_inset Formula $\exists q_{1}\in q,\mathtt{isterm}\left(q_{1}\right)$
+\begin_inset Formula $\exists q_{1}\in q,\mathtt{esc}\left(q_{1}\right)$
 \end_inset
 
 .
