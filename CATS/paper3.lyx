@@ -468,23 +468,22 @@ Parametric semantics
 \end_inset
 
  is a quadruple 
-\begin_inset Formula $\left(X,D,d,P\right)$
+\begin_inset Formula $\left(X,State,s,P\right)$
 \end_inset
 
  where 
 \begin_inset Formula $X$
 \end_inset
 
- is a collection of semantic functions for syntactic structures, 
-\begin_inset Formula $D$
-\end_inset
-
- is a definition of a 
+ is a collection of semantic functions for syntactic structures, as outlined
+ below.
+ 
 \begin_inset Formula $State$
 \end_inset
 
- record, 
-\begin_inset Formula $d$
+ is a set of representations of computation state, which can be anything
+ to suit a particular analysis, 
+\begin_inset Formula $s$
 \end_inset
 
  is an initial program state, and 
@@ -492,6 +491,11 @@ Parametric semantics
 \end_inset
 
  is the set of primitive operations of the semantics.
+ We assumption throughout that 
+\begin_inset Formula $State$
+\end_inset
+
+ is ordered by identity.
 \end_layout
 
 \begin_layout Standard
@@ -1088,6 +1092,124 @@ T\ \bind\ U & = & \lambda f\lambda s.\:\mathbf{let}\ S=T\ f\ s\ \mathbf{in}\\
 \end_inset
 
 
+\end_layout
+
+\begin_layout Theorem
+\begin_inset CommandInset label
+LatexCommand label
+name "thm:bindmono"
+
+\end_inset
+
+
+\begin_inset Argument
+status open
+
+\begin_layout Plain Layout
+Monotonicity of bind operation
+\end_layout
+
+\end_inset
+
+When 
+\begin_inset Formula $\mathtt{esc}$
+\end_inset
+
+ is monotonic, given two monotonic functions 
+\begin_inset Formula $F$
+\end_inset
+
+ and 
+\begin_inset Formula $G$
+\end_inset
+
+, 
+\begin_inset Formula $F\bind G$
+\end_inset
+
+ is also a monotonic function.
+\end_layout
+
+\begin_layout Proof
+Assume 
+\begin_inset Formula $\eta_{1}\sqsubseteq\eta_{2}$
+\end_inset
+
+, let 
+\begin_inset Formula $p_{1}=F\ f\ \eta_{1}$
+\end_inset
+
+, 
+\begin_inset Formula $p_{2}=F\ f\ \eta_{2}$
+\end_inset
+
+.
+ By monotonicity of 
+\begin_inset Formula $F$
+\end_inset
+
+, we have 
+\begin_inset Formula $p_{1}\sqsubseteq p_{2}$
+\end_inset
+
+.
+ Now,
+\end_layout
+
+\begin_layout Proof
+\begin_inset Formula $q_{1}=F\bind G\ f\ \eta_{1}=\underset{\left\langle s,a\right\rangle \in p_{1}}{\bigcup}\left(\begin{gathered}\mbox{if}\ \mathtt{esc}\left(s\right)\ \\
+\mbox{then}\ \left\{ \left\langle s,a\right\rangle \right\} \ \\
+\mbox{else}\ G\ a\ f\ s
+\end{gathered}
+\right)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Proof
+\begin_inset Formula $q_{2}=F\bind G\ f\ \eta_{2}=\underset{\left\langle s,a\right\rangle \in p_{2}}{\bigcup}\left(\begin{gathered}\mbox{if}\ \mathtt{esc}\left(s\right)\ \\
+\mbox{then}\ \left\{ \left\langle s,a\right\rangle \right\} \ \\
+\mbox{else}\ G\ a\ f\ s
+\end{gathered}
+\right)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Proof
+Note that, from the definition of 
+\begin_inset Formula $\sqsubseteq$
+\end_inset
+
+, 
+\begin_inset Formula $\forall\left\langle s_{1},a\right\rangle \in p_{1}\exists\left\langle s_{2},a\right\rangle \in p_{2}$
+\end_inset
+
+ such that 
+\begin_inset Formula $s_{1}\sqsubseteq s_{2}$
+\end_inset
+
+.
+ Given the monotonicity of 
+\begin_inset Formula $\mathtt{esc}$
+\end_inset
+
+, 
+\begin_inset Formula $\mathtt{esc}\left(s_{1}\right)=\mathtt{esc}\left(s_{2}\right)$
+\end_inset
+
+.
+ It follows that 
+\begin_inset Formula $\forall q\in q_{1}\exists q'\in q_{2}$
+\end_inset
+
+ such that 
+\begin_inset Formula $q\sqsubseteq q'$
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Standard
@@ -3225,206 +3347,17 @@ Well-definedness
 \end_layout
 
 \begin_layout Standard
-Now we turn to examine key characteristic of the abstract interpretation.
- First, observe that the abstract domain is finite.
- Finiteness of the domain has been argued in various stages of development
- when such argument was necessary.
-\end_layout
-
-\begin_layout Standard
-We now define a partial ordering on abstract states.
-\end_layout
-
-\begin_layout Definition
-\begin_inset Argument
-status open
-
-\begin_layout Plain Layout
-Partial ordering
-\end_layout
-
-\end_inset
-
-For all 
-\begin_inset Formula $a_{1},a_{2}\in AVal,a_{1}\sqsubseteq a_{2}$
-\end_inset
-
- iff 
-\begin_inset Formula $a_{1}=a_{2}$
-\end_inset
-
-.
- Likewise, 
-\begin_inset Formula $AThis,AReturn,AEx$
-\end_inset
-
- are ordered by identity.
- 
-\begin_inset Formula $AEnv,AObjMem,Curried$
-\end_inset
-
- are ordered point-wise.
-\end_layout
-
-\begin_layout Standard
-We also define an ordering between powersets of abstract states and associated
- values.
-\end_layout
-
-\begin_layout Definition
-\begin_inset Argument
-status open
-
-\begin_layout Plain Layout
-Partial ordering on powersets
-\end_layout
-
-\end_inset
-
-For all 
-\begin_inset Formula $e_{1},e_{2}\in\wp\left(AState\times a\right),e_{1}\sqsubseteq e_{2}$
-\end_inset
-
- iff 
-\begin_inset Formula $\forall\left\langle \eta_{1},x\right\rangle \in e_{1}\exists\left\langle \eta_{2},x\right\rangle \in e_{2}$
-\end_inset
-
- such that 
-\begin_inset Formula $\eta_{1}\sqsubseteq\eta_{2}$
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-Then we argue that the abstract interpretation is a monotonic framework.
- First, observe that the bind operation preserves the monotonicity when
- binding two monotonic functions.
-\end_layout
-
-\begin_layout Theorem
-\begin_inset CommandInset label
-LatexCommand label
-name "thm:bindmono"
-
-\end_inset
-
-
-\begin_inset Argument
-status open
-
-\begin_layout Plain Layout
-Monotonicity of bind operation
-\end_layout
-
-\end_inset
-
-Given two monotonic functions 
-\begin_inset Formula $F$
-\end_inset
-
- and 
-\begin_inset Formula $G$
-\end_inset
-
-, 
-\begin_inset Formula $F\bind G$
-\end_inset
-
- is also a monotonic function.
-\end_layout
-
-\begin_layout Proof
-Assume 
-\begin_inset Formula $\eta_{1}\sqsubseteq\eta_{2}$
-\end_inset
-
-, let 
-\begin_inset Formula $p_{1}=F\ f\ \eta_{1}$
-\end_inset
-
-, 
-\begin_inset Formula $p_{2}=F\ f\ \eta_{2}$
-\end_inset
-
-.
- By monotonicity of 
-\begin_inset Formula $F$
-\end_inset
-
-, we have 
-\begin_inset Formula $p_{1}\sqsubseteq p_{2}$
-\end_inset
-
-.
- Now,
-\end_layout
-
-\begin_layout Proof
-\begin_inset Formula $q_{1}=F\bind G\ f\ \eta_{1}=\underset{\left\langle s,a\right\rangle \in p_{1}}{\bigcup}\left(\begin{gathered}\mbox{if}\ \mathtt{esc}\left(s\right)\ \\
-\mbox{then}\ \left\{ \left\langle s,a\right\rangle \right\} \ \\
-\mbox{else}\ G\ a\ f\ s
-\end{gathered}
-\right)$
-\end_inset
-
-
-\end_layout
-
-\begin_layout Proof
-\begin_inset Formula $q_{2}=F\bind G\ f\ \eta_{2}=\underset{\left\langle s,a\right\rangle \in p_{2}}{\bigcup}\left(\begin{gathered}\mbox{if}\ \mathtt{esc}\left(s\right)\ \\
-\mbox{then}\ \left\{ \left\langle s,a\right\rangle \right\} \ \\
-\mbox{else}\ G\ a\ f\ s
-\end{gathered}
-\right)$
-\end_inset
-
-
-\end_layout
-
-\begin_layout Proof
-Note that, from the definition of 
-\begin_inset Formula $\sqsubseteq$
-\end_inset
-
-, 
-\begin_inset Formula $\forall\left\langle s_{1},a\right\rangle \in p_{1}\exists\left\langle s_{2},a\right\rangle \in p_{2}$
-\end_inset
-
- such that 
-\begin_inset Formula $s_{1}\sqsubseteq s_{2}$
-\end_inset
-
-.
- Observe that 
-\begin_inset Formula $AReturn$
-\end_inset
-
- and 
-\begin_inset Formula $AEx$
-\end_inset
-
- are ordered by identity.
- Therefore, 
-\begin_inset Formula $\mathtt{esc}\left(s_{1}\right)=\mathtt{esc}\left(s_{2}\right)$
-\end_inset
-
-.
- It follows that 
-\begin_inset Formula $\forall q\in q_{1}\exists q'\in q_{2}$
-\end_inset
-
- such that 
-\begin_inset Formula $q\sqsubseteq q'$
-\end_inset
-
-.
-\end_layout
-
-\begin_layout Standard
-We omit a function-by-function argument for the monotonicity of each primitive
- operation, as the argument would be a mechanical exercise.
- It follows that 
+For the purpose of the argument, we assume that all the functions appearing
+ in both concrete and abstract versions of interpretations are ordered point-wis
+e.
+ Recall that the bind operation preserves the monotonicity when binding
+ two monotonic functions.
+ Observe that all of the primitive operations that yield a state transformer,
+ or the value-returning operation lifted to yield one, such transformer
+ is monotonic.
+ This follows from the fact that the domain of such transformers are ordered
+ by identity.
+ Then, it follows that 
 \begin_inset Formula $\mathcal{S}$
 \end_inset
 
@@ -3436,12 +3369,9 @@ We omit a function-by-function argument for the monotonicity of each primitive
 \begin_inset Formula $\mathcal{L}$
 \end_inset
 
- in the abstract interpretation are monotonic.
- Then, it is trivial to argue that 
-\begin_inset Formula $\mathtt{cond}$
-\end_inset
-
- is also monotonic.
+ are monotonic.
+ Hence the semantics is well-defined both in concrete and abstract interpretatio
+ns.
 \end_layout
 
 \begin_layout Section
@@ -3477,11 +3407,11 @@ Abstraction of primitive values
 \end_inset
 
 
-\begin_inset Formula $Number\succ\mathbb{N}$
+\begin_inset Formula $Num\succ\mathbb{N}$
 \end_inset
 
 , 
-\begin_inset Formula $Boolean\succ\mathbb{B}$
+\begin_inset Formula $Bool\succ\mathbb{B}$
 \end_inset
 
 , 
@@ -3581,15 +3511,35 @@ Abstraction relation
 
 \end_inset
 
-Given 
-\begin_inset Formula $\rho\in CState$
+Given
+\end_layout
+
+\begin_layout Definition
+\begin_inset Formula $\rho=\left(\begin{gathered}V:Env,\\
+OM:ObjMem,\\
+T:This\\
+R:Return,E:Ex
+\end{gathered}
+\right)\in CState$
 \end_inset
 
-, 
-\begin_inset Formula $\eta\in AState$
+
+\end_layout
+
+\begin_layout Definition
+\begin_inset Formula $\eta=\left(\begin{gathered}\sigma:AEnv,\\
+\alpha:AObjMem,\\
+\tau:AThis\\
+C:Curried,\\
+r:AReturn,e:AEx
+\end{gathered}
+\right)\in AState$
 \end_inset
 
-, 
+
+\end_layout
+
+\begin_layout Definition
 \begin_inset Formula $\eta\succ\rho$
 \end_inset
 
@@ -3597,34 +3547,10 @@ Given
 \end_layout
 
 \begin_layout Definition
-when 
-\end_layout
-
-\begin_layout Definition
-\begin_inset Formula $\rho=\left\langle \begin{gathered}V:Env,OM:ObjMem,T:Object,\\
-R:Return,E:Ex
-\end{gathered}
-\right\rangle $
-\end_inset
-
-
-\end_layout
-
-\begin_layout Definition
-\begin_inset Formula $\eta=\left\langle \begin{gathered}\sigma:AEnv,\alpha:AObjMem,\tau:AObj\\
-C:AObjCurried,r:AReturn,e:AEx
-\end{gathered}
-\right\rangle $
-\end_inset
-
-
-\end_layout
-
-\begin_layout Definition
 \begin_inset Formula 
 \begin{align*}
 \sigma\succ V & \wedge\\
-\forall m\in OM\exists n\in\alpha,OM\left(m\right)\succ\alpha\left(n\right) & \wedge\\
+\forall m\in OM\exists n\in\alpha,\alpha\left(n\right)\succ OM\left(m\right) & \wedge\\
 \tau\succ T\wedge r\succ R\wedge e\succ E
 \end{align*}
 
@@ -3668,7 +3594,7 @@ First, we observe that the bind operation preserves morphisms of the functions
 \end_layout
 
 \begin_layout Definition
-a pair of functions
+A pair of functions
 \begin_inset Formula $\left\langle F,F'\right\rangle $
 \end_inset
 
@@ -3772,7 +3698,7 @@ are also elements of
 \begin_inset Formula $q'$
 \end_inset
 
-
+.
 \end_layout
 
 \begin_layout Enumerate
@@ -3789,7 +3715,7 @@ otherwise, morphism of
 \begin_inset Formula $q'$
 \end_inset
 
-
+.
 \end_layout
 
 \end_deeper
@@ -3800,7 +3726,8 @@ Finally, we observe that operations resulting from abstract functions and
 \end_inset
 
 .
- As with the monotonicity argument, we omit function-by-function proof.
+ We omit function-by-function proof, as such proof would be a mechanical
+ exercise.
 \end_layout
 
 \begin_layout Section
