@@ -371,7 +371,7 @@ key "Bracha:1990:MI:97946.97982"
 
 ).
  By passing arguments to a mixin function, objects can be extended with
- extra methodsthat is, functionality can be added dynamically.
+ extra methods; that is, functionality can be added dynamically.
  There are model languages and formalisations of mixin functions, such as
  
 \begin_inset CommandInset citation
@@ -493,7 +493,7 @@ parametric semantics
 \begin_layout Standard
 Every statement is understood as a series of non-deterministic state transformat
 ions.
- We dictinguish between 
+ We distinguish between 
 \begin_inset Quotes eld
 \end_inset
 
@@ -534,8 +534,8 @@ bind
 
  to spell out the precise mechanism for escaping a current program execution
  flow.
- This provides a flexibale and general formalisation of a control flow,
- and it allows the handling of exceptions as well as function return statements.
+ This provides a flexible and general formalisation of a control flow, and
+ it allows the handling of exceptions as well as function return statements.
 \end_layout
 
 \begin_layout Standard
@@ -941,7 +941,7 @@ Analytic framework
 We first describe a monadic framework for language analysis.
  In this section we produce a particular monadic construct, specifically
  designed for the purpose of analysis.
- We then introduce polymorphic auxiliary functions that are useful in expending
+ We then introduce polymorphic auxiliary functions that are useful in extending
  theories in a modular manner.
 \end_layout
 
@@ -978,6 +978,19 @@ Type constructor
 
  has the following polymorphic definition.
  
+\begin_inset Note Greyedout
+status open
+
+\begin_layout Plain Layout
+First explain what 
+\backslash
+beta is for.
+ Also give intuition of M a.
+\end_layout
+
+\end_inset
+
+ 
 \begin_inset Formula $\beta$
 \end_inset
 
@@ -996,8 +1009,8 @@ value
 \begin_inset Quotes erd
 \end_inset
 
- type, which means different things in different context, as we shall see
- in a formulation of semantics.
+ type, which means different things in different contexts, as we shall see
+ shortly.
 \end_layout
 
 \begin_layout Definition
@@ -1009,9 +1022,28 @@ value
 
 \begin_layout Definition
 We are essentially modelling a non-deterministic state transformation.
- Allowing non-determinism helps (or enables) defining abstract interpretation
- of a language in the exact same framework on which concrete interpretation
- is defined.
+ Allowing non-determinism 
+\begin_inset Note Greyedout
+status open
+
+\begin_layout Plain Layout
+First say that the powerset above simulates nondeterminism.
+\end_layout
+
+\end_inset
+
+helps (or enables) defining abstract interpretation of a language in the
+ exact same framework on which concrete interpretation is defined.
+\begin_inset Note Greyedout
+status open
+
+\begin_layout Plain Layout
+How does it do that?
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_deeper
@@ -1070,8 +1102,8 @@ Now we define monadic functions in order to provide modularity.
  For example, if a particular parametrised operation takes a state but only
  produces a value, it would be redundant to include a state as a part of
  returning type, to match the definition of monadic binding.
- In such case, we take a function that returns only a value, then lift such
- function to be used in the monadic binding.
+ In such a case, we take a function that returns only a value, then lift
+ it to be used in the monadic binding.
 \end_layout
 
 \begin_layout Definition
@@ -1213,7 +1245,7 @@ Record updater
 \begin_inset Formula $State$
 \end_inset
 
- domain to accommodate extra feature orthogonal to the previous version.
+ domain to accommodate extra features orthogonal to the previous version.
 \end_layout
 
 \begin_layout Definition
@@ -1237,7 +1269,7 @@ When we have a record
 \begin_inset Formula $\Upsilon$
 \end_inset
 
- that takes a record, project its columns into an n-tuple corresponding
+ that takes a record, projects its columns into an n-tuple corresponding
  to the selected columns, let 
 \begin_inset Formula $U$
 \end_inset
@@ -1354,7 +1386,8 @@ Singleton operation
 
 \end_inset
 
-Another commonly occurring pattern is that functions often return a singleton.
+Another commonly occurring pattern is that functions often return a singleton
+ set.
  We define a function that takes a function returning a value and lifts
  it to be a function that returns a singleton set.
 \end_layout
@@ -1398,9 +1431,9 @@ reference "recup"
 \end_deeper
 \end_deeper
 \begin_layout Standard
-We now have monadic constructs and auxiliary functions to describe a semantic
+We now have monadic constructs and auxiliary functions to describe the semantic
  functions of the model language.
- We can proceed to define following semantic functions of the language.
+ We can now define the semantic functions of the language.
 \end_layout
 
 \begin_layout Section
@@ -1525,7 +1558,7 @@ Semantic functions
 
 \end_inset
 
-The analytic framework contains following semantic functions.
+The analytic framework contains following semantic functions:
 \end_layout
 
 \begin_layout Definition
@@ -1736,15 +1769,33 @@ end{grammar}
 \end_layout
 
 \begin_layout Standard
-Notably, this language supports higher-order functions, which allows functions
- to be recursively referenced.
+Notably, this language 
+\begin_inset Note Greyedout
+status open
+
+\begin_layout Plain Layout
+Give the language a name, then use that in place of the ambiguous 
+\begin_inset Quotes eld
+\end_inset
+
+this language
+\begin_inset Quotes erd
+\end_inset
+
+)
+\end_layout
+
+\end_inset
+
+supports higher-order functions, which allows functions to be recursively
+ referenced.
  Hence, we formulate meaning of a function as a fixed point (see the definition
  of 
 \begin_inset Formula $F$
 \end_inset
 
 ).
- Semantic functions for the language is defined in figure 
+ The semantic functions for the language are defined in figure 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "semantic"
