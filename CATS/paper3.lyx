@@ -1070,7 +1070,7 @@ We define a bind operator
 \begin_inset Formula 
 \begin{eqnarray*}
 T\ \bind\ U & = & \lambda f\lambda s.\:\mathbf{let}\ S=T\ f\ s\ \mathbf{in}\\
- &  & \underset{\left\langle s',a\right\rangle \in S}{\bigcup}\left(\begin{gathered}\mbox{if}\ \mathtt{isterm}\left(s'\right)\\
+ &  & \underset{\left\langle s',a\right\rangle \in S}{\bigcup}\left(\begin{gathered}\mbox{if}\ \mathtt{esc}\left(s'\right)\\
 \mbox{then}\ \left\{ \left\langle s',\bot\right\rangle \right\} \\
 \mbox{else}\ U\ a\ f\ s'
 \end{gathered}
@@ -1086,7 +1086,7 @@ T\ \bind\ U & = & \lambda f\lambda s.\:\mathbf{let}\ S=T\ f\ s\ \mathbf{in}\\
 \begin_inset Formula $\mathtt{esc}$
 \end_inset
 
- is a parametrised function that returns true if a State is at a terminal
+ is a parametrised function that returns true if a State is an escaping
  state (having encountered a return statement, for example).
  
 \end_layout
@@ -1111,7 +1111,7 @@ Monadic functions
 
 \end_inset
 
-We define following auxiliary functions to incorporate non-monadic functions
+We define the following auxiliary functions to incorporate non-monadic functions
  as a part of monadic transformation:
 \end_layout
 
@@ -1138,7 +1138,7 @@ We define following auxiliary functions to incorporate non-monadic functions
 \end_layout
 
 \begin_layout Standard
-\begin_inset Formula $I_{A}\ v=\lambda f\lambda s.\left\{ \left\langle r,v\right\rangle \right\} $
+\begin_inset Formula $I_{A}\ v=\lambda f\lambda s.\left\{ \left\langle s,v\right\rangle \right\} $
 \end_inset
 
 
@@ -1166,7 +1166,7 @@ We define following auxiliary functions to incorporate non-monadic functions
 \end_layout
 
 \begin_layout Standard
-\begin_inset Formula $I_{V}\ t=\lambda f\lambda s.\left\langle \left\{ \left\langle r,t\ r\right\rangle \right\} ,\phi\right\rangle $
+\begin_inset Formula $I_{V}\ t=\lambda f\lambda s.\left\langle \left\{ \left\langle s,t\ s\right\rangle \right\} ,\emptyset\right\rangle $
 \end_inset
 
 
@@ -1189,28 +1189,7 @@ We define following auxiliary functions to incorporate non-monadic functions
 \end_layout
 
 \begin_layout Standard
-\begin_inset Formula $I_{S}\ T=\lambda f\lambda s.\left\{ \left\langle s,\bot\right\rangle \mid s\in T\ r\right\} $
-\end_inset
-
-
-\end_layout
-
-\end_deeper
-\begin_layout Itemize
-(unit operation for 
-\begin_inset Formula $M$
-\end_inset
-
-) 
-\begin_inset Formula $\mathtt{noop}$
-\end_inset
-
- is a function that does nothing.
-\end_layout
-
-\begin_deeper
-\begin_layout Standard
-\begin_inset Formula $\mathtt{noop}=\lambda f\lambda x.\left\{ \left\langle x,\bot\right\rangle \right\} $
+\begin_inset Formula $I_{S}\ T=\lambda f\lambda s.\left\{ \left\langle s',\bot\right\rangle \mid s'\in T\ s\right\} $
 \end_inset
 
 
@@ -1234,13 +1213,14 @@ Record updater
 
 \end_inset
 
- We model a state as a record, with named columns.
- In this way, an update operation written for a particular set of columns
- can be reused without redefining it when we add extra dimension to a 
+ We model a state as a record with named fields.
+ In this way, an update operation written for a particular set of fields
+ can be reused without redefining it when we add extra dimensions to a 
 \begin_inset Formula $State$
 \end_inset
 
- domain to accommodate extra features orthogonal to the previous version.
+ domain to accommodate features that are orthogonal to the features of the
+ previous version.
 \end_layout
 
 \begin_layout Definition
@@ -1248,7 +1228,7 @@ When we have a record
 \begin_inset Formula $\rho$
 \end_inset
 
- with named columns 
+ with named fields 
 \begin_inset Formula $\left\langle c_{1},\ldots,c_{k}\right\rangle $
 \end_inset
 
@@ -1256,7 +1236,7 @@ When we have a record
 \begin_inset Formula $U$
 \end_inset
 
- updates columns 
+ updates fields 
 \begin_inset Formula $c_{i},\ldots,c_{j}$
 \end_inset
 
@@ -1264,12 +1244,12 @@ When we have a record
 \begin_inset Formula $\Upsilon$
 \end_inset
 
- that takes a record, projects its columns into an n-tuple corresponding
- to the selected columns, let 
+ that takes a record, projects its fields into an n-tuple corresponding
+ to the selected fields, lets 
 \begin_inset Formula $U$
 \end_inset
 
- update the tuple, and finally update the whole record with the updated
+ update the tuple, and finally updates the whole record with the updated
  tuple.
 \end_layout
 
@@ -1281,7 +1261,7 @@ When we have a record
 \begin_inset Formula $a_{i}$
 \end_inset
 
- is a value for the column 
+ is a value for the field 
 \begin_inset Formula $c_{i}$
 \end_inset
 
@@ -1346,7 +1326,7 @@ When
 \begin_inset Formula $c$
 \end_inset
 
- is an n-tuple space for chosen columns and 
+ is an n-tuple space for chosen fields and 
 \begin_inset Formula $r$
 \end_inset
 
@@ -1432,7 +1412,7 @@ We now have monadic constructs and auxiliary functions to describe the semantic
 \end_layout
 
 \begin_layout Section
-Language Analysis
+Semantic functions
 \end_layout
 
 \begin_layout Standard
@@ -1471,7 +1451,7 @@ We use syntax nodes as references to various items constituting program
 \begin_inset Formula $Sid$
 \end_inset
 
- is a statement id.
+ is a statement identifier.
 \end_layout
 
 \begin_layout Labeling
@@ -1479,7 +1459,7 @@ We use syntax nodes as references to various items constituting program
 \begin_inset Formula $Eid$
 \end_inset
 
- is an expression id.
+ is an expression identifier.
 \end_layout
 
 \begin_layout Labeling
@@ -1511,7 +1491,7 @@ We define following auxiliary functions to describe the use of the augmented
 \begin_layout Standard
 Note that we use an sid of a function declaration statement as a reference
  point for the function defined.
- 
+ The
 \begin_inset Formula $\mathtt{param}$
 \end_inset
 
@@ -1519,8 +1499,8 @@ Note that we use an sid of a function declaration statement as a reference
 \begin_inset Formula $\mathtt{arity}$
 \end_inset
 
- functions take such sid and returns a list of parameter names and the arity
- of the function.
+ functions take such sid and return a list of parameter names, and the arity
+ of the function, respectively.
 \end_layout
 
 \begin_layout Standard
@@ -1539,10 +1519,6 @@ We write
 .
 \end_layout
 
-\begin_layout Subsection
-Semantic functions
-\end_layout
-
 \begin_layout Definition
 \begin_inset Argument
 status open
@@ -1553,7 +1529,7 @@ Semantic functions
 
 \end_inset
 
-The analytic framework contains following semantic functions:
+The analytic framework contains the following semantic functions:
 \end_layout
 
 \begin_layout Definition
@@ -1574,8 +1550,8 @@ F & = & Sid\rightarrow State\rightarrow\wp\left(State\right)\\
 \begin_inset Formula $\mathcal{S},\mathcal{E},\mathcal{L}$
 \end_inset
 
- functions are semantics functions for statements, expressions and left
- expressions, respectively.
+ are semantic functions for statements, expressions and left expressions,
+ respectively.
  
 \begin_inset Formula $F$
 \end_inset
@@ -1603,7 +1579,7 @@ returns
 \end_layout
 
 \begin_layout Section
-Model language
+The language under study
 \end_layout
 
 \begin_layout Subsection
@@ -1613,7 +1589,7 @@ name "sub:Procedural-language"
 
 \end_inset
 
-Procedural language
+The procedural core language
 \end_layout
 
 \begin_layout Standard
@@ -1967,7 +1943,7 @@ where
 
 \begin_layout Standard
 Initial state of a program is 
-\begin_inset Formula $\left\langle \phi,io,Void\right\rangle $
+\begin_inset Formula $\left\langle \emptyset,io,Void\right\rangle $
 \end_inset
 
  where 
@@ -2062,7 +2038,7 @@ AState & = & AVar\times AReturn
 
 \begin_layout Standard
 Initial state of a program is 
-\begin_inset Formula $\left\langle \phi,Void\right\rangle $
+\begin_inset Formula $\left\langle \emptyset,Void\right\rangle $
 \end_inset
 
 
@@ -2131,7 +2107,7 @@ Introduction of a function currying does not change the syntactic structure
 
 \begin_layout Standard
 \begin_inset Formula $\mathcal{E}\de{L\left(\vec{E}\right)}=\left(\begin{aligned}\mathcal{L}\ \dd{L} & \bind\lambda n.\\
-\mathtt{evalParams}\ \vec{E}\ \phi & \bind\lambda p.\\
+\mathtt{evalParams}\ \vec{E}\ \emptyset & \bind\lambda p.\\
 \mathtt{apply}\left(n,p,e\right)
 \end{aligned}
 \right)$
@@ -2313,7 +2289,7 @@ AState & = & AVar\times Curried\times AReturn
 
 \begin_layout Standard
 Initial state of a program is 
-\begin_inset Formula $\left\langle \phi,\phi,Void\right\rangle $
+\begin_inset Formula $\left\langle \emptyset,\emptyset,Void\right\rangle $
 \end_inset
 
 
@@ -2662,7 +2638,7 @@ CState & = & Var\times ObjMem\times\\
 
 \begin_layout Standard
 Initial state of a program is 
-\begin_inset Formula $\left\langle \phi,\left\{ 0\mapsto\phi\right\} ,0,Void\right\rangle $
+\begin_inset Formula $\left\langle \emptyset,\left\{ 0\mapsto\emptyset\right\} ,0,Void\right\rangle $
 \end_inset
 
 .
@@ -2816,7 +2792,7 @@ AState & = & AVar\times AObjMem\times\\
 
 \begin_layout Standard
 Initial state of a program is 
-\begin_inset Formula $\left\langle \phi,\left\{ 0\mapsto\phi\right\} ,0,\phi,Void\right\rangle $
+\begin_inset Formula $\left\langle \emptyset,\left\{ 0\mapsto\emptyset\right\} ,0,\emptyset,Void\right\rangle $
 \end_inset
 
 .
@@ -3047,7 +3023,7 @@ CState & = & Var\times ObjMem\times\\
 
 \begin_layout Standard
 Initial state of a program is 
-\begin_inset Formula $\left\langle \phi,\left\{ 0\mapsto\phi\right\} ,0,Void,Void\right\rangle $
+\begin_inset Formula $\left\langle \emptyset,\left\{ 0\mapsto\emptyset\right\} ,0,Void,Void\right\rangle $
 \end_inset
 
 .
@@ -3129,7 +3105,7 @@ AState & = & AVar\times AObjMem\times AThis\\
 
 \begin_layout Standard
 Initial state of a program is 
-\begin_inset Formula $\left\langle \phi,\left\{ 0\mapsto\phi\right\} ,0,\phi,Void,Void\right\rangle $
+\begin_inset Formula $\left\langle \emptyset,\left\{ 0\mapsto\emptyset\right\} ,0,\emptyset,Void,Void\right\rangle $
 \end_inset
 
 .
