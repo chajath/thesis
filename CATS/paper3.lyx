@@ -153,7 +153,7 @@ submittedstandard
 
 \begin_layout Standard
 \begin_inset FormulaMacro
-\renewcommand{\st}[2]{\left|#1\right|_{s_{#2}}}
+\newcommand{\st}[2]{\left|#1\right|_{s_{#2}}}
 {#1_{\left[s#2\right]}}
 \end_inset
 
@@ -162,7 +162,7 @@ submittedstandard
 
 \begin_layout Standard
 \begin_inset FormulaMacro
-\renewcommand{\ex}[2]{\left|#1\right|_{e_{#2}}}
+\newcommand{\ex}[2]{\left|#1\right|_{e_{#2}}}
 {#1_{\left[e#2\right]}}
 \end_inset
 
@@ -672,31 +672,26 @@ status open
 
 \begin_layout Plain Layout
 
-\lang english
 function fact(f,x) {
 \end_layout
 
 \begin_layout Plain Layout
 
-\lang english
 	if(x < 2) { return 1; }
 \end_layout
 
 \begin_layout Plain Layout
 
-\lang english
 	return x * f(f,x-1);
 \end_layout
 
 \begin_layout Plain Layout
 
-\lang english
 }
 \end_layout
 
 \begin_layout Plain Layout
 
-\lang english
 output fact(fact,input);
 \end_layout
 
@@ -706,13 +701,11 @@ output fact(fact,input);
 
 \begin_layout Plain Layout
 
-\lang english
 fa=fact(fact);
 \end_layout
 
 \begin_layout Plain Layout
 
-\lang english
 output fa(input);
 \end_layout
 
@@ -722,19 +715,16 @@ output fa(input);
 
 \begin_layout Plain Layout
 
-\lang english
 function Fruit(v) {
 \end_layout
 
 \begin_layout Plain Layout
 
-\lang english
 	this.value = v;
 \end_layout
 
 \begin_layout Plain Layout
 
-\lang english
 }
 \end_layout
 
@@ -744,7 +734,6 @@ function Fruit(v) {
 
 \begin_layout Plain Layout
 
-\lang english
 global.answer = 0;
 \end_layout
 
@@ -754,43 +743,36 @@ global.answer = 0;
 
 \begin_layout Plain Layout
 
-\lang english
 function juicible(fruit, juice) {
 \end_layout
 
 \begin_layout Plain Layout
 
-\lang english
 	function juiceMe(j,x) {
 \end_layout
 
 \begin_layout Plain Layout
 
-\lang english
 		return this.value + j + x;
 \end_layout
 
 \begin_layout Plain Layout
 
-\lang english
 	}
 \end_layout
 
 \begin_layout Plain Layout
 
-\lang english
 	fruit.juice = juiceMe(juice); #currying
 \end_layout
 
 \begin_layout Plain Layout
 
-\lang english
 	global.answer=42;
 \end_layout
 
 \begin_layout Plain Layout
 
-\lang english
 }
 \end_layout
 
@@ -800,31 +782,26 @@ function juicible(fruit, juice) {
 
 \begin_layout Plain Layout
 
-\lang english
 # Juicibles
 \end_layout
 
 \begin_layout Plain Layout
 
-\lang english
 apple = new Fruit(15);
 \end_layout
 
 \begin_layout Plain Layout
 
-\lang english
 juicible(apple, 20);
 \end_layout
 
 \begin_layout Plain Layout
 
-\lang english
 grape = new Fruit(30);
 \end_layout
 
 \begin_layout Plain Layout
 
-\lang english
 juicible(grape, 50);
 \end_layout
 
@@ -834,19 +811,16 @@ juicible(grape, 50);
 
 \begin_layout Plain Layout
 
-\lang english
 # Non-juicibles
 \end_layout
 
 \begin_layout Plain Layout
 
-\lang english
 banana = new Fruit(20);
 \end_layout
 
 \begin_layout Plain Layout
 
-\lang english
 watermelon = new Fruit(25);
 \end_layout
 
@@ -856,19 +830,16 @@ watermelon = new Fruit(25);
 
 \begin_layout Plain Layout
 
-\lang english
 output apple.juice(10); # 15 + 20 + 10
 \end_layout
 
 \begin_layout Plain Layout
 
-\lang english
 output grape.juice(10); # 30 + 50 + 10
 \end_layout
 
 \begin_layout Plain Layout
 
-\lang english
 output global.answer; # 42
 \end_layout
 
@@ -878,31 +849,26 @@ output global.answer; # 42
 
 \begin_layout Plain Layout
 
-\lang english
 try {
 \end_layout
 
 \begin_layout Plain Layout
 
-\lang english
 	if(input > 42) {throw 42;}
 \end_layout
 
 \begin_layout Plain Layout
 
-\lang english
 } catch(e) {
 \end_layout
 
 \begin_layout Plain Layout
 
-\lang english
 	output e;
 \end_layout
 
 \begin_layout Plain Layout
 
-\lang english
 }
 \end_layout
 
@@ -2448,19 +2414,16 @@ status open
 
 \begin_layout Plain Layout
 
-\lang english
 function foo(a,b) {
 \end_layout
 
 \begin_layout Plain Layout
 
-\lang english
 	return a;
 \end_layout
 
 \begin_layout Plain Layout
 
-\lang english
 }
 \end_layout
 
@@ -2470,25 +2433,21 @@ function foo(a,b) {
 
 \begin_layout Plain Layout
 
-\lang english
 x = 0;
 \end_layout
 
 \begin_layout Plain Layout
 
-\lang english
 while(true) {
 \end_layout
 
 \begin_layout Plain Layout
 
-\lang english
 	x = foo(x);
 \end_layout
 
 \begin_layout Plain Layout
 
-\lang english
 }
 \end_layout
 
@@ -2732,10 +2691,15 @@ status open
 \begin_layout Plain Layout
 \begin_inset Formula 
 \begin{align*}
- & \mathcal{S}\dd{E_{1}.id=E_{2}} & = & \mathcal{E}\ \dd{E_{1}}\bind\lambda v.\mathcal{E}\ \dd{E_{2}}\bind\lambda r.I_{S}\ \mathtt{set}\left(r,id,v\right)\\
+ & \mathcal{S}\dd{E_{1}.id=E_{2}} & = & \mathcal{E}\ \dd{E_{1}}\bind\lambda r.\mathcal{E}\ \dd{E_{2}}\bind\lambda v.I_{S}\ \mathtt{set}\left(r,id,v\right)\\
  & \mathcal{E}\dd{\mathtt{global}} & = & I_{V}\ \mathtt{getglobal}\\
  & \mathcal{E}\dd{\mathtt{this}} & = & I_{V}\ \mathtt{getthis}\\
- & \mathcal{E}\de{L\left(\vec{E}\right)} & = & \mathcal{L}\ \dd L\bind\lambda n.\left(\mathtt{evalParams}\ \vec{E}\ \emptyset\right)\bind\lambda p.\mathtt{apply}\left(n,p,\mathtt{obj}\left(0,\rho\right),e\right)\\
+ & \mathcal{E}\de{L\left(\vec{E}\right)} & = & \left(\begin{aligned}\mathcal{L}\ \dd L & \bind\lambda n.\\
+\left(\mathtt{evalParams}\ \vec{E}\ \emptyset\right) & \bind\lambda p.\\
+I_{V}\ \mathtt{getthis} & \bind\lambda t.\\
+\mathtt{apply}\left(n,p,t,e\right)
+\end{aligned}
+\right)\\
  & \mathcal{E}\de{\mathtt{new}\ L\left(\vec{E}\right)} & = & \left(\begin{aligned}\mathcal{L}\ \dd{L} & \bind\lambda n.\\
 \mathtt{evalParams}\ \vec{E}\ \emptyset & \bind\lambda p.\\
 \mathtt{newobj}\left(e\right) & \bind\lambda m.\\
@@ -2743,8 +2707,8 @@ status open
 I_{A}\ m
 \end{aligned}
 \right)\\
- & \mathcal{E}\de{E_{1}.L\left(\vec{E}\right)} & = & \left(\begin{aligned}\mathcal{E}\ \dd{E_{1}} & \bind\lambda t.\\
-\mathcal{L}\ \dd L & \bind\lambda n.\\
+ & \mathcal{E}\de{E_{1}.id\left(\vec{E}\right)} & = & \left(\begin{aligned}\mathcal{E}\ \dd{E_{1}} & \bind\lambda t.\\
+I_{V}\ \mathtt{get}(t,id) & \bind\lambda n.\\
 \mathtt{evalParams}\ \vec{E}\ \emptyset & \bind\lambda p.\\
 \mathtt{apply}\left(n,p,t,e\right)
 \end{aligned}
@@ -3032,7 +2996,7 @@ Domain
 \begin{eqnarray*}
 AObj & = & \left\{ 0\right\} \cup Eid\\
 AVal & = & P\cup AObj\cup FunPointer\\
-AObjMem & = & Eid\rightarrow AEnv\\
+AObjMem & = & AObj\rightarrow AEnv\\
 AThis & = & AObj\\
 AState & = & AEnv\times AObjMem\times\\
  &  & AThis\times Curried\times AReturn
