@@ -1950,8 +1950,7 @@ reference "semantic"
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-\mathtt{call}\left(n,p\right) & = & \lambda f\lambda\rho.\left\{ \mathtt{leave}\ \rho\ \rho'\mid\rho'\in S\right\} \ \mbox{where}\\
- &  & S=f\ n\ \left(\mathtt{enter}\ \rho\ p\right)
+\mathtt{call}\left(n,p\right) & = & \lambda f\lambda\rho.\left\{ \mathtt{leave}\ \rho\ \rho'\mid\rho'\in S\right\} \ \mbox{where}\ S=f\ n\ \left(\mathtt{enter}\ \rho\ p\right)
 \end{eqnarray*}
 
 \end_inset
@@ -1961,14 +1960,12 @@ reference "semantic"
 
 \begin_layout Standard
 \begin_inset Formula 
-\begin{gather*}
-\mathtt{evalParams}:\left[Exp\right]\times\left[a\right]\rightarrow\\
-\ \ F\rightarrow State\rightarrow\wp\left(State\times\left[a\right]\right)\\
-\mathtt{evalParams}\ \epsilon\ ps\ f\ \rho=\lambda f\lambda\rho.\left\langle \rho,ps\right\rangle \\
-\mathtt{evalParams}\ \dd{E}\smallfrown Exps\ ps=\lambda f\lambda\rho.\\
-\underset{\left\langle \rho',con\right\rangle \in S}{\bigcup}\left\{ \mathtt{evalParams}\ Exps\ ps\smallfrown con\ f\ \rho'\right\} \\
-\ \ \mbox{where}\; S=\mathcal{E}\ \dd{E}\ f\ \rho
-\end{gather*}
+\begin{eqnarray*}
+\mathtt{evalParams} & : & \left[Exp\right]\times\left[a\right]\rightarrow F\rightarrow State\rightarrow\wp\left(State\times\left[a\right]\right)\\
+\mathtt{evalParams}\ \epsilon\ ps\ f\ \rho & = & \lambda f\lambda\rho.\left\langle \rho,ps\right\rangle \\
+\mathtt{evalParams}\ \dd{E}\smallfrown Exps\ ps & = & \lambda f\lambda\rho.\underset{\left\langle \rho',con\right\rangle \in S}{\bigcup}\left\{ \mathtt{evalParams}\ Exps\ ps\smallfrown con\ f\ \rho'\right\} \\
+ &  & \mbox{where}\; S\ =\ \mathcal{E}\ \dd{E}\ f\ \rho
+\end{eqnarray*}
 
 \end_inset
 
@@ -2333,14 +2330,14 @@ Functions
 
 \begin_layout Standard
 \begin_inset Formula 
-\begin{gather*}
-\mathtt{apply}\left(\left\langle n,C\right\rangle ,p,\_\right)=\begin{cases}
+\begin{eqnarray*}
+\mathtt{apply}\left(\left\langle n,C\right\rangle ,p,\_\right) & = & \begin{cases}
 \mathtt{call}\left(n,C\smallfrown p\right)\  & \mbox{if}\begin{gathered}\: N\left(C\smallfrown p\right)=\mathtt{arity}\left(n\right)\end{gathered}
 \\
 \lambda f,\rho.\left\{ \left\langle \rho,\left\langle n,C\smallfrown p\right\rangle \right\rangle \right\} \  & \mbox{otherwise}
 \end{cases}\\
-\mathtt{fundecl}(id,n)=\bar{\Upsilon}_{Env}\ \lambda V.V\left[id\mapsto\left\langle n,\emptyset\right\rangle \right]
-\end{gather*}
+\mathtt{fundecl}(id,n) & = & \bar{\Upsilon}_{Env}\ \lambda V.V\left[id\mapsto\left\langle n,\emptyset\right\rangle \right]
+\end{eqnarray*}
 
 \end_inset
 
@@ -2450,9 +2447,7 @@ Domain
 \begin_inset Formula 
 \begin{eqnarray*}
 FunPointer & = & Sid\times c\times\left(Eid\cup\left\{ 0\right\} \right)\\
-Curried & = & Sid\times c\times Eid\rightarrow\left[AVal\right]\\
- &  & \mbox{where}\\
- &  & c\mbox{ is a number of parameters given}\\
+Curried & = & Sid\times c\times Eid\rightarrow\left[AVal\right]\ \mbox{where}\ c\mbox{ is a number of parameters given}\\
 AState & = & AEnv\times Curried\times AReturn
 \end{eqnarray*}
 
@@ -2588,14 +2583,7 @@ begin{grammar}
 
 \begin_layout Plain Layout
 
-<Exp> ::= `global' | `this'
-\end_layout
-
-\begin_layout Plain Layout
-
-
-\backslash
-alt  `new' <Lexp> `(' [<Exp> [,<Exp>]*]? `)'
+<Exp> ::= `global' | `this' | `new' <Lexp> `(' [<Exp> [,<Exp>]*]? `)'
 \end_layout
 
 \begin_layout Plain Layout
@@ -2738,8 +2726,7 @@ We redefine
 \lang english
 \begin_inset Formula 
 \begin{multline*}
-\mathtt{call}\left(n,p,t\right)=\\
-\ \ \ \lambda f\lambda\rho,\gamma.\Theta\ \left\langle \left\{ \mathtt{leave}\ \rho\ \rho'\mid\rho'\in S\right\} ,\gamma'\right\rangle \\
+\mathtt{call}\left(n,p,t\right)=\lambda f\lambda\rho,\gamma.\Theta\ \left\langle \left\{ \mathtt{leave}\ \rho\ \rho'\mid\rho'\in S\right\} ,\gamma'\right\rangle \\
 \mbox{where}\left\langle S,\gamma'\right\rangle =f\ n\ \left(\mathtt{enter}\ \rho\ \left\langle p,t\right\rangle \ n\right)\ \gamma
 \end{multline*}
 
@@ -2813,13 +2800,11 @@ Domain
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-Value & = & \mathbb{Z}\cup\left\{ T,F\right\} \cup Object\cup\\
- &  & FunPointer\\
+Value & = & \mathbb{Z}\cup\left\{ T,F\right\} \cup Object\cup FunPointer\\
 Object & = & \mathbb{N}\\
 ObjMem & = & n\rightarrow Env\\
 This & = & Object\\
-CState & = & Env\times ObjMem\times\\
- &  & This\times Return
+CState & = & Env\times ObjMem\times This\times Return
 \end{eqnarray*}
 
 \end_inset
@@ -2859,10 +2844,8 @@ We redefine
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-\mathtt{enter} & = & \lambda\left\langle \_,OM,\_,\_\right\rangle ,\left\langle P,T'\right\rangle ,n.\\
- &  & \ \left\langle \left[\mathtt{param}\left(n\right)_{k}\mapsto P_{k}\right],OM,T',Void\right\rangle \\
-\mathtt{leave} & = & \lambda\left\langle V,\_,T,\_\right\rangle ,\left\langle \_,OM',\_,r\right\rangle .\\
- &  & \ \left\langle \left\langle V,OM',T,Void\right\rangle ,r\right\rangle 
+\mathtt{enter} & = & \lambda\left\langle \_,OM,\_,\_\right\rangle ,\left\langle P,T'\right\rangle ,n.\left\langle \left[\mathtt{param}\left(n\right)_{k}\mapsto P_{k}\right],OM,T',Void\right\rangle \\
+\mathtt{leave} & = & \lambda\left\langle V,\_,T,\_\right\rangle ,\left\langle \_,OM',\_,r\right\rangle .\left\langle \left\langle V,OM',T,Void\right\rangle ,r\right\rangle 
 \end{eqnarray*}
 
 \end_inset
@@ -2972,8 +2955,7 @@ AObj & = & \left\{ 0\right\} \cup Eid\\
 AVal & = & P\cup AObj\cup FunPointer\\
 AObjMem & = & AObj\rightarrow AEnv\\
 AThis & = & AObj\\
-AState & = & AEnv\times AObjMem\times\\
- &  & AThis\times Curried\times AReturn
+AState & = & AEnv\times AObjMem\times AThis\times Curried\times AReturn
 \end{eqnarray*}
 
 \end_inset
@@ -3001,10 +2983,8 @@ Functions
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-\mathtt{enter} & = & \lambda\left\langle \_,\alpha,\_,\nu,\_\right\rangle ,\left\langle P,\tau'\right\rangle ,n.\\
- &  & \ \left\langle \left[\mathtt{param}\left(n\right)_{k}\mapsto P_{k}\right],\alpha,\tau',\nu,Void\right\rangle \\
-\mathtt{leave} & = & \lambda\left\langle \sigma,\_,\tau,\_,\_\right\rangle ,\left\langle \_,\alpha',\_,\nu',r\right\rangle .\\
- &  & \ \left\langle \left\langle \sigma,\alpha',\tau,\nu',Void\right\rangle ,r\right\rangle 
+\mathtt{enter} & = & \lambda\left\langle \_,\alpha,\_,\nu,\_\right\rangle ,\left\langle P,\tau'\right\rangle ,n.\left\langle \left[\mathtt{param}\left(n\right)_{k}\mapsto P_{k}\right],\alpha,\tau',\nu,Void\right\rangle \\
+\mathtt{leave} & = & \lambda\left\langle \sigma,\_,\tau,\_,\_\right\rangle ,\left\langle \_,\alpha',\_,\nu',r\right\rangle .\left\langle \left\langle \sigma,\alpha',\tau,\nu',Void\right\rangle ,r\right\rangle 
 \end{eqnarray*}
 
 \end_inset
@@ -3052,8 +3032,7 @@ status open
 \mathtt{getthis} & = & \bar{\Theta}_{AThis}\ \lambda\tau.\tau\\
 \mathtt{newobj}\left(n\right) & = & \bar{\Psi}_{AObjMem}\ \lambda\alpha.\left\langle \alpha\left[n\mapsto\emptyset\right],n\right\rangle \\
 \mathtt{apply}\left(\left\langle n,c,e\right\rangle ,p,t,e\right) & = & \begin{cases}
-\Theta_{Curried}\ \lambda\nu.\underset{C\in\nu\left(n,c,e\right)}{\bigcup}\mathtt{call}\left(n,C\smallfrown p,t\right)\ \mbox{if}\ c+N\left(p\right)=\mathtt{arity}\left(n\right) & \begin{gathered}\end{gathered}
-\\
+\Theta_{Curried}\ \lambda\nu.\underset{C\in\nu\left(n,c,e\right)}{\bigcup}\mathtt{call}\left(n,C\smallfrown p,t\right)\ \mbox{if}\ c+N\left(p\right)=\mathtt{arity}\left(n\right)\\
 \Psi_{Curried}\ \lambda\nu.\underset{C\in\nu\left(n,c,e\right)}{\bigcup}\left\langle \nu\left[\left\langle n,c+N\left(p\right),e\right\rangle \mapsto C\smallfrown p\right],\left\langle n,c+N\left(p\right),e\right\rangle \right\rangle \ \mbox{otherwise}
 \end{cases}
 \end{eqnarray*}
@@ -3137,14 +3116,8 @@ begin{grammar}
 
 \begin_layout Plain Layout
 
-<Stm> ::= `try' `{' <Stm> `}' `catch' `(' id `)' `{' <Stm> `}'
-\end_layout
-
-\begin_layout Plain Layout
-
-
-\backslash
-alt `throw' <Exp>
+<Stm> ::= `try' `{' <Stm> `}' `catch' `(' id `)' `{' <Stm> `}' | `throw'
+ <Exp>
 \end_layout
 
 \begin_layout Plain Layout
@@ -3170,21 +3143,11 @@ Following functions are the semantic functions for the newly introduced
 
 \begin_layout Standard
 \begin_inset Formula 
-\begin{gather*}
-\mathcal{S}\dd{\mathtt{try}\ S_{1}\ \mathtt{catch}\left(Id\right)\ S_{2}}=\\
-\left(\begin{aligned}\mathcal{S}\ \dd{S_{1}} & \bind\\
-\mathtt{catch}\left(id,\mathcal{S}\ \dd{S_{2}}\right)
-\end{aligned}
-\right)
-\end{gather*}
+\begin{eqnarray*}
+\mathcal{S}\dd{\mathtt{try}\ S_{1}\ \mathtt{catch}\left(Id\right)\ S_{2}} & = & \mathcal{S}\ \dd{S_{1}}\bind\mathtt{catch}\left(id,\mathcal{S}\ \dd{S_{2}}\right)\\
+\mathcal{S}\dd{\mathtt{throw}\ E} & = & \mathcal{E}\ \dd{E}\bind\mathtt{throw}
+\end{eqnarray*}
 
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula $\mathcal{S}\dd{\mathtt{throw}\ E}=\mathcal{E}\ \dd{E}\bind\mathtt{throw}$
 \end_inset
 
 
@@ -3212,8 +3175,7 @@ Domain
 \begin_inset Formula 
 \begin{eqnarray*}
 Ex & = & Value\cup\left\{ Void\right\} \\
-CState & = & Env\times ObjMem\times\\
- &  & This\times Return\times Ex
+CState & = & Env\times ObjMem\times This\times Return\times Ex
 \end{eqnarray*}
 
 \end_inset
@@ -3236,8 +3198,8 @@ Functions
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-\mathtt{enter} & = & \lambda\left\langle \_,OM,\_,\_,\_\right\rangle ,\left\langle P,T'\right\rangle ,n.\ \left\langle \left[\mathtt{param}\left(n\right)_{k}\mapsto P_{k}\right],OM,T',Void,Void\right\rangle \\
-\mathtt{leave} & = & \lambda\left\langle V,\_,T,\_,\_\right\rangle ,\left\langle \_,OM',\_,r,e\right\rangle .\ \left\langle \left\langle V,OM',T,Void,e\right\rangle ,r\right\rangle 
+\mathtt{enter} & = & \lambda\left\langle \_,OM,\_,\_,\_\right\rangle ,\left\langle P,T'\right\rangle ,n.\left\langle \left[\mathtt{param}\left(n\right)_{k}\mapsto P_{k}\right],OM,T',Void,Void\right\rangle \\
+\mathtt{leave} & = & \lambda\left\langle V,\_,T,\_,\_\right\rangle ,\left\langle \_,OM',\_,r,e\right\rangle .\left\langle \left\langle V,OM',T,Void,e\right\rangle ,r\right\rangle 
 \end{eqnarray*}
 
 \end_inset
@@ -3743,8 +3705,67 @@ Haskell Implementation
 \end_layout
 
 \begin_layout Subsection
-Syntax parser.
- Creates an augmented syntax tree with unique ID numbers.
+Syntax parser 
+\end_layout
+
+\begin_layout Standard
+Creates an augmented syntax tree with unique ID numbers.
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset include
+LatexCommand lstinputlisting
+filename "implementation/Sdtl.y"
+lstparams "basicstyle={\\footnotesize\\ttfamily},language=Haskell,numbers=none,xleftmargin=0pt"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Semantic functions
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset include
+LatexCommand lstinputlisting
+filename "implementation/SemanticFunctions.hs"
+lstparams "basicstyle={\\footnotesize\\ttfamily},language=Haskell,numbers=none,xleftmargin=0pt"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Concrete interpretation
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset include
+LatexCommand lstinputlisting
+filename "implementation/ConcreteInterpretation.hs"
+lstparams "basicstyle={\\footnotesize\\ttfamily},language=Haskell,numbers=none,xleftmargin=0pt"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Abstract interpretation
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset include
+LatexCommand lstinputlisting
+filename "implementation/AbstractInterpretation.hs"
+lstparams "basicstyle={\\footnotesize\\ttfamily},language=Haskell,numbers=none,xleftmargin=0pt"
+
+\end_inset
+
+
 \end_layout
 
 \end_body
