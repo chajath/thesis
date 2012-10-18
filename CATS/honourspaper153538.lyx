@@ -1,0 +1,3751 @@
+#LyX 2.0 created this file. For more info see http://www.lyx.org/
+\lyxformat 413
+\begin_document
+\begin_header
+\textclass article
+\begin_preamble
+\usepackage{stmaryrd}
+\usepackage{syntax}
+\usepackage{color}
+\usepackage{xspace}
+
+\definecolor{lightgray}{rgb}{.9,.9,.9}
+\definecolor{darkgray}{rgb}{.4,.4,.4}
+\definecolor{purple}{rgb}{0.65, 0.12, 0.82}
+
+\AtBeginDocument{\catcode`\_=8}
+
+\newcommand{\dd}[1]{\llbracket#1\rrbracket}
+\newcommand{\ds}[1]{\llbracket\left|#1\right|_s\rrbracket}
+\newcommand{\de}[1]{\llbracket\left|#1\right|_e\rrbracket}
+
+\newcommand{\bind}{\Yright}
+
+\exhyphenpenalty=10000\hyphenpenalty=10000
+
+\newcommand\conferencenameandplace{19th Computing: Australasian Theory Symposium (CATS 2013), Adelaide, Australia, January 2013}
+\newcommand\volumenumber{xxx}
+\newcommand\conferenceyear{2013}
+\newcommand\editorname{Anthony Wirth}
+
+\newcommand\sdtl{\textsc{SDTL}\xspace}
+
+\usepackage{hyperref}
+\usepackage[all]{hypcap}
+\end_preamble
+\options fleqn
+\use_default_options true
+\begin_modules
+theorems-ams
+eqs-within-sections
+figs-within-sections
+\end_modules
+\maintain_unincluded_children false
+\language british
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\float_placement !t
+\paperfontsize default
+\spacing single
+\use_hyperref true
+\pdf_bookmarks true
+\pdf_bookmarksnumbered false
+\pdf_bookmarksopen false
+\pdf_bookmarksopenlevel 1
+\pdf_breaklinks true
+\pdf_pdfborder false
+\pdf_colorlinks false
+\pdf_backref false
+\pdf_pdfusetitle true
+\papersize default
+\use_geometry true
+\use_amsmath 1
+\use_esint 1
+\use_mhchem 1
+\use_mathdots 1
+\cite_engine basic
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\use_refstyle 1
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\leftmargin 1in
+\topmargin 1in
+\rightmargin 1in
+\bottommargin 1in
+\headheight 0in
+\headsep 0in
+\footskip 0.5in
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\listings_params "basicstyle={\small},comment={[l]{\#}},commentstyle={\color{purple}\ttfamily},frame=leftline,identifierstyle={\color{black}},keywords={new, function, return, if, while, else, output, input},keywordstyle={\bfseries\underline},ndkeywords={this, global, true, false},ndkeywordstyle={\bfseries},numbers=left,numbersep=10pt,numberstyle={\tiny},sensitive=false,tabsize=2,xleftmargin=20pt"
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+Parametric Denotational Semantics for Extensible Language Definition and
+ Program Analysis
+\end_layout
+
+\begin_layout Author
+In-Ho Yi
+\begin_inset Newline newline
+\end_inset
+
+Department of Computing and Information Systems 
+\begin_inset Newline newline
+\end_inset
+
+ The University of Melbourne, Victoria 3010, Australia 
+\begin_inset Newline newline
+\end_inset
+
+ i.yi@student.unimelb.edu.au
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\newcommand{\st}[2]{\left|#1\right|_{s_{#2}}}
+{#1_{\left[s#2\right]}}
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\newcommand{\ex}[2]{\left|#1\right|_{e_{#2}}}
+{#1_{\left[e#2\right]}}
+\end_inset
+
+
+\end_layout
+
+\begin_layout Abstract
+We present a novel approach to construction of a formal semantics for a
+ programming language.
+ Our approach, using a parametric denotational semantics, allows the semantics
+ to be easily extended to support new language features, and abstracted
+ to define program analyses.
+ We apply this in analysing a duck-typed, reflective, curried dynamic language.
+ The benefits of this approach include its terseness and modularity, and
+ the ease with which one can gradually build language features and analyses
+ on top of a previous incarnation of a semantics.
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset toc
+LatexCommand tableofcontents
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Introduction
+\end_layout
+
+\begin_layout Standard
+Two distinct needs motivated the development of the present work.
+ First, there is the theoretician's need for a simple, concise, elegant
+ way of presenting a formal semantics for a programming language and of
+ developing that into various static analyses.
+ We base our approach on a parametric denotational semantics that is modularised
+ to allow the concrete semantics and the abstract interpretation to share
+ a common framework that uniformly handles most aspects of the programming
+ language.
+ 
+\end_layout
+
+\begin_layout Standard
+Second, there is a practical need for program analyses suitable for the
+ dynamic languages that have been growing in popularity in recent years.
+ Traditionally these languages were called 
+\begin_inset Quotes eld
+\end_inset
+
+scripting
+\begin_inset Quotes erd
+\end_inset
+
+ languages, as they were mainly used for automating tasks and processing
+ strings.
+ However, with the advent of web applications, languages such as Perl and
+ PHP gained popularity as languages for web application development.
+ On the client side, web pages make heavy use of JavaScript, a dynamically
+ typed language, to deliver dynamic contents to the browser.
+ Recent years have seen an increasing use of JavaScript on the server side,
+ as well.
+\end_layout
+
+\begin_layout Standard
+What these languages provide is an ability to rapidly prototype and validate
+ application models in a real time read-eval-print loop.
+ Another strength comes from the fact that programmers do not need to have
+ a class structure defined upfront.
+ Rather, class structures and types of variables in general are dynamically
+ built.
+ This reduces the initial overhead of software design.
+\end_layout
+
+\begin_layout Standard
+However, these features come at a cost.
+ The lack of a formal, static definition of type information makes dynamically
+ typed languages harder to analyse.
+ This difficulty causes several practical problems.
+ 
+\end_layout
+
+\begin_layout Itemize
+As applications become more mature, more effort is devoted to program unit
+ testing and writing assertions to ensure type safety of systems.
+ This extra effort can sometimes outweigh the benefit of having a dynamically
+ typed language.
+\end_layout
+
+\begin_layout Itemize
+Whereas programmers using statically typed languages enjoy an abundance
+ of development tools, the choice of tools for development in dynamically
+ typed languages is limited, and the tools that do exist lack much of the
+ power of the tools for statically typed languages, owing largely to the
+ difficulty or infeasibility of type analysis for such languages.
+\end_layout
+
+\begin_layout Itemize
+Lack of static type structure has a significant impact on the performance
+ of dynamically typed languages.
+\end_layout
+
+\begin_layout Standard
+With these problems in mind, we designed a model language that has a dynamism
+ comparable to that of the aforementioned scripting languages, such as duck
+ typing, reflection, and partial function application.
+ A notable omission is a closure scoping.
+ However, allowing function currying gives enough expressive power to the
+ language.
+\end_layout
+
+\begin_layout Standard
+The two concerns are not distinct ones, but an interconnected dialectic.
+ The theoretical need is there because of the difficulty of describing the
+ abstract and concrete meaning of dynamic languages, which often allow side-effe
+ct causing, type-altering functions.
+\end_layout
+
+\begin_layout Section
+Related work
+\end_layout
+
+\begin_layout Standard
+Denotational semantics is the starting point of our development of a theoretical
+ system.
+ The idea of incorporating monads into the denotational semantics was developed
+ by 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Liang:phd1998"
+
+\end_inset
+
+ and 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Liang_Hudak:ESOP1996"
+
+\end_inset
+
+.
+ Whereas these works modularise an analytic framework by having multiple
+ layers of monadic transformations, we instead parametrise the definition
+ of a program state.
+ 
+\end_layout
+
+\begin_layout Standard
+Action semantics, as advanced by 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Mosses1996TPA"
+
+\end_inset
+
+, shares the motivation that semantics ought to be pragmatic, yet expressive
+ enough to deal with non-trivial, feature-rich languages.
+ While action semantics endeavours to devise a new semantics, we constrain
+ ourself to the language of denotational semantics, and seek to devise a
+ formalism largely compatible with denotational semantics.
+\end_layout
+
+\begin_layout Standard
+The idea of constructing formulae with parametric types can be found in
+ 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Wadler:1989:TF:99370.99404"
+
+\end_inset
+
+.
+ The present work is a special application of the parametricity in the field
+ of language semantics and analysis.
+\end_layout
+
+\begin_layout Standard
+Regarding the type analysis of dynamic languages, 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Anderson:ECOOP2005"
+
+\end_inset
+
+, 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Anderson:ENTCS2005"
+
+\end_inset
+
+, 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Guha:ESOP2011"
+
+\end_inset
+
+ and 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Wrigstad:POPL2010"
+
+\end_inset
+
+ study simple languages and their semantics for the purpose of static analysis
+ of dynamic languages.
+ A major difference between those languages and the model language presented
+ in this paper is that our language is designed to capture the critical
+ feature of real world languages which allows functions to alter types through
+ side-effect causing statements.
+ We point out similarities and differences of this work compared to the
+ cited works as we encounter them in this paper.
+\end_layout
+
+\begin_layout Standard
+Type analysis plays a crucial part in compiling scripting languages, mainly
+ to improve performance.
+ 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Ancona:2007:RST:1297081.1297091"
+
+\end_inset
+
+ and 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Dufour:2006"
+
+\end_inset
+
+ design restricted versions of a scripting languages so that static inference
+ of types can be performed.
+ We adopt several techniques employed in those projects, such as the use
+ of named memory allocation sites as static references.
+\end_layout
+
+\begin_layout Standard
+An important use case of functions in dynamically typed languages is 
+\begin_inset Quotes eld
+\end_inset
+
+mixin
+\begin_inset Quotes erd
+\end_inset
+
+ functions (
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Bracha:1990:MI:97946.97982"
+
+\end_inset
+
+).
+ By passing arguments to a mixin function, objects can be extended with
+ extra methods; that is, functionality can be added dynamically.
+ There are model languages and formalisations of mixin functions, such as
+ 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Anderson:ECOOP2005"
+
+\end_inset
+
+ and 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Mens:TR1996"
+
+\end_inset
+
+.
+ Where those works seek to find functional models for mixins, we define
+ instead a language (with side-effect causing functions) that is expressive
+ enough to program mixin inheritance.
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Jensen:SAS2009"
+
+\end_inset
+
+ describe a feature-complete analyser for the JavaScript language.
+ Our work can be extended further to provide the semantic foundation for
+ such an analyser.
+ Such an attempt to formalise the analysis might pave the way for further
+ refinement and improvement.
+\end_layout
+
+\begin_layout Section
+Overview
+\end_layout
+
+\begin_layout Standard
+Our semantic framework is comprised of two components: one for the syntactic
+ structure, and the other for giving meanings to the primitive operations.
+ What divides the two is the following separation of concerns:
+\end_layout
+
+\begin_layout Enumerate
+What are the semantic operations entailed in a particular syntactic structure?
+ For example, syntactic structure 
+\begin_inset Formula $\dd{a=30}$
+\end_inset
+
+ entails a primitive operation 
+\begin_inset Formula $\mathtt{asg}\left(a,30\right)$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Enumerate
+How do we interpret such semantic operations in a particular point of view?
+ If we were to give a concrete interpretation, we would interpret 
+\begin_inset Formula $\mathtt{asg}\left(a,30\right)$
+\end_inset
+
+ as updating an environment with a newly defined variable e.g., 
+\begin_inset Formula $Env\left[a=30\right]$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+Observe that an interpretation of syntactic structure can remain agnostic
+ of the view of a program state at a given point.
+ Therefore, once we remove the actual interpretation of primitive operations,
+ what remains in a semantics can be re-used for multiple interpretations
+ of the language.
+ Hence, not only are the primitive operations parametrised, but so is the
+ whole definition of the domain of the program state.
+ Now we give a formal definition of our framework.
+ Such a separation of concerns also helps to define an extensible semantics,
+ to which adding a new feature takes as little effort as possible.
+\end_layout
+
+\begin_layout Definition
+\begin_inset Argument
+status open
+
+\begin_layout Plain Layout
+Parametric semantics
+\end_layout
+
+\end_inset
+
+ A parametric semantics 
+\begin_inset Formula $Q$
+\end_inset
+
+ is a quadruple 
+\begin_inset Formula $\left(X,State,s,P\right)$
+\end_inset
+
+ where 
+\begin_inset Formula $X$
+\end_inset
+
+ is a collection of semantic functions for syntactic structures, as outlined
+ below; 
+\begin_inset Formula $State$
+\end_inset
+
+ is a set of representations of computation state, which can be anything
+ to suit a particular analysis; 
+\begin_inset Formula $s$
+\end_inset
+
+ is an initial program state; and 
+\begin_inset Formula $P$
+\end_inset
+
+ is the set of primitive operations of the semantics.
+ We assume throughout that 
+\begin_inset Formula $State$
+\end_inset
+
+ is ordered by identity.
+\end_layout
+
+\begin_layout Standard
+Throughout the analysis, these primitive operations are the parameters of
+ our analysis:
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\mathtt{esc}$
+\end_inset
+
+ takes a state and reports whether it is escaping (i.e., whether or not control
+ flow reaches the successor statement)
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\mathtt{cond}$
+\end_inset
+
+ interprets the meaning of a branching point when a value and two transformation
+s (one for true and another for false) are given
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\mathtt{asg}$
+\end_inset
+
+ takes an identifier and a value, and performs assignment
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\mathtt{val}$
+\end_inset
+
+ takes an identifier and produces its value
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\mathtt{conval}$
+\end_inset
+
+ takes a constant and produces its value
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\mathtt{getinput}$
+\end_inset
+
+ and 
+\begin_inset Formula $\mathtt{dooutput}$
+\end_inset
+
+ define the meanings of console I/O operations 
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\mathtt{bin}$
+\end_inset
+
+ defines the meaning of all binary operations given two values
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\mathtt{ret}$
+\end_inset
+
+ defines the meaning of a return statement given the value to be returned
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\mathtt{fundecl}$
+\end_inset
+
+ defines the meaning of dynamic execution of a function declaration
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\mathtt{apply}$
+\end_inset
+
+ defines the meaning of (possibly partially) applying a function to a list
+ of values
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\mathtt{get}$
+\end_inset
+
+ and 
+\begin_inset Formula $\mathtt{set}$
+\end_inset
+
+ defines the meaning of getting or setting a member of an object
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\mathtt{getglobal}$
+\end_inset
+
+ and 
+\begin_inset Formula $\mathtt{getthis}$
+\end_inset
+
+ define the meaning of keywords 
+\begin_inset Formula $\mathtt{global}$
+\end_inset
+
+ and 
+\begin_inset Formula $\mathtt{this}$
+\end_inset
+
+, respectively
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\mathtt{newobj}$
+\end_inset
+
+ defines the meaning of instantiating a new object from a particular allocation
+ site
+\end_layout
+
+\begin_layout Standard
+Our model language, as it evolves along with the framework, has a set of
+ features found commonly in scripting languages.
+ Below is an example of a program written in the model language:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+function fact(f,x) {
+\end_layout
+
+\begin_layout Plain Layout
+
+	if(x < 2) { return 1; }
+\end_layout
+
+\begin_layout Plain Layout
+
+	return x * f(f,x-1);
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+output fact(fact,input);
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+fa=fact(fact);
+\end_layout
+
+\begin_layout Plain Layout
+
+output fa(input);
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+function Fruit(v) {
+\end_layout
+
+\begin_layout Plain Layout
+
+	this.value = v;
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+global.answer = 0;
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+function juicible(fruit, juice) {
+\end_layout
+
+\begin_layout Plain Layout
+
+	function juiceMe(j,x) {
+\end_layout
+
+\begin_layout Plain Layout
+
+		return this.value + j + x;
+\end_layout
+
+\begin_layout Plain Layout
+
+	}
+\end_layout
+
+\begin_layout Plain Layout
+
+	fruit.juice = juiceMe(juice); #currying
+\end_layout
+
+\begin_layout Plain Layout
+
+	global.answer=42;
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+# Juicibles
+\end_layout
+
+\begin_layout Plain Layout
+
+apple = new Fruit(15);
+\end_layout
+
+\begin_layout Plain Layout
+
+juicible(apple, 20);
+\end_layout
+
+\begin_layout Plain Layout
+
+grape = new Fruit(30);
+\end_layout
+
+\begin_layout Plain Layout
+
+juicible(grape, 50);
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+# Non-juicibles
+\end_layout
+
+\begin_layout Plain Layout
+
+banana = new Fruit(20);
+\end_layout
+
+\begin_layout Plain Layout
+
+watermelon = new Fruit(25);
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+output apple.juice(10); # 15 + 20 + 10
+\end_layout
+
+\begin_layout Plain Layout
+
+output grape.juice(10); # 30 + 50 + 10
+\end_layout
+
+\begin_layout Plain Layout
+
+output global.answer; # 42
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+try {
+\end_layout
+
+\begin_layout Plain Layout
+
+	if(input > 42) {throw 42;}
+\end_layout
+
+\begin_layout Plain Layout
+
+} catch(e) {
+\end_layout
+
+\begin_layout Plain Layout
+
+	output e;
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+In the remainder of the paper we provide the semantics for a language with
+ many different features.
+ We introduce the components of the language step by step.
+ The aim is to demonstrate that the semantic formalism enables such a stepwise
+ development, each step being incremental in the sense that it does not
+ require revision of the semantic equations developed in earlier steps.
+ 
+\end_layout
+
+\begin_layout Standard
+A locally-scoped procedural language with support for higher order functions
+ (lines 1 to 5) is introduced in Section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:Procedural-language"
+
+\end_inset
+
+.
+ Function currying (lines 7, 8 and 20) is introduced in Section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:Function-currying"
+
+\end_inset
+
+.
+ Object oriented features, including duck-typing and reflection, are introduced
+ in Section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:Object-Oriented"
+
+\end_inset
+
+.
+ Finally, exception handling (lines 38 to 42) is introduced in Section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:Exception-handling"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Section
+Analytic framework
+\end_layout
+
+\begin_layout Standard
+In this section we introduce a monadic construct specifically designed for
+ the purpose of program analysis.
+ We then introduce polymorphic auxiliary functions that are useful in extending
+ theories in a modular manner.
+\end_layout
+
+\begin_layout Standard
+First we define the monadic constructions.
+ We define a type constructor 
+\begin_inset Formula $M$
+\end_inset
+
+ and a bind operator 
+\begin_inset Formula $\bind$
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Definition
+\begin_inset Argument
+status open
+
+\begin_layout Plain Layout
+Type constructor
+\end_layout
+
+\end_inset
+
+ The type constructor 
+\begin_inset Formula $M$
+\end_inset
+
+ has the following polymorphic definition.
+ 
+\begin_inset Formula $F$
+\end_inset
+
+, in this formulation, is an approximation of the meaning of all the functions
+ in the program.
+ This is necessary to determine the semantics of many of the program constructs.
+ The 
+\begin_inset Formula $a$
+\end_inset
+
+ parameter to the type is used in different context to extract different
+ information from the semantics.
+\end_layout
+
+\begin_layout Definition
+\begin_inset Formula 
+\[
+M\ a=F\rightarrow State\rightarrow\wp\left(State\times a\cup\left\{ \bot\right\} \right)
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Definition
+Observe that a single state can give rise to multiple corresponding successor
+ states.
+ We are essentially modelling a non-deterministic state transformation.
+ This gives us the flexibility to handle both concrete and abstract semantics
+ within a single framework.
+\end_layout
+
+\begin_layout Standard
+Every statement is understood as a state transformer.
+ We distinguish between 
+\begin_inset Quotes eld
+\end_inset
+
+normal
+\begin_inset Quotes erd
+\end_inset
+
+ and 
+\begin_inset Quotes eld
+\end_inset
+
+escaping
+\begin_inset Quotes erd
+\end_inset
+
+ statements, the latter yielding an 
+\begin_inset Quotes eld
+\end_inset
+
+escape
+\begin_inset Quotes erd
+\end_inset
+
+ state.
+ For example, when a function returns, the return statement transforms the
+ current state into an escape state.
+ Our 
+\begin_inset Quotes eld
+\end_inset
+
+bind
+\begin_inset Quotes erd
+\end_inset
+
+ operator relies on a parametric operation 
+\begin_inset Formula $\mathtt{esc}$
+\end_inset
+
+ to spell out the precise mechanism for escaping the current program execution
+ flow.
+ The 
+\begin_inset Formula $\mathtt{esc}$
+\end_inset
+
+ function returns true if a state does not continue to the next expression
+ or statement (having encountered a return statement, for example).
+ This provides a flexible and general formalisation of a control flow, and
+ it allows the handling of exceptions as well as function return statements.
+\end_layout
+
+\begin_layout Standard
+In such escaping cases, there is no appropriate value of the type 
+\begin_inset Formula $a$
+\end_inset
+
+ to be associated with the successor states.
+ Hence, we introduce 
+\begin_inset Formula $\bot$
+\end_inset
+
+ to be assigned to successor states of the escaping states.
+ 
+\end_layout
+
+\begin_layout Definition
+\begin_inset Argument
+status open
+
+\begin_layout Plain Layout
+Bind operator
+\end_layout
+
+\end_inset
+
+We define a bind operator 
+\begin_inset Formula $\bind$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Definition
+\begin_inset Formula $\left(\bind\right):M\ a\rightarrow\left(a\rightarrow M\ b\right)\rightarrow M\ b$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Definition
+\begin_inset Formula 
+\begin{eqnarray*}
+T\ \bind\ U & = & \lambda f\lambda s.\:\mathbf{let}\ S=T\ f\ s\ \mathbf{in}\underset{\left\langle s',a\right\rangle \in S}{\bigcup}\left(\begin{gathered}\mbox{if}\ \mathtt{esc}\left(s'\right)\ \mbox{then}\ \left\{ \left\langle s',\bot\right\rangle \right\} \ \mbox{else}\ U\ a\ f\ s'\end{gathered}
+\right)
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Theorem
+\begin_inset CommandInset label
+LatexCommand label
+name "thm:bindmono"
+
+\end_inset
+
+
+\begin_inset Argument
+status open
+
+\begin_layout Plain Layout
+Monotonicity of bind operation
+\end_layout
+
+\end_inset
+
+When 
+\begin_inset Formula $\mathtt{esc}$
+\end_inset
+
+ is monotonic, given two monotonic functions 
+\begin_inset Formula $F$
+\end_inset
+
+ and 
+\begin_inset Formula $G$
+\end_inset
+
+, 
+\begin_inset Formula $F\bind G$
+\end_inset
+
+ is also a monotonic function.
+\end_layout
+
+\begin_layout Proof
+Assume 
+\begin_inset Formula $\eta_{1}\sqsubseteq\eta_{2}$
+\end_inset
+
+, let 
+\begin_inset Formula $p_{1}=F\ f\ \eta_{1}$
+\end_inset
+
+, 
+\begin_inset Formula $p_{2}=F\ f\ \eta_{2}$
+\end_inset
+
+.
+ By monotonicity of 
+\begin_inset Formula $F$
+\end_inset
+
+, we have 
+\begin_inset Formula $p_{1}\sqsubseteq p_{2}$
+\end_inset
+
+.
+ Now,
+\end_layout
+
+\begin_layout Proof
+\begin_inset Formula $q_{1}=F\bind G\ f\ \eta_{1}=\underset{\left\langle s,a\right\rangle \in p_{1}}{\bigcup}\left(\begin{gathered}\mbox{if}\ \mathtt{esc}\left(s\right)\ \mbox{then}\ \left\{ \left\langle s,a\right\rangle \right\} \ \mbox{else}\ G\ a\ f\ s\end{gathered}
+\right)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Proof
+\begin_inset Formula $q_{2}=F\bind G\ f\ \eta_{2}=\underset{\left\langle s,a\right\rangle \in p_{2}}{\bigcup}\left(\begin{gathered}\mbox{if}\ \mathtt{esc}\left(s\right)\ \mbox{then}\ \left\{ \left\langle s,a\right\rangle \right\} \ \mbox{else}\ G\ a\ f\ s\end{gathered}
+\right)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Proof
+Since we assume the identity ordering, it follows that 
+\begin_inset Formula $\forall\left\langle s_{1},a\right\rangle \in p_{1},\exists\left\langle s_{2},a\right\rangle \in p_{2}$
+\end_inset
+
+ such that 
+\begin_inset Formula $s_{1}\sqsubseteq s_{2}$
+\end_inset
+
+.
+ Given the monotonicity of 
+\begin_inset Formula $\mathtt{esc}$
+\end_inset
+
+, 
+\begin_inset Formula $\mathtt{esc}\left(s_{1}\right)=\mathtt{esc}\left(s_{2}\right)$
+\end_inset
+
+.
+ It follows that 
+\begin_inset Formula $\forall q\in q_{1}\exists q'\in q_{2}$
+\end_inset
+
+ such that 
+\begin_inset Formula $q\sqsubseteq q'$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+Having a monadic structure helps provide modularity.
+ For example, if a particular parametrised operation takes a state but only
+ produces a value, it would be redundant to include a state as a part of
+ returning type, to match the definition of monadic binding.
+ In such a case, we take a function that returns only a value, then lift
+ it to be used in the monadic binding.
+\end_layout
+
+\begin_layout Definition
+\begin_inset Argument
+status open
+
+\begin_layout Plain Layout
+Monadic functions
+\end_layout
+
+\end_inset
+
+We define the following auxiliary functions to incorporate non-monadic functions
+ as a part of monadic transformation:
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+(return for 
+\begin_inset Formula $M$
+\end_inset
+
+) 
+\begin_inset Formula $I_{A}$
+\end_inset
+
+ is an identity state transformer that takes a constant and lifts it to
+ an identity state transformer with the constant as a return value
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+\begin_inset Formula $I_{A}:a\rightarrow M\ a$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $I_{A}\ v=\lambda f\lambda s.\left\{ \left\langle s,v\right\rangle \right\} $
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+(lift for 
+\begin_inset Formula $M$
+\end_inset
+
+) 
+\begin_inset Formula $I_{V}$
+\end_inset
+
+ lifts a function that takes a state and returns a value to a monadic function
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+\begin_inset Formula $I_{V}:\left(State\rightarrow a\right)\rightarrow M\ a$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $I_{V}\ t=\lambda f\lambda s.\left\langle \left\{ \left\langle s,t\ s\right\rangle \right\} ,\emptyset\right\rangle $
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+\begin_inset Formula $I_{S}$
+\end_inset
+
+ takes a non-deterministic transformation and lifts it to a monadic function
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+\begin_inset Formula $I_{S}:\left(State\rightarrow\wp\left(State\right)\right)\rightarrow M\ a$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $I_{S}\ T=\lambda f\lambda s.\left\{ \left\langle s',\bot\right\rangle \mid s'\in T\ s\right\} $
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Definition
+\begin_inset CommandInset label
+LatexCommand label
+name "recup"
+
+\end_inset
+
+
+\begin_inset Argument
+status open
+
+\begin_layout Plain Layout
+Record updater
+\end_layout
+
+\end_inset
+
+ We model a state as a record with named fields.
+ In this way, an update operation written for a particular set of fields
+ can be reused without redefining it when we add extra dimensions to a 
+\begin_inset Formula $State$
+\end_inset
+
+ domain to accommodate features that are orthogonal to the features of the
+ previous version.
+\end_layout
+
+\begin_layout Definition
+When we have a record 
+\begin_inset Formula $\rho$
+\end_inset
+
+ with named fields 
+\begin_inset Formula $\left\langle c_{1},\ldots,c_{k}\right\rangle $
+\end_inset
+
+, and when an updater function 
+\begin_inset Formula $U$
+\end_inset
+
+ updates fields 
+\begin_inset Formula $c_{i},\ldots,c_{j}$
+\end_inset
+
+, we define a function 
+\begin_inset Formula $\Upsilon$
+\end_inset
+
+ that takes a record, projects its fields into an n-tuple corresponding
+ to the selected fields, lets 
+\begin_inset Formula $U$
+\end_inset
+
+ update the tuple, and finally updates the whole record with the updated
+ tuple.
+\end_layout
+
+\begin_layout Definition
+\begin_inset Formula $P_{c_{i},\ldots,c_{j}}=\lambda\rho.\left\langle a_{i},\ldots,a_{j}\right\rangle $
+\end_inset
+
+ where 
+\begin_inset Formula $a_{i}$
+\end_inset
+
+ is a value for the field 
+\begin_inset Formula $c_{i}$
+\end_inset
+
+ of a record 
+\begin_inset Formula $\rho$
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Definition
+\begin_inset Formula $J_{c_{i},\ldots,c_{j}}=\lambda\left\langle a_{i},\ldots,a_{j}\right\rangle \lambda\rho.\rho\left[c_{n}=a_{n},n\in\left\{ i,\ldots,j\right\} \right]$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Definition
+\begin_inset Formula $\Upsilon_{c_{i},\ldots,c_{j}}\ U=J_{c_{i},\ldots,c_{j}}\circ U\circ P_{c_{i},\ldots,c_{j}}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Definition
+Similarly, we define an operation to update a record and return a value.
+\end_layout
+
+\begin_layout Definition
+\begin_inset Formula $\Psi_{c_{i},\ldots,c_{j}}\ U=\lambda\rho.\left\langle \rho',a\right\rangle $
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Definition
+where 
+\begin_inset Formula $\left\langle \upsilon,a\right\rangle =U\ \left(P_{c_{i},\ldots,c_{j}}\ \rho\right)$
+\end_inset
+
+ and 
+\begin_inset Formula $\rho'=J_{c_{i},\ldots,c_{j}}\ \upsilon$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Definition
+Finally, we define a value extractor, that takes a record and selects a
+ value from it.
+\end_layout
+
+\begin_layout Definition
+\begin_inset Formula $\Theta{}_{c_{i},\ldots,c_{j}}\ U=U\circ P_{c_{i},\ldots,c_{j}}$
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Definition
+When 
+\begin_inset Formula $c$
+\end_inset
+
+ is an n-tuple space for chosen fields and 
+\begin_inset Formula $r$
+\end_inset
+
+ is a domain of a 
+\begin_inset Formula $State$
+\end_inset
+
+ record, functions defined here have the following type signature.
+\end_layout
+
+\begin_layout Definition
+\begin_inset Formula 
+\begin{eqnarray*}
+\Upsilon & : & \left(c\rightarrow r\right)\rightarrow\left(r\rightarrow r\right)\\
+\Psi & : & \left(c\rightarrow c\times a\right)\rightarrow\left(r\rightarrow r\times a\right)\\
+\Theta & : & \left(c\rightarrow a\right)\rightarrow\left(r\rightarrow a\right)
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Definition
+\begin_inset Argument
+status open
+
+\begin_layout Plain Layout
+Singleton lifting
+\end_layout
+
+\end_inset
+
+Another commonly occurring pattern is that functions often return a singleton
+ set.
+ We define a function that takes a function returning a value and lifts
+ it to be a function that returns a singleton set.
+\end_layout
+
+\begin_layout Definition
+\begin_inset Formula 
+\begin{eqnarray*}
+\Gamma & : & \left(a\rightarrow b\right)\rightarrow\left(a\rightarrow\wp\left(b\right)\right)\\
+\Gamma\ F\ x & = & \left\{ F\ x\right\} 
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Definition
+For simplicity of notation, we compose this function with the other functions
+ from Definition 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "recup"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Definition
+\begin_inset Formula 
+\begin{eqnarray*}
+\bar{\Upsilon} & = & \Gamma\circ\Upsilon\\
+\bar{\Psi} & = & \Gamma\circ\Psi\\
+\bar{\Theta} & = & \Gamma\circ\Theta
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\end_deeper
+\begin_layout Standard
+We now have monadic constructs and auxiliary functions to describe the semantic
+ functions of the model language.
+ We can now define the semantic functions of the language.
+\end_layout
+
+\begin_layout Section
+Semantic functions
+\end_layout
+
+\begin_layout Standard
+We use syntax nodes as references to various items constituting program
+ environment.
+ For that purpose, we define the following syntactic nodes and unique identifier
+ spaces.
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+\begin_inset Formula $Stm$
+\end_inset
+
+ is a statement node.
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+\begin_inset Formula $Exp$
+\end_inset
+
+ is an expression node.
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+\begin_inset Formula $Lexp$
+\end_inset
+
+ is a left-expression node.
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+\begin_inset Formula $Sid$
+\end_inset
+
+ is a statement identifier.
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+\begin_inset Formula $Eid$
+\end_inset
+
+ is an expression identifier.
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+\begin_inset Formula $Id$
+\end_inset
+
+ is an alphanumeric identifier.
+\end_layout
+
+\begin_layout Standard
+We define following auxiliary functions to describe the use of the augmented
+ values.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\mathtt{stm} & : & Sid\rightarrow Stm\\
+\mathtt{param} & : & Sid\rightarrow\left[Id\right]\\
+\mathtt{arity} & : & Sid\rightarrow\mathbb{N}\cup\left\{ 0\right\} 
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Note that we use an sid of a function declaration statement as a reference
+ point for the function defined.
+ The 
+\begin_inset Formula $\mathtt{param}$
+\end_inset
+
+ and 
+\begin_inset Formula $\mathtt{arity}$
+\end_inset
+
+ functions take such sid and return a list of parameter names, and the arity
+ of the function, respectively.
+\end_layout
+
+\begin_layout Standard
+Where we specifically refer to an identifier to a syntactic construct, we
+ write 
+\begin_inset Formula $\dd{\left|X\right|_{x}}$
+\end_inset
+
+ to mean a statement or expression 
+\begin_inset Formula $X$
+\end_inset
+
+ with an id 
+\begin_inset Formula $x$
+\end_inset
+
+.
+ In cases where such identifiers are not directly referenced, we omit them
+ for simplicity.
+\end_layout
+
+\begin_layout Definition
+\begin_inset Argument
+status open
+
+\begin_layout Plain Layout
+Semantic functions
+\end_layout
+
+\end_inset
+
+The analytic framework contains the following semantic functions:
+\end_layout
+
+\begin_layout Definition
+\begin_inset Formula 
+\begin{eqnarray*}
+F & = & Sid\rightarrow State\rightarrow\wp\left(State\right)\\
+\mathcal{S} & : & Stm\rightarrow F\rightarrow State\rightarrow\wp\left(State\times\left\{ \bot\right\} \right)\\
+\mathcal{E} & : & Exp\rightarrow F\rightarrow State\rightarrow\wp\left(State\times a\cup\left\{ \bot\right\} \right)\\
+\mathcal{L} & : & Lexp\rightarrow F\rightarrow State\rightarrow\wp\left(State\times a\cup\left\{ \bot\right\} \right)
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Definition
+\begin_inset Formula $\mathcal{S},\mathcal{E}$
+\end_inset
+
+ and 
+\begin_inset Formula $\mathcal{L}$
+\end_inset
+
+ are semantic functions for statements, expressions and left expressions,
+ respectively.
+ 
+\begin_inset Formula $F$
+\end_inset
+
+ is a function space to model functions in a program.
+ Given the sid of a function declaration site, it gives a state transformer.
+ Note that in this picture a function 
+\begin_inset Quotes eld
+\end_inset
+
+returns
+\begin_inset Quotes erd
+\end_inset
+
+ a value by giving a state transformation.
+ Incorporating such concept as a return value in a 
+\begin_inset Formula $State$
+\end_inset
+
+ itself provides a greater flexibility in describing the effects of executing
+ a statement or an expression at a particular program point.
+\end_layout
+
+\begin_layout Section
+The language under study
+\end_layout
+
+\begin_layout Standard
+We define the model language, the 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+sdtl
+\end_layout
+
+\end_inset
+
+ (Simple Duck-Typed Language).
+\end_layout
+
+\begin_layout Subsection
+\begin_inset CommandInset label
+LatexCommand label
+name "sub:Procedural-language"
+
+\end_inset
+
+The procedural core language
+\end_layout
+
+\begin_layout Standard
+We start off with a procedural language with C-like syntax.
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{grammar}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+<con> ::= <Num> | <Bool>
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+<Lexp> ::= ID
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+<Exp> ::= <con> | <Lexp> | `input'
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+alt  <Lexp> `(' [<Exp> [,<Exp>]*]? `)'
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+alt  <Exp> <binop> <Exp>
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+alt  `(' <Exp> `)'
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+<binop> ::= `+' | `-' | `*' | `/' | `>' | `<' | `=='
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+<Stm> ::= nil | <Stm> `;' <Stm> | <Exp>
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+alt `output' <Exp>
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+alt <Lexp> `=' <Exp>
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+alt `if' `(' <Exp> `)' `{' <Stm> `}'
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+alt `if' `(' <Exp> `)' `{' <Stm> `}' `else' `{' <Stm> `}'
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+alt `while' `(' <Exp> `)' `{' <Stm> `}'
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+alt `function' Id `(' [Id [, Id]*]? `)' `{' <Stm> `}'
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+alt `return' <Exp>
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{grammar}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Here Num and Bool are the syntactic categories for integers and boolean
+ values.
+\end_layout
+
+\begin_layout Standard
+Notably, 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+sdtl
+\end_layout
+
+\end_inset
+
+ supports higher-order functions, which allows functions to be recursively
+ referenced.
+ Hence, we formulate the meaning of a function as a fixed point (see the
+ definition of 
+\begin_inset Formula $F$
+\end_inset
+
+).
+ The semantic functions for 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+sdtl
+\end_layout
+
+\end_inset
+
+ are defined in figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "semantic"
+
+\end_inset
+
+.
+ We use auxiliary functions 
+\begin_inset Formula $\mathtt{evalParams}$
+\end_inset
+
+ and 
+\begin_inset Formula $\mathtt{call}$
+\end_inset
+
+ to describe a function call.
+ (Note that we use 
+\begin_inset Formula $\epsilon$
+\end_inset
+
+ for the empty sequence and the notation 
+\begin_inset Formula $a\smallfrown b$
+\end_inset
+
+ to denote concatenation of sequences 
+\begin_inset Formula $a$
+\end_inset
+
+ and 
+\begin_inset Formula $b$
+\end_inset
+
+.)
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\mathtt{call}\left(n,p\right) & = & \lambda f\lambda\rho.\left\{ \mathtt{leave}\ \rho\ \rho'\mid\rho'\in S\right\} \ \mbox{where}\\
+ &  & S=f\ n\ \left(\mathtt{enter}\ \rho\ p\right)
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{gather*}
+\mathtt{evalParams}:\left[Exp\right]\times\left[a\right]\rightarrow\\
+\ \ F\rightarrow State\rightarrow\wp\left(State\times\left[a\right]\right)\\
+\mathtt{evalParams}\ \epsilon\ ps\ f\ \rho=\lambda f\lambda\rho.\left\langle \rho,ps\right\rangle \\
+\mathtt{evalParams}\ \dd{E}\smallfrown Exps\ ps=\lambda f\lambda\rho.\\
+\underset{\left\langle \rho',con\right\rangle \in S}{\bigcup}\left\{ \mathtt{evalParams}\ Exps\ ps\smallfrown con\ f\ \rho'\right\} \\
+\ \ \mbox{where}\; S=\mathcal{E}\ \dd{E}\ f\ \rho
+\end{gather*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $\mathtt{enter}$
+\end_inset
+
+ is a parametrised function that takes a caller's state at the time of function
+ invocation and an id-to-constant value mapping, and constructs initial
+ state for a callee.
+ 
+\begin_inset Formula $\mathtt{leave}$
+\end_inset
+
+ takes both the caller's state and the resulting states of callee's, and
+ constructs the caller's states after the function call.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide true
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Box Boxed
+position "t"
+hor_pos "c"
+has_inner_box 1
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "100text%"
+special "none"
+height "1in"
+height_special "totalheight"
+status open
+
+\begin_layout Plain Layout
+\begin_inset Formula 
+\begin{align*}
+ & \mathcal{F} & = & Y\left(\lambda f.\lambda n.\mathcal{S}\ \dd{\mathtt{stm}\left(n\right)}\ f\right)\\
+ & \mathcal{S}\dd{\epsilon} & = & I_{A}\bot\\
+ & \mathcal{S}\dd{S_{1};S_{2}} & = & \begin{aligned}\mathcal{S}\ \dd{S_{1}}\bind\lambda\_.\mathcal{S}\ \dd{S_{2}}\end{aligned}
+\\
+ & \mathcal{S}\dd{E} & = & \mathcal{E}\ \dd{E}\bind\lambda\_.I_{A}\bot\\
+ & \mathcal{S}\dd{\mathtt{return}\ E} & = & \mathcal{E}\ \dd{E}\bind\lambda v.I_{S}\ \mathtt{ret}\left(V\right)\\
+ & \mathcal{S}\dd{\mathtt{if}\left(E\right)\ S_{1}} & = & \mathcal{E}\ \dd{E}\bind\lambda v.\mathtt{cond}\left(v,\mathcal{S}\ \dd{S_{1}},I_{A}\bot\right)\\
+ & \mathcal{S}\dd{\mathtt{if}\left(E\right)\ S_{1}\ \mathtt{else}\ S_{2}} & = & \mathcal{E}\ \dd{E}\bind\lambda v.\mathtt{cond}\left(v,\mathcal{S}\ \dd{S_{1}},\mathcal{S}\ \dd{S_{1}}\right)\\
+ & \mathcal{S}\dd{id=E} & = & \begin{aligned}\mathcal{E}\ \dd{E} & \bind\lambda v.I_{S}\ \mathtt{asg}\left(id,v\right)\end{aligned}
+\\
+ & \mathcal{S}\dd{\mathtt{while}\left(E\right)\ S_{1}} & = & Y\lambda x.\lambda f\lambda r.\left(\begin{aligned}\mathcal{E}\ \dd{E}\bind\lambda v.\mathtt{cond}\left(\begin{gathered}v,\left(\mathcal{S}\ \dd{S_{1}}\right)\bind\lambda\_.x,I_{A}\bot\end{gathered}
+\right)\end{aligned}
+\right)\\
+ & \mathcal{S}\dd{\mathtt{output}\ E} & = & \mathcal{E}\ \dd{E}\bind\lambda v.I_{S}\ \mathtt{dooutput}\left(v\right)\\
+ & S\ds{\mathtt{function}\ Id_{1}\left(\vec{Id}\right)\ S_{1}} & = & I_{S}\ \mathtt{fundecl}\left(Id_{1},s\right)\\
+ & \mathcal{E}\dd{con} & = & I_{A}\ \mathtt{conval}\left(con\right)\\
+ & \mathcal{E}\dd{L} & = & \mathcal{L}\ \dd{L}\\
+ & \mathcal{E}\dd{\mathtt{input}} & = & I_{V}\ \mathtt{getinput}\\
+ & \mathcal{E}\dd{L\left(\vec{E}\right)} & = & \mathcal{L}\ \dd L\bind\lambda n.\left(\mathtt{evalParams}\ \vec{E}\ \phi\right)\bind\lambda p.\mathtt{call}\left(n,p\right)\\
+ & \mathcal{E}\dd{E_{1}\ binop\ E_{2}} & = & \mathcal{E}\ \dd{E_{1}}\bind\lambda c_{1}.\mathcal{E}\ \dd{E_{2}}\bind\lambda c_{2}.I_{A}\ \mathtt{bin}\left(binop,c_{1},c_{2}\right)\\
+ & \mathcal{L}\dd{Id} & = & I_{A}\ \mathtt{val}\left(Id\right)
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "semantic"
+
+\end_inset
+
+
+\begin_inset Caption
+
+\begin_layout Plain Layout
+Semantic equations for a procedural core of 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+sdtl
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+Concrete interpretation
+\end_layout
+
+\begin_layout Paragraph
+Domain
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+Value & = & \mathbb{Z}\cup\left\{ true,false\right\} \cup\: FunPointer\\
+FunPointer & = & Sid\\
+Env & = & Id\rightarrow Value\\
+Return & = & Value\cup\left\{ Void\right\} \\
+CState & = & Env\times IO\times Return
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+where 
+\begin_inset Formula $n$
+\end_inset
+
+ is a function identifier.
+\end_layout
+
+\begin_layout Standard
+The initial program state is 
+\begin_inset Formula $\left\langle \emptyset,io,Void\right\rangle ,$
+\end_inset
+
+ where 
+\begin_inset Formula $io$
+\end_inset
+
+ is an initial IO state.
+\end_layout
+
+\begin_layout Paragraph
+Functions
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\mathtt{enter} & = & \lambda\left\langle \_,IO,\_\right\rangle ,P,n.\left\langle \left[\mathtt{param}\left(n\right)_{k}\mapsto P_{k}\right],IO,Void\right\rangle \\
+\mathtt{leave} & = & \lambda\left\langle V,\_,\_\right\rangle ,\left\langle \_,IO',R\right\rangle .\left\langle \left\langle V,IO',Void\right\rangle ,R\right\rangle 
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\mathtt{esc} & = & \bar{\Theta}_{Return}\ \lambda R.\left(R=Void\right)\\
+\mathtt{cond}\left(v,s_{1},s_{2}\right) & = & \begin{cases}
+s_{1} & \mbox{if}\ v=true\\
+s_{2} & \mbox{if}\ v=false
+\end{cases}\\
+\mathtt{asg}\left(id,v\right) & = & \bar{\Upsilon}_{Env}\ \lambda V.V\left[id\mapsto v\right]\\
+\mathtt{val}\left(id\right) & = & \bar{\Upsilon}_{Env}\ \lambda V.V\left(id\right)\\
+\mathtt{conval}\left(con\right) & = & \left\{ con\right\} \\
+\mathtt{getinput\left(\rho\right)} & = & \bar{\Psi}_{IO}\ \lambda O.\left\langle O',z\in\mathbb{N}\right\rangle \mbox{see note}\\
+\mathtt{dooutput}\left(v\right) & = & \bar{\Upsilon}_{IO}\ \lambda O.O'\mbox{see note}\\
+\mathtt{fundecl}(id,n) & = & \bar{\Upsilon}_{Env}\ \lambda V.V\left[id\mapsto FP_{n}\right]\\
+\mathtt{ret}\left(v\right) & = & \bar{\Upsilon}_{Return}\ \lambda R.v\\
+\mathtt{bin}\left(op,c_{1},c_{2}\right) & = & \mbox{perform binary operation }\mbox{between two constants}
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+We omit a detailed description of IO environment.
+ Normally, IO can be modelled as a queue of inputs and outputs as they are
+ given and produced during the execution of a program.
+\end_layout
+
+\begin_layout Subsubsection
+Abstract interpretation
+\end_layout
+
+\begin_layout Standard
+At this stage, abstract interpretation looks largely similar to concrete
+ interpretation.
+ Notable differences are that we approximate each constant by its type,
+ and that 
+\begin_inset Formula $\mathtt{cond}$
+\end_inset
+
+ is a non-deterministic transformation where it collects effects of both
+ branches at a branching point.
+\end_layout
+
+\begin_layout Paragraph
+Domain
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+FunPointer & = & Sid\\
+AVal & = & \left\{ Num,Bool\right\} \cup\: FunPointer\\
+AEnv & = & Id\rightarrow AVal\\
+AReturn & = & AVal\cup\left\{ Void\right\} \\
+AState & = & AEnv\times AReturn
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The initial program state is 
+\begin_inset Formula $\left\langle \emptyset,Void\right\rangle $
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Paragraph
+Functions
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\mathtt{enter} & = & \lambda\left\langle \_,\_\right\rangle ,P,n.\left\langle \left[\mathtt{param}\left(n\right)_{k}\mapsto P_{k}\right],Void\right\rangle \\
+\mathtt{leave} & = & \lambda\left\langle V,\_\right\rangle ,\left\langle \_,R\right\rangle .\left\langle \left\langle V,Void\right\rangle ,R\right\rangle 
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\mathtt{esc} & = & \bar{\Theta}_{AReturn}\ \lambda R.\left(R=Void\right)\\
+\mathtt{cond}\left(v,s_{1},s_{2}\right) & = & \lambda f\lambda\eta.\left(s_{1}\ f\ \eta\right)\cup\left(s_{2}\ f\ \eta\right)\\
+\mathtt{asg}\left(id,v\right) & = & \bar{\Upsilon}_{AEnv}\ \lambda\sigma.\sigma\left[id=v\right]\\
+\mathtt{val}\left(id,v\right) & = & \bar{\Upsilon}_{AEnv}\ \lambda\sigma.\sigma\left(id\right)\\
+\mathtt{conval}\left(con\right) & = & \begin{cases}
+\Gamma\ Num & \mbox{if}\ con\in\mathbb{N}\\
+\Gamma\ Bool & \mbox{if}\ con\in\mathbb{B}
+\end{cases}\\
+\mathtt{getinput} & = & \Gamma\ \lambda\eta.\left\langle \eta,Num\right\rangle \\
+\mathtt{dooutput}\left(v\right) & = & \Gamma\ \lambda\eta.\eta\\
+\mathtt{fundecl}\left(id,n\right) & = & \bar{\Upsilon}_{AEnv}\ \lambda\sigma.\sigma\left[id\mapsto n\right]\\
+\mathtt{ret}\left(v\right) & = & \bar{\Upsilon}_{AReturn}\ \lambda R:AReturn.v\\
+\mathtt{bin}\left(op,c_{1},c_{2}\right) & = & \begin{cases}
+\Gamma\ Num & \mbox{if}\ op\in{\scriptstyle \left\{ +,-,*,/\right\} }\\
+\Gamma\ Bool & \mbox{otherwise}
+\end{cases}
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+\begin_inset CommandInset label
+LatexCommand label
+name "sub:Function-currying"
+
+\end_inset
+
+Function currying
+\end_layout
+
+\begin_layout Standard
+The introduction of function currying does not change the syntax of the
+ language.
+ Therefore, there is no inherent reason for changing semantic functions.
+ However, we do redefine the semantics of function calls to include an eid
+ as an input, for the reason explained below.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $\mathcal{E}\de{L\left(\vec{E}\right)}=\mathcal{L}\ \dd{L}\bind\lambda n.\mathtt{evalParams}\ \vec{E}\ \emptyset\bind\lambda p.\mathtt{apply}\left(n,p,e\right)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Here we introduce the 
+\begin_inset Formula $\mathtt{apply}$
+\end_inset
+
+ function.
+ It invokes the 
+\begin_inset Formula $\mathtt{call}$
+\end_inset
+
+ function when the function arguments are saturated, or it returns a pointer
+ to a curried function otherwise.
+\end_layout
+
+\begin_layout Subsubsection
+Concrete interpretation
+\end_layout
+
+\begin_layout Standard
+We need to extend the definition of 
+\begin_inset Formula $FunPointer$
+\end_inset
+
+ to hold curried parameters.
+ This means that the 
+\begin_inset Formula $\mathtt{fundecl}$
+\end_inset
+
+ function also needs to be modified to match the new type signature.
+\end_layout
+
+\begin_layout Paragraph
+Domain
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $FunPointer=Sid\times\left[Value\right]$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The initial program state is unchanged.
+\end_layout
+
+\begin_layout Paragraph
+Functions
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{gather*}
+\mathtt{apply}\left(\left\langle n,C\right\rangle ,p,\_\right)=\begin{cases}
+\mathtt{call}\left(n,C\smallfrown p\right)\  & \mbox{if}\begin{gathered}\: N\left(C\smallfrown p\right)=\mathtt{arity}\left(n\right)\end{gathered}
+\\
+\lambda f,\rho.\left\{ \left\langle \rho,\left\langle n,C\smallfrown p\right\rangle \right\rangle \right\} \  & \mbox{otherwise}
+\end{cases}\\
+\mathtt{fundecl}(id,n)=\bar{\Upsilon}_{Env}\ \lambda V.V\left[id\mapsto\left\langle n,\emptyset\right\rangle \right]
+\end{gather*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Here, 
+\begin_inset Formula $N\left(s\right)$
+\end_inset
+
+ is the length of a sequence 
+\begin_inset Formula $s$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsubsection
+Abstract interpretation
+\end_layout
+
+\begin_layout Standard
+Note that curried functions introduce a possibility of creating closures
+ requiring an infinite number of arguments.
+\end_layout
+
+\begin_layout Example
+\begin_inset Argument
+status open
+
+\begin_layout Plain Layout
+Currying loop
+\end_layout
+
+\end_inset
+
+ Consider the following program.
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+function foo(a,b) {
+\end_layout
+
+\begin_layout Plain Layout
+
+	return a;
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+x = 0;
+\end_layout
+
+\begin_layout Plain Layout
+
+while(true) {
+\end_layout
+
+\begin_layout Plain Layout
+
+	x = foo(x);
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+In this case, variable 
+\begin_inset Formula $x$
+\end_inset
+
+ refers to a function of unbounded arity.
+ A solution to this problem is to have a curried function anchored to a
+ particular language construct.
+ In this case, we can use an eid of a currying expression as a point of
+ reference (or '0' if not curried).
+\end_layout
+
+\begin_layout Paragraph
+Domain
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+FunPointer & = & Sid\times c\times\left(Eid\cup\left\{ 0\right\} \right)\\
+Curried & = & Sid\times c\times Eid\rightarrow\left[AVal\right]\\
+ &  & \mbox{where}\\
+ &  & c\mbox{ is a number of parameters given}\\
+AState & = & AEnv\times Curried\times AReturn
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The initial program state is 
+\begin_inset Formula $\left\langle \emptyset,\emptyset,Void\right\rangle $
+\end_inset
+
+
+\end_layout
+
+\begin_layout Paragraph
+Functions
+\end_layout
+
+\begin_layout Standard
+Definitions are given in figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "absfun-curry"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide true
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Box Boxed
+position "t"
+hor_pos "c"
+has_inner_box 1
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "100text%"
+special "none"
+height "1in"
+height_special "totalheight"
+status open
+
+\begin_layout Plain Layout
+\begin_inset Formula 
+\begin{eqnarray*}
+\mathtt{apply}\left(\left\langle n,c,e\right\rangle ,p,e'\right) & = & \begin{cases}
+\Theta_{Curried}\ \lambda\nu.\underset{C\in\nu\left(n,c,e\right)}{\bigcup}\mathtt{call}\left(n,C\smallfrown p\right)\ \mbox{if }c+N\left(p\right)=\mathtt{{arity}\left(n\right)}\\
+\Psi_{Curried}\ \lambda\nu.\underset{C\in\nu\left(n,c,e\right)}{\bigcup}\left\langle \nu\left[\left\langle n,c+N\left(p\right),e'\right\rangle \mapsto C\smallfrown p\right],\left\langle n,c+N\left(p\right),e'\right\rangle \right\rangle \ \mbox{otherwise}
+\end{cases}\\
+\mathtt{fundecl}\left(id,n\right) & = & \bar{\Upsilon}_{AEnv}\ \lambda\sigma.\sigma\left[id\mapsto\left\langle n,0,0\right\rangle \right]
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+Abstract functions for curried functions
+\end_layout
+
+\end_inset
+
+
+\begin_inset CommandInset label
+LatexCommand label
+name "absfun-curry"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+\begin_inset CommandInset label
+LatexCommand label
+name "sub:Object-Oriented"
+
+\end_inset
+
+Object oriented features
+\end_layout
+
+\begin_layout Standard
+We now extend our language to support objects.
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{grammar}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+<Lexp> ::= <Exp> `.' ID
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+<Exp> ::= `global' | `this'
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+alt  `new' <Lexp> `(' [<Exp> [,<Exp>]*]? `)'
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{grammar}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $\mathtt{global}$
+\end_inset
+
+ is a reference to a global object, and the reference to global object is
+ program invariant (akin to `window' in Client-side JavaScript or `global'
+ in Node.js).
+ 
+\begin_inset Formula $\mathtt{this}$
+\end_inset
+
+ is the usual reference to the receiver object of a method call.
+ 
+\end_layout
+
+\begin_layout Standard
+As this extension introduces new syntactic structure, extra definitions
+ for semantic functions are given in figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "semmon-oo"
+
+\end_inset
+
+.
+ Note, however, that existing semantic equations are not impacted by this.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide true
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Box Boxed
+position "t"
+hor_pos "c"
+has_inner_box 1
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "100text%"
+special "none"
+height "1in"
+height_special "totalheight"
+status open
+
+\begin_layout Plain Layout
+\begin_inset Formula 
+\begin{align*}
+ & \mathcal{S}\dd{E_{1}.id=E_{2}} & = & \mathcal{E}\ \dd{E_{1}}\bind\lambda r.\mathcal{E}\ \dd{E_{2}}\bind\lambda v.I_{S}\ \mathtt{set}\left(r,id,v\right)\\
+ & \mathcal{E}\dd{\mathtt{global}} & = & I_{V}\ \mathtt{getglobal}\\
+ & \mathcal{E}\dd{\mathtt{this}} & = & I_{V}\ \mathtt{getthis}\\
+ & \mathcal{E}\de{L\left(\vec{E}\right)} & = & \left(\begin{aligned}\mathcal{L}\ \dd L & \bind\lambda n.\\
+\left(\mathtt{evalParams}\ \vec{E}\ \emptyset\right) & \bind\lambda p.\\
+I_{V}\ \mathtt{getthis} & \bind\lambda t.\\
+\mathtt{apply}\left(n,p,t,e\right)
+\end{aligned}
+\right)\\
+ & \mathcal{E}\de{\mathtt{new}\ L\left(\vec{E}\right)} & = & \left(\begin{aligned}\mathcal{L}\ \dd{L} & \bind\lambda n.\\
+\mathtt{evalParams}\ \vec{E}\ \emptyset & \bind\lambda p.\\
+\mathtt{newobj}\left(e\right) & \bind\lambda m.\\
+\mathtt{apply}\left(n,p,m,e\right) & \bind\lambda\_.\\
+I_{A}\ m
+\end{aligned}
+\right)\\
+ & \mathcal{E}\de{E_{1}.id\left(\vec{E}\right)} & = & \left(\begin{aligned}\mathcal{E}\ \dd{E_{1}} & \bind\lambda t.\\
+I_{V}\ \mathtt{get}(t,id) & \bind\lambda n.\\
+\mathtt{evalParams}\ \vec{E}\ \emptyset & \bind\lambda p.\\
+\mathtt{apply}\left(n,p,t,e\right)
+\end{aligned}
+\right)\\
+ & \mathcal{L}\dd{E_{1}.id} & = & \mathcal{E}\ \dd{E_{1}}\bind\lambda v.I_{V}\ \mathtt{get}\left(v,id\right)
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+Semantic equations for the object-oriented extension of the language
+\end_layout
+
+\end_inset
+
+
+\begin_inset CommandInset label
+LatexCommand label
+name "semmon-oo"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+We redefine 
+\begin_inset Formula $\mathtt{call}$
+\end_inset
+
+ function to include receiver object reference, and to account for side-effects
+ that functions can have on object memories.
+\end_layout
+
+\begin_layout Standard
+
+\lang english
+\begin_inset Formula 
+\begin{multline*}
+\mathtt{call}\left(n,p,t\right)=\\
+\ \ \ \lambda f\lambda\rho,\gamma.\Theta\ \left\langle \left\{ \mathtt{leave}\ \rho\ \rho'\mid\rho'\in S\right\} ,\gamma'\right\rangle \\
+\mbox{where}\left\langle S,\gamma'\right\rangle =f\ n\ \left(\mathtt{enter}\ \rho\ \left\langle p,t\right\rangle \ n\right)\ \gamma
+\end{multline*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Note that by modelling function calls as an effect on a state, we can readily
+ model such concepts as mixins.
+ In the 
+\begin_inset Formula $\mbox{JS}_{0}$
+\end_inset
+
+ language (
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Anderson:ECOOP2005"
+
+\end_inset
+
+ and 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Anderson:ENTCS2005"
+
+\end_inset
+
+), mixin creating behaviour is modelled in a functional model language.
+ A similar approach has been taken in the discussion of 
+\begin_inset Formula $\lambda_{S}$
+\end_inset
+
+ language as devised in 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Guha:ESOP2011"
+
+\end_inset
+
+.
+ However, with languages like JavaScript, it is in the nature of such language
+ that functions are side-effect causing, and much of the type operations
+ are being done with by the side-effects.
+ Hence our deviation from a purely functional approach to devise a model
+ language that resembles a real-life language.
+\end_layout
+
+\begin_layout Subsubsection
+Concrete interpretation
+\end_layout
+
+\begin_layout Standard
+We extend the domain to include object memory (where object references are
+ mapped to a symbol mapping), and a reference to 
+\begin_inset Quotes eld
+\end_inset
+
+this
+\begin_inset Quotes erd
+\end_inset
+
+ object.
+\end_layout
+
+\begin_layout Paragraph
+Domain
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+Value & = & \mathbb{Z}\cup\left\{ T,F\right\} \cup Object\cup\\
+ &  & FunPointer\\
+Object & = & \mathbb{N}\\
+ObjMem & = & n\rightarrow Env\\
+This & = & Object\\
+CState & = & Env\times ObjMem\times\\
+ &  & This\times Return
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The initial program state is 
+\begin_inset Formula $\left\langle \emptyset,\left\{ 0\mapsto\emptyset\right\} ,0,Void\right\rangle $
+\end_inset
+
+.
+ 
+\begin_inset Formula $0$
+\end_inset
+
+ is a unique id referring to the global object.
+\end_layout
+
+\begin_layout Paragraph
+Functions
+\end_layout
+
+\begin_layout Standard
+We redefine 
+\begin_inset Formula $\mathtt{enter}$
+\end_inset
+
+ and 
+\begin_inset Formula $\mathtt{leave}$
+\end_inset
+
+ functions to allow passing of a receiver object.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\mathtt{enter} & = & \lambda\left\langle \_,OM,\_,\_\right\rangle ,\left\langle P,T'\right\rangle ,n.\\
+ &  & \ \left\langle \left[\mathtt{param}\left(n\right)_{k}\mapsto P_{k}\right],OM,T',Void\right\rangle \\
+\mathtt{leave} & = & \lambda\left\langle V,\_,T,\_\right\rangle ,\left\langle \_,OM',\_,r\right\rangle .\\
+ &  & \ \left\langle \left\langle V,OM',T,Void\right\rangle ,r\right\rangle 
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Other functions are given in figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "concfunc-oo"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide true
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Box Boxed
+position "t"
+hor_pos "c"
+has_inner_box 1
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "100text%"
+special "none"
+height "1in"
+height_special "totalheight"
+status open
+
+\begin_layout Plain Layout
+\begin_inset Formula 
+\begin{eqnarray*}
+\mathtt{get}\left(n,id\right) & = & \bar{\Theta}_{ObjMem}\ \lambda OM.OM\left(n\right)\left(id\right)\\
+\mathtt{set}\left(n,id,v\right) & = & \bar{\Upsilon}_{ObjMem}\ \lambda OM.OM\left[n\mapsto OM\left(n\right)\left[id\mapsto v\right]\right]\\
+\mathtt{getglobal} & = & \bar{\Theta}_{ObjMem}\ \lambda OM.OM\left(0\right)\\
+\mathtt{getthis} & = & \bar{\Theta}_{This}\ \lambda T.T\\
+\mathtt{apply}\left(\left\langle n,C\right\rangle ,p,t,\_\right) & = & \begin{cases}
+\mathtt{call}\left(n,C\smallfrown p,t\right) & \mbox{if}\ N\left(C\smallfrown p\right)=\mathtt{arity}\left(n\right)\\
+\Gamma\ \lambda\rho.\left\langle \rho,\left\langle n,C\smallfrown p\right\rangle \right\rangle  & \mbox{otherwise}
+\end{cases}\\
+\mathtt{newobj}\left(\_\right) & = & \bar{\Psi}_{ObjMem}\ \lambda OM.\left\langle OM\left[n\mapsto\emptyset\right],n\right\rangle \ \mbox{where}\ n=N\left(OM\right)
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+Concrete functions for the object-oriented extension
+\end_layout
+
+\end_inset
+
+
+\begin_inset CommandInset label
+LatexCommand label
+name "concfunc-oo"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+Abstract interpretation
+\end_layout
+
+\begin_layout Standard
+Similarly, we extend the abstract interpretation.
+ Note that, whereas in a concrete interpretation we generate a unique id
+ for each of the object instantiated in run-time, we use a reference to
+ allocation site of an object as a reference to a particular object, hence
+ we contain object memory in a finite domain.
+\end_layout
+
+\begin_layout Paragraph
+Domain
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+AObj & = & \left\{ 0\right\} \cup Eid\\
+AVal & = & P\cup AObj\cup FunPointer\\
+AObjMem & = & AObj\rightarrow AEnv\\
+AThis & = & AObj\\
+AState & = & AEnv\times AObjMem\times\\
+ &  & AThis\times Curried\times AReturn
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The initial program state is 
+\begin_inset Formula $\left\langle \emptyset,\left\{ 0\mapsto\emptyset\right\} ,0,\emptyset,Void\right\rangle $
+\end_inset
+
+.
+ 
+\begin_inset Formula $0$
+\end_inset
+
+ is a unique id referring to the global object.
+\end_layout
+
+\begin_layout Paragraph
+Functions
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\mathtt{enter} & = & \lambda\left\langle \_,\alpha,\_,\nu,\_\right\rangle ,\left\langle P,\tau'\right\rangle ,n.\\
+ &  & \ \left\langle \left[\mathtt{param}\left(n\right)_{k}\mapsto P_{k}\right],\alpha,\tau',\nu,Void\right\rangle \\
+\mathtt{leave} & = & \lambda\left\langle \sigma,\_,\tau,\_,\_\right\rangle ,\left\langle \_,\alpha',\_,\nu',r\right\rangle .\\
+ &  & \ \left\langle \left\langle \sigma,\alpha',\tau,\nu',Void\right\rangle ,r\right\rangle 
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Other functions are defined in figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "absfun-oo"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide true
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Box Boxed
+position "t"
+hor_pos "c"
+has_inner_box 1
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "100text%"
+special "none"
+height "1in"
+height_special "totalheight"
+status open
+
+\begin_layout Plain Layout
+\begin_inset Formula 
+\begin{eqnarray*}
+\mathtt{get}\left(n,id\right) & = & \bar{\Theta}_{AObjMem}\ \lambda\alpha.\alpha\left(n\right)\\
+\mathtt{set}\left(n,id,v\right) & = & \bar{\Upsilon}_{AObjMem}\ \lambda\alpha.\alpha\left(n\right)\left[id\mapsto v\right]\\
+\mathtt{obj}\left(j\right) & = & \bar{\Theta}_{AObjMem}\ \lambda\alpha.\alpha\left(j\right)\\
+\mathtt{getthis} & = & \bar{\Theta}_{AThis}\ \lambda\tau.\tau\\
+\mathtt{newobj}\left(n\right) & = & \bar{\Psi}_{AObjMem}\ \lambda\alpha.\left\langle \alpha\left[n\mapsto\emptyset\right],n\right\rangle \\
+\mathtt{apply}\left(\left\langle n,c,e\right\rangle ,p,t,e\right) & = & \begin{cases}
+\Theta_{Curried}\ \lambda\nu.\underset{C\in\nu\left(n,c,e\right)}{\bigcup}\mathtt{call}\left(n,C\smallfrown p,t\right)\ \mbox{if}\ c+N\left(p\right)=\mathtt{arity}\left(n\right) & \begin{gathered}\end{gathered}
+\\
+\Psi_{Curried}\ \lambda\nu.\underset{C\in\nu\left(n,c,e\right)}{\bigcup}\left\langle \nu\left[\left\langle n,c+N\left(p\right),e\right\rangle \mapsto C\smallfrown p\right],\left\langle n,c+N\left(p\right),e\right\rangle \right\rangle \ \mbox{otherwise}
+\end{cases}
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+Abstract functions for the object-oriented extension
+\end_layout
+
+\end_inset
+
+
+\begin_inset CommandInset label
+LatexCommand label
+name "absfun-oo"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+\begin_inset CommandInset label
+LatexCommand label
+name "sub:Exception-handling"
+
+\end_inset
+
+Exception handling
+\end_layout
+
+\begin_layout Standard
+As a final extension to 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+sdtl
+\end_layout
+
+\end_inset
+
+, we introduce exception throwing and handling.
+ First, we introduce a familiar syntax for exception handling.
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{grammar}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+<Stm> ::= `try' `{' <Stm> `}' `catch' `(' id `)' `{' <Stm> `}'
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+alt `throw' <Exp>
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{grammar}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Following functions are the semantic functions for the newly introduced
+ syntax.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{gather*}
+\mathcal{S}\dd{\mathtt{try}\ S_{1}\ \mathtt{catch}\left(Id\right)\ S_{2}}=\\
+\left(\begin{aligned}\mathcal{S}\ \dd{S_{1}} & \bind\\
+\mathtt{catch}\left(id,\mathcal{S}\ \dd{S_{2}}\right)
+\end{aligned}
+\right)
+\end{gather*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $\mathcal{S}\dd{\mathtt{throw}\ E}=\mathcal{E}\ \dd{E}\bind\mathtt{throw}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+Concrete interpretation
+\end_layout
+
+\begin_layout Standard
+As the flow control of the execution is abstracted out and parametrised
+ as a function 
+\begin_inset Formula $\mathtt{esc}$
+\end_inset
+
+, it is not very surprising that introducing exceptions to a program does
+ not necessitate a heavy modification to an interpretation of the language.
+\end_layout
+
+\begin_layout Paragraph
+Domain
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+Ex & = & Value\cup\left\{ Void\right\} \\
+CState & = & Env\times ObjMem\times\\
+ &  & This\times Return\times Ex
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The initial program state is 
+\begin_inset Formula $\left\langle \emptyset,\left\{ 0\mapsto\emptyset\right\} ,0,Void,Void\right\rangle $
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Paragraph
+Functions
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\mathtt{enter} & = & \lambda\left\langle \_,OM,\_,\_,\_\right\rangle ,\left\langle P,T'\right\rangle ,n.\ \left\langle \left[\mathtt{param}\left(n\right)_{k}\mapsto P_{k}\right],OM,T',Void,Void\right\rangle \\
+\mathtt{leave} & = & \lambda\left\langle V,\_,T,\_,\_\right\rangle ,\left\langle \_,OM',\_,r,e\right\rangle .\ \left\langle \left\langle V,OM',T,Void,e\right\rangle ,r\right\rangle 
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\mathtt{esc} & = & \Theta_{Return,Ex}\ \lambda R,E.\left(R=Void\right)\wedge\left(E=Void\right)\\
+\mathtt{throw}\left(v\right) & = & \bar{\Upsilon}_{Ex}\ \lambda E.v\\
+\mathtt{catch}\left(id,s\right) & = & \Theta_{Ex}\ \lambda E.\begin{cases}
+I_{A}\bot & \mbox{if}\ E=Void\\
+\lambda f,r.s\ f\ \mathtt{exs}\left(\rho,id\right) & \mbox{otherwise}
+\end{cases}\\
+\mathtt{exs}\left(id\right) & = & \Upsilon_{Env,Ex}\ \lambda V,E.\left\langle V\left[id\mapsto E\right],Void\right\rangle 
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $\mathtt{exs}$
+\end_inset
+
+ helps constructing an entering state to a catch block if an exception was
+ caught.
+ As we do not support lexical scoping, an exception variable enters a variable
+ mapping as we enter the block.
+\end_layout
+
+\begin_layout Subsubsection
+Abstract interpretation
+\end_layout
+
+\begin_layout Standard
+Abstract definitions are largely similar to that of concrete ones.
+ Notice that we carry on modified exception state returned from a function
+ call, thereby allowing exception propagation.
+\end_layout
+
+\begin_layout Paragraph
+Domain
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+AEx & = & AVal\cup\left\{ Void\right\} \\
+AState & = & AEnv\times AObjMem\times AThisCurried\times AReturn\times AEx
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The initial program state is 
+\begin_inset Formula $\left\langle \emptyset,\left\{ 0\mapsto\emptyset\right\} ,0,\emptyset,Void,Void\right\rangle $
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Paragraph
+Functions
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\mathtt{enter} & = & \lambda\left\langle \_,\alpha,\_,\nu,\_,\_\right\rangle ,\left\langle P,\tau'\right\rangle ,n.\left\langle \left[\mathtt{param}\left(n\right)_{k}\mapsto P_{k}\right],\alpha,\tau',\nu,Void,Void\right\rangle \\
+\mathtt{leave} & = & \lambda\left\langle \sigma,\_,\tau,\_,\_,\_\right\rangle ,\left\langle \_,\alpha',\_,\nu',r,e\right\rangle .\left\langle \left\langle \sigma,\alpha',\tau,\nu',Void,e\right\rangle ,r\right\rangle 
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\mathtt{esc} & = & \Theta_{AReturn,AEx}\ \lambda R,E.\left(R=Void\right)\wedge\left(E=Void\right)\\
+\mathtt{throw}\left(v\right) & = & \bar{\Upsilon}_{AEx}\ \lambda E.v\\
+\mathtt{catch}\left(id,s\right) & = & \Theta_{AEx}\ \lambda E.\begin{cases}
+I_{A}\bot & \mbox{if}\ E=Void\\
+\lambda f\lambda\eta.s\ f\ \mathtt{exs}\left(\eta,id\right) & \mbox{otherwise}
+\end{cases}\\
+\mathtt{exs}\left(id\right) & = & \Upsilon_{AEnv,AEx}\ \lambda\sigma,E.\left\langle \sigma\left[id\mapsto E\right],Void\right\rangle 
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Well-definedness
+\end_layout
+
+\begin_layout Standard
+We assume that all the functions appearing in both concrete and abstract
+ versions of interpretations are ordered point-wise.
+ Recall that the bind operation preserves the monotonicity when binding
+ two monotonic functions.
+ Observe that all of the primitive operations that yield a state transformer,
+ or the value-returning operation lifted to yield one, such transformer
+ is monotonic.
+ This follows from the fact that the domain of such transformers are ordered
+ by identity.
+ Then, it follows that 
+\begin_inset Formula $\mathcal{S}$
+\end_inset
+
+, 
+\begin_inset Formula $\mathcal{E}$
+\end_inset
+
+ and 
+\begin_inset Formula $\mathcal{L}$
+\end_inset
+
+ are monotonic.
+ Hence the semantics is well-defined both in concrete and abstract interpretatio
+ns.
+\end_layout
+
+\begin_layout Section
+Correctness
+\end_layout
+
+\begin_layout Standard
+We define an abstraction relation 
+\begin_inset Formula $\succ$
+\end_inset
+
+between concrete and abstract states.
+ 
+\end_layout
+
+\begin_layout Subsection
+Definition of correct abstraction
+\end_layout
+
+\begin_layout Standard
+First, we define an abstraction between values and other components of the
+ states.
+\end_layout
+
+\begin_layout Definition
+\begin_inset Argument
+status open
+
+\begin_layout Plain Layout
+Abstraction of primitive values
+\end_layout
+
+\end_inset
+
+
+\begin_inset Formula $Num\succ\mathbb{N}$
+\end_inset
+
+, 
+\begin_inset Formula $Bool\succ\mathbb{B}$
+\end_inset
+
+, 
+\begin_inset Formula $Void\succ Void$
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Definition
+\begin_inset Argument
+status open
+
+\begin_layout Plain Layout
+Abstraction of objects and symbol maps
+\end_layout
+
+\end_inset
+
+
+\begin_inset Formula $\alpha,OM\vdash n\succ m$
+\end_inset
+
+ if 
+\begin_inset Formula $\alpha\left(n\right)\succ OM\left(m\right)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Definition
+\begin_inset Formula $\sigma:AEnv\succ V:Env$
+\end_inset
+
+ if 
+\begin_inset Formula $\forall id\in V,\sigma\left(id\right)\succ V\left(id\right)$
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Definition
+\begin_inset Argument
+status open
+
+\begin_layout Plain Layout
+Function pointers
+\end_layout
+
+\end_inset
+
+
+\begin_inset Formula $C:Curried\vdash\left\langle n,c,e\right\rangle \succ\left\langle m,P\right\rangle $
+\end_inset
+
+ if 
+\begin_inset Formula $n=m$
+\end_inset
+
+, 
+\begin_inset Formula $c=N\left(P\right)$
+\end_inset
+
+ and 
+\begin_inset Formula $\exists A\in C\left(n,c,e\right),A_{k}\succ P_{k}$
+\end_inset
+
+ for 
+\begin_inset Formula $1\leq k\leq c$
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\end_deeper
+\begin_layout Standard
+Now we are ready to define an abstraction between concrete and abstract
+ states.
+\end_layout
+
+\begin_layout Definition
+\begin_inset Argument
+status open
+
+\begin_layout Plain Layout
+Abstraction relation
+\end_layout
+
+\end_inset
+
+Given
+\end_layout
+
+\begin_layout Definition
+\begin_inset Formula $\rho=\left(\begin{gathered}V:Env,OM:ObjMem,T:This,R:Return,E:Ex\end{gathered}
+\right)\in CState$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Definition
+\begin_inset Formula $\eta=\left(\begin{gathered}\sigma:AEnv,\alpha:AObjMem,\tau:AThis,C:Curried,r:AReturn,e:AEx\end{gathered}
+\right)\in AState$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Definition
+\begin_inset Formula $\eta\succ\rho$
+\end_inset
+
+ if
+\begin_inset Formula $\left(\sigma\succ V\right)\wedge\left(\forall m\in OM\exists n\in\alpha,\alpha\left(n\right)\succ OM\left(m\right)\right)\wedge\left(\tau\succ T\wedge r\succ R\wedge e\succ E\right)$
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Definition
+\begin_inset Argument
+status open
+
+\begin_layout Plain Layout
+Abstraction between powersets
+\end_layout
+
+\end_inset
+
+Given 
+\begin_inset Formula $p\in\wp\left(AState\times a\right),q\in\wp\left(CState\times c\right),p\succ q$
+\end_inset
+
+ if
+\end_layout
+
+\begin_layout Definition
+\begin_inset Formula $\forall\rho\in q\exists\eta\in p,\left(\eta\succ\rho\right)\wedge\left(\rho,\eta\vdash a\succ c\right)$
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Subsection
+Morphism
+\end_layout
+
+\begin_layout Standard
+First, we observe that the bind operation preserves morphisms of the functions
+\end_layout
+
+\begin_layout Definition
+A pair of functions
+\begin_inset Formula $\left\langle F,F'\right\rangle $
+\end_inset
+
+ shows a morphism over 
+\begin_inset Formula $\succ$
+\end_inset
+
+ if the following condition is met
+\end_layout
+
+\begin_layout Definition
+\begin_inset Formula $a\succ b\implies F'\left(a\right)\succ F\left(b\right)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Theorem
+If 
+\begin_inset Formula $\left\langle F,F'\right\rangle $
+\end_inset
+
+ and 
+\begin_inset Formula $\left\langle G,G'\right\rangle $
+\end_inset
+
+ are such pairs of functions that shows a morphism over 
+\begin_inset Formula $\succ$
+\end_inset
+
+, then 
+\begin_inset Formula $\left\langle F\bind G,F'\bind G'\right\rangle $
+\end_inset
+
+ is also such pair.
+\end_layout
+
+\begin_layout Proof
+\begin_inset Formula $\forall\rho\in CState$
+\end_inset
+
+, let 
+\begin_inset Formula $p=F\left(\rho\right)$
+\end_inset
+
+,
+\begin_inset Formula $p'=F\bind G\left(\rho\right)$
+\end_inset
+
+, 
+\begin_inset Formula $\eta\in AState\mbox{ such that }\eta\succ\rho,$
+\end_inset
+
+
+\begin_inset Formula $q=F'\left(\eta\right)$
+\end_inset
+
+,
+\begin_inset Formula $q'=F'\bind G'\left(\eta\right)$
+\end_inset
+
+, 
+\begin_inset Formula $\forall p_{1}\in p,$
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+when 
+\begin_inset Formula $\mathtt{esc}\left(p_{1}\right)$
+\end_inset
+
+ is true, then the morphism and 
+\begin_inset Formula $\succ$
+\end_inset
+
+ relation imply that 
+\begin_inset Formula $\exists q_{1}\in q,\mathtt{esc}\left(q_{1}\right)$
+\end_inset
+
+.
+ Given the definition of 
+\begin_inset Formula $\bind$
+\end_inset
+
+ operation, 
+\begin_inset Formula $p_{1}$
+\end_inset
+
+ and 
+\begin_inset Formula $q_{1}$
+\end_inset
+
+are also elements of 
+\begin_inset Formula $p'$
+\end_inset
+
+ and 
+\begin_inset Formula $q'$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Enumerate
+otherwise, morphism of 
+\begin_inset Formula $\left\langle G,G'\right\rangle $
+\end_inset
+
+ gives that 
+\begin_inset Formula $\forall p_{2}\in G\left(p_{1}\right)\exists q_{2}\in G'\left(q_{1}\right)\mbox{ such that }q_{2}\succ p_{2}$
+\end_inset
+
+.
+ Such entities also exist in 
+\begin_inset Formula $q'$
+\end_inset
+
+.
+\end_layout
+
+\end_deeper
+\begin_layout Standard
+Finally, we observe that operations resulting from abstract functions and
+ their corresponding concrete functions form such a morphism over 
+\begin_inset Formula $\succ$
+\end_inset
+
+.
+ We omit function-by-function proof, as such proof would be a mechanical
+ exercise.
+\end_layout
+
+\begin_layout Section
+Conclusion and future direction
+\end_layout
+
+\begin_layout Standard
+As we have noted in the introduction, this work is a snapshot of an ongoing
+ dialogue between theory and practice, positively informing each other to
+ gradually move towards a better theorisation (and practical implementation)
+ of the difficult task of analysing dynamic languages.
+ We have sought to modularise the theoretical framework so that we can take
+ an evolutionary approach.
+ We anticipate that, as a result of having such a theory, adding new features
+ to the current model language while maintaining formality and rigour will
+ be considerably less laborious than to invent a new incarnation of a more
+ feature-complete model language and produce theory for it.
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset bibtex
+LatexCommand bibtex
+bibfiles "duck"
+options "IEEEtran"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage pagebreak
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+\start_of_appendix
+Haskell Implementation
+\end_layout
+
+\begin_layout Subsection
+Syntax parser.
+ Creates an augmented syntax tree with unique ID numbers.
+\end_layout
+
+\end_body
+\end_document
