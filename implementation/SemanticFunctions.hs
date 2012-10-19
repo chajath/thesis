@@ -29,22 +29,24 @@ class (State s, Value v) => StateValue s v where
 	getglobal :: s -> v
 	getthis :: s -> v
 	newobj :: Eid -> (M s v v)
-
+	runthrow :: v -> s -> [s]
+	runcatch :: String -> (M s v ()) -> (M s v ()) -> (M s v ())
 data M s v a where
 	M :: (State s, Value v) => ((Sid -> (M s v ())) -> s -> [(s,Maybe a)]) -> M s v a
 
 --data (State s) => M s a = M (F s -> s -> [(s,Maybe a)])
 
 instance (State s, Value v) => Monad (M s v) where
-	(M t) >>= u = M $ (\f -> \s0 -> 
-					    let ss = t f s0
-						in
-						   concat [ if esc s1 then [(s1, Nothing)]
-						   	            	  else let 
-						   	            	      Just a' = a
-						   	            	      (M us) = u a'
-						   	            	      in us f s1
-						   	      | (s1, a) <- ss ])
+	(M t) >>= u = 
+		M $ (\f -> \s0 -> 
+			let ss = t f s0
+			in
+			   concat [ if esc s1 then [(s1, Nothing)]
+			   	            	  else let 
+			   	            	      Just a' = a
+			   	            	      (M us) = u a'
+			   	            	      in us f s1
+			   	      | (s1, a) <- ss ])
 	return a = M $ \f -> \s0 -> [(s0, Just a)]
 
 {- Takes a state transformer and transforms into a monad -}
@@ -60,12 +62,12 @@ getState = M $ \f -> \s0 -> [(s0,Just s0)]
 sstmt :: (StateValue s v) => AStmt -> M s v ()
 sstmt (AStmt Empty sid) = return ()
 sstmt (AStmt (Stmts s1 s2) sid)  = do 
-	sstmt s1
-	sstmt s2
+	traceShow s1 $ sstmt s1
+	traceShow s2 $ sstmt s2
 sstmt (AStmt (Expr e1) sid) = do
 	sexpr e1
 	return ()
-sstmt (AStmt (Return e1) sid) = trace "returning" $ do
+sstmt (AStmt (Return e1) sid) = do
 	v <- sexpr e1
 	liftS $ ret v
 sstmt (AStmt (If e1 s1) sid) = do
@@ -88,7 +90,11 @@ sstmt (AStmt (Asg (Ref e1 id1) e2) sid) = do
 	r <- sexpr e1
 	v <- sexpr e2
 	liftS $ set r id1 v
-
+sstmt (AStmt (TryCatch s1 id1 s2) sid) = do
+	runcatch id1 (sstmt s1) (sstmt s2)
+sstmt (AStmt (Throw e1) sid) = do
+	v1 <- sexpr e1
+	liftS $ runthrow v1
 sexpr :: (StateValue s v) => AExpr -> M s v v
 sexpr (AExpr (Number n) eid) = return $ conval (Number n)
 sexpr (AExpr (Boolean b) eid) = return $ conval (Boolean b)
@@ -136,10 +142,7 @@ getFunc :: (StateValue s v) => M s v (Sid -> (M s v ()))
 getFunc = M $ \f -> \s -> [(s, Just f)]
 
 call :: (StateValue s v) => Sid -> [v] -> v -> (M s v v)
-call n p t = do
-	s0 <- getState
-	putState (enter s0 n p t)
-	M $ \f -> \s1 -> [leave s0 s | (s,_) <- let M t = (f n) in t f s1 ]
+call n p t = M $ \f -> \s0 -> [leave s0 s | (s,_) <- let M x = (f n) in x f (enter s0 n p t) ]
 
 runMonad :: (StateValue s v) => (M s v a) -> (Sid -> (M s v ())) -> s -> v -> [s]
 runMonad (M t) = \f -> \s0 -> \_ -> (Prelude.map) fst (t f s0)

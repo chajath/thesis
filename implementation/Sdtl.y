@@ -22,6 +22,9 @@ import Data.Map
 	true		{TokenTrue}
 	false		{TokenFalse}
 	global		{TokenGlobal}
+	try 		{TokenTry}
+	catch 		{TokenCatch}
+	throw  		{TokenThrow}
 	id			{TokenId $$}
 	'='			{TokenAsg}
 	'+'			{TokenPlus}
@@ -73,6 +76,8 @@ Stmt : AExpr ';' {Expr $1}
 	 | output AExpr ';' {Output $2}
 	 | return AExpr ';' {Return $2}
 	 | function id '(' Idlist ')' Cblock {Function $2 $4 $6}
+	 | try Cblock catch '(' id ')' Cblock {TryCatch $2 $5 $7}
+	 | throw AExpr ';' {Throw $2}
 
 Params :: {[AExpr]}
 Params : {[]}
@@ -151,8 +156,10 @@ data Stmt =
 	| Expr AExpr
 	| Return AExpr
 	| Function String [String] AStmt
+	| TryCatch AStmt String AStmt
 	| Empty
 	| Stmts AStmt AStmt
+	| Throw AExpr
 	deriving Show
 
 data Token =
@@ -185,6 +192,9 @@ data Token =
 	| TokenDot
 	| TokenComma
 	| TokenNumber Int
+	| TokenTry
+	| TokenCatch
+	| TokenThrow
 	deriving Show
 
 type P = State (Int, Map Int AStmt)
@@ -246,6 +256,9 @@ lexVar cs =
 		("true", rest) -> TokenTrue : lexer1 rest
 		("false", rest) -> TokenFalse : lexer1 rest
 		("global", rest) -> TokenGlobal : lexer1 rest
+		("try", rest) -> TokenTry : lexer1 rest
+		("catch", rest) -> TokenCatch : lexer1 rest
+		("throw", rest) -> TokenThrow : lexer1 rest
 		(var, rest) -> TokenId var : lexer1 rest
 
 happyError :: [Token] -> a

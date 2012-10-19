@@ -37,6 +37,7 @@ instance Value AValue where
 data AState = AState{
         env :: Map String AValue,
         returning :: Maybe AValue,
+        exception :: Maybe AValue,
         functions :: Map Sid [String],
         objmem :: Map Eid (Map String AValue),
         this :: AValue,
@@ -44,8 +45,10 @@ data AState = AState{
     } deriving (Show, Eq, Ord)
 
 instance State (AState) where
-    esc (AState {returning = v}) = case v of
-        Nothing -> False
+    esc (AState {returning = v, exception = e}) = case v of
+        Nothing -> case e of 
+            Nothing -> False
+            _ -> True
         _ -> True
     
     --fundecl :: String -> [String] -> Sid -> s -> [s]
@@ -97,7 +100,7 @@ instance StateValue AState AValue where
 
     --leave :: (CValue v) => s -> s -> (s, Maybe v)
     leave s0 s = trace (show s) $ 
-        (AState {env = (env s0), returning = Nothing, 
+        (AState {env = (env s0), returning = Nothing, exception = (exception s), 
                  functions = (functions s), 
                 curried = (curried s),
                 objmem = (objmem s),
@@ -121,7 +124,19 @@ instance StateValue AState AValue where
     getglobal = \s -> (Object 0)
     getthis = \s -> (this s)
     newobj eid = M $ \f -> \s -> 
-        [(s {objmem = insert eid (fromList []) (objmem s)}, Just (Object eid))]    
+        [(s {objmem = insert eid (fromList []) (objmem s)}, Just (Object eid))]
+
+    --runthrow :: v -> s -> [s]
+    runthrow v = \s -> [s {exception=Just v}]
+
+    --runcatch :: String -> (M s v ()) -> (M s v ())
+    runcatch id1 (M t) (M u) = M $ \f -> \s0 ->
+        trace ("in catch " ++ (show s0)) $
+        L.nub $ concat
+        [trace ("we have " ++ (show s1)) $ case (exception s1) of
+            Nothing -> [(s1, r)]
+            Just v -> (u f (s1 {env = insert id1 v (env s1), exception=Nothing}))    
+            | (s1, r) <- t f s0]
 {-
 getWorld :: IO RealWorld
 getWorld = IO (\s -> (# s, fromState s #))
@@ -155,7 +170,8 @@ runAbstract (SdtlProgram (AStmt _ mainSid) sdtlMap) = do
             runMonad (fun sdtlMap (fromList []) mainSid) 
                      (fun sdtlMap (fromList []))
                      (AState {env = fromList [], 
-                              returning = Nothing, 
+                              returning = Nothing,
+                              exception = Nothing,
                               functions = fromList [], 
                               curried = fromList [],
                               objmem = fromList [(0, fromList [])],
@@ -163,6 +179,7 @@ runAbstract (SdtlProgram (AStmt _ mainSid) sdtlMap) = do
                      (Intval)
         in do
         --putWorld (io endState)
+        putStrLn "Final States"
         putStrLn $ show endStates
 
 runString :: String -> IO()

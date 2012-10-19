@@ -48,6 +48,7 @@ data CState = CState{
 		--io :: RealWorld,
 		objmem :: Map Int (Map String CValue),
 		returning :: Maybe CValue,
+		exception :: Maybe CValue,
 		this :: CValue,
 		functions :: Map Sid [String]
 	} deriving (Show)
@@ -56,8 +57,10 @@ instance Eq CState where
 	(==) _ _ = False
 
 instance State (CState) where
-	esc (CState {returning = v}) = case v of
-		Nothing -> False
+	esc (CState {returning = v, exception = e}) = case v of
+		Nothing -> case e of 
+			Nothing -> False
+			_ -> True
 		_ -> True
 	
 	--fundecl :: String -> [String] -> Sid -> s -> [s]
@@ -99,6 +102,7 @@ instance StateValue CState CValue where
 	leave s0 s = trace (show s) $ 
 		(CState {env = (env s0), {-io = (io s), -} 
 			     returning = Nothing,
+			     exception = (exception s),
 			     objmem = (objmem s),
 			     this = (this s0),
 			     functions = (functions s)}, (returning s))
@@ -124,6 +128,16 @@ instance StateValue CState CValue where
 		in 
 		traceShow (Object newn) $
 		[(s {objmem = insert newn (fromList []) (objmem s)}, Just (Object newn))]
+
+	--runthrow :: v -> s -> [s]
+	runthrow v = \s -> [s {exception=Just v}]
+
+	--runcatch :: String -> (M s v ()) -> (M s v ())
+	runcatch id1 (M t) (M u) = M $ \f -> \s0 ->
+		let [(s1,r)] = t f s0 in
+			case (exception s1) of
+				Nothing -> [(s1, r)]
+				Just v -> (u f (s1 {env = insert id1 v (env s0), exception=Nothing}))
 {-
 getWorld :: IO RealWorld
 getWorld = IO (\s -> (# s, fromState s #))
@@ -146,7 +160,7 @@ runConcrete (SdtlProgram (AStmt _ mainSid) sdtlMap) = do
 	let [endState] = 
 		runMonad (fun sdtlMap mainSid) 
 				 (fun sdtlMap)
-		         (CState {env = fromList [], {-io = w, -} returning = Nothing, 
+		         (CState {env = fromList [], {-io = w, -} returning = Nothing, exception = Nothing,
 		         		  functions = fromList [], objmem = fromList [(0, fromList [])], this = (Object 0)}) 
 		         (Intval 0)
 		in do
