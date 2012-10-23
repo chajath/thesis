@@ -30,13 +30,13 @@ class (State s, Value v) => StateValue s v where
 	getthis :: s -> v
 	newobj :: Eid -> (M s v v)
 	runthrow :: v -> s -> [s]
-	runcatch :: String -> (M s v ()) -> (M s v ()) -> (M s v ())
+	runcatch :: String -> (M s v ()) -> (M s v ())
 data M s v a where
 	M :: (State s, Value v) => ((Sid -> (M s v ())) -> s -> [(s,Maybe a)]) -> M s v a
 
 --data (State s) => M s a = M (F s -> s -> [(s,Maybe a)])
 
-instance (State s, Value v) => Monad (M s v) where
+instance (StateValue s v) => Monad (M s v) where
 	(M t) >>= u = 
 		M $ (\f -> \s0 -> 
 			let ss = t f s0
@@ -49,8 +49,13 @@ instance (State s, Value v) => Monad (M s v) where
 			   	      | (s1, a) <- ss ])
 	return a = M $ \f -> \s0 -> [(s0, Just a)]
 
+(>>>) :: (StateValue s v) => (M s v a) -> (M s v a) -> (M s v a)
+(M t) >>> (M u) = M $ (\f -> \s0 -> 
+	let ss = t f s0 in concat [ u f s1 | (s1, a) <- ss ])
+					   
+
 {- Takes a state transformer and transforms into a monad -}
-liftS :: (State s, Value v) => (s -> [s]) -> M s v ()
+liftS :: (StateValue s v) => (s -> [s]) -> M s v ()
 liftS strans = M $ \f -> \s0 -> [(s1,Just ()) | s1 <- (strans s0)]
 
 liftV :: (State s, Value v) => (s -> v) -> M s v v
@@ -90,11 +95,12 @@ sstmt (AStmt (Asg (Ref e1 id1) e2) sid) = do
 	r <- sexpr e1
 	v <- sexpr e2
 	liftS $ set r id1 v
-sstmt (AStmt (TryCatch s1 id1 s2) sid) = do
-	runcatch id1 (sstmt s1) (sstmt s2)
+sstmt (AStmt (TryCatch s1 id1 s2) sid) =
+	(sstmt s1) >>> runcatch id1 (sstmt s2)
 sstmt (AStmt (Throw e1) sid) = do
 	v1 <- sexpr e1
 	liftS $ runthrow v1
+
 sexpr :: (StateValue s v) => AExpr -> M s v v
 sexpr (AExpr (Number n) eid) = return $ conval (Number n)
 sexpr (AExpr (Boolean b) eid) = return $ conval (Boolean b)

@@ -133,11 +133,10 @@ instance StateValue CState CValue where
 	runthrow v = \s -> [s {exception=Just v}]
 
 	--runcatch :: String -> (M s v ()) -> (M s v ())
-	runcatch id1 (M t) (M u) = M $ \f -> \s0 ->
-		let [(s1,r)] = t f s0 in
-			case (exception s1) of
-				Nothing -> [(s1, r)]
-				Just v -> (u f (s1 {env = insert id1 v (env s0), exception=Nothing}))
+	runcatch id1 (M u) = M $ \f -> \s0 ->
+		case (exception s0) of
+			Nothing -> [(s0, Just ())]
+			Just v -> (u f (s0 {env = insert id1 v (env s0), exception=Nothing}))
 {-
 getWorld :: IO RealWorld
 getWorld = IO (\s -> (# s, fromState s #))
