@@ -49,10 +49,10 @@ instance (StateValue s v) => Monad (M s v) where
 			   	      | (s1, a) <- ss ])
 	return a = M $ \f -> \s0 -> [(s0, Just a)]
 
-(>>>) :: (StateValue s v) => (M s v a) -> (M s v a) -> (M s v a)
-(M t) >>> (M u) = M $ (\f -> \s0 -> 
-	let ss = t f s0 in concat [ u f s1 | (s1, a) <- ss ])
-					   
+(>>>) :: (StateValue s v) => (M s v a) -> (Maybe a -> (M s v a)) -> (M s v a)
+(M t) >>> u = M $ (\f -> \s0 -> 
+	let ss = t f s0 in concat [ let (M us) = u a in us f s1 | (s1, a) <- ss ])
+
 
 {- Takes a state transformer and transforms into a monad -}
 liftS :: (StateValue s v) => (s -> [s]) -> M s v ()
@@ -96,7 +96,7 @@ sstmt (AStmt (Asg (Ref e1 id1) e2) sid) = do
 	v <- sexpr e2
 	liftS $ set r id1 v
 sstmt (AStmt (TryCatch s1 id1 s2) sid) =
-	(sstmt s1) >>> runcatch id1 (sstmt s2)
+	(sstmt s1) >>> \_ -> runcatch id1 (sstmt s2)
 sstmt (AStmt (Throw e1) sid) = do
 	v1 <- sexpr e1
 	liftS $ runthrow v1

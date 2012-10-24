@@ -1076,15 +1076,9 @@ We define a bind operator
 \end_layout
 
 \begin_layout Definition
-\begin_inset Formula $\left(\bind\right):M\ a\rightarrow\left(a\rightarrow M\ b\right)\rightarrow M\ b$
-\end_inset
-
-
-\end_layout
-
-\begin_layout Definition
 \begin_inset Formula 
 \begin{eqnarray*}
+\left(\bind\right) & : & M\ a\rightarrow\left(a\rightarrow M\ b\right)\rightarrow M\ b\\
 T\ \bind\ U & = & \lambda f\lambda s.\:\mathbf{let}\ S=T\ f\ s\ \mathbf{in}\underset{\left\langle s',a\right\rangle \in S}{\bigcup}\left(\begin{gathered}\mbox{if}\ \mathtt{esc}\left(s'\right)\ \mbox{then}\ \left\{ \left\langle s',\bot\right\rangle \right\} \ \mbox{else}\ U\ a\ f\ s'\end{gathered}
 \right)
 \end{eqnarray*}
@@ -1892,8 +1886,90 @@ sdtl
 
  supports higher-order functions, which allows functions to be recursively
  referenced.
- Hence, we formulate the meaning of a function as a fixed point (see the
- definition of 
+ For example, we can define Factorial function in a recursive manner.
+\end_layout
+
+\begin_layout Example
+\begin_inset Argument
+status open
+
+\begin_layout Plain Layout
+Recursively defined factorial function
+\end_layout
+
+\end_inset
+
+ In 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+sdtl
+\end_layout
+
+\end_inset
+
+, Factorial function can be implemented in a recursive way.
+\end_layout
+
+\begin_layout Example
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+function fact(f,n) {
+\end_layout
+
+\begin_layout Plain Layout
+
+	if(n>1) { return f(f,n-1) * n; } else { return 1; }
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+z=fact(fact,input);
+\end_layout
+
+\begin_layout Plain Layout
+
+output z;
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Example
+In this example, the function 
+\begin_inset Formula $\mathtt{fact}$
+\end_inset
+
+ takes two arguments.
+ The first is the function pointer to recursively invoke, and the second
+ is the number to calculate factorial of it.
+ This example illustrates that recursive functions are possible even in
+ the absence of lexical scoping or other special scoping rules to allow
+ function body to refer to the function itself.
+\end_layout
+
+\begin_layout Standard
+Given the availability of higher-order functions, we formulate the meaning
+ of a function as a fixed point (see the definition of 
 \begin_inset Formula $F$
 \end_inset
 
@@ -1985,6 +2061,9 @@ reference "semantic"
 
  takes both the caller's state and the resulting states of callee's, and
  constructs the caller's states after the function call.
+ These functions are parametrised so as to allow each interpretation to
+ define the exact shape of a program state and its manipulation during a
+ function call and return.
 \end_layout
 
 \begin_layout Standard
@@ -2112,7 +2191,13 @@ where
 \end_layout
 
 \begin_layout Standard
-The initial program state is 
+Concrete state is a Cartesian product of environment, IO state and a return
+ value.
+ The return value is set to be a value when a function is returning any
+ value inside a function body.
+ This has been incorporated as a part of a program state so that we can
+ signal escaping of a program flow.
+ The initial program state is 
 \begin_inset Formula $\left\langle \emptyset,io,Void\right\rangle ,$
 \end_inset
 
@@ -2152,7 +2237,7 @@ s_{2} & \mbox{if}\ v=false
 \mathtt{conval}\left(con\right) & = & \left\{ con\right\} \\
 \mathtt{getinput\left(\rho\right)} & = & \bar{\Psi}_{IO}\ \lambda O.\left\langle O',z\in\mathbb{N}\right\rangle \mbox{see note}\\
 \mathtt{dooutput}\left(v\right) & = & \bar{\Upsilon}_{IO}\ \lambda O.O'\mbox{see note}\\
-\mathtt{fundecl}(id,n) & = & \bar{\Upsilon}_{Env}\ \lambda V.V\left[id\mapsto FP_{n}\right]\\
+\mathtt{fundecl}(id,n) & = & \bar{\Upsilon}_{Env}\ \lambda V.V\left[id\mapsto n\right]\\
 \mathtt{ret}\left(v\right) & = & \bar{\Upsilon}_{Return}\ \lambda R.v\\
 \mathtt{bin}\left(op,c_{1},c_{2}\right) & = & \mbox{perform binary operation }\mbox{between two constants}
 \end{eqnarray*}
@@ -2204,7 +2289,9 @@ AState & = & AEnv\times AReturn
 \end_layout
 
 \begin_layout Standard
-The initial program state is 
+Composition of an abstract domain is similar to that of the concrete counterpart
+, except that it does not include an IO state.
+ The initial program state is 
 \begin_inset Formula $\left\langle \emptyset,Void\right\rangle $
 \end_inset
 
@@ -2253,6 +2340,10 @@ Functions
 
 \end_layout
 
+\begin_layout Standard
+Function definitions are largely similar to that of concrete definition.
+\end_layout
+
 \begin_layout Subsection
 \begin_inset CommandInset label
 LatexCommand label
@@ -2261,6 +2352,157 @@ name "sub:Function-currying"
 \end_inset
 
 Function currying
+\end_layout
+
+\begin_layout Standard
+We now introduce function currying to the 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+sdtl
+\end_layout
+
+\end_inset
+
+ language.
+ Introduction of this language feature allows the language to be flexible
+ enough to express what JavaScript programmers would do with lexical scoping.
+\end_layout
+
+\begin_layout Example
+\begin_inset Argument
+status open
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "Function-currying"
+
+\end_inset
+
+Function currying
+\end_layout
+
+\end_inset
+
+ We take a simple add function, and curry one argument to produce different
+ adders.
+\end_layout
+
+\begin_layout Example
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+function add(x,y) {
+\end_layout
+
+\begin_layout Plain Layout
+
+	return x+y;
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+add5 = add(5);
+\end_layout
+
+\begin_layout Plain Layout
+
+add7 = add(7);
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+output add5(input) + add7(input);
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Example
+If we were to write this in JavaScript, we could have written the following
+ for the same effect.
+\end_layout
+
+\begin_layout Example
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+function adder(toadd) {
+\end_layout
+
+\begin_layout Plain Layout
+
+	return function(y) {
+\end_layout
+
+\begin_layout Plain Layout
+
+		return toadd+y;
+\end_layout
+
+\begin_layout Plain Layout
+
+	}
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+add5 = adder(5);
+\end_layout
+
+\begin_layout Plain Layout
+
+add7 = adder(7);
+\end_layout
+
+\begin_layout Plain Layout
+
+// suppose input is a platform-specific console input function
+\end_layout
+
+\begin_layout Plain Layout
+
+console.log(add5(input()) + add7(input()));
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -2356,6 +2598,100 @@ Here,
 .
 \end_layout
 
+\begin_layout Example
+\begin_inset Argument
+status open
+
+\begin_layout Plain Layout
+Concrete interpretation of a function currying
+\end_layout
+
+\end_inset
+
+ Consider the program shown in example 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "Function-currying"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Example
+At line 1, we are presented with a function declaration.
+ 
+\begin_inset Formula $\mathtt{fundecl}$
+\end_inset
+
+ adds identifier as a reference to function pointer with no curried value.
+ Assuming 
+\begin_inset Formula $add$
+\end_inset
+
+ has given a unique ID of 
+\begin_inset Formula $1$
+\end_inset
+
+ during the parsing of the program, we have in environment 
+\begin_inset Formula $\left[\mathtt{add}\mapsto\left\langle 1,\emptyset\right\rangle \right]$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Example
+At lines 5 and 7, we partially apply the 
+\begin_inset Formula $\mathtt{add}$
+\end_inset
+
+ function.
+ Since the number of arguments is not saturated, 
+\begin_inset Formula $\mathtt{apply}\left(\left\langle 1,\emptyset\right\rangle ,\left[5\right],\_\right)$
+\end_inset
+
+ gives 
+\begin_inset Formula $\left\langle 1,\left[5\right]\right\rangle $
+\end_inset
+
+ for 
+\begin_inset Formula $\mathtt{add5}$
+\end_inset
+
+ .
+ Similarly, 
+\begin_inset Formula $\mathtt{add7}$
+\end_inset
+
+ gets 
+\begin_inset Formula $\left\langle 1,\left[7\right]\right\rangle $
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Example
+At line 8, we saturate the parameters, 
+\begin_inset Formula $\mathtt{apply}\left(\left\langle 1,\left[5\right]\right\rangle ,\left[x\right],\_\right)$
+\end_inset
+
+ give 
+\begin_inset Formula $\mathtt{call}\left(1,\left[5,x\right]\right)$
+\end_inset
+
+, where 
+\begin_inset Formula $x$
+\end_inset
+
+ is an arbitrary number given from user input.
+ Hence we have the addition done.
+ It works similarly for 
+\begin_inset Formula $\mathtt{add7}$
+\end_inset
+
+.
+\end_layout
+
 \begin_layout Subsubsection
 Abstract interpretation
 \end_layout
@@ -2370,12 +2706,19 @@ Note that curried functions introduce a possibility of creating closures
 status open
 
 \begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "Currying-loop"
+
+\end_inset
+
 Currying loop
 \end_layout
 
 \end_inset
 
  Consider the following program.
+ 
 \end_layout
 
 \begin_layout Standard
@@ -2428,13 +2771,28 @@ while(true) {
 \end_layout
 
 \begin_layout Standard
-In this case, variable 
-\begin_inset Formula $x$
+If we naively interpret this program, we would not be able to reach a fixed
+ point in analysis.
+ Instead, we would have:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\mathtt{x} & = & \mathtt{foo}\left(Num\right)\\
+\mathtt{x} & = & \mathtt{foo}\left(\mathtt{foo}\left(Num\right)\right)\\
+\mathtt{x} & = & \mathtt{foo}\left(\mathtt{foo}\left(\mathtt{foo}\left(Num\right)\right)\right)\\
+ & \vdots
+\end{eqnarray*}
+
 \end_inset
 
- refers to a function of unbounded arity.
- A solution to this problem is to have a curried function anchored to a
- particular language construct.
+
+\end_layout
+
+\begin_layout Standard
+A solution to this problem is to have a curried function anchored to a particula
+r language construct.
  In this case, we can use an eid of a currying expression as a point of
  reference (or '0' if not curried).
 \end_layout
@@ -2504,7 +2862,7 @@ status open
 \begin{eqnarray*}
 \mathtt{apply}\left(\left\langle n,c,e\right\rangle ,p,e'\right) & = & \begin{cases}
 \Theta_{Curried}\ \lambda\nu.\underset{C\in\nu\left(n,c,e\right)}{\bigcup}\mathtt{call}\left(n,C\smallfrown p\right)\ \mbox{if }c+N\left(p\right)=\mathtt{{arity}\left(n\right)}\\
-\Psi_{Curried}\ \lambda\nu.\underset{C\in\nu\left(n,c,e\right)}{\bigcup}\left\langle \nu\left[\left\langle n,c+N\left(p\right),e'\right\rangle \mapsto C\smallfrown p\right],\left\langle n,c+N\left(p\right),e'\right\rangle \right\rangle \ \mbox{otherwise}
+\Psi_{Curried}\ \lambda\nu.\underset{C\in\nu\left(n,c,e\right)}{\bigcup}\left\langle \nu\left[\left\langle n,c+N\left(p\right),e'\right\rangle \mapsto C\smallfrown p\right],\left\langle n,c+N\left(p\right),e'\right\rangle \right\rangle \ {\scriptstyle \mbox{otherwise}}
 \end{cases}\\
 \mathtt{fundecl}\left(id,n\right) & = & \bar{\Upsilon}_{AEnv}\ \lambda\sigma.\sigma\left[id\mapsto\left\langle n,0,0\right\rangle \right]
 \end{eqnarray*}
@@ -2537,6 +2895,182 @@ name "absfun-curry"
 
 
 \end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Example
+\begin_inset Argument
+status open
+
+\begin_layout Plain Layout
+Abstract interpretation of a currying loop
+\end_layout
+
+\end_inset
+
+ A program shown in example 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "Currying-loop"
+
+\end_inset
+
+ can be analysed as follows:
+\end_layout
+
+\begin_layout Example
+At line 1, 
+\begin_inset Formula $\mathtt{fundecl}\left(\mathtt{foo},1\right)$
+\end_inset
+
+ gives 
+\begin_inset Formula $\left[\mathtt{foo}\mapsto\left\langle 1,0,0\right\rangle \right]$
+\end_inset
+
+, assuming 
+\begin_inset Formula $1$
+\end_inset
+
+ is a unique ID given to the function.
+ At line 7, assuming the partial application expression has a unique ID
+ of 7, 
+\begin_inset Formula $\mathtt{apply}\left(\left\langle 1,0,0\right\rangle ,\left[Num\right],7\right)$
+\end_inset
+
+ gives 
+\begin_inset Formula $\left[x\mapsto\left\langle 1,1,7\right\rangle \right]$
+\end_inset
+
+ for environment and 
+\begin_inset Formula $\left[\left\langle 1,1,7\right\rangle \mapsto\left[Num\right]\right]$
+\end_inset
+
+ for curried in the first iteration.
+ Subsequently, we have 
+\begin_inset Formula $\mathtt{apply}\left(\left\langle 1,0,0\right\rangle ,\left\langle 1,1,7\right\rangle ,7\right)$
+\end_inset
+
+ gives 
+\begin_inset Formula $\left[x\mapsto\left\langle 1,1,7\right\rangle \right]$
+\end_inset
+
+ for environment and 
+\begin_inset Formula $\left[\left\langle 1,1,7\right\rangle \mapsto\left[\left\langle 1,1,7\right\rangle \right]\right]$
+\end_inset
+
+ for the list of curried value.
+ Here we reach a fixed point.
+\end_layout
+
+\begin_layout Example
+All possible final states calculated by the interpretation are:
+\end_layout
+
+\begin_layout Example
+\begin_inset Tabular
+<lyxtabular version="3" rows="4" columns="2">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Environment
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Curried
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $x\mapsto Num$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+None
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $x\mapsto\left\langle 1,1,7\right\rangle $
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\left\langle 1,1,7\right\rangle \mapsto\left[Num\right]$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $x\mapsto\left\langle 1,1,7\right\rangle $
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\left\langle 1,1,7\right\rangle \mapsto\left[\left\langle 1,1,7\right\rangle \right]$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
 
 \end_inset
 
@@ -2726,8 +3260,7 @@ We redefine
 \lang english
 \begin_inset Formula 
 \begin{multline*}
-\mathtt{call}\left(n,p,t\right)=\lambda f\lambda\rho,\gamma.\Theta\ \left\langle \left\{ \mathtt{leave}\ \rho\ \rho'\mid\rho'\in S\right\} ,\gamma'\right\rangle \\
-\mbox{where}\left\langle S,\gamma'\right\rangle =f\ n\ \left(\mathtt{enter}\ \rho\ \left\langle p,t\right\rangle \ n\right)\ \gamma
+\mathtt{call}\left(n,p,t\right)=\lambda f\lambda\rho,\gamma.\Theta\ \left\langle \left\{ \mathtt{leave}\ \rho\ \rho'\mid\rho'\in S\right\} ,\gamma'\right\rangle \ \mbox{where}\left\langle S,\gamma'\right\rangle =f\ n\ \left(\mathtt{enter}\ \rho\ \left\langle p,t\right\rangle \ n\right)\ \gamma
 \end{multline*}
 
 \end_inset
@@ -2932,6 +3465,191 @@ name "concfunc-oo"
 
 \end_layout
 
+\begin_layout Example
+\begin_inset Argument
+status open
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "Concrete-analysis-of"
+
+\end_inset
+
+Concrete analysis of objects
+\end_layout
+
+\end_inset
+
+ Consider the following program.
+\end_layout
+
+\begin_layout Example
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+function Fruit(v) {
+\end_layout
+
+\begin_layout Plain Layout
+
+	this.value = v;
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+function juicible(fruit, juice) {
+\end_layout
+
+\begin_layout Plain Layout
+
+	function juiceMe(j,x) {
+\end_layout
+
+\begin_layout Plain Layout
+
+		return this.value + j + x;
+\end_layout
+
+\begin_layout Plain Layout
+
+	}
+\end_layout
+
+\begin_layout Plain Layout
+
+	fruit.juice = juiceMe(juice);
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+apple = new Fruit(15);
+\end_layout
+
+\begin_layout Plain Layout
+
+juicible(apple, 20);
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+output apple.juice(10); # 15 + 20 + 10
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Example
+Assume that 
+\begin_inset Formula $\mathtt{Fruit}$
+\end_inset
+
+ has an ID of 1, 
+\begin_inset Formula $\mathtt{juicible}$
+\end_inset
+
+ has 2, and 
+\begin_inset Formula $\mathtt{juiceMe}$
+\end_inset
+
+ has 3.
+\end_layout
+
+\begin_layout Example
+Right before line 12, we have 
+\begin_inset Formula $\left[\mathtt{Fruit}\mapsto\left\langle 1,\emptyset\right\rangle ,\mathtt{juicible}\mapsto\left\langle 2,\emptyset\right\rangle \right]$
+\end_inset
+
+ .
+ At line 12, the 
+\begin_inset Formula $\mathtt{new}$
+\end_inset
+
+ expression creates an object in object memory through 
+\begin_inset Formula $\mathtt{newobj}\left(\_\right)$
+\end_inset
+
+, then pass it on as a receiver of a method call to 
+\begin_inset Formula $\mathtt{Fruit}$
+\end_inset
+
+.
+ Inside the 
+\family typewriter
+Fruit
+\family default
+ function, the new object gets the member 
+\family typewriter
+value
+\family default
+.
+ After the line, we have 
+\begin_inset Formula $Env=\left[\mathtt{Fruit}\mapsto\left\langle 1,\emptyset\right\rangle ,\mathtt{juicible}\mapsto\left\langle 2,\emptyset\right\rangle ,\mathtt{apple}\mapsto Obj\ 1\right]$
+\end_inset
+
+ and 
+\begin_inset Formula $ObjMem=\left[1\mapsto\left[\mathtt{value}\mapsto15\right]\right]$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Example
+At line 13, 
+\begin_inset Formula $\mathtt{apply}\left(\left\langle 2,\emptyset\right\rangle ,\left[Obj\ 1,20\right],global,\_\right)$
+\end_inset
+
+ gives 
+\begin_inset Formula $\mathtt{call}\left(2,\left[Obj\ 1,20\right],global\right)$
+\end_inset
+
+.
+ Inside the 
+\family typewriter
+juicible 
+\family default
+function, object memory is manipulated in line 9 to be 
+\begin_inset Formula $\left[1\mapsto\left[\mathtt{value}\mapsto15,\mathtt{juice}\mapsto\left\langle 3,\left[20\right]\right\rangle \right]\right]$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Example
+At line 15, by the method call semantics,
+\begin_inset Formula $\mathtt{apply}\left(\left\langle 3,\left[20\right]\right\rangle ,\left[10\right].Obj\ 1,\_\right)$
+\end_inset
+
+ is invoked, which gives 45 as a final result.
+\end_layout
+
 \begin_layout Subsubsection
 Abstract interpretation
 \end_layout
@@ -3071,6 +3789,115 @@ name "absfun-oo"
 
 \end_layout
 
+\begin_layout Example
+\begin_inset Argument
+status open
+
+\begin_layout Plain Layout
+Abstract interpretation of objects
+\end_layout
+
+\end_inset
+
+ The program in example 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "Concrete-analysis-of"
+
+\end_inset
+
+ results in the following final state.
+\end_layout
+
+\begin_layout Example
+\begin_inset Tabular
+<lyxtabular version="3" rows="2" columns="3">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Environment
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Object Memory
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Curried
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\begin{aligned}\mathtt{Fruit} & \mapsto & \left\langle 1,0,0\right\rangle \\
+\mathtt{juicible} & \mapsto & \left\langle 2,0,0\right\rangle \\
+\mathtt{juiceMe} & \mapsto & \left\langle 3,0,0\right\rangle \\
+\mathtt{apple} & \mapsto & Obj\ 1
+\end{aligned}
+$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $Obj\ 1\mapsto\left(\begin{aligned}\mathtt{value} & \mapsto & Num\\
+\mathtt{juice} & \mapsto & \left\langle 3,1,9\right\rangle 
+\end{aligned}
+\right)$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\left\langle 3,1,9\right\rangle \mapsto\left[Num\right]$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
 \begin_layout Subsection
 \begin_inset CommandInset label
 LatexCommand label
@@ -3144,8 +3971,63 @@ Following functions are the semantic functions for the newly introduced
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-\mathcal{S}\dd{\mathtt{try}\ S_{1}\ \mathtt{catch}\left(Id\right)\ S_{2}} & = & \mathcal{S}\ \dd{S_{1}}\bind\mathtt{catch}\left(id,\mathcal{S}\ \dd{S_{2}}\right)\\
-\mathcal{S}\dd{\mathtt{throw}\ E} & = & \mathcal{E}\ \dd{E}\bind\mathtt{throw}
+\mathcal{S}\dd{\mathtt{try}\ S_{1}\ \mathtt{catch}\left(Id\right)\ S_{2}} & = & \mathcal{S}\ \dd{S_{1}}\bind_{noesc}\mathtt{catch}\left(id,\mathcal{S}\ \dd{S_{2}}\right)\\
+\mathcal{S}\dd{\mathtt{throw}\ E} & = & \mathcal{E}\ \dd{E}\bind\lambda v.\mathtt{throw}
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Note that we cannot use 
+\begin_inset Formula $\bind$
+\end_inset
+
+ operate to combine try code body and catch, since the 
+\begin_inset Formula $\bind$
+\end_inset
+
+ operator has 
+\begin_inset Formula $\mathtt{esc}$
+\end_inset
+
+ built into its definition, which will terminate the program flow when the
+ exception is raised.
+ In order to allow exception-raising transformations to flow through, we
+ introduce a non-escaping bind operator, 
+\begin_inset Formula $\bind_{noesc}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Definition
+\begin_inset Argument
+status open
+
+\begin_layout Plain Layout
+Non-escaping bind operator
+\end_layout
+
+\end_inset
+
+ We define a non-escaping bind operator, 
+\begin_inset Formula $\bind_{noesc}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Definition
+\begin_inset Formula $\left(\bind_{noesc}\right):M\ a\rightarrow\left(a\cup\left\{ 0\right\} \rightarrow M\ a\right)\rightarrow M\ a$
+\end_inset
+
+
+\begin_inset Formula 
+\begin{eqnarray*}
+T\ \bind_{noesc}\ U & = & \lambda f\lambda s.\:\mathbf{let}\ S=T\ f\ s\ \mathbf{in}\underset{\left\langle s',a\right\rangle \in S}{\bigcup}\left(U\ a\ f\ s'\right)
 \end{eqnarray*}
 
 \end_inset
@@ -3212,7 +4094,7 @@ Functions
 \begin{eqnarray*}
 \mathtt{esc} & = & \Theta_{Return,Ex}\ \lambda R,E.\left(R=Void\right)\wedge\left(E=Void\right)\\
 \mathtt{throw}\left(v\right) & = & \bar{\Upsilon}_{Ex}\ \lambda E.v\\
-\mathtt{catch}\left(id,s\right) & = & \Theta_{Ex}\ \lambda E.\begin{cases}
+\mathtt{catch}\left(id,s_{1},s_{2}\right) & = & \Theta_{Ex}\ \lambda E.\begin{cases}
 I_{A}\bot & \mbox{if}\ E=Void\\
 \lambda f,r.s\ f\ \mathtt{exs}\left(\rho,id\right) & \mbox{otherwise}
 \end{cases}\\

@@ -63,10 +63,13 @@ instance StateValue AState AValue where
     fix x = M $ \f -> \s ->
         let (fixedMap) = 
                 (y $ \x0 -> \m0 -> 
-                    let (M t1) = (x (mapToMonad m0))
-                        newmap = traceShow m0 $ union m0 $ fromList [(s1,t1 f s1) | s1 <- (L.map fst (L.nub $ concat $ elems m0)) ++ [s] ]
-                    in
-                    if m0 == newmap then newmap else x0 newmap) (fromList [])
+                let (M t1) = (x (mapToMonad m0))
+                    newmap = traceShow m0 $ 
+                             union m0 $ 
+                             fromList 
+                             [(s1,t1 f s1) | s1 <- (L.map fst (L.nub $ concat $ elems m0)) ++ [s] ]
+                in
+                if m0 == newmap then newmap else x0 newmap) (fromList [])
         in
             trace ("final " ++ (show fixedMap)) $
                 L.nub $ concat $ elems fixedMap
