@@ -104,7 +104,7 @@ figs-within-sections
 \papercolumns 1
 \papersides 1
 \paperpagestyle default
-\listings_params "basicstyle={\small},comment={[l]{\#}},commentstyle={\color{purple}\ttfamily},frame=leftline,identifierstyle={\color{black}},keywords={new, function, return, if, while, else, output, input},keywordstyle={\bfseries\underline},ndkeywords={this, global, true, false},ndkeywordstyle={\bfseries},numbers=left,numbersep=10pt,numberstyle={\tiny},sensitive=false,tabsize=2,xleftmargin=20pt"
+\listings_params "basicstyle={\small},comment={[l]{\#}},commentstyle={\color{purple}\ttfamily},frame=leftline,identifierstyle={\color{black}},keywords={new, function, return, if, while, else, output, input, try, catch, throw},keywordstyle={\bfseries\underline},ndkeywords={this, global, true, false},ndkeywordstyle={\bfseries},numbers=left,numbersep=10pt,numberstyle={\tiny},sensitive=false,tabsize=2,xleftmargin=20pt"
 \tracking_changes false
 \output_changes false
 \html_math_output 0
@@ -1894,6 +1894,12 @@ sdtl
 status open
 
 \begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "Recursively-defined-factorial"
+
+\end_inset
+
 Recursively defined factorial function
 \end_layout
 
@@ -2253,6 +2259,164 @@ We omit a detailed description of IO environment.
  given and produced during the execution of a program.
 \end_layout
 
+\begin_layout Example
+\begin_inset Argument
+status open
+
+\begin_layout Plain Layout
+Concrete interpretation of recursive factorial function
+\end_layout
+
+\end_inset
+
+The program in example 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "Recursively-defined-factorial"
+
+\end_inset
+
+ is concretely interpreted as follows.
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+At line 1, 
+\begin_inset Formula $\mathtt{fundecl}\left(\mathtt{fact},1\right)$
+\end_inset
+
+ updates environment to be 
+\begin_inset Formula $\left[\mathtt{fact}\mapsto Function\ 1\right]$
+\end_inset
+
+ assuming the function declaration has a unique ID of 1.
+\end_layout
+
+\begin_layout Itemize
+At line 5, 
+\begin_inset Formula $\mathtt{getinput}$
+\end_inset
+
+ gives a user input.
+ Assume that the input was 2.
+ 
+\begin_inset Formula $\mathtt{evalParam}$
+\end_inset
+
+ gives 
+\begin_inset Formula $\left[\left(Function\ 1\right),2\right]$
+\end_inset
+
+.
+ In a function call
+\begin_inset Formula $\mathtt{call}\left(1,\left[\left(Function\ 1\right),2\right]\right)$
+\end_inset
+
+, we first construct initial state of a function call.
+ 
+\begin_inset Formula $\mathtt{enter}$
+\end_inset
+
+ gives 
+\begin_inset Formula $\left\langle \left[\mathtt{f}\mapsto\left(Function\ 1\right),\mathtt{n}\mapsto2\right],IO,Void\right\rangle $
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Itemize
+At line 2, evaluating expression 
+\begin_inset Formula $\mathtt{n}>1$
+\end_inset
+
+ yields true.
+ 
+\begin_inset Formula $\mathtt{cond}$
+\end_inset
+
+ invokes another function call, with initial state 
+\begin_inset Formula $\left\langle \left[\mathtt{f}\mapsto\left(Function\ 1\right),\mathtt{n}\mapsto1\right],IO,Void\right\rangle $
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Itemize
+On the second call 
+\family typewriter
+fact(f,1)
+\family default
+, 
+\begin_inset Formula $\mathtt{n}>1$
+\end_inset
+
+ yields false.
+ Hence, 
+\begin_inset Formula $\mathtt{cond}$
+\end_inset
+
+ invokes 
+\begin_inset Formula $\mathtt{ret}\left(1\right)$
+\end_inset
+
+ which gives final state of 
+\begin_inset Formula $\left\langle \left[\mathtt{f}\mapsto\left(Function\ 1\right),\mathtt{n}\mapsto1\right],IO,1\right\rangle $
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Itemize
+On the first call, this state is first evaluated to yield value 
+\begin_inset Formula $1$
+\end_inset
+
+ by 
+\begin_inset Formula $\mathtt{leave}$
+\end_inset
+
+.
+ Then, 
+\family typewriter
+f(f,1) * 2
+\family default
+ evaluates to be 2, which becomes the ultimate return value.
+\end_layout
+
+\begin_layout Itemize
+At line 5, after the function call 
+\begin_inset Formula $\mathtt{leave}$
+\end_inset
+
+ gives 
+\begin_inset Formula $\left\langle \left[\mathtt{fact}\mapsto Function\ 1\right],IO,Void\right\rangle $
+\end_inset
+
+ as the final state.
+ 
+\begin_inset Formula $\mathtt{asg}$
+\end_inset
+
+ adds symbol 
+\begin_inset Formula $\mathtt{z}$
+\end_inset
+
+ to the environment: 
+\begin_inset Formula $\mathtt{z}\mapsto2$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+At line 6, 
+\begin_inset Formula $\mathtt{val\left(z\right)}$
+\end_inset
+
+ evaluates to be 2, and hence the final output of the program.
+\end_layout
+
+\end_deeper
 \begin_layout Subsubsection
 Abstract interpretation
 \end_layout
@@ -2277,7 +2441,7 @@ Domain
 \begin_inset Formula 
 \begin{eqnarray*}
 FunPointer & = & Sid\\
-AVal & = & \left\{ Num,Bool\right\} \cup\: FunPointer\\
+AVal & = & \left\{ Num,Bool,\bot\right\} \cup FunPointer\\
 AEnv & = & Id\rightarrow AVal\\
 AReturn & = & AVal\cup\left\{ Void\right\} \\
 AState & = & AEnv\times AReturn
@@ -2291,6 +2455,12 @@ AState & = & AEnv\times AReturn
 \begin_layout Standard
 Composition of an abstract domain is similar to that of the concrete counterpart
 , except that it does not include an IO state.
+ 
+\begin_inset Formula $\bot$
+\end_inset
+
+ is an undetermined value, which is used to approximate unknown function
+ calls at an initial stage.
  The initial program state is 
 \begin_inset Formula $\left\langle \emptyset,Void\right\rangle $
 \end_inset
@@ -2330,6 +2500,7 @@ Functions
 \mathtt{fundecl}\left(id,n\right) & = & \bar{\Upsilon}_{AEnv}\ \lambda\sigma.\sigma\left[id\mapsto n\right]\\
 \mathtt{ret}\left(v\right) & = & \bar{\Upsilon}_{AReturn}\ \lambda R:AReturn.v\\
 \mathtt{bin}\left(op,c_{1},c_{2}\right) & = & \begin{cases}
+\Gamma\ \bot & \mbox{if}\ c_{1}=\bot\mbox{ or }c_{2}=\bot\\
 \Gamma\ Num & \mbox{if}\ op\in{\scriptstyle \left\{ +,-,*,/\right\} }\\
 \Gamma\ Bool & \mbox{otherwise}
 \end{cases}
@@ -2344,6 +2515,777 @@ Functions
 Function definitions are largely similar to that of concrete definition.
 \end_layout
 
+\begin_layout Example
+\begin_inset Argument
+status open
+
+\begin_layout Plain Layout
+Abstract interpretation of recursive factorial function
+\end_layout
+
+\end_inset
+
+The program in example 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "Recursively-defined-factorial"
+
+\end_inset
+
+ is abstractly interpreted as follows.
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+At line 1, 
+\begin_inset Formula $\mathtt{fundecl}\left(\mathtt{fact},1\right)$
+\end_inset
+
+ updates environment to be 
+\begin_inset Formula $\left[\mathtt{fact}\mapsto Function\ 1\right]$
+\end_inset
+
+ assuming the function declaration has a unique ID of 1.
+\end_layout
+
+\begin_layout Itemize
+At line 5, 
+\begin_inset Formula $\mathtt{getinput}$
+\end_inset
+
+ gives an abstract value 
+\begin_inset Formula $Num$
+\end_inset
+
+.
+ 
+\begin_inset Formula $\mathtt{evalParam}$
+\end_inset
+
+ gives 
+\begin_inset Formula $\left[\left(Function\ 1\right),Num\right]$
+\end_inset
+
+.
+ In a function call
+\begin_inset Formula $\mathtt{call}\left(1,\left[\left(Function\ 1\right),Num\right]\right)$
+\end_inset
+
+, we first construct initial state of a function call.
+ 
+\begin_inset Formula $\mathtt{enter}$
+\end_inset
+
+ gives 
+\begin_inset Formula $\left\langle \left[\mathtt{f}\mapsto\left(Function\ 1\right),\mathtt{n}\mapsto Num\right],IO,Void\right\rangle $
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Itemize
+The meaning of this function call is determined via a fixed point iteration
+ by progressively updating current approximation of the meaning of the function
+ call, starting from a null hypothesis that the function returns 
+\begin_inset Formula $\bot$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Tabular
+<lyxtabular version="3" rows="3" columns="3">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Current approximation
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Meaning of function call
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Note
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\bot$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\bot,Num$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\bot,Num$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\bot,Num$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Fixed point
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Example
+Implementation of this fixed point iteration is found in 
+\begin_inset Formula $\mathtt{fun}$
+\end_inset
+
+ function in appendix 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:Abstract-interpretation"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+This yields two returning states after the function call:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Tabular
+<lyxtabular version="3" rows="3" columns="2">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Environment
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Return
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+\lang english
+\begin_inset Formula $\left[\mathtt{f}\mapsto\left(Function\ 1\right),\mathtt{n}\mapsto Num\right]$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\bot$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\left[\mathtt{f}\mapsto\left(Function\ 1\right),\mathtt{n}\mapsto Num\right]$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $Num$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+After 
+\begin_inset Formula $\mathtt{leave}$
+\end_inset
+
+,
+\begin_inset Formula $\mathtt{asg}$
+\end_inset
+
+ and 
+\begin_inset Formula $\mathtt{dooutput}$
+\end_inset
+
+, we have two final states of the program:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Tabular
+<lyxtabular version="3" rows="3" columns="2">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Environment
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Return
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+\lang english
+\begin_inset Formula $\left[\mathtt{fact}\mapsto Function\ 1,\mathtt{z}\mapsto\bot\right]$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Void
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\left[\mathtt{fact}\mapsto Function\ 1,\mathtt{z}\mapsto Num\right]$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Void
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Example
+\begin_inset Argument
+status open
+
+\begin_layout Plain Layout
+Abstract interpretation of a while loop
+\end_layout
+
+\end_inset
+
+ Following example illustrates an interpretation of a while loop through
+ a fixed point iteration.
+\end_layout
+
+\begin_layout Example
+The following program calculates sum of a sequence.
+ For illustration purpose, we have added variable 
+\begin_inset Formula $\mathtt{x}$
+\end_inset
+
+ that changes its type inside a while loop.
+\end_layout
+
+\begin_layout Example
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+sum = 0;
+\end_layout
+
+\begin_layout Plain Layout
+
+z = input;
+\end_layout
+
+\begin_layout Plain Layout
+
+x = 50;
+\end_layout
+
+\begin_layout Plain Layout
+
+while(z>0) {
+\end_layout
+
+\begin_layout Plain Layout
+
+	sum = sum + z;
+\end_layout
+
+\begin_layout Plain Layout
+
+	z = z - 1;
+\end_layout
+
+\begin_layout Plain Layout
+
+	x = true;
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+output sum;
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+At line 4, we have environment 
+\begin_inset Formula $\left[\mathtt{sum}\mapsto Num,\mathtt{z}\mapsto Num,\mathtt{x}\mapsto Num\right]$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+As an initial hypothesis, we assume that the statement body of a while loop
+ does not cause any change in the program state for any given initial state.
+ We progressively update this approximation until we meet a fixed point.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Tabular
+<lyxtabular version="3" rows="4" columns="2">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Current Approximation
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Init 
+\begin_inset Formula $\rightarrow$
+\end_inset
+
+ Final State
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\emptyset$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\left[\begin{array}{ccc}
+sum & \mapsto & Num\\
+z & \mapsto & Num\\
+x & \mapsto & Num
+\end{array}\right]\rightarrow\left\{ \begin{gathered}\left[\begin{array}{ccc}
+sum & \mapsto & Num\\
+z & \mapsto & Num\\
+x & \mapsto & Num
+\end{array}\right]\\
+\left[\begin{array}{ccc}
+sum & \mapsto & Num\\
+z & \mapsto & Num\\
+x & \mapsto & Bool
+\end{array}\right]
+\end{gathered}
+\right\} $
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\left[\begin{array}{ccc}
+sum & \mapsto & Num\\
+z & \mapsto & Num\\
+x & \mapsto & Num
+\end{array}\right]\rightarrow\left\{ \begin{gathered}\left[\begin{array}{ccc}
+sum & \mapsto & Num\\
+z & \mapsto & Num\\
+x & \mapsto & Num
+\end{array}\right]\\
+\left[\begin{array}{ccc}
+sum & \mapsto & Num\\
+z & \mapsto & Num\\
+x & \mapsto & Bool
+\end{array}\right]
+\end{gathered}
+\right\} $
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\begin{gathered}\left[\begin{array}{ccc}
+sum & \mapsto & Num\\
+z & \mapsto & Num\\
+x & \mapsto & Num
+\end{array}\right]\rightarrow\left\{ \begin{gathered}\left[\begin{array}{ccc}
+sum & \mapsto & Num\\
+z & \mapsto & Num\\
+x & \mapsto & Num
+\end{array}\right]\\
+\left[\begin{array}{ccc}
+sum & \mapsto & Num\\
+z & \mapsto & Num\\
+x & \mapsto & Bool
+\end{array}\right]
+\end{gathered}
+\right\} \\
+\left[\begin{array}{ccc}
+sum & \mapsto & Num\\
+z & \mapsto & Num\\
+x & \mapsto & Bool
+\end{array}\right]\rightarrow\left[\begin{array}{ccc}
+sum & \mapsto & Num\\
+z & \mapsto & Num\\
+x & \mapsto & Bool
+\end{array}\right]
+\end{gathered}
+$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\begin{gathered}\left[\begin{array}{ccc}
+sum & \mapsto & Num\\
+z & \mapsto & Num\\
+x & \mapsto & Num
+\end{array}\right]\rightarrow\left\{ \begin{gathered}\left[\begin{array}{ccc}
+sum & \mapsto & Num\\
+z & \mapsto & Num\\
+x & \mapsto & Num
+\end{array}\right]\\
+\left[\begin{array}{ccc}
+sum & \mapsto & Num\\
+z & \mapsto & Num\\
+x & \mapsto & Bool
+\end{array}\right]
+\end{gathered}
+\right\} \\
+\left[\begin{array}{ccc}
+sum & \mapsto & Num\\
+z & \mapsto & Num\\
+x & \mapsto & Bool
+\end{array}\right]\rightarrow\left[\begin{array}{ccc}
+sum & \mapsto & Num\\
+z & \mapsto & Num\\
+x & \mapsto & Bool
+\end{array}\right]
+\end{gathered}
+$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\begin{gathered}\left[\begin{array}{ccc}
+sum & \mapsto & Num\\
+z & \mapsto & Num\\
+x & \mapsto & Num
+\end{array}\right]\rightarrow\left\{ \begin{gathered}\left[\begin{array}{ccc}
+sum & \mapsto & Num\\
+z & \mapsto & Num\\
+x & \mapsto & Num
+\end{array}\right]\\
+\left[\begin{array}{ccc}
+sum & \mapsto & Num\\
+z & \mapsto & Num\\
+x & \mapsto & Bool
+\end{array}\right]
+\end{gathered}
+\right\} \\
+\left[\begin{array}{ccc}
+sum & \mapsto & Num\\
+z & \mapsto & Num\\
+x & \mapsto & Bool
+\end{array}\right]\rightarrow\left[\begin{array}{ccc}
+sum & \mapsto & Num\\
+z & \mapsto & Num\\
+x & \mapsto & Bool
+\end{array}\right]
+\end{gathered}
+$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Example
+Implementation of this fixed point iteration can be found in 
+\begin_inset Formula $\mathtt{fix}$
+\end_inset
+
+ function in appendix 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:Abstract-interpretation"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+The resulting final states of the program is calculated to be 
+\begin_inset Formula $\left[\begin{array}{ccc}
+sum & \mapsto & Num\\
+z & \mapsto & Num\\
+x & \mapsto & Num
+\end{array}\right],\left[\begin{array}{ccc}
+sum & \mapsto & Num\\
+z & \mapsto & Num\\
+x & \mapsto & Bool
+\end{array}\right]$
+\end_inset
+
+
+\end_layout
+
+\end_deeper
 \begin_layout Subsection
 \begin_inset CommandInset label
 LatexCommand label
@@ -2618,7 +3560,7 @@ reference "Function-currying"
 .
 \end_layout
 
-\begin_layout Example
+\begin_layout Itemize
 At line 1, we are presented with a function declaration.
  
 \begin_inset Formula $\mathtt{fundecl}$
@@ -2640,7 +3582,7 @@ At line 1, we are presented with a function declaration.
 .
 \end_layout
 
-\begin_layout Example
+\begin_layout Itemize
 At lines 5 and 7, we partially apply the 
 \begin_inset Formula $\mathtt{add}$
 \end_inset
@@ -2670,7 +3612,7 @@ At lines 5 and 7, we partially apply the
 .
 \end_layout
 
-\begin_layout Example
+\begin_layout Itemize
 At line 8, we saturate the parameters, 
 \begin_inset Formula $\mathtt{apply}\left(\left\langle 1,\left[5\right]\right\rangle ,\left[x\right],\_\right)$
 \end_inset
@@ -2921,7 +3863,7 @@ reference "Currying-loop"
  can be analysed as follows:
 \end_layout
 
-\begin_layout Example
+\begin_layout Itemize
 At line 1, 
 \begin_inset Formula $\mathtt{fundecl}\left(\mathtt{foo},1\right)$
 \end_inset
@@ -2935,8 +3877,12 @@ At line 1,
 \end_inset
 
  is a unique ID given to the function.
- At line 7, assuming the partial application expression has a unique ID
- of 7, 
+ 
+\end_layout
+
+\begin_layout Itemize
+At line 7, assuming the partial application expression has a unique ID of
+ 7, 
 \begin_inset Formula $\mathtt{apply}\left(\left\langle 1,0,0\right\rangle ,\left[Num\right],7\right)$
 \end_inset
 
@@ -2965,11 +3911,12 @@ At line 1,
  Here we reach a fixed point.
 \end_layout
 
-\begin_layout Example
+\begin_layout Itemize
 All possible final states calculated by the interpretation are:
 \end_layout
 
-\begin_layout Example
+\begin_deeper
+\begin_layout Standard
 \begin_inset Tabular
 <lyxtabular version="3" rows="4" columns="2">
 <features tabularvalignment="middle">
@@ -3077,6 +4024,7 @@ None
 
 \end_layout
 
+\end_deeper
 \begin_layout Subsection
 \begin_inset CommandInset label
 LatexCommand label
@@ -3259,9 +4207,9 @@ We redefine
 
 \lang english
 \begin_inset Formula 
-\begin{multline*}
+\[
 \mathtt{call}\left(n,p,t\right)=\lambda f\lambda\rho,\gamma.\Theta\ \left\langle \left\{ \mathtt{leave}\ \rho\ \rho'\mid\rho'\in S\right\} ,\gamma'\right\rangle \ \mbox{where}\left\langle S,\gamma'\right\rangle =f\ n\ \left(\mathtt{enter}\ \rho\ \left\langle p,t\right\rangle \ n\right)\ \gamma
-\end{multline*}
+\]
 
 \end_inset
 
@@ -3566,7 +4514,7 @@ output apple.juice(10); # 15 + 20 + 10
 
 \end_layout
 
-\begin_layout Example
+\begin_layout Itemize
 Assume that 
 \begin_inset Formula $\mathtt{Fruit}$
 \end_inset
@@ -3582,7 +4530,7 @@ Assume that
  has 3.
 \end_layout
 
-\begin_layout Example
+\begin_layout Itemize
 Right before line 12, we have 
 \begin_inset Formula $\left[\mathtt{Fruit}\mapsto\left\langle 1,\emptyset\right\rangle ,\mathtt{juicible}\mapsto\left\langle 2,\emptyset\right\rangle \right]$
 \end_inset
@@ -3621,7 +4569,7 @@ value
 
 \end_layout
 
-\begin_layout Example
+\begin_layout Itemize
 At line 13, 
 \begin_inset Formula $\mathtt{apply}\left(\left\langle 2,\emptyset\right\rangle ,\left[Obj\ 1,20\right],global,\_\right)$
 \end_inset
@@ -3642,7 +4590,7 @@ function, object memory is manipulated in line 9 to be
 
 \end_layout
 
-\begin_layout Example
+\begin_layout Itemize
 At line 15, by the method call semantics,
 \begin_inset Formula $\mathtt{apply}\left(\left\langle 3,\left[20\right]\right\rangle ,\left[10\right].Obj\ 1,\_\right)$
 \end_inset
@@ -3670,7 +4618,7 @@ Domain
 \begin_inset Formula 
 \begin{eqnarray*}
 AObj & = & \left\{ 0\right\} \cup Eid\\
-AVal & = & P\cup AObj\cup FunPointer\\
+AVal & = & \left\{ Num,Bool,\bot\right\} \cup AObj\cup FunPointer\\
 AObjMem & = & AObj\rightarrow AEnv\\
 AThis & = & AObj\\
 AState & = & AEnv\times AObjMem\times AThis\times Curried\times AReturn
@@ -4021,12 +4969,9 @@ Non-escaping bind operator
 \end_layout
 
 \begin_layout Definition
-\begin_inset Formula $\left(\bind_{noesc}\right):M\ a\rightarrow\left(a\cup\left\{ 0\right\} \rightarrow M\ a\right)\rightarrow M\ a$
-\end_inset
-
-
 \begin_inset Formula 
 \begin{eqnarray*}
+\left(\bind_{noesc}\right) & : & M\ a\rightarrow\left(a\cup\bot\rightarrow M\ a\right)\rightarrow M\ a\\
 T\ \bind_{noesc}\ U & = & \lambda f\lambda s.\:\mathbf{let}\ S=T\ f\ s\ \mathbf{in}\underset{\left\langle s',a\right\rangle \in S}{\bigcup}\left(U\ a\ f\ s'\right)
 \end{eqnarray*}
 
@@ -4094,7 +5039,7 @@ Functions
 \begin{eqnarray*}
 \mathtt{esc} & = & \Theta_{Return,Ex}\ \lambda R,E.\left(R=Void\right)\wedge\left(E=Void\right)\\
 \mathtt{throw}\left(v\right) & = & \bar{\Upsilon}_{Ex}\ \lambda E.v\\
-\mathtt{catch}\left(id,s_{1},s_{2}\right) & = & \Theta_{Ex}\ \lambda E.\begin{cases}
+\mathtt{catch}\left(id,s\right) & = & \Theta_{Ex}\ \lambda E.\begin{cases}
 I_{A}\bot & \mbox{if}\ E=Void\\
 \lambda f,r.s\ f\ \mathtt{exs}\left(\rho,id\right) & \mbox{otherwise}
 \end{cases}\\
@@ -4114,6 +5059,170 @@ I_{A}\bot & \mbox{if}\ E=Void\\
  caught.
  As we do not support lexical scoping, an exception variable enters a variable
  mapping as we enter the block.
+\end_layout
+
+\begin_layout Example
+\begin_inset Argument
+status open
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "Concrete-interpretation-of"
+
+\end_inset
+
+Concrete interpretation of exception handling
+\end_layout
+
+\end_inset
+
+ The following program illustrates exception handling in 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+sdtl
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Example
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+x = input;
+\end_layout
+
+\begin_layout Plain Layout
+
+try {
+\end_layout
+
+\begin_layout Plain Layout
+
+	if(x<0) {
+\end_layout
+
+\begin_layout Plain Layout
+
+		throw 0;
+\end_layout
+
+\begin_layout Plain Layout
+
+	}
+\end_layout
+
+\begin_layout Plain Layout
+
+	output x;
+\end_layout
+
+\begin_layout Plain Layout
+
+	j = 3;
+\end_layout
+
+\begin_layout Plain Layout
+
+} catch(e) {
+\end_layout
+
+\begin_layout Plain Layout
+
+	output x;
+\end_layout
+
+\begin_layout Plain Layout
+
+	output e;
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+At line 3, we have 
+\begin_inset Formula $\left[\mathtt{x}\mapsto a\right]$
+\end_inset
+
+ where 
+\begin_inset Formula $a$
+\end_inset
+
+ is a user input.
+ Suppose 
+\begin_inset Formula $a$
+\end_inset
+
+ is less than 0, then 
+\family typewriter
+if
+\family default
+ leads to 
+\begin_inset Formula $\mathtt{throw}\left(0\right)$
+\end_inset
+
+ gives 
+\begin_inset Formula $Ex:0$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Itemize
+The resulting state is deemed to be an escaping state by 
+\begin_inset Formula $\mathtt{esc}$
+\end_inset
+
+.
+ Hence, the code block of the try clause gives the resulting program state
+ of 
+\begin_inset Formula $\left\langle \left[x\mapsto a\right],\left\{ 0\mapsto\emptyset\right\} ,0,Void,0\right\rangle $
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+With non-escaping binding to a 
+\begin_inset Formula $\mathtt{catch}$
+\end_inset
+
+ primitive function afterwards, 
+\family typewriter
+catch
+\family default
+ yields the state with environment of 
+\begin_inset Formula $\left[x\mapsto a,e\mapsto0\right]$
+\end_inset
+
+ then it evaluates the catch clause, which outputs 
+\begin_inset Formula $a$
+\end_inset
+
+ and 
+\begin_inset Formula $0$
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Subsubsection
@@ -4178,6 +5287,77 @@ I_{A}\bot & \mbox{if}\ E=Void\\
 \mathtt{exs}\left(id\right) & = & \Upsilon_{AEnv,AEx}\ \lambda\sigma,E.\left\langle \sigma\left[id\mapsto E\right],Void\right\rangle 
 \end{eqnarray*}
 
+\end_inset
+
+
+\end_layout
+
+\begin_layout Example
+\begin_inset Argument
+status open
+
+\begin_layout Plain Layout
+Abstract interpretation of exception handling
+\end_layout
+
+\end_inset
+
+ The program in example 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "Concrete-interpretation-of"
+
+\end_inset
+
+ can be abstractly interpreted as follows.
+\end_layout
+
+\begin_layout Itemize
+After lines 3-5, we have two possible states 
+\begin_inset Formula $\left\langle \left[\mathtt{x}\mapsto Num\right],\left\{ 0\mapsto\emptyset\right\} ,0,\emptyset,Void,Void\right\rangle $
+\end_inset
+
+ and
+\begin_inset Newline newline
+\end_inset
+
+ 
+\begin_inset Formula $\left\langle \left[\mathtt{x}\mapsto Num\right],\left\{ 0\mapsto\emptyset\right\} ,0,\emptyset,Void,Num\right\rangle $
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+By the binding operation, the latter state becomes the final state of the
+ try clause.
+ The former state progresses further, and updates its environment to 
+\begin_inset Formula $\left[\mathtt{x}\mapsto Num,\mathtt{j}\mapsto Num\right]$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+At line 8, the environment of exception throwing state is updated to be
+ 
+\begin_inset Formula $\left[\mathtt{x}\mapsto Num,\mathtt{e}\mapsto Num\right]$
+\end_inset
+
+, then evaluate the catch clause, which does not cause any state update.
+\end_layout
+
+\begin_layout Itemize
+The final states are
+\begin_inset Formula $\left\langle \left[\mathtt{x}\mapsto Num,\mathtt{j}\mapsto Num\right],\left\{ 0\mapsto\emptyset\right\} ,0,\emptyset,Void,Void\right\rangle $
+\end_inset
+
+ and
+\begin_inset Newline newline
+\end_inset
+
+ 
+\begin_inset Formula $\left\langle \left[\mathtt{x}\mapsto Num,\mathtt{e}\mapsto Num\right],\left\{ 0\mapsto\emptyset\right\} ,0,\emptyset,Void,Void\right\rangle $
 \end_inset
 
 
@@ -4567,7 +5747,7 @@ As we have noted in the introduction, this work is a snapshot of an ongoing
 \begin_inset CommandInset bibtex
 LatexCommand bibtex
 bibfiles "duck"
-options "IEEEtran"
+options "bibtotoc,IEEEtran"
 
 \end_inset
 
@@ -4636,6 +5816,12 @@ lstparams "basicstyle={\\footnotesize\\ttfamily},language=Haskell,numbers=none,x
 \end_layout
 
 \begin_layout Subsection
+\begin_inset CommandInset label
+LatexCommand label
+name "sub:Abstract-interpretation"
+
+\end_inset
+
 Abstract interpretation
 \end_layout
 
