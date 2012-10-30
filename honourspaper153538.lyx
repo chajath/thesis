@@ -89,9 +89,9 @@ figs-within-sections
 \shortcut idx
 \color #008000
 \end_index
-\leftmargin 1in
+\leftmargin 0.7in
 \topmargin 1in
-\rightmargin 1in
+\rightmargin 0.7in
 \bottommargin 1in
 \headheight 0in
 \headsep 0in
@@ -179,6 +179,21 @@ Introduction
 \end_layout
 
 \begin_layout Standard
+Programming language semantics is a sub-field within theoretical computer
+ science where researchers develop a formal description for the meaning
+ of a computer program.
+ Over the years, we have seen the development of denotational semantics,
+ where we mathematically model the effect of an execution of a language
+ construct.
+ Operational semantics formalise mechanical steps that transform program
+ states given a particular program.
+ As we shall argue in this thesis, the challenge of analysing dynamic languages,
+ in both concrete and abstract manner, necessitates a semantics that bridge
+ the gap between the two different semantics in order for such task to be
+ feasible.
+\end_layout
+
+\begin_layout Standard
 Two distinct needs motivated the development of the present work.
  First, there is the theoretician's need for a simple, concise, elegant
  way of presenting a formal semantics for a programming language and of
@@ -187,7 +202,9 @@ Two distinct needs motivated the development of the present work.
  to allow the concrete semantics and the abstract interpretation to share
  a common framework that uniformly handles most aspects of the programming
  language.
- 
+ Use of denotational semantics provides a strong foundation in proving correctne
+ss of an abstract interpretation, and allows us to focus on algorithmic
+ details of analysis.
 \end_layout
 
 \begin_layout Standard
@@ -250,12 +267,12 @@ Lack of static type structure has a significant impact on the performance
 \end_layout
 
 \begin_layout Standard
-With these problems in mind, we designed a model language that has a dynamism
- comparable to that of the aforementioned scripting languages, such as duck
- typing, reflection, and partial function application.
+With these problems in mind, we have designed a model language that has
+ a dynamism comparable to that of the aforementioned scripting languages,
+ such as duck typing, reflection, and partial function application.
  A notable omission is a closure scoping.
- However, allowing function currying gives enough expressive power to the
- language.
+ However, allowing function currying gives expressive power to the language
+ comparable to that of languages with closure or lexical scoping.
 \end_layout
 
 \begin_layout Standard
@@ -263,6 +280,19 @@ The two concerns are not distinct ones, but an interconnected dialectic.
  The theoretical need is there because of the difficulty of describing the
  abstract and concrete meaning of dynamic languages, which often allow side-effe
 ct causing, type-altering functions.
+ With such complexity, duck-typed languages are interesting test cases to
+ which we formulate concrete semantics, abstract interpretation and the
+ proof of correctness.
+ Our Haskell implementation of both concrete and abstract analysis, appearing
+ in the appendix to this thesis, illustrates practicality of the proposed
+ programming language semantics.
+\end_layout
+
+\begin_layout Standard
+This work is inspired by Haskell's use of monads, and we assume the reader's
+ familiarity with monadic style Haskell programming.
+ We also assume the knowledge of denotational semantics, partial ordering
+ and fixed point combinator.
 \end_layout
 
 \begin_layout Section
@@ -273,17 +303,10 @@ Related work
 Denotational semantics is the starting point of our development of a theoretical
  system.
  The idea of incorporating monads into the denotational semantics was developed
- by 
+ by Liang and Hudak 
 \begin_inset CommandInset citation
-LatexCommand citet
-key "Liang:phd1998"
-
-\end_inset
-
- and 
-\begin_inset CommandInset citation
-LatexCommand citet
-key "Liang_Hudak:ESOP1996"
+LatexCommand cite
+key "Liang:phd1998,Liang_Hudak:ESOP1996"
 
 \end_inset
 
@@ -295,7 +318,7 @@ key "Liang_Hudak:ESOP1996"
 \end_layout
 
 \begin_layout Standard
-Action semantics, as advanced by 
+Action semantics, as advanced by Mosses 
 \begin_inset CommandInset citation
 LatexCommand citet
 key "Mosses1996TPA"
@@ -304,14 +327,14 @@ key "Mosses1996TPA"
 
 , shares the motivation that semantics ought to be pragmatic, yet expressive
  enough to deal with non-trivial, feature-rich languages.
- While action semantics endeavours to devise a new semantics, we constrain
- ourself to the language of denotational semantics, and seek to devise a
- formalism largely compatible with denotational semantics.
+ While action semantics endeavours to devise a new meta-language for describing
+ semantics, we constrain ourself to the language of denotational semantics,
+ and seek to devise a formalism largely compatible with denotational semantics.
 \end_layout
 
 \begin_layout Standard
 The idea of constructing formulae with parametric types can be found in
- 
+ Wadler's work
 \begin_inset CommandInset citation
 LatexCommand cite
 key "Wadler:1989:TF:99370.99404"
@@ -324,36 +347,16 @@ key "Wadler:1989:TF:99370.99404"
 \end_layout
 
 \begin_layout Standard
-Regarding the type analysis of dynamic languages, 
+Regarding the type analysis of dynamic languages, there have been numerous
+ studies 
 \begin_inset CommandInset citation
-LatexCommand citet
-key "Anderson:ECOOP2005"
+LatexCommand cite
+key "Anderson:ECOOP2005,Anderson:ENTCS2005,Guha:ESOP2011,Wrigstad:POPL2010"
 
 \end_inset
 
-, 
-\begin_inset CommandInset citation
-LatexCommand citet
-key "Anderson:ENTCS2005"
-
-\end_inset
-
-, 
-\begin_inset CommandInset citation
-LatexCommand citet
-key "Guha:ESOP2011"
-
-\end_inset
-
- and 
-\begin_inset CommandInset citation
-LatexCommand citet
-key "Wrigstad:POPL2010"
-
-\end_inset
-
- study simple languages and their semantics for the purpose of static analysis
- of dynamic languages.
+ that consider simple toy languages and their semantics for the purpose
+ of static analysis of dynamic languages.
  A major difference between those languages and the model language presented
  in this paper is that our language is designed to capture the critical
  feature of real world languages which allows functions to alter types through
@@ -365,14 +368,14 @@ key "Wrigstad:POPL2010"
 \begin_layout Standard
 Type analysis plays a crucial part in compiling scripting languages, mainly
  to improve performance.
- 
+ Ancona et al 
 \begin_inset CommandInset citation
 LatexCommand citet
 key "Ancona:2007:RST:1297081.1297091"
 
 \end_inset
 
- and 
+ and Dufour 
 \begin_inset CommandInset citation
 LatexCommand citet
 key "Dufour:2006"
@@ -394,25 +397,25 @@ mixin
 \begin_inset Quotes erd
 \end_inset
 
- functions (
+ functions 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "Bracha:1990:MI:97946.97982"
 
 \end_inset
 
-).
+.
  By passing arguments to a mixin function, objects can be extended with
  extra methods; that is, functionality can be added dynamically.
  There are model languages and formalisations of mixin functions, such as
- 
+ the works of Anderson et al
 \begin_inset CommandInset citation
 LatexCommand citet
 key "Anderson:ECOOP2005"
 
 \end_inset
 
- and 
+ and Mens et al
 \begin_inset CommandInset citation
 LatexCommand citet
 key "Mens:TR1996"
@@ -426,6 +429,7 @@ key "Mens:TR1996"
 \end_layout
 
 \begin_layout Standard
+Jensen et al 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "Jensen:SAS2009"
@@ -622,7 +626,7 @@ s (one for true and another for false) are given
 \begin_inset Formula $\mathtt{set}$
 \end_inset
 
- defines the meaning of getting or setting a member of an object
+ define the meaning of getting or setting a member of an object
 \end_layout
 
 \begin_layout Itemize
@@ -655,11 +659,25 @@ s (one for true and another for false) are given
 \begin_layout Standard
 Our model language, as it evolves along with the framework, has a set of
  features found commonly in scripting languages.
- Below is an example of a program written in the model language:
+ Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Example-sdtl"
+
+\end_inset
+
+ is an example of a program written in the model language:
 \end_layout
 
 \begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
 \begin_inset listings
+lstparams "frame=single"
 inline false
 status open
 
@@ -870,8 +888,48 @@ try {
 
 \end_layout
 
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Example-sdtl"
+
+\end_inset
+
+Example 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+sdtl
+\end_layout
+
+\end_inset
+
+ program
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
 \begin_layout Standard
-In the remainder of the paper we provide the semantics for a language with
+In the remainder of the thesis we provide the semantics for a language with
  many different features.
  We introduce the components of the language step by step.
  The aim is to demonstrate that the semantic formalism enables such a stepwise
@@ -1100,7 +1158,7 @@ name "thm:bindmono"
 status open
 
 \begin_layout Plain Layout
-Monotonicity of bind operation
+Preservation of monotonicity
 \end_layout
 
 \end_inset
@@ -1168,11 +1226,7 @@ Assume
 
 \begin_layout Proof
 Since we assume the identity ordering, it follows that 
-\begin_inset Formula $\forall\left\langle s_{1},a\right\rangle \in p_{1},\exists\left\langle s_{2},a\right\rangle \in p_{2}$
-\end_inset
-
- such that 
-\begin_inset Formula $s_{1}\sqsubseteq s_{2}$
+\begin_inset Formula $\forall\left\langle s_{1},a\right\rangle \in p_{1},\exists\left\langle s_{2},a\right\rangle \in p_{2},s_{1}\sqsubseteq s_{2}$
 \end_inset
 
 .
@@ -1186,11 +1240,7 @@ Since we assume the identity ordering, it follows that
 
 .
  It follows that 
-\begin_inset Formula $\forall q\in q_{1}\exists q'\in q_{2}$
-\end_inset
-
- such that 
-\begin_inset Formula $q\sqsubseteq q'$
+\begin_inset Formula $\forall q\in q_{1}\exists q'\in q_{2},q\sqsubseteq q'$
 \end_inset
 
 .
@@ -1358,7 +1408,13 @@ When we have a record
 \end_layout
 
 \begin_layout Definition
-\begin_inset Formula $P_{c_{i},\ldots,c_{j}}=\lambda\rho.\left\langle a_{i},\ldots,a_{j}\right\rangle $
+\begin_inset Formula 
+\begin{eqnarray*}
+P_{c_{i},\ldots,c_{j}} & = & \lambda\rho.\left\langle a_{i},\ldots,a_{j}\right\rangle \\
+J_{c_{i},\ldots,c_{j}} & = & \lambda\left\langle a_{i},\ldots,a_{j}\right\rangle \lambda\rho.\rho\left[c_{n}=a_{n},n\in\left\{ i,\ldots,j\right\} \right]\\
+\Upsilon_{c_{i},\ldots,c_{j}}\ U & = & J_{c_{i},\ldots,c_{j}}\circ U\circ P_{c_{i},\ldots,c_{j}}
+\end{eqnarray*}
+
 \end_inset
 
  where 
@@ -1377,28 +1433,18 @@ When we have a record
 \end_layout
 
 \begin_layout Definition
-\begin_inset Formula $J_{c_{i},\ldots,c_{j}}=\lambda\left\langle a_{i},\ldots,a_{j}\right\rangle \lambda\rho.\rho\left[c_{n}=a_{n},n\in\left\{ i,\ldots,j\right\} \right]$
-\end_inset
-
-
-\end_layout
-
-\begin_layout Definition
-\begin_inset Formula $\Upsilon_{c_{i},\ldots,c_{j}}\ U=J_{c_{i},\ldots,c_{j}}\circ U\circ P_{c_{i},\ldots,c_{j}}$
-\end_inset
-
-
-\end_layout
-
-\begin_layout Definition
 Similarly, we define an operation to update a record and return a value.
 \end_layout
 
 \begin_layout Definition
-\begin_inset Formula $\Psi_{c_{i},\ldots,c_{j}}\ U=\lambda\rho.\left\langle \rho',a\right\rangle $
+\begin_inset Formula 
+\[
+\Psi_{c_{i},\ldots,c_{j}}\ U=\lambda\rho.\left\langle \rho',a\right\rangle 
+\]
+
 \end_inset
 
- 
+
 \end_layout
 
 \begin_layout Definition
@@ -1419,10 +1465,14 @@ Finally, we define a value extractor, that takes a record and selects a
 \end_layout
 
 \begin_layout Definition
-\begin_inset Formula $\Theta{}_{c_{i},\ldots,c_{j}}\ U=U\circ P_{c_{i},\ldots,c_{j}}$
+\begin_inset Formula 
+\[
+\Theta{}_{c_{i},\ldots,c_{j}}\ U=U\circ P_{c_{i},\ldots,c_{j}}
+\]
+
 \end_inset
 
- 
+
 \end_layout
 
 \begin_layout Definition
@@ -1438,7 +1488,7 @@ When
 \begin_inset Formula $State$
 \end_inset
 
- record, functions defined here have the following type signature.
+ record, the functions defined here have the following type signature:
 \end_layout
 
 \begin_layout Definition
@@ -1532,7 +1582,7 @@ We use syntax nodes as references to various items constituting program
 \begin_inset Formula $Stm$
 \end_inset
 
- is a statement node.
+ is a set of statement nodes.
 \end_layout
 
 \begin_layout Labeling
@@ -1540,7 +1590,7 @@ We use syntax nodes as references to various items constituting program
 \begin_inset Formula $Exp$
 \end_inset
 
- is an expression node.
+ is a set of expression nodes.
 \end_layout
 
 \begin_layout Labeling
@@ -1548,7 +1598,7 @@ We use syntax nodes as references to various items constituting program
 \begin_inset Formula $Lexp$
 \end_inset
 
- is a left-expression node.
+ is a set of left-expression nodes.
 \end_layout
 
 \begin_layout Labeling
@@ -1556,7 +1606,7 @@ We use syntax nodes as references to various items constituting program
 \begin_inset Formula $Sid$
 \end_inset
 
- is a statement identifier.
+ is a set of statement identifiers.
 \end_layout
 
 \begin_layout Labeling
@@ -1564,7 +1614,7 @@ We use syntax nodes as references to various items constituting program
 \begin_inset Formula $Eid$
 \end_inset
 
- is an expression identifier.
+ is a set of expression identifiers.
 \end_layout
 
 \begin_layout Labeling
@@ -1572,7 +1622,7 @@ We use syntax nodes as references to various items constituting program
 \begin_inset Formula $Id$
 \end_inset
 
- is an alphanumeric identifier.
+ is a set of alphanumeric identifiers.
 \end_layout
 
 \begin_layout Standard
@@ -1604,8 +1654,8 @@ Note that we use an sid of a function declaration statement as a reference
 \begin_inset Formula $\mathtt{arity}$
 \end_inset
 
- functions take such sid and return a list of parameter names, and the arity
- of the function, respectively.
+ functions take such an sid and return a list of parameter names, and the
+ arity of the function, respectively.
 \end_layout
 
 \begin_layout Standard
@@ -1668,7 +1718,7 @@ F & = & Sid\rightarrow State\rightarrow\wp\left(State\right)\\
 \begin_inset Formula $F$
 \end_inset
 
- is a function space to model functions in a program.
+ is a function space to model the collection of functions in a program.
  Given the sid of a function declaration site, it gives a state transformer.
  Note that in this picture a function 
 \begin_inset Quotes eld
@@ -1679,7 +1729,7 @@ returns
 \end_inset
 
  a value by giving a state transformation.
- Incorporating such concept as a return value in a 
+ Incorporating such a concept as a return value in a 
 \begin_inset Formula $State$
 \end_inset
 
@@ -1866,12 +1916,41 @@ end{grammar}
 \end_layout
 
 \begin_layout Standard
-Here Num and Bool are the syntactic categories for integers and boolean
- values.
+Here 
+\emph on
+Num
+\emph default
+ and 
+\emph on
+Bool
+\emph default
+ are the syntactic categories for integers and boolean values.
 \end_layout
 
 \begin_layout Standard
-Notably, 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+sdtl
+\end_layout
+
+\end_inset
+
+ does not have a separate category for function and variable declarations.
+ Variables are declared 
+\emph on
+ad hoc
+\emph default
+ whenever such variables appear as a left expression to assignment statements.
+ Function declarations are statements themselves, which allow them to appear
+ any where in the program.
+\end_layout
+
+\begin_layout Standard
 \begin_inset ERT
 status open
 
@@ -1886,7 +1965,7 @@ sdtl
 
  supports higher-order functions, which allows functions to be recursively
  referenced.
- For example, we can define Factorial function in a recursive manner.
+ For example, we can define a factorial function in a recursive manner.
 \end_layout
 
 \begin_layout Example
@@ -1918,7 +1997,7 @@ sdtl
 
 \end_inset
 
-, Factorial function can be implemented in a recursive way.
+, the factorial function can be implemented in a recursive way.
 \end_layout
 
 \begin_layout Example
@@ -1967,10 +2046,10 @@ In this example, the function
 
  takes two arguments.
  The first is the function pointer to recursively invoke, and the second
- is the number to calculate factorial of it.
+ is the usual argument to the function.
  This example illustrates that recursive functions are possible even in
  the absence of lexical scoping or other special scoping rules to allow
- function body to refer to the function itself.
+ a function body to refer to the function itself.
 \end_layout
 
 \begin_layout Standard
@@ -2045,7 +2124,7 @@ reference "semantic"
 \begin{eqnarray*}
 \mathtt{evalParams} & : & \left[Exp\right]\times\left[a\right]\rightarrow F\rightarrow State\rightarrow\wp\left(State\times\left[a\right]\right)\\
 \mathtt{evalParams}\ \epsilon\ ps\ f\ \rho & = & \lambda f\lambda\rho.\left\langle \rho,ps\right\rangle \\
-\mathtt{evalParams}\ \dd{E}\smallfrown Exps\ ps & = & \lambda f\lambda\rho.\underset{\left\langle \rho',con\right\rangle \in S}{\bigcup}\left\{ \mathtt{evalParams}\ Exps\ ps\smallfrown con\ f\ \rho'\right\} \\
+\mathtt{evalParams}\ \dd{E}\smallfrown Exps\ ps & = & \lambda f\lambda\rho.\underset{\left\langle \rho',con\right\rangle \in S}{\bigcup}\left\{ \mathtt{evalParams}\ Exps\ \left(ps\smallfrown con\right)\ f\ \rho'\right\} \\
  &  & \mbox{where}\; S\ =\ \mathcal{E}\ \dd{E}\ f\ \rho
 \end{eqnarray*}
 
@@ -2059,7 +2138,7 @@ reference "semantic"
 \end_inset
 
  is a parametrised function that takes a caller's state at the time of function
- invocation and an id-to-constant value mapping, and constructs initial
+ invocation and an id-to-constant value mapping, and constructs an initial
  state for a callee.
  
 \begin_inset Formula $\mathtt{leave}$
@@ -2202,7 +2281,7 @@ Concrete state is a Cartesian product of environment, IO state and a return
  The return value is set to be a value when a function is returning any
  value inside a function body.
  This has been incorporated as a part of a program state so that we can
- signal escaping of a program flow.
+ signal escaping from a program flow.
  The initial program state is 
 \begin_inset Formula $\left\langle \emptyset,io,Void\right\rangle ,$
 \end_inset
@@ -2233,18 +2312,18 @@ Functions
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-\mathtt{esc} & = & \bar{\Theta}_{Return}\ \lambda R.\left(R=Void\right)\\
+\mathtt{esc} & = & \bar{\Theta}_{Return}\ \left(\lambda R.\left(R=Void\right)\right)\\
 \mathtt{cond}\left(v,s_{1},s_{2}\right) & = & \begin{cases}
 s_{1} & \mbox{if}\ v=true\\
 s_{2} & \mbox{if}\ v=false
 \end{cases}\\
-\mathtt{asg}\left(id,v\right) & = & \bar{\Upsilon}_{Env}\ \lambda V.V\left[id\mapsto v\right]\\
-\mathtt{val}\left(id\right) & = & \bar{\Upsilon}_{Env}\ \lambda V.V\left(id\right)\\
+\mathtt{asg}\left(id,v\right) & = & \bar{\Upsilon}_{Env}\ \left(\lambda V.V\left[id\mapsto v\right]\right)\\
+\mathtt{val}\left(id\right) & = & \bar{\Upsilon}_{Env}\ \left(\lambda V.V\left(id\right)\right)\\
 \mathtt{conval}\left(con\right) & = & \left\{ con\right\} \\
-\mathtt{getinput\left(\rho\right)} & = & \bar{\Psi}_{IO}\ \lambda O.\left\langle O',z\in\mathbb{N}\right\rangle \mbox{see note}\\
-\mathtt{dooutput}\left(v\right) & = & \bar{\Upsilon}_{IO}\ \lambda O.O'\mbox{see note}\\
-\mathtt{fundecl}(id,n) & = & \bar{\Upsilon}_{Env}\ \lambda V.V\left[id\mapsto n\right]\\
-\mathtt{ret}\left(v\right) & = & \bar{\Upsilon}_{Return}\ \lambda R.v\\
+\mathtt{getinput\left(\rho\right)} & = & \bar{\Psi}_{IO}\ \lambda O.\left\langle O',z\in\mathbb{N}\right\rangle \ \mbox{see note}\\
+\mathtt{dooutput}\left(v\right) & = & \bar{\Upsilon}_{IO}\ \lambda O.O'\ \mbox{see note}\\
+\mathtt{fundecl}(id,n) & = & \bar{\Upsilon}_{Env}\ \left(\lambda V.V\left[id\mapsto n\right]\right)\\
+\mathtt{ret}\left(v\right) & = & \bar{\Upsilon}_{Return}\ \left(\lambda R.v\right)\\
 \mathtt{bin}\left(op,c_{1},c_{2}\right) & = & \mbox{perform binary operation }\mbox{between two constants}
 \end{eqnarray*}
 
@@ -2254,7 +2333,7 @@ s_{2} & \mbox{if}\ v=false
 \end_layout
 
 \begin_layout Standard
-We omit a detailed description of IO environment.
+We omit a detailed description of the IO environment.
  Normally, IO can be modelled as a queue of inputs and outputs as they are
  given and produced during the execution of a program.
 \end_layout
@@ -2308,11 +2387,11 @@ At line 5,
 \end_inset
 
 .
- In a function call
+ In a function call 
 \begin_inset Formula $\mathtt{call}\left(1,\left[\left(Function\ 1\right),2\right]\right)$
 \end_inset
 
-, we first construct initial state of a function call.
+, we first construct the initial state of a function call.
  
 \begin_inset Formula $\mathtt{enter}$
 \end_inset
@@ -2380,7 +2459,7 @@ On the first call, this state is first evaluated to yield value
 \family typewriter
 f(f,1) * 2
 \family default
- evaluates to be 2, which becomes the ultimate return value.
+ evaluates to 2, which becomes the ultimate return value.
 \end_layout
 
 \begin_layout Itemize
@@ -2413,7 +2492,7 @@ At line 6,
 \begin_inset Formula $\mathtt{val\left(z\right)}$
 \end_inset
 
- evaluates to be 2, and hence the final output of the program.
+ evaluates to 2, which is the final output of the program.
 \end_layout
 
 \end_deeper
@@ -2441,7 +2520,7 @@ Domain
 \begin_inset Formula 
 \begin{eqnarray*}
 FunPointer & = & Sid\\
-AVal & = & \left\{ Num,Bool,\bot\right\} \cup FunPointer\\
+AVal & = & \left\{ Num,Bool\right\} \cup FunPointer\\
 AEnv & = & Id\rightarrow AVal\\
 AReturn & = & AVal\cup\left\{ Void\right\} \\
 AState & = & AEnv\times AReturn
@@ -2487,20 +2566,19 @@ Functions
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-\mathtt{esc} & = & \bar{\Theta}_{AReturn}\ \lambda R.\left(R=Void\right)\\
+\mathtt{esc} & = & \bar{\Theta}_{AReturn}\ \left(\lambda R.\left(R=Void\right)\right)\\
 \mathtt{cond}\left(v,s_{1},s_{2}\right) & = & \lambda f\lambda\eta.\left(s_{1}\ f\ \eta\right)\cup\left(s_{2}\ f\ \eta\right)\\
-\mathtt{asg}\left(id,v\right) & = & \bar{\Upsilon}_{AEnv}\ \lambda\sigma.\sigma\left[id=v\right]\\
-\mathtt{val}\left(id,v\right) & = & \bar{\Upsilon}_{AEnv}\ \lambda\sigma.\sigma\left(id\right)\\
+\mathtt{asg}\left(id,v\right) & = & \bar{\Upsilon}_{AEnv}\ \left(\lambda\sigma.\sigma\left[id=v\right]\right)\\
+\mathtt{val}\left(id,v\right) & = & \bar{\Upsilon}_{AEnv}\ \left(\lambda\sigma.\sigma\left(id\right)\right)\\
 \mathtt{conval}\left(con\right) & = & \begin{cases}
 \Gamma\ Num & \mbox{if}\ con\in\mathbb{N}\\
 \Gamma\ Bool & \mbox{if}\ con\in\mathbb{B}
 \end{cases}\\
-\mathtt{getinput} & = & \Gamma\ \lambda\eta.\left\langle \eta,Num\right\rangle \\
-\mathtt{dooutput}\left(v\right) & = & \Gamma\ \lambda\eta.\eta\\
-\mathtt{fundecl}\left(id,n\right) & = & \bar{\Upsilon}_{AEnv}\ \lambda\sigma.\sigma\left[id\mapsto n\right]\\
-\mathtt{ret}\left(v\right) & = & \bar{\Upsilon}_{AReturn}\ \lambda R:AReturn.v\\
+\mathtt{getinput} & = & \Gamma\ \left(\lambda\eta.\left\langle \eta,Num\right\rangle \right)\\
+\mathtt{dooutput}\left(v\right) & = & \Gamma\ \left(\lambda\eta.\eta\right)\\
+\mathtt{fundecl}\left(id,n\right) & = & \bar{\Upsilon}_{AEnv}\ \left(\lambda\sigma.\sigma\left[id\mapsto n\right]\right)\\
+\mathtt{ret}\left(v\right) & = & \bar{\Upsilon}_{AReturn}\ \left(\lambda R:AReturn.v\right)\\
 \mathtt{bin}\left(op,c_{1},c_{2}\right) & = & \begin{cases}
-\Gamma\ \bot & \mbox{if}\ c_{1}=\bot\mbox{ or }c_{2}=\bot\\
 \Gamma\ Num & \mbox{if}\ op\in{\scriptstyle \left\{ +,-,*,/\right\} }\\
 \Gamma\ Bool & \mbox{otherwise}
 \end{cases}
@@ -2520,6 +2598,12 @@ Function definitions are largely similar to that of concrete definition.
 status open
 
 \begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "abs-int-fact"
+
+\end_inset
+
 Abstract interpretation of recursive factorial function
 \end_layout
 
@@ -2586,11 +2670,8 @@ At line 5,
 \begin_layout Itemize
 The meaning of this function call is determined via a fixed point iteration
  by progressively updating current approximation of the meaning of the function
- call, starting from a null hypothesis that the function returns 
-\begin_inset Formula $\bot$
-\end_inset
-
-.
+ call, starting from a null hypothesis that the function call does not return
+ any state.
 \end_layout
 
 \begin_layout Standard
@@ -2634,7 +2715,7 @@ Note
 \begin_inset Text
 
 \begin_layout Plain Layout
-\begin_inset Formula $\bot$
+\begin_inset Formula $\emptyset$
 \end_inset
 
 
@@ -2646,7 +2727,7 @@ Note
 \begin_inset Text
 
 \begin_layout Plain Layout
-\begin_inset Formula $\bot,Num$
+\begin_inset Formula $\left\{ \left\langle \left[\mathtt{fact}\mapsto\left(Function\ 1\right)\right],Num\right\rangle \right\} $
 \end_inset
 
 
@@ -2669,7 +2750,7 @@ Note
 \begin_inset Text
 
 \begin_layout Plain Layout
-\begin_inset Formula $\bot,Num$
+\begin_inset Formula $\left\{ \left\langle \left[\mathtt{fact}\mapsto\left(Function\ 1\right)\right],Num\right\rangle \right\} $
 \end_inset
 
 
@@ -2681,7 +2762,7 @@ Note
 \begin_inset Text
 
 \begin_layout Plain Layout
-\begin_inset Formula $\bot,Num$
+\begin_inset Formula $\left\{ \left\langle \left[\mathtt{fact}\mapsto\left(Function\ 1\right)\right],Num\right\rangle \right\} $
 \end_inset
 
 
@@ -2708,7 +2789,7 @@ Fixed point
 
 \end_deeper
 \begin_layout Example
-Implementation of this fixed point iteration is found in 
+Implementation of this fixed point iteration is found in the 
 \begin_inset Formula $\mathtt{fun}$
 \end_inset
 
@@ -2724,102 +2805,8 @@ reference "sub:Abstract-interpretation"
 
 \begin_deeper
 \begin_layout Itemize
-This yields two returning states after the function call:
-\end_layout
-
-\begin_layout Standard
-\begin_inset Tabular
-<lyxtabular version="3" rows="3" columns="2">
-<features tabularvalignment="middle">
-<column alignment="center" valignment="top" width="0">
-<column alignment="center" valignment="top" width="0">
-<row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Environment
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Return
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\family roman
-\series medium
-\shape up
-\size normal
-\emph off
-\bar no
-\strikeout off
-\uuline off
-\uwave off
-\noun off
-\color none
-\lang english
-\begin_inset Formula $\left[\mathtt{f}\mapsto\left(Function\ 1\right),\mathtt{n}\mapsto Num\right]$
-\end_inset
-
-
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-\begin_inset Formula $\bot$
-\end_inset
-
-
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-\begin_inset Formula $\left[\mathtt{f}\mapsto\left(Function\ 1\right),\mathtt{n}\mapsto Num\right]$
-\end_inset
-
-
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-\begin_inset Formula $Num$
-\end_inset
-
-
-\end_layout
-
-\end_inset
-</cell>
-</row>
-</lyxtabular>
-
+This yields 
+\begin_inset Formula $\left\langle \left[\mathtt{fact}\mapsto\left(Function\ 1\right)\right],Num\right\rangle $
 \end_inset
 
 
@@ -2838,96 +2825,8 @@ After
 \begin_inset Formula $\mathtt{dooutput}$
 \end_inset
 
-, we have two final states of the program:
-\end_layout
-
-\begin_layout Standard
-\begin_inset Tabular
-<lyxtabular version="3" rows="3" columns="2">
-<features tabularvalignment="middle">
-<column alignment="center" valignment="top" width="0">
-<column alignment="center" valignment="top" width="0">
-<row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Environment
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Return
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\family roman
-\series medium
-\shape up
-\size normal
-\emph off
-\bar no
-\strikeout off
-\uuline off
-\uwave off
-\noun off
-\color none
-\lang english
-\begin_inset Formula $\left[\mathtt{fact}\mapsto Function\ 1,\mathtt{z}\mapsto\bot\right]$
-\end_inset
-
-
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Void
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
+, we have the final state of the program: 
 \begin_inset Formula $\left[\mathtt{fact}\mapsto Function\ 1,\mathtt{z}\mapsto Num\right]$
-\end_inset
-
-
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Void
-\end_layout
-
-\end_inset
-</cell>
-</row>
-</lyxtabular>
-
 \end_inset
 
 
@@ -2943,12 +2842,12 @@ Abstract interpretation of a while loop
 
 \end_inset
 
- Following example illustrates an interpretation of a while loop through
+ The following example illustrates an interpretation of a while loop through
  a fixed point iteration.
 \end_layout
 
 \begin_layout Example
-The following program calculates sum of a sequence.
+The program calculates sum of a sequence.
  For illustration purpose, we have added variable 
 \begin_inset Formula $\mathtt{x}$
 \end_inset
@@ -3020,7 +2919,7 @@ At line 4, we have environment
 \begin_inset Formula $\left[\mathtt{sum}\mapsto Num,\mathtt{z}\mapsto Num,\mathtt{x}\mapsto Num\right]$
 \end_inset
 
-
+.
 \end_layout
 
 \begin_layout Itemize
@@ -3254,7 +3153,7 @@ $
 
 \end_deeper
 \begin_layout Example
-Implementation of this fixed point iteration can be found in 
+Implementation of this fixed point iteration can be found in the
 \begin_inset Formula $\mathtt{fix}$
 \end_inset
 
@@ -3566,7 +3465,8 @@ At line 1, we are presented with a function declaration.
 \begin_inset Formula $\mathtt{fundecl}$
 \end_inset
 
- adds identifier as a reference to function pointer with no curried value.
+ adds the identifier as a reference to a function pointer with no curried
+ value.
  Assuming 
 \begin_inset Formula $add$
 \end_inset
@@ -3600,7 +3500,7 @@ At lines 5 and 7, we partially apply the
 \begin_inset Formula $\mathtt{add5}$
 \end_inset
 
- .
+.
  Similarly, 
 \begin_inset Formula $\mathtt{add7}$
 \end_inset
@@ -3804,7 +3704,7 @@ status open
 \begin{eqnarray*}
 \mathtt{apply}\left(\left\langle n,c,e\right\rangle ,p,e'\right) & = & \begin{cases}
 \Theta_{Curried}\ \lambda\nu.\underset{C\in\nu\left(n,c,e\right)}{\bigcup}\mathtt{call}\left(n,C\smallfrown p\right)\ \mbox{if }c+N\left(p\right)=\mathtt{{arity}\left(n\right)}\\
-\Psi_{Curried}\ \lambda\nu.\underset{C\in\nu\left(n,c,e\right)}{\bigcup}\left\langle \nu\left[\left\langle n,c+N\left(p\right),e'\right\rangle \mapsto C\smallfrown p\right],\left\langle n,c+N\left(p\right),e'\right\rangle \right\rangle \ {\scriptstyle \mbox{otherwise}}
+\Psi_{Curried}\ \lambda\nu.\underset{C\in\nu\left(n,c,e\right)}{\bigcup}\left\langle \nu\left[\left\langle n,c+N\left(p\right),e'\right\rangle \mapsto\left(C\smallfrown p\right)\right],\left\langle n,c+N\left(p\right),e'\right\rangle \right\rangle \ \mbox{otherwise}
 \end{cases}\\
 \mathtt{fundecl}\left(id,n\right) & = & \bar{\Upsilon}_{AEnv}\ \lambda\sigma.\sigma\left[id\mapsto\left\langle n,0,0\right\rangle \right]
 \end{eqnarray*}
@@ -4109,7 +4009,11 @@ reference "semmon-oo"
 \end_inset
 
 .
- Note, however, that existing semantic equations are not impacted by this.
+ Note, however, that 
+\emph on
+existing semantic equations are not impacted by this
+\emph default
+.
 \end_layout
 
 \begin_layout Standard
@@ -4195,7 +4099,7 @@ name "semmon-oo"
 \end_layout
 
 \begin_layout Standard
-We redefine 
+We redefine the 
 \begin_inset Formula $\mathtt{call}$
 \end_inset
 
@@ -4225,24 +4129,17 @@ Note that by modelling function calls as an effect on a state, we can readily
 
  language (
 \begin_inset CommandInset citation
-LatexCommand citet
-key "Anderson:ECOOP2005"
-
-\end_inset
-
- and 
-\begin_inset CommandInset citation
-LatexCommand citet
-key "Anderson:ENTCS2005"
+LatexCommand cite
+key "Anderson:ECOOP2005,Anderson:ENTCS2005"
 
 \end_inset
 
 ), mixin creating behaviour is modelled in a functional model language.
- A similar approach has been taken in the discussion of 
+ A similar approach has been taken in the discussion of the 
 \begin_inset Formula $\lambda_{S}$
 \end_inset
 
- language as devised in 
+ language by Guha et al 
 \begin_inset CommandInset citation
 LatexCommand citet
 key "Guha:ESOP2011"
@@ -4335,7 +4232,7 @@ We redefine
 \end_layout
 
 \begin_layout Standard
-Other functions are given in figure 
+The other functions are given in figure 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "concfunc-oo"
@@ -4368,15 +4265,15 @@ status open
 \begin_layout Plain Layout
 \begin_inset Formula 
 \begin{eqnarray*}
-\mathtt{get}\left(n,id\right) & = & \bar{\Theta}_{ObjMem}\ \lambda OM.OM\left(n\right)\left(id\right)\\
-\mathtt{set}\left(n,id,v\right) & = & \bar{\Upsilon}_{ObjMem}\ \lambda OM.OM\left[n\mapsto OM\left(n\right)\left[id\mapsto v\right]\right]\\
-\mathtt{getglobal} & = & \bar{\Theta}_{ObjMem}\ \lambda OM.OM\left(0\right)\\
-\mathtt{getthis} & = & \bar{\Theta}_{This}\ \lambda T.T\\
+\mathtt{get}\left(n,id\right) & = & \bar{\Theta}_{ObjMem}\ \left(\lambda OM.OM\left(n\right)\left(id\right)\right)\\
+\mathtt{set}\left(n,id,v\right) & = & \bar{\Upsilon}_{ObjMem}\ \left(\lambda OM.OM\left[n\mapsto OM\left(n\right)\left[id\mapsto v\right]\right]\right)\\
+\mathtt{getglobal} & = & \bar{\Theta}_{ObjMem}\ \left(\lambda OM.OM\left(0\right)\right)\\
+\mathtt{getthis} & = & \bar{\Theta}_{This}\ \left(\lambda T.T\right)\\
 \mathtt{apply}\left(\left\langle n,C\right\rangle ,p,t,\_\right) & = & \begin{cases}
 \mathtt{call}\left(n,C\smallfrown p,t\right) & \mbox{if}\ N\left(C\smallfrown p\right)=\mathtt{arity}\left(n\right)\\
-\Gamma\ \lambda\rho.\left\langle \rho,\left\langle n,C\smallfrown p\right\rangle \right\rangle  & \mbox{otherwise}
+\Gamma\ \left(\lambda\rho.\left\langle \rho,\left\langle n,C\smallfrown p\right\rangle \right\rangle \right) & \mbox{otherwise}
 \end{cases}\\
-\mathtt{newobj}\left(\_\right) & = & \bar{\Psi}_{ObjMem}\ \lambda OM.\left\langle OM\left[n\mapsto\emptyset\right],n\right\rangle \ \mbox{where}\ n=N\left(OM\right)
+\mathtt{newobj}\left(\_\right) & = & \bar{\Psi}_{ObjMem}\ \left(\lambda OM.\left\langle OM\left[n\mapsto\emptyset\right],n\right\rangle \right)\ \mbox{where}\ n=N\left(OM\right)
 \end{eqnarray*}
 
 \end_inset
@@ -4591,7 +4488,7 @@ function, object memory is manipulated in line 9 to be
 \end_layout
 
 \begin_layout Itemize
-At line 15, by the method call semantics,
+At line 15, by the method call semantics, 
 \begin_inset Formula $\mathtt{apply}\left(\left\langle 3,\left[20\right]\right\rangle ,\left[10\right].Obj\ 1,\_\right)$
 \end_inset
 
@@ -4605,9 +4502,9 @@ Abstract interpretation
 \begin_layout Standard
 Similarly, we extend the abstract interpretation.
  Note that, whereas in a concrete interpretation we generate a unique id
- for each of the object instantiated in run-time, we use a reference to
- allocation site of an object as a reference to a particular object, hence
- we contain object memory in a finite domain.
+ for each of the objects instantiated in run-time, we use a reference to
+ the allocation site of an object as a reference to a particular object,
+ hence we contain object memory in a finite domain.
 \end_layout
 
 \begin_layout Paragraph
@@ -4758,6 +4655,13 @@ reference "Concrete-analysis-of"
 \end_layout
 
 \begin_layout Example
+\begin_inset VSpace medskip
+\end_inset
+
+
+\end_layout
+
+\begin_layout Example
 \begin_inset Tabular
 <lyxtabular version="3" rows="2" columns="3">
 <features tabularvalignment="middle">
@@ -4834,6 +4738,275 @@ $
 \end_inset
 
 
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Notice that as we add object oriented programming to the programming language,
+ the functions are now capable of causing side-effects.
+ The following modified example illustrates how the meaning of recursive
+ function call is calculated when the function causes side-effects.
+\end_layout
+
+\begin_layout Example
+\begin_inset Argument
+status open
+
+\begin_layout Plain Layout
+Side-effect causing factorial function
+\end_layout
+
+\end_inset
+
+ Consider the following modification of program analysed in example 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "abs-int-fact"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Example
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+function fact(f,n) {
+\end_layout
+
+\begin_layout Plain Layout
+
+	if(n>1) { global.x=5; return f(f,n-1) * n; } else { return 1; }
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+z=fact(fact,input);
+\end_layout
+
+\begin_layout Plain Layout
+
+output z;
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+At line 5, the meaning of the function call is calculated as follows.
+ For simplicity, we only record 
+\begin_inset Formula $AEnv,AObjMem$
+\end_inset
+
+ and 
+\begin_inset Formula $AReturn$
+\end_inset
+
+.
+ The rest components remain identical.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Tabular
+<lyxtabular version="3" rows="4" columns="3">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Current approximation
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Meaning of function call
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Note
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\emptyset$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\left\{ \left\langle \begin{gathered}\left[\mathtt{fact}\mapsto Function\ 1\right],\\
+\left[0\mapsto\emptyset\right],\\
+Num
+\end{gathered}
+\right\rangle \right\} $
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\left\{ \left\langle \begin{gathered}\left[\mathtt{fact}\mapsto Function\ 1\right],\\
+\left[0\mapsto\emptyset\right],\\
+Num
+\end{gathered}
+\right\rangle \right\} $
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\left\{ \begin{gathered}\left\langle \begin{gathered}\left[\mathtt{fact}\mapsto Function\ 1\right],\\
+\left[0\mapsto\emptyset\right],\\
+Num
+\end{gathered}
+\right\rangle ,\\
+\left\langle \begin{gathered}\left[\mathtt{fact}\mapsto Function\ 1\right],\\
+\left[0\mapsto\left[x\mapsto Num\right]\right],\\
+Num
+\end{gathered}
+\right\rangle 
+\end{gathered}
+\right\} $
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\left\{ \begin{gathered}\left\langle \begin{gathered}\left[\mathtt{fact}\mapsto Function\ 1\right],\\
+\left[0\mapsto\emptyset\right],\\
+Num
+\end{gathered}
+\right\rangle ,\\
+\left\langle \begin{gathered}\left[\mathtt{fact}\mapsto Function\ 1\right],\\
+\left[0\mapsto\left[x\mapsto Num\right]\right],\\
+Num
+\end{gathered}
+\right\rangle 
+\end{gathered}
+\right\} $
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\left\{ \begin{gathered}\left\langle \begin{gathered}\left[\mathtt{fact}\mapsto Function\ 1\right],\\
+\left[0\mapsto\emptyset\right],\\
+Num
+\end{gathered}
+\right\rangle ,\\
+\left\langle \begin{gathered}\left[\mathtt{fact}\mapsto Function\ 1\right],\\
+\left[0\mapsto\left[x\mapsto Num\right]\right],\\
+Num
+\end{gathered}
+\right\rangle 
+\end{gathered}
+\right\} $
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Fixed point
 \end_layout
 
 \end_inset
@@ -4985,13 +5158,13 @@ Concrete interpretation
 \end_layout
 
 \begin_layout Standard
-As the flow control of the execution is abstracted out and parametrised
+As the control flow of the execution is abstracted out and parametrised
  as a function 
 \begin_inset Formula $\mathtt{esc}$
 \end_inset
 
 , it is not very surprising that introducing exceptions to a program does
- not necessitate a heavy modification to an interpretation of the language.
+ not necessitate a heavy modification to the interpretation of the language.
 \end_layout
 
 \begin_layout Paragraph
@@ -5329,8 +5502,8 @@ After lines 3-5, we have two possible states
 \end_layout
 
 \begin_layout Itemize
-By the binding operation, the latter state becomes the final state of the
- try clause.
+By the bind operation, the latter state becomes the final state of the try
+ clause.
  The former state progresses further, and updates its environment to 
 \begin_inset Formula $\left[\mathtt{x}\mapsto Num,\mathtt{j}\mapsto Num\right]$
 \end_inset

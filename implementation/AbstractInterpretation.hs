@@ -15,7 +15,6 @@ data AValue = Intval
             | Boolval
             | FunPointer Sid Int Eid
             | Object Int
-            | Undecided
             deriving (Show, Eq, Ord)
 
 instance Value AValue where
@@ -23,7 +22,6 @@ instance Value AValue where
     conval (Boolean False) = Boolval
     conval (Number i) = Intval
     getSid (FunPointer n _ _) = n
-    getSid Undecided = -1
     binop Plus (Intval) (Intval) = Intval
     binop Minus (Intval) (Intval) = Intval
     binop Mult (Intval) (Intval) = Intval
@@ -31,8 +29,6 @@ instance Value AValue where
     binop GreaterThan (Intval) (Intval) = Boolval
     binop LessThan (Intval) (Intval) = Boolval
     binop Equal (Intval) (Intval) = Boolval
-    binop _ Undecided _ = Undecided
-    binop _ _ Undecided = Undecided
     
 data AState = AState{
         env :: Map String AValue,
@@ -159,7 +155,7 @@ fun sidMap fapprox sid = trace ("call sid " ++ (show sid)) $
                         result = t (fun sidMap newapprox) s
                     in
                         if result == prevresult then result
-                        else localx result) [(s {returning = Just Undecided}, Just ())])
+                        else localx result) [])
 
 runAbstract :: SdtlProgram -> IO ()
 runAbstract (SdtlProgram (AStmt _ mainSid) sdtlMap) = do
