@@ -1146,101 +1146,101 @@ T\ \bind\ U & = & \lambda f\lambda s.\:\mathbf{let}\ S=T\ f\ s\ \mathbf{in}\unde
 
 \end_layout
 
-\begin_layout Theorem
-\begin_inset CommandInset label
-LatexCommand label
-name "thm:bindmono"
-
-\end_inset
-
-
+\begin_deeper
+\begin_layout Definition
 \begin_inset Argument
 status open
 
 \begin_layout Plain Layout
-Preservation of monotonicity
+Point-wise ordering of state transformations
 \end_layout
 
 \end_inset
 
-When 
-\begin_inset Formula $\mathtt{esc}$
+ Given 
+\begin_inset Formula $T,U\in State\rightarrow\wp\left(State\times a\cup\left\{ \bot\right\} \right)$
 \end_inset
 
- is monotonic, given two monotonic functions 
-\begin_inset Formula $F$
+,
+\begin_inset Formula $T\sqsubseteq U$
+\end_inset
+
+ iff 
+\begin_inset Formula $\forall x\in State,\left(T\ x\right)\subseteq\left(U\ x\right)$
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Definition
+\begin_inset Argument
+status open
+
+\begin_layout Plain Layout
+Point-wise ordering of monadic functions
+\end_layout
+
+\end_inset
+
+ Given 
+\begin_inset Formula $T,U\in M\ a$
+\end_inset
+
+, 
+\begin_inset Formula $T\sqsubseteq U$
+\end_inset
+
+ iff 
+\begin_inset Formula $\forall f\in F,\left(T\ f\right)\sqsubseteq\left(U\ f\right)$
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\end_deeper
+\begin_layout Theorem
+\begin_inset Argument
+status open
+
+\begin_layout Plain Layout
+Presevation of monotonicity
+\end_layout
+
+\end_inset
+
+Given monads 
+\begin_inset Formula $T$
+\end_inset
+
+, 
+\begin_inset Formula $T'$
 \end_inset
 
  and 
-\begin_inset Formula $G$
+\begin_inset Formula $U$
 \end_inset
 
 , 
-\begin_inset Formula $F\bind G$
+\begin_inset Formula $T\sqsubseteq T'\implies T\bind G\sqsubseteq T'\bind G$
 \end_inset
 
- is also a monotonic function.
+ 
 \end_layout
 
 \begin_layout Proof
-Assume 
-\begin_inset Formula $\eta_{1}\sqsubseteq\eta_{2}$
+\begin_inset Formula $\forall f\in F,\forall s\in State,\exists x,x\in\left(\left(T\bind U\right)\ f\ s\right)\Leftrightarrow\exists x'\in State,x'\in\left(T\ f\ s\right)\wedge x\in\left(U\ f\ x'\right)$
 \end_inset
 
-, let 
-\begin_inset Formula $p_{1}=F\ f\ \eta_{1}$
-\end_inset
-
-, 
-\begin_inset Formula $p_{2}=F\ f\ \eta_{2}$
+ by the definition of bind operation.
+ Now, 
+\begin_inset Formula $T\sqsubseteq T'\implies x'\in\left(T'\ f\ s\right)$
 \end_inset
 
 .
- By monotonicity of 
-\begin_inset Formula $F$
-\end_inset
-
-, we have 
-\begin_inset Formula $p_{1}\sqsubseteq p_{2}$
-\end_inset
-
-.
- Now,
-\end_layout
-
-\begin_layout Proof
-\begin_inset Formula $q_{1}=F\bind G\ f\ \eta_{1}=\underset{\left\langle s,a\right\rangle \in p_{1}}{\bigcup}\left(\begin{gathered}\mbox{if}\ \mathtt{esc}\left(s\right)\ \mbox{then}\ \left\{ \left\langle s,a\right\rangle \right\} \ \mbox{else}\ G\ a\ f\ s\end{gathered}
-\right)$
-\end_inset
-
-
-\end_layout
-
-\begin_layout Proof
-\begin_inset Formula $q_{2}=F\bind G\ f\ \eta_{2}=\underset{\left\langle s,a\right\rangle \in p_{2}}{\bigcup}\left(\begin{gathered}\mbox{if}\ \mathtt{esc}\left(s\right)\ \mbox{then}\ \left\{ \left\langle s,a\right\rangle \right\} \ \mbox{else}\ G\ a\ f\ s\end{gathered}
-\right)$
-\end_inset
-
-
-\end_layout
-
-\begin_layout Proof
-Since we assume the identity ordering, it follows that 
-\begin_inset Formula $\forall\left\langle s_{1},a\right\rangle \in p_{1},\exists\left\langle s_{2},a\right\rangle \in p_{2},s_{1}\sqsubseteq s_{2}$
-\end_inset
-
-.
- Given the monotonicity of 
-\begin_inset Formula $\mathtt{esc}$
-\end_inset
-
-, 
-\begin_inset Formula $\mathtt{esc}\left(s_{1}\right)=\mathtt{esc}\left(s_{2}\right)$
-\end_inset
-
-.
- It follows that 
-\begin_inset Formula $\forall q\in q_{1}\exists q'\in q_{2},q\sqsubseteq q'$
+ Hence, 
+\begin_inset Formula $x\in\left(\left(T'\bind U\right)\ f\ s\right)$
 \end_inset
 
 .
@@ -5541,8 +5541,8 @@ Well-definedness
 \end_layout
 
 \begin_layout Standard
-We assume that all the functions appearing in both concrete and abstract
- versions of interpretations are ordered point-wise.
+All the functions appearing in both concrete and abstract versions of interpreta
+tions are ordered point-wise.
  Recall that the bind operation preserves the monotonicity when binding
  two monotonic functions.
  Observe that all of the primitive operations that yield a state transformer,
@@ -5562,9 +5562,86 @@ We assume that all the functions appearing in both concrete and abstract
 \begin_inset Formula $\mathcal{L}$
 \end_inset
 
- are monotonic.
- Hence the semantics is well-defined both in concrete and abstract interpretatio
-ns.
+ are monotonic for any given 
+\begin_inset Formula $f\in F$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+Now, observe the monotonic relationship between 
+\begin_inset Formula $F$
+\end_inset
+
+ and monadic functions.
+\end_layout
+
+\begin_layout Definition
+\begin_inset Argument
+status open
+
+\begin_layout Plain Layout
+Point-wise ordering of function approximation
+\end_layout
+
+\end_inset
+
+Given 
+\begin_inset Formula $f\in F$
+\end_inset
+
+ and 
+\begin_inset Formula $f'\in F$
+\end_inset
+
+, 
+\begin_inset Formula $f\sqsubseteq f'$
+\end_inset
+
+ iff 
+\begin_inset Formula $\forall s\in Sid,\forall\sigma\in State,\left(f\ s\ \sigma\right)\subseteq\left(f'\ s\ \sigma\right)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Theorem
+\begin_inset Formula $\forall f,f'\in F,f\sqsubseteq f'\implies\forall s\in\mathcal{S}\forall t\in Stm,\left(s\ t\ f\right)\sqsubseteq\left(s\ t\ f'\right)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Proof
+Observe that, it is self-evident that the 
+\begin_inset Formula $\mathtt{call}$
+\end_inset
+
+ auxiliary function is monotonic with regards to the function approximation.
+ the 
+\begin_inset Formula $\mathtt{call}$
+\end_inset
+
+ function is the only function that the function approximation value is
+ referenced.
+ Recall the preservation of monotonicity of bind operation.
+ Then, this theorem immediately follows.
+\end_layout
+
+\begin_layout Standard
+It follows from this theorem that there exists the fixed point of the meaning
+ of function 
+\begin_inset Formula $f\in F$
+\end_inset
+
+ for a particular program.
+ Hence the well-definedness of the fixed point of 
+\begin_inset Formula $F$
+\end_inset
+
+ in a particular analysis, and that of the semantics both in concrete and
+ abstract interpretations.
 \end_layout
 
 \begin_layout Section
