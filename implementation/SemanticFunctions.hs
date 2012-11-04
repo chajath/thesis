@@ -148,7 +148,8 @@ slexpr (Ref e1 id1) = do
 --getFunc = M $ \f -> \s -> [(s, Just f)]
 
 call :: (StateValue s v) => Sid -> [v] -> v -> (M s v v)
-call n p t = M $ \f -> \s0 -> [leave s0 s | (s,_) <- let (AStmt (Function _ ids _) _, M x) = (f n) in x f (enter s0 n p t ids) ]
+call n p t = M $ \f -> \s0 -> 
+	[leave s0 s | (s,_) <- let (AStmt (Function _ ids _) _, M x) = (f n) in x f (enter s0 n p t ids) ]
 
 runMonad :: (StateValue s v) => AStmt -> (Sid -> (AStmt, (M s v ()))) -> s -> v -> [s]
 runMonad mainStmt = \f -> \s0 -> \_ -> let M t = sstmt mainStmt in (Prelude.map) fst (t f s0)
