@@ -2381,8 +2381,8 @@ reference "semantic"
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-\mathtt{evalParams} & : & \left[Exp\right]\times\left[a\right]\rightarrow F\rightarrow State\rightarrow\wp\left(State\times\left[a\right]\right)\\
-\mathtt{evalParams}\ \epsilon\ ps\ f\ \rho & = & \lambda f\lambda\rho.\left\langle \rho,ps\right\rangle \\
+\mathtt{evalParams} & : & \left[Exp\right]\times\left[Value\right]\rightarrow F\rightarrow State\rightarrow\wp\left(State\times\left[Value\right]\right)\\
+\mathtt{evalParams}\ \epsilon\ ps\ f\ \rho & = & \lambda f\lambda\rho.\left\{ \left\langle \rho,ps\right\rangle \right\} \\
 \mathtt{evalParams}\ \dd{E}\smallfrown Exps\ ps & = & \lambda f\lambda\rho.\underset{\left\langle \rho',con\right\rangle \in S}{\bigcup}\left\{ \mathtt{evalParams}\ Exps\ \left(ps\smallfrown con\right)\ f\ \rho'\right\} \\
  &  & \mbox{where}\; S\ =\ \mathcal{E}\ \dd{E}\ f\ \rho
 \end{eqnarray*}
@@ -5918,12 +5918,11 @@ At line 3, when
 \begin_inset Formula $\mathtt{tryorerror}$
 \end_inset
 
- is called from line 21, it will set a return state, following a standard
- return state from 
-\begin_inset Formula $\mathtt{positive}$
-\end_inset
-
- function.
+ is called from line 21, it sets a return state with 
+\family sans
+Void
+\family default
+ exception state.
  As 
 \begin_inset Formula $Ex$
 \end_inset
@@ -5932,12 +5931,12 @@ At line 3, when
 \family sans
 Void
 \family default
-, 
+, the 
 \begin_inset Formula $\mathtt{catch}$
 \end_inset
 
- primitive operation does not interfere, and proceed to return the value
- of 50.
+ primitive operation does not interfere, and the control flow proceeds to
+ return the value of 50.
 \end_layout
 
 \begin_layout Itemize
@@ -5946,10 +5945,10 @@ When called from line 22, the call to
 \end_inset
 
  function sets an exception state.
- Observe that, during the evaluation of return statement, if the exception
- is set while evaluating returning expression, the control flow does not
- proceed to setting a return state.
- 
+ Observe that, during the evaluation of the return statement, if the exception
+ is set while evaluating the returning expression, the control flow does
+ not proceed to set a return state.
+ the 
 \begin_inset Formula $\mathtt{catch}$
 \end_inset
 
@@ -5964,12 +5963,12 @@ Finally, when the exception throwing function
 \begin_inset Formula $\mathtt{positive}$
 \end_inset
 
- is directly called without graceful wrapper, at line 23, after the function
- the exception state is set to be -50, and 
+ is directly called, at line 23, the exception state is set to be -50, and
+ 
 \begin_inset Formula $\mathtt{catch}$
 \end_inset
 
- primitive operation proceeds to line 25, to print 0 as an output.
+ primitive operation proceeds to line 25, printing 0 to the output.
 \end_layout
 
 \end_deeper
