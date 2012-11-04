@@ -20,7 +20,7 @@ class (State s, Value v) => StateValue s v where
 	dooutput :: v -> s -> [s]
 	getinput :: s -> [(s,v)]
 	val :: s -> String -> v
-	enter :: s -> Sid -> [v] -> v -> s
+	enter :: s -> Sid -> [v] -> v -> [String] -> s
 	leave :: s -> s -> (s, Maybe v)
 	fix :: ((M s v ()) -> (M s v ())) -> M s v ()
 	apply :: v -> [v] -> v -> Eid -> (M s v v)
@@ -32,7 +32,7 @@ class (State s, Value v) => StateValue s v where
 	runthrow :: v -> s -> [s]
 	runcatch :: String -> (M s v ()) -> (M s v ())
 data M s v a where
-	M :: (State s, Value v) => ((Sid -> (M s v ())) -> s -> [(s,Maybe a)]) -> M s v a
+	M :: (State s, Value v) => ((Sid -> (AStmt, (M s v ()))) -> s -> [(s,Maybe a)]) -> M s v a
 
 --data (State s) => M s a = M (F s -> s -> [(s,Maybe a)])
 
@@ -90,7 +90,7 @@ sstmt (AStmt (While e1 s1) sid) = fix $ \x -> do
 sstmt (AStmt (Output e1) sid) = do
 	v <- sexpr e1
 	liftS $ dooutput v
-sstmt (AStmt (Function id1 ids (AStmt _ s1)) sid) = liftS $ fundecl id1 ids s1
+sstmt (AStmt (Function id1 ids (AStmt _ s1)) sid) = liftS $ fundecl id1 ids sid
 sstmt (AStmt (Asg (Ref e1 id1) e2) sid) = do
 	r <- sexpr e1
 	v <- sexpr e2
@@ -141,14 +141,20 @@ slexpr (Id id1) = do
 slexpr (Ref e1 id1) = do
 	v <- sexpr e1
 	liftV $ get v id1
-putState :: (StateValue s v) => s -> (M s v ())
-putState s = M $ \f -> \s0 -> [(s,Just ())]
+--putState :: (StateValue s v) => s -> (M s v ())
+--putState s = M $ \f -> \s0 -> [(s,Just ())]
 
-getFunc :: (StateValue s v) => M s v (Sid -> (M s v ()))
-getFunc = M $ \f -> \s -> [(s, Just f)]
+--getFunc :: (StateValue s v) => M s v (Sid -> (M s v ()))
+--getFunc = M $ \f -> \s -> [(s, Just f)]
 
 call :: (StateValue s v) => Sid -> [v] -> v -> (M s v v)
-call n p t = M $ \f -> \s0 -> [leave s0 s | (s,_) <- let M x = (f n) in x f (enter s0 n p t) ]
+call n p t = M $ \f -> \s0 -> [leave s0 s | (s,_) <- let (AStmt (Function _ ids _) _, M x) = (f n) in x f (enter s0 n p t ids) ]
 
-runMonad :: (StateValue s v) => (M s v a) -> (Sid -> (M s v ())) -> s -> v -> [s]
-runMonad (M t) = \f -> \s0 -> \_ -> (Prelude.map) fst (t f s0)
+runMonad :: (StateValue s v) => AStmt -> (Sid -> (AStmt, (M s v ()))) -> s -> v -> [s]
+runMonad mainStmt = \f -> \s0 -> \_ -> let M t = sstmt mainStmt in (Prelude.map) fst (t f s0)
+
+params :: (Sid -> (AStmt, (M s v ()))) -> Sid -> [String]
+params f sid = let ((AStmt (Function _ ids _) _), _) = (f sid) in ids
+
+arity :: (Sid -> (AStmt, (M s v ()))) -> Sid -> Int
+arity f sid = length (params f sid)

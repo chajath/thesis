@@ -49,8 +49,7 @@ data CState = CState{
 		objmem :: Map Int (Map String CValue),
 		returning :: Maybe CValue,
 		exception :: Maybe CValue,
-		this :: CValue,
-		functions :: Map Sid [String]
+		this :: CValue
 	} deriving (Show)
 
 instance Eq CState where
@@ -65,8 +64,7 @@ instance State (CState) where
 	
 	--fundecl :: String -> [String] -> Sid -> s -> [s]
 	fundecl fnname fnparams n s = 
-		[s {functions = insert n fnparams (functions s), 
-		    env = insert fnname (FunPointer n []) (env s) }]
+		[s {env = insert fnname (FunPointer n []) (env s) }]
 instance StateValue CState CValue where
 	ret v s = trace (show s) $ [s {returning = Just v}]
 
@@ -94,9 +92,7 @@ instance StateValue CState CValue where
 	val s i = (env s) ! i
 
 	--enter :: (CValue v) => s -> Sid -> [v] -> s
-	enter s n vs t = 
-		let params = (functions s) ! n
-		in s {env = fromList (zip params vs), this = t}
+	enter s n vs t ids = s {env = fromList (zip ids vs), this = t}
 
 	--leave :: (CValue v) => s -> s -> (s, Maybe v)
 	leave s0 s = trace (show s) $ 
@@ -104,14 +100,13 @@ instance StateValue CState CValue where
 			     returning = Nothing,
 			     exception = (exception s),
 			     objmem = (objmem s),
-			     this = (this s0),
-			     functions = (functions s)}, (returning s))
+			     this = (this s0)}, (returning s))
 
 	fix x = x (fix x)
 
 	apply (FunPointer n c) p t _ =
 		M $ \f -> \s -> 
-			if length ((functions s) ! n) == (length (c ++ p)) 
+			if (arity f n) == (length (c ++ p)) 
 				then let (M tcall) = call n (c ++ p) t in (tcall f s)
 				else [(s, Just (FunPointer n (c++p)))]
 
@@ -146,21 +141,21 @@ putWorld s' = IO (\_ -> (# toState s', () #))
 -}
 
 
-fun :: (StateValue s v) => (Map Int AStmt) -> Int -> (M s v ())
+fun :: (StateValue s v) => (Map Int AStmt) -> Int -> (AStmt, (M s v ()))
 fun sidMap sid = trace ("call sid " ++ (show sid)) $ 
-	let Just fbody = Data.Map.lookup sid sidMap in 
-	sstmt fbody
+	let Just astmt = Data.Map.lookup sid sidMap
+	    (AStmt (Function _ _ fbody) _) = astmt in (astmt, sstmt fbody)
 
 runConcrete :: SdtlProgram -> IO ()
-runConcrete (SdtlProgram (AStmt _ mainSid) sdtlMap) = do
+runConcrete (SdtlProgram mainStmt sdtlMap) = do
 	--putStrLn $ show mainSid
 	putStrLn $ show sdtlMap
 	--w <- getWorld
 	let [endState] = 
-		runMonad (fun sdtlMap mainSid) 
+		runMonad mainStmt
 				 (fun sdtlMap)
-		         (CState {env = fromList [], {-io = w, -} returning = Nothing, exception = Nothing,
-		         		  functions = fromList [], objmem = fromList [(0, fromList [])], this = (Object 0)}) 
+		         (CState {env = fromList [], {-io = w, -} returning = Nothing, exception = Nothing, 
+		         		  objmem = fromList [(0, fromList [])], this = (Object 0)}) 
 		         (Intval 0)
 		in do
 		--putWorld (io endState)

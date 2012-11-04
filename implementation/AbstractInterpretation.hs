@@ -34,7 +34,6 @@ data AState = AState{
         env :: Map String AValue,
         returning :: Maybe AValue,
         exception :: Maybe AValue,
-        functions :: Map Sid [String],
         objmem :: Map Eid (Map String AValue),
         this :: AValue,
         curried :: Map (Sid, Int, Eid) [AValue]
@@ -49,8 +48,7 @@ instance State (AState) where
     
     --fundecl :: String -> [String] -> Sid -> s -> [s]
     fundecl fnname fnparams n s = 
-        [s {functions = insert n fnparams (functions s), 
-            env = insert fnname (FunPointer n 0 0) (env s) }]
+        [s {env = insert fnname (FunPointer n 0 0) (env s) }]
 
 y x = x (y x)
 mapToMonad m = M $ \f -> \s -> if member s m then (m ! s) else [(s, Just ())]
@@ -93,14 +91,11 @@ instance StateValue AState AValue where
     val s i = (env s) ! i
 
     --enter :: (CValue v) => s -> Sid -> [v] -> s
-    enter s n vs t = 
-        let params = (functions s) ! n
-        in s {env = fromList (zip params vs), this = t}
+    enter s n vs t ids = s {env = fromList (zip ids vs), this = t}
 
     --leave :: (CValue v) => s -> s -> (s, Maybe v)
     leave s0 s = trace (show s) $ 
         (AState {env = (env s0), returning = Nothing, exception = (exception s), 
-                 functions = (functions s), 
                 curried = (curried s),
                 objmem = (objmem s),
                 this = (this s0)}, (returning s))
@@ -108,7 +103,7 @@ instance StateValue AState AValue where
     apply (FunPointer n c ce) p t e =
         M $ \f -> \s ->
             let cv=if c > 0 then ((curried s) ! (n, c, ce)) else [] in
-                if length ((functions s) ! n) == c + (length p) 
+                if (arity f n) == c + (length p) 
                     then let (M tcall) = (call n (cv ++ p) t) in (tcall f s)
                     else 
                         [(s {curried = insert (n, (c + length p), e)  (cv ++ p) (curried s)}
@@ -141,12 +136,13 @@ putWorld :: RealWorld -> IO ()
 putWorld s' = IO (\_ -> (# toState s', () #))
 -}
 
-
-fun :: (Map Int AStmt) -> (Map (Int,AState) [(AState, Maybe ())]) -> Int -> (M AState AValue ())
+fun :: (Map Int AStmt) -> (Map (Int,AState) [(AState, Maybe ())]) -> Int -> (AStmt, (M AState AValue ()))
 fun sidMap fapprox sid = trace ("call sid " ++ (show sid)) $ 
-    let Just fbody = Data.Map.lookup sid sidMap in 
-    (M $ \f -> \s -> 
-            if member (sid, s) fapprox then fapprox ! (sid, s)
+    let Just astmt = Data.Map.lookup sid sidMap
+        (AStmt (Function _ _ fbody) _) = traceShow astmt $ astmt in
+    (astmt,
+        (M $ \f -> \s -> 
+                if member (sid, s) fapprox then fapprox ! (sid, s)
                 else  
                 (y $ \localx -> \prevresult ->
                     let 
@@ -155,20 +151,19 @@ fun sidMap fapprox sid = trace ("call sid " ++ (show sid)) $
                         result = t (fun sidMap newapprox) s
                     in
                         if result == prevresult then result
-                        else localx result) [])
+                        else localx result) []))
 
 runAbstract :: SdtlProgram -> IO ()
-runAbstract (SdtlProgram (AStmt _ mainSid) sdtlMap) = do
+runAbstract (SdtlProgram mainStmt sdtlMap) = do
     --putStrLn $ show mainSid
     putStrLn $ show sdtlMap
     --w <- getWorld
     let endStates = 
-            runMonad (fun sdtlMap (fromList []) mainSid) 
+            runMonad mainStmt
                      (fun sdtlMap (fromList []))
                      (AState {env = fromList [], 
                               returning = Nothing,
                               exception = Nothing,
-                              functions = fromList [], 
                               curried = fromList [],
                               objmem = fromList [(0, fromList [])],
                               this = (Object 0)}) 
