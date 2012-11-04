@@ -188,7 +188,7 @@ Programming language semantics is a sub-field within theoretical computer
  Operational semantics formalise mechanical steps that transform program
  states given a particular program.
  As we shall argue in this thesis, the challenge of analysing dynamic languages,
- in both concrete and abstract manner, necessitates a semantics that bridge
+ in both concrete and abstract manner, necessitates a semantics that bridges
  the gap between the two different semantics in order for such task to be
  feasible.
 \end_layout
@@ -270,7 +270,7 @@ Lack of static type structure has a significant impact on the performance
 With these problems in mind, we have designed a model language that has
  a dynamism comparable to that of the aforementioned scripting languages,
  such as duck typing, reflection, and partial function application.
- A notable omission is a closure scoping.
+ A notable omission is closure scoping.
  However, allowing function currying gives expressive power to the language
  comparable to that of languages with closure or lexical scoping.
 \end_layout
@@ -280,11 +280,11 @@ The two concerns are not distinct ones, but an interconnected dialectic.
  The theoretical need is there because of the difficulty of describing the
  abstract and concrete meaning of dynamic languages, which often allow side-effe
 ct causing, type-altering functions.
- With such complexity, duck-typed languages are interesting test cases to
+ With such complexity, duck-typed languages are interesting test cases for
  which we formulate concrete semantics, abstract interpretation and the
  proof of correctness.
  Our Haskell implementation of both concrete and abstract analysis, appearing
- in the appendix to this thesis, illustrates practicality of the proposed
+ in the appendix to this thesis, illustrates the practicality of the proposed
  programming language semantics.
 \end_layout
 
@@ -292,7 +292,20 @@ ct causing, type-altering functions.
 This work is inspired by Haskell's use of monads, and we assume the reader's
  familiarity with monadic style Haskell programming.
  We also assume the knowledge of denotational semantics, partial ordering
- and fixed point combinator.
+ and the fixed point combinator.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+Describe remaining sections of paper.
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Section
@@ -481,15 +494,19 @@ How do we interpret such semantic operations in a particular point of view?
 
 \begin_layout Standard
 Observe that an interpretation of syntactic structure can remain agnostic
- of the view of a program state at a given point.
+ of the structure of a program state at a given point.
  Therefore, once we remove the actual interpretation of primitive operations,
  what remains in a semantics can be re-used for multiple interpretations
  of the language.
  Hence, not only are the primitive operations parametrised, but so is the
  whole definition of the domain of the program state.
- Now we give a formal definition of our framework.
  Such a separation of concerns also helps to define an extensible semantics,
  to which adding a new feature takes as little effort as possible.
+ 
+\end_layout
+
+\begin_layout Standard
+Now we give a formal definition of our framework.
 \end_layout
 
 \begin_layout Definition
@@ -536,6 +553,21 @@ Parametric semantics
  is ordered by identity.
 \end_layout
 
+\begin_layout Definition
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+Give the types for all these functions.
+ Also list the types that must be specified to specify the semantics, like
+ Value.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
 \begin_layout Standard
 Throughout the analysis, these primitive operations are the parameters of
  our analysis:
@@ -568,14 +600,14 @@ s (one for true and another for false) are given
 \begin_inset Formula $\mathtt{val}$
 \end_inset
 
- takes an identifier and produces its value
+ takes an identifier and produces its meaning
 \end_layout
 
 \begin_layout Itemize
 \begin_inset Formula $\mathtt{conval}$
 \end_inset
 
- takes a constant and produces its value
+ takes a constant and produces its meaning
 \end_layout
 
 \begin_layout Itemize
@@ -637,7 +669,7 @@ s (one for true and another for false) are given
 \begin_inset Formula $\mathtt{getthis}$
 \end_inset
 
- define the meaning of keywords 
+ define the meanings of keywords 
 \begin_inset Formula $\mathtt{global}$
 \end_inset
 
@@ -666,7 +698,21 @@ reference "fig:Example-sdtl"
 
 \end_inset
 
- is an example of a program written in the model language:
+ is an example of a program written in the model language.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+explain in some detail what the code in Figure 3.1 does, to give an intuition
+ about the language.
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -1246,6 +1292,21 @@ Given monads
 .
 \end_layout
 
+\begin_layout Proof
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+The proof is too terse.
+ I have trouble parsing it.
+ What do the commas mean?
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
 \begin_layout Standard
 Having a monadic structure helps provide modularity.
  For example, if a particular parametrised operation takes a state but only
@@ -1488,7 +1549,7 @@ When
 \begin_inset Formula $State$
 \end_inset
 
- record, the functions defined here have the following type signature:
+ record, the functions defined here have the following type signatures:
 \end_layout
 
 \begin_layout Definition
@@ -1498,6 +1559,21 @@ When
 \Psi & : & \left(c\rightarrow c\times a\right)\rightarrow\left(r\rightarrow r\times a\right)\\
 \Theta & : & \left(c\rightarrow a\right)\rightarrow\left(r\rightarrow a\right)
 \end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Definition
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+an example of P, J, and whatever that greek letter is would be good.
+ The idea is simple enough, but the notation used to define them, particularly
+ the relationship between the as and the cs is pretty unclear.
+\end_layout
 
 \end_inset
 
@@ -1582,7 +1658,7 @@ We use syntax nodes as references to various items constituting program
 \begin_inset Formula $Stm$
 \end_inset
 
- is a set of statement nodes.
+ is the set of statement nodes.
 \end_layout
 
 \begin_layout Labeling
@@ -1590,7 +1666,7 @@ We use syntax nodes as references to various items constituting program
 \begin_inset Formula $Exp$
 \end_inset
 
- is a set of expression nodes.
+ is the set of expression nodes.
 \end_layout
 
 \begin_layout Labeling
@@ -1598,7 +1674,7 @@ We use syntax nodes as references to various items constituting program
 \begin_inset Formula $Lexp$
 \end_inset
 
- is a set of left-expression nodes.
+ is the set of left-expression nodes.
 \end_layout
 
 \begin_layout Labeling
@@ -1606,7 +1682,7 @@ We use syntax nodes as references to various items constituting program
 \begin_inset Formula $Sid$
 \end_inset
 
- is a set of statement identifiers.
+ is the set of statement identifiers.
 \end_layout
 
 \begin_layout Labeling
@@ -1614,7 +1690,7 @@ We use syntax nodes as references to various items constituting program
 \begin_inset Formula $Eid$
 \end_inset
 
- is a set of expression identifiers.
+ is the set of expression identifiers.
 \end_layout
 
 \begin_layout Labeling
@@ -1622,12 +1698,37 @@ We use syntax nodes as references to various items constituting program
 \begin_inset Formula $Id$
 \end_inset
 
- is a set of alphanumeric identifiers.
+ is the set of alphanumeric identifiers.
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+explain what Statement, expression, and alphanumeric identifiers are.
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
 We define following auxiliary functions to describe the use of the augmented
  values.
+ 
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+What "augmented values"? Unclear what you mean.
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -1637,6 +1738,21 @@ We define following auxiliary functions to describe the use of the augmented
 \mathtt{param} & : & Sid\rightarrow\left[Id\right]\\
 \mathtt{arity} & : & Sid\rightarrow\mathbb{N}\cup\left\{ 0\right\} 
 \end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+How is that possible? A Sid doesn't hold the information necessary to map
+ it to a Stm.
+ Similarly for the other 2 functions.
+\end_layout
 
 \end_inset
 
@@ -1947,7 +2063,7 @@ ad hoc
 \emph default
  whenever such variables appear as a left expression to assignment statements.
  Function declarations are statements themselves, which allow them to appear
- any where in the program.
+ anywhere in the program.
 \end_layout
 
 \begin_layout Standard
@@ -2109,6 +2225,21 @@ reference "semantic"
 \end_layout
 
 \begin_layout Standard
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+give the type of call first.
+ Also, somewhere explain that [Type] means the set of sequences of any number
+ of values of type Type.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
 \mathtt{call}\left(n,p\right) & = & \lambda f\lambda\rho.\left\{ \mathtt{leave}\ \rho\ \rho'\mid\rho'\in S\right\} \ \mbox{where}\ S=f\ n\ \left(\mathtt{enter}\ \rho\ p\right)
@@ -2181,7 +2312,7 @@ status open
  & \mathcal{S}\dd{E} & = & \mathcal{E}\ \dd{E}\bind\lambda\_.I_{A}\bot\\
  & \mathcal{S}\dd{\mathtt{return}\ E} & = & \mathcal{E}\ \dd{E}\bind\lambda v.I_{S}\ \mathtt{ret}\left(V\right)\\
  & \mathcal{S}\dd{\mathtt{if}\left(E\right)\ S_{1}} & = & \mathcal{E}\ \dd{E}\bind\lambda v.\mathtt{cond}\left(v,\mathcal{S}\ \dd{S_{1}},I_{A}\bot\right)\\
- & \mathcal{S}\dd{\mathtt{if}\left(E\right)\ S_{1}\ \mathtt{else}\ S_{2}} & = & \mathcal{E}\ \dd{E}\bind\lambda v.\mathtt{cond}\left(v,\mathcal{S}\ \dd{S_{1}},\mathcal{S}\ \dd{S_{1}}\right)\\
+ & \mathcal{S}\dd{\mathtt{if}\left(E\right)\ S_{1}\ \mathtt{else}\ S_{2}} & = & \mathcal{E}\ \dd{E}\bind\lambda v.\mathtt{cond}\left(v,\mathcal{S}\ \dd{S_{1}},\mathcal{S}\ \dd{S_{2}}\right)\\
  & \mathcal{S}\dd{id=E} & = & \begin{aligned}\mathcal{E}\ \dd{E} & \bind\lambda v.I_{S}\ \mathtt{asg}\left(id,v\right)\end{aligned}
 \\
  & \mathcal{S}\dd{\mathtt{while}\left(E\right)\ S_{1}} & = & Y\lambda x.\lambda f\lambda r.\left(\begin{aligned}\mathcal{E}\ \dd{E}\bind\lambda v.\mathtt{cond}\left(\begin{gathered}v,\left(\mathcal{S}\ \dd{S_{1}}\right)\bind\lambda\_.x,I_{A}\bot\end{gathered}
@@ -2192,7 +2323,7 @@ status open
  & \mathcal{E}\dd{con} & = & I_{A}\ \mathtt{conval}\left(con\right)\\
  & \mathcal{E}\dd{L} & = & \mathcal{L}\ \dd{L}\\
  & \mathcal{E}\dd{\mathtt{input}} & = & I_{V}\ \mathtt{getinput}\\
- & \mathcal{E}\dd{L\left(\vec{E}\right)} & = & \mathcal{L}\ \dd L\bind\lambda n.\left(\mathtt{evalParams}\ \vec{E}\ \phi\right)\bind\lambda p.\mathtt{call}\left(n,p\right)\\
+ & \mathcal{E}\dd{L\left(\vec{E}\right)} & = & \mathcal{L}\ \dd L\bind\lambda n.\left(\mathtt{evalParams}\ \vec{E}\ \emptyset\right)\bind\lambda p.\mathtt{call}\left(n,p\right)\\
  & \mathcal{E}\dd{E_{1}\ binop\ E_{2}} & = & \mathcal{E}\ \dd{E_{1}}\bind\lambda c_{1}.\mathcal{E}\ \dd{E_{2}}\bind\lambda c_{2}.I_{A}\ \mathtt{bin}\left(binop,c_{1},c_{2}\right)\\
  & \mathcal{L}\dd{Id} & = & I_{A}\ \mathtt{val}\left(Id\right)
 \end{align*}
@@ -2255,10 +2386,10 @@ Domain
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-Value & = & \mathbb{Z}\cup\left\{ true,false\right\} \cup\: FunPointer\\
 FunPointer & = & Sid\\
+Value & = & \mathbb{Z}\cup\left\{ \mathsf{true},\mathsf{false}\right\} \cup\: FunPointer\\
 Env & = & Id\rightarrow Value\\
-Return & = & Value\cup\left\{ Void\right\} \\
+Return & = & Value\cup\left\{ \mathsf{Void}\right\} \\
 CState & = & Env\times IO\times Return
 \end{eqnarray*}
 
@@ -2268,22 +2399,17 @@ CState & = & Env\times IO\times Return
 \end_layout
 
 \begin_layout Standard
-where 
-\begin_inset Formula $n$
+\begin_inset Formula $CState$
 \end_inset
 
- is a function identifier.
-\end_layout
-
-\begin_layout Standard
-Concrete state is a Cartesian product of environment, IO state and a return
+ is a Cartesian product of environment, input/output state and a return
  value.
  The return value is set to be a value when a function is returning any
  value inside a function body.
  This has been incorporated as a part of a program state so that we can
  signal escaping from a program flow.
  The initial program state is 
-\begin_inset Formula $\left\langle \emptyset,io,Void\right\rangle ,$
+\begin_inset Formula $\left\langle \emptyset,io,\mathsf{Void}\right\rangle ,$
 \end_inset
 
  where 
@@ -2293,6 +2419,20 @@ Concrete state is a Cartesian product of environment, IO state and a return
  is an initial IO state.
 \end_layout
 
+\begin_layout Standard
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+shouldn't "enter" and "leave" been listed as domain parameters in the big
+ list on page 4?
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
 \begin_layout Paragraph
 Functions
 \end_layout
@@ -2300,8 +2440,8 @@ Functions
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-\mathtt{enter} & = & \lambda\left\langle \_,IO,\_\right\rangle ,P,n.\left\langle \left[\mathtt{param}\left(n\right)_{k}\mapsto P_{k}\right],IO,Void\right\rangle \\
-\mathtt{leave} & = & \lambda\left\langle V,\_,\_\right\rangle ,\left\langle \_,IO',R\right\rangle .\left\langle \left\langle V,IO',Void\right\rangle ,R\right\rangle 
+\mathtt{enter} & = & \lambda\left\langle \_,IO,\_\right\rangle ,P,n.\left\langle \left[\mathtt{param}\left(n\right)_{k}\mapsto P_{k}\right],IO,\mathsf{Void}\right\rangle \\
+\mathtt{leave} & = & \lambda\left\langle V,\_,\_\right\rangle ,\left\langle \_,IO',R\right\rangle .\left\langle \left\langle V,IO',\mathsf{Void}\right\rangle ,R\right\rangle 
 \end{eqnarray*}
 
 \end_inset
@@ -2312,19 +2452,19 @@ Functions
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-\mathtt{esc} & = & \bar{\Theta}_{Return}\ \left(\lambda R.\left(R=Void\right)\right)\\
+\mathtt{esc} & = & \bar{\Theta}_{Return}\ \left(\lambda R.\left(R\neq\mathsf{Void}\right)\right)\\
 \mathtt{cond}\left(v,s_{1},s_{2}\right) & = & \begin{cases}
-s_{1} & \mbox{if}\ v=true\\
-s_{2} & \mbox{if}\ v=false
+s_{1} & \mbox{if}\ v=\mathsf{true}\\
+s_{2} & \mbox{if}\ v=\mathsf{\mathsf{false}}
 \end{cases}\\
 \mathtt{asg}\left(id,v\right) & = & \bar{\Upsilon}_{Env}\ \left(\lambda V.V\left[id\mapsto v\right]\right)\\
 \mathtt{val}\left(id\right) & = & \bar{\Upsilon}_{Env}\ \left(\lambda V.V\left(id\right)\right)\\
 \mathtt{conval}\left(con\right) & = & \left\{ con\right\} \\
-\mathtt{getinput\left(\rho\right)} & = & \bar{\Psi}_{IO}\ \lambda O.\left\langle O',z\in\mathbb{N}\right\rangle \ \mbox{see note}\\
+\mathtt{getinput\left(\rho\right)} & = & \bar{\Psi}_{IO}\ \lambda O.\left\langle O',\mbox{user input integer}\right\rangle \ \mbox{see note}\\
 \mathtt{dooutput}\left(v\right) & = & \bar{\Upsilon}_{IO}\ \lambda O.O'\ \mbox{see note}\\
 \mathtt{fundecl}(id,n) & = & \bar{\Upsilon}_{Env}\ \left(\lambda V.V\left[id\mapsto n\right]\right)\\
 \mathtt{ret}\left(v\right) & = & \bar{\Upsilon}_{Return}\ \left(\lambda R.v\right)\\
-\mathtt{bin}\left(op,c_{1},c_{2}\right) & = & \mbox{perform binary operation }\mbox{between two constants}
+\mathtt{bin}\left(op,c_{1},c_{2}\right) & = & c_{1}\ op\ c_{2}\ \mbox{(perform binary operation between two constants)}
 \end{eqnarray*}
 
 \end_inset
@@ -2365,7 +2505,7 @@ At line 1,
 \end_inset
 
  updates environment to be 
-\begin_inset Formula $\left[\mathtt{fact}\mapsto Function\ 1\right]$
+\begin_inset Formula $\left[\mathtt{fact}\mapsto\mathsf{Function}\ 1\right]$
 \end_inset
 
  assuming the function declaration has a unique ID of 1.
@@ -2383,12 +2523,12 @@ At line 5,
 \end_inset
 
  gives 
-\begin_inset Formula $\left[\left(Function\ 1\right),2\right]$
+\begin_inset Formula $\left[\left(\mathsf{Function}\ 1\right),2\right]$
 \end_inset
 
 .
  In a function call 
-\begin_inset Formula $\mathtt{call}\left(1,\left[\left(Function\ 1\right),2\right]\right)$
+\begin_inset Formula $\mathtt{call}\left(1,\left[\left(\mathsf{Function}\ 1\right),2\right]\right)$
 \end_inset
 
 , we first construct the initial state of a function call.
@@ -2397,7 +2537,7 @@ At line 5,
 \end_inset
 
  gives 
-\begin_inset Formula $\left\langle \left[\mathtt{f}\mapsto\left(Function\ 1\right),\mathtt{n}\mapsto2\right],IO,Void\right\rangle $
+\begin_inset Formula $\left\langle \left[\mathtt{f}\mapsto\left(\mathsf{Function}\ 1\right),\mathtt{n}\mapsto2\right],IO,Void\right\rangle $
 \end_inset
 
 .
@@ -2414,7 +2554,7 @@ At line 2, evaluating expression
 \end_inset
 
  invokes another function call, with initial state 
-\begin_inset Formula $\left\langle \left[\mathtt{f}\mapsto\left(Function\ 1\right),\mathtt{n}\mapsto1\right],IO,Void\right\rangle $
+\begin_inset Formula $\left\langle \left[\mathtt{f}\mapsto\left(\mathsf{Function}\ 1\right),\mathtt{n}\mapsto1\right],IO,Void\right\rangle $
 \end_inset
 
 .
@@ -2439,7 +2579,7 @@ fact(f,1)
 \end_inset
 
  which gives final state of 
-\begin_inset Formula $\left\langle \left[\mathtt{f}\mapsto\left(Function\ 1\right),\mathtt{n}\mapsto1\right],IO,1\right\rangle $
+\begin_inset Formula $\left\langle \left[\mathtt{f}\mapsto\left(\mathsf{Function}\ 1\right),\mathtt{n}\mapsto1\right],IO,1\right\rangle $
 \end_inset
 
 .
@@ -2468,7 +2608,7 @@ At line 5, after the function call
 \end_inset
 
  gives 
-\begin_inset Formula $\left\langle \left[\mathtt{fact}\mapsto Function\ 1\right],IO,Void\right\rangle $
+\begin_inset Formula $\left\langle \left[\mathtt{fact}\mapsto\mathsf{Function}\ 1\right],IO,\mathsf{Void}\right\rangle $
 \end_inset
 
  as the final state.
@@ -2520,9 +2660,9 @@ Domain
 \begin_inset Formula 
 \begin{eqnarray*}
 FunPointer & = & Sid\\
-AVal & = & \left\{ Num,Bool\right\} \cup FunPointer\\
+AVal & = & \left\{ \mathsf{Num},\mathsf{Bool}\right\} \cup FunPointer\\
 AEnv & = & Id\rightarrow AVal\\
-AReturn & = & AVal\cup\left\{ Void\right\} \\
+AReturn & = & AVal\cup\left\{ \mathsf{Void}\right\} \\
 AState & = & AEnv\times AReturn
 \end{eqnarray*}
 
@@ -2541,7 +2681,7 @@ Composition of an abstract domain is similar to that of the concrete counterpart
  is an undetermined value, which is used to approximate unknown function
  calls at an initial stage.
  The initial program state is 
-\begin_inset Formula $\left\langle \emptyset,Void\right\rangle $
+\begin_inset Formula $\left\langle \emptyset,\mathsf{Void}\right\rangle $
 \end_inset
 
 .
@@ -2554,8 +2694,8 @@ Functions
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-\mathtt{enter} & = & \lambda\left\langle \_,\_\right\rangle ,P,n.\left\langle \left[\mathtt{param}\left(n\right)_{k}\mapsto P_{k}\right],Void\right\rangle \\
-\mathtt{leave} & = & \lambda\left\langle V,\_\right\rangle ,\left\langle \_,R\right\rangle .\left\langle \left\langle V,Void\right\rangle ,R\right\rangle 
+\mathtt{enter} & = & \lambda\left\langle \_,\_\right\rangle ,P,n.\left\langle \left[\mathtt{param}\left(n\right)_{k}\mapsto P_{k}\right],\mathsf{Void}\right\rangle \\
+\mathtt{leave} & = & \lambda\left\langle V,\_\right\rangle ,\left\langle \_,R\right\rangle .\left\langle \left\langle V,\mathsf{Void}\right\rangle ,R\right\rangle 
 \end{eqnarray*}
 
 \end_inset
@@ -2566,21 +2706,21 @@ Functions
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-\mathtt{esc} & = & \bar{\Theta}_{AReturn}\ \left(\lambda R.\left(R=Void\right)\right)\\
+\mathtt{esc} & = & \bar{\Theta}_{AReturn}\ \left(\lambda R.\left(R\neq\mathsf{Void}\right)\right)\\
 \mathtt{cond}\left(v,s_{1},s_{2}\right) & = & \lambda f\lambda\eta.\left(s_{1}\ f\ \eta\right)\cup\left(s_{2}\ f\ \eta\right)\\
 \mathtt{asg}\left(id,v\right) & = & \bar{\Upsilon}_{AEnv}\ \left(\lambda\sigma.\sigma\left[id=v\right]\right)\\
 \mathtt{val}\left(id,v\right) & = & \bar{\Upsilon}_{AEnv}\ \left(\lambda\sigma.\sigma\left(id\right)\right)\\
 \mathtt{conval}\left(con\right) & = & \begin{cases}
-\Gamma\ Num & \mbox{if}\ con\in\mathbb{N}\\
-\Gamma\ Bool & \mbox{if}\ con\in\mathbb{B}
+\Gamma\ \mathsf{Num} & \mbox{if}\ con\in\mathbb{N}\\
+\Gamma\ \mathsf{Bool} & \mbox{if}\ con\in\mathbb{B}
 \end{cases}\\
-\mathtt{getinput} & = & \Gamma\ \left(\lambda\eta.\left\langle \eta,Num\right\rangle \right)\\
+\mathtt{getinput} & = & \Gamma\ \left(\lambda\eta.\left\langle \eta,\mathsf{Num}\right\rangle \right)\\
 \mathtt{dooutput}\left(v\right) & = & \Gamma\ \left(\lambda\eta.\eta\right)\\
 \mathtt{fundecl}\left(id,n\right) & = & \bar{\Upsilon}_{AEnv}\ \left(\lambda\sigma.\sigma\left[id\mapsto n\right]\right)\\
 \mathtt{ret}\left(v\right) & = & \bar{\Upsilon}_{AReturn}\ \left(\lambda R:AReturn.v\right)\\
 \mathtt{bin}\left(op,c_{1},c_{2}\right) & = & \begin{cases}
-\Gamma\ Num & \mbox{if}\ op\in{\scriptstyle \left\{ +,-,*,/\right\} }\\
-\Gamma\ Bool & \mbox{otherwise}
+\Gamma\ \mathsf{Num} & \mbox{if}\ op\in{\scriptstyle \left\{ +,-,*,/\right\} }\\
+\Gamma\ \mathsf{Bool} & \mbox{otherwise}
 \end{cases}
 \end{eqnarray*}
 
@@ -2626,7 +2766,7 @@ At line 1,
 \end_inset
 
  updates environment to be 
-\begin_inset Formula $\left[\mathtt{fact}\mapsto Function\ 1\right]$
+\begin_inset Formula $\left[\mathtt{fact}\mapsto\mathsf{Function}\ 1\right]$
 \end_inset
 
  assuming the function declaration has a unique ID of 1.
@@ -2638,7 +2778,7 @@ At line 5,
 \end_inset
 
  gives an abstract value 
-\begin_inset Formula $Num$
+\begin_inset Formula $\mathsf{Num}$
 \end_inset
 
 .
@@ -2647,12 +2787,12 @@ At line 5,
 \end_inset
 
  gives 
-\begin_inset Formula $\left[\left(Function\ 1\right),Num\right]$
+\begin_inset Formula $\left[\left(\mathsf{Function}\ 1\right),\mathsf{Num}\right]$
 \end_inset
 
 .
- In a function call
-\begin_inset Formula $\mathtt{call}\left(1,\left[\left(Function\ 1\right),Num\right]\right)$
+ In a function call 
+\begin_inset Formula $\mathtt{call}\left(1,\left[\left(\mathsf{Function}\ 1\right),\mathsf{Num}\right]\right)$
 \end_inset
 
 , we first construct initial state of a function call.
@@ -2661,17 +2801,21 @@ At line 5,
 \end_inset
 
  gives 
-\begin_inset Formula $\left\langle \left[\mathtt{f}\mapsto\left(Function\ 1\right),\mathtt{n}\mapsto Num\right],IO,Void\right\rangle $
+\begin_inset Formula 
+\[
+\left\langle \left[\mathtt{f}\mapsto\left(\mathsf{Function}\ 1\right),\mathtt{n}\mapsto\mathsf{Num}\right],IO,\mathsf{Void}\right\rangle 
+\]
+
 \end_inset
 
-.
+
 \end_layout
 
 \begin_layout Itemize
 The meaning of this function call is determined via a fixed point iteration
- by progressively updating current approximation of the meaning of the function
- call, starting from a null hypothesis that the function call does not return
- any state.
+ by progressively updating the current approximation of the meaning of the
+ function call, starting from a null hypothesis that the function call does
+ not return any state.
 \end_layout
 
 \begin_layout Standard
@@ -2727,7 +2871,7 @@ Note
 \begin_inset Text
 
 \begin_layout Plain Layout
-\begin_inset Formula $\left\{ \left\langle \left[\mathtt{fact}\mapsto\left(Function\ 1\right)\right],Num\right\rangle \right\} $
+\begin_inset Formula $\left\{ \left\langle \left[\mathtt{fact}\mapsto\left(\mathsf{Function}\ 1\right)\right],\mathsf{Num}\right\rangle \right\} $
 \end_inset
 
 
@@ -2750,7 +2894,7 @@ Note
 \begin_inset Text
 
 \begin_layout Plain Layout
-\begin_inset Formula $\left\{ \left\langle \left[\mathtt{fact}\mapsto\left(Function\ 1\right)\right],Num\right\rangle \right\} $
+\begin_inset Formula $\left\{ \left\langle \left[\mathtt{fact}\mapsto\left(\mathsf{Function}\ 1\right)\right],\mathsf{Num}\right\rangle \right\} $
 \end_inset
 
 
@@ -2762,7 +2906,7 @@ Note
 \begin_inset Text
 
 \begin_layout Plain Layout
-\begin_inset Formula $\left\{ \left\langle \left[\mathtt{fact}\mapsto\left(Function\ 1\right)\right],Num\right\rangle \right\} $
+\begin_inset Formula $\left\{ \left\langle \left[\mathtt{fact}\mapsto\left(\mathsf{Function}\ 1\right)\right],\mathsf{Num}\right\rangle \right\} $
 \end_inset
 
 
@@ -2806,7 +2950,7 @@ reference "sub:Abstract-interpretation"
 \begin_deeper
 \begin_layout Itemize
 This yields 
-\begin_inset Formula $\left\langle \left[\mathtt{fact}\mapsto\left(Function\ 1\right)\right],Num\right\rangle $
+\begin_inset Formula $\left\langle \left[\mathtt{fact}\mapsto\left(\mathsf{Function}\ 1\right)\right],\mathsf{Num}\right\rangle $
 \end_inset
 
 
@@ -2826,7 +2970,7 @@ After
 \end_inset
 
 , we have the final state of the program: 
-\begin_inset Formula $\left[\mathtt{fact}\mapsto Function\ 1,\mathtt{z}\mapsto Num\right]$
+\begin_inset Formula $\left[\mathtt{fact}\mapsto\mathsf{Function}\ 1,\mathtt{z}\mapsto\mathsf{Num}\right]$
 \end_inset
 
 
@@ -2848,7 +2992,7 @@ Abstract interpretation of a while loop
 
 \begin_layout Example
 The program calculates sum of a sequence.
- For illustration purpose, we have added variable 
+ For the purpose of illustration, we have added variable 
 \begin_inset Formula $\mathtt{x}$
 \end_inset
 
@@ -2916,7 +3060,7 @@ output sum;
 
 \begin_layout Itemize
 At line 4, we have environment 
-\begin_inset Formula $\left[\mathtt{sum}\mapsto Num,\mathtt{z}\mapsto Num,\mathtt{x}\mapsto Num\right]$
+\begin_inset Formula $\left[\mathtt{sum}\mapsto\mathsf{Num},\mathtt{z}\mapsto\mathsf{Num},\mathtt{x}\mapsto\mathsf{Num}\right]$
 \end_inset
 
 .
@@ -3355,7 +3499,11 @@ The introduction of function currying does not change the syntax of the
 \end_layout
 
 \begin_layout Standard
-\begin_inset Formula $\mathcal{E}\de{L\left(\vec{E}\right)}=\mathcal{L}\ \dd{L}\bind\lambda n.\mathtt{evalParams}\ \vec{E}\ \emptyset\bind\lambda p.\mathtt{apply}\left(n,p,e\right)$
+\begin_inset Formula 
+\[
+\mathcal{E}\de{L\left(\vec{E}\right)}=\mathcal{L}\ \dd{L}\bind\lambda n.\mathtt{evalParams}\ \vec{E}\ \emptyset\bind\lambda p.\mathtt{apply}\left(n,p,e\right)
+\]
+
 \end_inset
 
 
@@ -3415,7 +3563,7 @@ Functions
 \begin_inset Formula 
 \begin{eqnarray*}
 \mathtt{apply}\left(\left\langle n,C\right\rangle ,p,\_\right) & = & \begin{cases}
-\mathtt{call}\left(n,C\smallfrown p\right)\  & \mbox{if}\begin{gathered}\: N\left(C\smallfrown p\right)=\mathtt{arity}\left(n\right)\end{gathered}
+\mathtt{call}\left(n,C\smallfrown p\right)\  & \mbox{if}\begin{gathered}\:\mathtt{length}\left(C\smallfrown p\right)=\mathtt{arity}\left(n\right)\end{gathered}
 \\
 \lambda f,\rho.\left\{ \left\langle \rho,\left\langle n,C\smallfrown p\right\rangle \right\rangle \right\} \  & \mbox{otherwise}
 \end{cases}\\
@@ -3635,8 +3783,8 @@ If we naively interpret this program, we would not be able to reach a fixed
 \begin_layout Standard
 A solution to this problem is to have a curried function anchored to a particula
 r language construct.
- In this case, we can use an eid of a currying expression as a point of
- reference (or '0' if not curried).
+ In this case, we can use an eid of a curried expression as a point of reference
+ (or '0' if not curried).
 \end_layout
 
 \begin_layout Paragraph
@@ -3658,7 +3806,19 @@ AState & = & AEnv\times Curried\times AReturn
 
 \begin_layout Standard
 The initial program state is 
-\begin_inset Formula $\left\langle \emptyset,\emptyset,Void\right\rangle $
+\begin_inset Formula $\left\langle \emptyset,\emptyset,\mathsf{Void}\right\rangle $
+\end_inset
+
+
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+Explain 
+\emph on
+Curried
+\end_layout
+
 \end_inset
 
 
@@ -3703,7 +3863,7 @@ status open
 \begin_inset Formula 
 \begin{eqnarray*}
 \mathtt{apply}\left(\left\langle n,c,e\right\rangle ,p,e'\right) & = & \begin{cases}
-\Theta_{Curried}\ \lambda\nu.\underset{C\in\nu\left(n,c,e\right)}{\bigcup}\mathtt{call}\left(n,C\smallfrown p\right)\ \mbox{if }c+N\left(p\right)=\mathtt{{arity}\left(n\right)}\\
+\Theta_{Curried}\ \lambda\nu.\underset{C\in\nu\left(n,c,e\right)}{\bigcup}\mathtt{call}\left(n,C\smallfrown p\right)\ \mbox{if }c+\mathtt{length}\left(p\right)=\mathtt{{arity}\left(n\right)}\\
 \Psi_{Curried}\ \lambda\nu.\underset{C\in\nu\left(n,c,e\right)}{\bigcup}\left\langle \nu\left[\left\langle n,c+N\left(p\right),e'\right\rangle \mapsto\left(C\smallfrown p\right)\right],\left\langle n,c+N\left(p\right),e'\right\rangle \right\rangle \ \mbox{otherwise}
 \end{cases}\\
 \mathtt{fundecl}\left(id,n\right) & = & \bar{\Upsilon}_{AEnv}\ \lambda\sigma.\sigma\left[id\mapsto\left\langle n,0,0\right\rangle \right]
@@ -3753,7 +3913,7 @@ Abstract interpretation of a currying loop
 
 \end_inset
 
- A program shown in example 
+ The program shown in example 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "Currying-loop"
@@ -4127,14 +4287,14 @@ Note that by modelling function calls as an effect on a state, we can readily
 \begin_inset Formula $\mbox{JS}_{0}$
 \end_inset
 
- language (
+ language 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "Anderson:ECOOP2005,Anderson:ENTCS2005"
 
 \end_inset
 
-), mixin creating behaviour is modelled in a functional model language.
+, mixin creating behaviour is modelled in a functional language.
  A similar approach has been taken in the discussion of the 
 \begin_inset Formula $\lambda_{S}$
 \end_inset
@@ -4161,11 +4321,7 @@ Concrete interpretation
 \begin_layout Standard
 We extend the domain to include object memory (where object references are
  mapped to a symbol mapping), and a reference to 
-\begin_inset Quotes eld
-\end_inset
-
-this
-\begin_inset Quotes erd
+\begin_inset Formula $\mathtt{this}$
 \end_inset
 
  object.
@@ -4178,7 +4334,7 @@ Domain
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-Value & = & \mathbb{Z}\cup\left\{ T,F\right\} \cup Object\cup FunPointer\\
+Value & = & \mathbb{Z}\cup\left\{ \mathsf{true},\mathsf{false}\right\} \cup Object\cup FunPointer\\
 Object & = & \mathbb{N}\\
 ObjMem & = & n\rightarrow Env\\
 This & = & Object\\
@@ -4192,7 +4348,7 @@ CState & = & Env\times ObjMem\times This\times Return
 
 \begin_layout Standard
 The initial program state is 
-\begin_inset Formula $\left\langle \emptyset,\left\{ 0\mapsto\emptyset\right\} ,0,Void\right\rangle $
+\begin_inset Formula $\left\langle \emptyset,\left\{ 0\mapsto\emptyset\right\} ,0,\mathsf{Void}\right\rangle $
 \end_inset
 
 .
@@ -4222,8 +4378,8 @@ We redefine
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-\mathtt{enter} & = & \lambda\left\langle \_,OM,\_,\_\right\rangle ,\left\langle P,T'\right\rangle ,n.\left\langle \left[\mathtt{param}\left(n\right)_{k}\mapsto P_{k}\right],OM,T',Void\right\rangle \\
-\mathtt{leave} & = & \lambda\left\langle V,\_,T,\_\right\rangle ,\left\langle \_,OM',\_,r\right\rangle .\left\langle \left\langle V,OM',T,Void\right\rangle ,r\right\rangle 
+\mathtt{enter} & = & \lambda\left\langle \_,OM,\_,\_\right\rangle ,\left\langle P,T'\right\rangle ,n.\left\langle \left[\mathtt{param}\left(n\right)_{k}\mapsto P_{k}\right],OM,T',\mathsf{Void}\right\rangle \\
+\mathtt{leave} & = & \lambda\left\langle V,\_,T,\_\right\rangle ,\left\langle \_,OM',\_,r\right\rangle .\left\langle \left\langle V,OM',T,\mathsf{Void}\right\rangle ,r\right\rangle 
 \end{eqnarray*}
 
 \end_inset
@@ -4441,7 +4597,7 @@ Right before line 12, we have
 \begin_inset Formula $\mathtt{newobj}\left(\_\right)$
 \end_inset
 
-, then pass it on as a receiver of a method call to 
+, then passes it on as a receiver of a method call to 
 \begin_inset Formula $\mathtt{Fruit}$
 \end_inset
 
@@ -4502,9 +4658,9 @@ Abstract interpretation
 \begin_layout Standard
 Similarly, we extend the abstract interpretation.
  Note that, whereas in a concrete interpretation we generate a unique id
- for each of the objects instantiated in run-time, we use a reference to
- the allocation site of an object as a reference to a particular object,
- hence we contain object memory in a finite domain.
+ for each of the objects instantiated at run-time, in abstract interpretation
+ we use a reference to the allocation site of an object as a reference to
+ a particular object, hence we contain object memory in a finite domain.
 \end_layout
 
 \begin_layout Paragraph
@@ -4528,7 +4684,7 @@ AState & = & AEnv\times AObjMem\times AThis\times Curried\times AReturn
 
 \begin_layout Standard
 The initial program state is 
-\begin_inset Formula $\left\langle \emptyset,\left\{ 0\mapsto\emptyset\right\} ,0,\emptyset,Void\right\rangle $
+\begin_inset Formula $\left\langle \emptyset,\left\{ 0\mapsto\emptyset\right\} ,0,\emptyset,\mathsf{Void}\right\rangle $
 \end_inset
 
 .
@@ -4546,8 +4702,8 @@ Functions
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-\mathtt{enter} & = & \lambda\left\langle \_,\alpha,\_,\nu,\_\right\rangle ,\left\langle P,\tau'\right\rangle ,n.\left\langle \left[\mathtt{param}\left(n\right)_{k}\mapsto P_{k}\right],\alpha,\tau',\nu,Void\right\rangle \\
-\mathtt{leave} & = & \lambda\left\langle \sigma,\_,\tau,\_,\_\right\rangle ,\left\langle \_,\alpha',\_,\nu',r\right\rangle .\left\langle \left\langle \sigma,\alpha',\tau,\nu',Void\right\rangle ,r\right\rangle 
+\mathtt{enter} & = & \lambda\left\langle \_,\alpha,\_,\nu,\_\right\rangle ,\left\langle P,\tau'\right\rangle ,n.\left\langle \left[\mathtt{param}\left(n\right)_{k}\mapsto P_{k}\right],\alpha,\tau',\nu,\mathsf{Void}\right\rangle \\
+\mathtt{leave} & = & \lambda\left\langle \sigma,\_,\tau,\_,\_\right\rangle ,\left\langle \_,\alpha',\_,\nu',r\right\rangle .\left\langle \left\langle \sigma,\alpha',\tau,\nu',\mathsf{Void}\right\rangle ,r\right\rangle 
 \end{eqnarray*}
 
 \end_inset
@@ -4719,7 +4875,7 @@ $
 \begin_inset Text
 
 \begin_layout Plain Layout
-\begin_inset Formula $Obj\ 1\mapsto\left(\begin{aligned}\mathtt{value} & \mapsto & Num\\
+\begin_inset Formula $Obj\ 1\mapsto\left(\begin{aligned}\mathtt{value} & \mapsto & \mathsf{Num}\\
 \mathtt{juice} & \mapsto & \left\langle 3,1,9\right\rangle 
 \end{aligned}
 \right)$
@@ -4734,7 +4890,7 @@ $
 \begin_inset Text
 
 \begin_layout Plain Layout
-\begin_inset Formula $\left\langle 3,1,9\right\rangle \mapsto\left[Num\right]$
+\begin_inset Formula $\left\langle 3,1,9\right\rangle \mapsto\left[\mathsf{Num}\right]$
 \end_inset
 
 
@@ -4827,7 +4983,7 @@ At line 5, the meaning of the function call is calculated as follows.
 \end_inset
 
 .
- The rest components remain identical.
+ The rest components remain unchanged.
 \end_layout
 
 \begin_layout Standard
@@ -4883,9 +5039,9 @@ Note
 \begin_inset Text
 
 \begin_layout Plain Layout
-\begin_inset Formula $\left\{ \left\langle \begin{gathered}\left[\mathtt{fact}\mapsto Function\ 1\right],\\
+\begin_inset Formula $\left\{ \left\langle \begin{gathered}\left[\mathtt{fact}\mapsto\mathsf{Function}\ 1\right],\\
 \left[0\mapsto\emptyset\right],\\
-Num
+\mathsf{Num}
 \end{gathered}
 \right\rangle \right\} $
 \end_inset
@@ -4910,9 +5066,9 @@ Num
 \begin_inset Text
 
 \begin_layout Plain Layout
-\begin_inset Formula $\left\{ \left\langle \begin{gathered}\left[\mathtt{fact}\mapsto Function\ 1\right],\\
+\begin_inset Formula $\left\{ \left\langle \begin{gathered}\left[\mathtt{fact}\mapsto\mathsf{Function}\ 1\right],\\
 \left[0\mapsto\emptyset\right],\\
-Num
+\mathsf{Num}
 \end{gathered}
 \right\rangle \right\} $
 \end_inset
@@ -4926,14 +5082,14 @@ Num
 \begin_inset Text
 
 \begin_layout Plain Layout
-\begin_inset Formula $\left\{ \begin{gathered}\left\langle \begin{gathered}\left[\mathtt{fact}\mapsto Function\ 1\right],\\
+\begin_inset Formula $\left\{ \begin{gathered}\left\langle \begin{gathered}\left[\mathtt{fact}\mapsto\mathsf{Function}\ 1\right],\\
 \left[0\mapsto\emptyset\right],\\
-Num
+\mathsf{Num}
 \end{gathered}
 \right\rangle ,\\
-\left\langle \begin{gathered}\left[\mathtt{fact}\mapsto Function\ 1\right],\\
-\left[0\mapsto\left[x\mapsto Num\right]\right],\\
-Num
+\left\langle \begin{gathered}\left[\mathtt{fact}\mapsto\mathsf{Function}\ 1\right],\\
+\left[0\mapsto\left[x\mapsto\mathsf{Num}\right]\right],\\
+\mathsf{Num}
 \end{gathered}
 \right\rangle 
 \end{gathered}
@@ -4960,14 +5116,14 @@ Num
 \begin_inset Text
 
 \begin_layout Plain Layout
-\begin_inset Formula $\left\{ \begin{gathered}\left\langle \begin{gathered}\left[\mathtt{fact}\mapsto Function\ 1\right],\\
+\begin_inset Formula $\left\{ \begin{gathered}\left\langle \begin{gathered}\left[\mathtt{fact}\mapsto\mathsf{Function}\ 1\right],\\
 \left[0\mapsto\emptyset\right],\\
-Num
+\mathsf{Num}
 \end{gathered}
 \right\rangle ,\\
-\left\langle \begin{gathered}\left[\mathtt{fact}\mapsto Function\ 1\right],\\
-\left[0\mapsto\left[x\mapsto Num\right]\right],\\
-Num
+\left\langle \begin{gathered}\left[\mathtt{fact}\mapsto\mathsf{Function}\ 1\right],\\
+\left[0\mapsto\left[x\mapsto\mathsf{Num}\right]\right],\\
+\mathsf{Num}
 \end{gathered}
 \right\rangle 
 \end{gathered}
@@ -4983,14 +5139,14 @@ Num
 \begin_inset Text
 
 \begin_layout Plain Layout
-\begin_inset Formula $\left\{ \begin{gathered}\left\langle \begin{gathered}\left[\mathtt{fact}\mapsto Function\ 1\right],\\
+\begin_inset Formula $\left\{ \begin{gathered}\left\langle \begin{gathered}\left[\mathtt{fact}\mapsto\mathsf{Function}\ 1\right],\\
 \left[0\mapsto\emptyset\right],\\
-Num
+\mathsf{Num}
 \end{gathered}
 \right\rangle ,\\
-\left\langle \begin{gathered}\left[\mathtt{fact}\mapsto Function\ 1\right],\\
-\left[0\mapsto\left[x\mapsto Num\right]\right],\\
-Num
+\left\langle \begin{gathered}\left[\mathtt{fact}\mapsto\mathsf{Function}\ 1\right],\\
+\left[0\mapsto\left[x\mapsto\mathsf{Num}\right]\right],\\
+\mathsf{Num}
 \end{gathered}
 \right\rangle 
 \end{gathered}
@@ -5092,7 +5248,7 @@ Following functions are the semantic functions for the newly introduced
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-\mathcal{S}\dd{\mathtt{try}\ S_{1}\ \mathtt{catch}\left(Id\right)\ S_{2}} & = & \mathcal{S}\ \dd{S_{1}}\bind_{noesc}\mathtt{catch}\left(id,\mathcal{S}\ \dd{S_{2}}\right)\\
+\mathcal{S}\dd{\mathtt{try}\ S_{1}\ \mathtt{catch}\left(id\right)\ S_{2}} & = & \mathcal{S}\ \dd{S_{1}}\bind_{noesc}\mathtt{catch}\left(id,\mathcal{S}\ \dd{S_{2}}\right)\\
 \mathcal{S}\dd{\mathtt{throw}\ E} & = & \mathcal{E}\ \dd{E}\bind\lambda v.\mathtt{throw}
 \end{eqnarray*}
 
@@ -5122,6 +5278,13 @@ Note that we cannot use
 \end_inset
 
 .
+ 
+\begin_inset Formula $\mathtt{catch}$
+\end_inset
+
+ primitive operator takes an exception variable name and the meaning of
+ a catch code block, and produces the meaning of a language construct in
+ which an exception is caught and handled.
 \end_layout
 
 \begin_layout Definition
@@ -5174,7 +5337,7 @@ Domain
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-Ex & = & Value\cup\left\{ Void\right\} \\
+Ex & = & Value\cup\left\{ \mathsf{Void}\right\} \\
 CState & = & Env\times ObjMem\times This\times Return\times Ex
 \end{eqnarray*}
 
@@ -5185,7 +5348,7 @@ CState & = & Env\times ObjMem\times This\times Return\times Ex
 
 \begin_layout Standard
 The initial program state is 
-\begin_inset Formula $\left\langle \emptyset,\left\{ 0\mapsto\emptyset\right\} ,0,Void,Void\right\rangle $
+\begin_inset Formula $\left\langle \emptyset,\left\{ 0\mapsto\emptyset\right\} ,0,\mathsf{Void},\mathsf{Void}\right\rangle $
 \end_inset
 
 .
@@ -5198,8 +5361,8 @@ Functions
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-\mathtt{enter} & = & \lambda\left\langle \_,OM,\_,\_,\_\right\rangle ,\left\langle P,T'\right\rangle ,n.\left\langle \left[\mathtt{param}\left(n\right)_{k}\mapsto P_{k}\right],OM,T',Void,Void\right\rangle \\
-\mathtt{leave} & = & \lambda\left\langle V,\_,T,\_,\_\right\rangle ,\left\langle \_,OM',\_,r,e\right\rangle .\left\langle \left\langle V,OM',T,Void,e\right\rangle ,r\right\rangle 
+\mathtt{enter} & = & \lambda\left\langle \_,OM,\_,\_,\_\right\rangle ,\left\langle P,T'\right\rangle ,n.\left\langle \left[\mathtt{param}\left(n\right)_{k}\mapsto P_{k}\right],OM,T',\mathsf{Void},\mathsf{Void}\right\rangle \\
+\mathtt{leave} & = & \lambda\left\langle V,\_,T,\_,\_\right\rangle ,\left\langle \_,OM',\_,r,e\right\rangle .\left\langle \left\langle V,OM',T,\mathsf{Void},e\right\rangle ,r\right\rangle 
 \end{eqnarray*}
 
 \end_inset
@@ -5210,13 +5373,13 @@ Functions
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-\mathtt{esc} & = & \Theta_{Return,Ex}\ \lambda R,E.\left(R=Void\right)\wedge\left(E=Void\right)\\
+\mathtt{esc} & = & \Theta_{Return,Ex}\ \lambda R,E.\left(R\neq\mathsf{Void}\right)\wedge\left(E\neq\mathsf{Void}\right)\\
 \mathtt{throw}\left(v\right) & = & \bar{\Upsilon}_{Ex}\ \lambda E.v\\
 \mathtt{catch}\left(id,s\right) & = & \Theta_{Ex}\ \lambda E.\begin{cases}
-I_{A}\bot & \mbox{if}\ E=Void\\
+I_{A}\bot & \mbox{if}\ E=\mathsf{Void}\\
 \lambda f,r.s\ f\ \mathtt{exs}\left(\rho,id\right) & \mbox{otherwise}
 \end{cases}\\
-\mathtt{exs}\left(id\right) & = & \Upsilon_{Env,Ex}\ \lambda V,E.\left\langle V\left[id\mapsto E\right],Void\right\rangle 
+\mathtt{exs}\left(id\right) & = & \Upsilon_{Env,Ex}\ \lambda V,E.\left\langle V\left[id\mapsto E\right],\mathsf{Void}\right\rangle 
 \end{eqnarray*}
 
 \end_inset
@@ -5368,7 +5531,7 @@ The resulting state is deemed to be an escaping state by
 .
  Hence, the code block of the try clause gives the resulting program state
  of 
-\begin_inset Formula $\left\langle \left[x\mapsto a\right],\left\{ 0\mapsto\emptyset\right\} ,0,Void,0\right\rangle $
+\begin_inset Formula $\left\langle \left[x\mapsto a\right],\left\{ 0\mapsto\emptyset\right\} ,0,\mathsf{Void},0\right\rangle $
 \end_inset
 
 
@@ -5398,6 +5561,20 @@ catch
 .
 \end_layout
 
+\begin_layout Standard
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+give an example like that to show that catch doesn't mess up the behaviour
+ of return.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
 \begin_layout Subsubsection
 Abstract interpretation
 \end_layout
@@ -5415,7 +5592,7 @@ Domain
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-AEx & = & AVal\cup\left\{ Void\right\} \\
+AEx & = & AVal\cup\left\{ \mathsf{Void}\right\} \\
 AState & = & AEnv\times AObjMem\times AThisCurried\times AReturn\times AEx
 \end{eqnarray*}
 
@@ -5426,7 +5603,7 @@ AState & = & AEnv\times AObjMem\times AThisCurried\times AReturn\times AEx
 
 \begin_layout Standard
 The initial program state is 
-\begin_inset Formula $\left\langle \emptyset,\left\{ 0\mapsto\emptyset\right\} ,0,\emptyset,Void,Void\right\rangle $
+\begin_inset Formula $\left\langle \emptyset,\left\{ 0\mapsto\emptyset\right\} ,0,\emptyset,\mathsf{Void},\mathsf{Void}\right\rangle $
 \end_inset
 
 .
@@ -5439,8 +5616,8 @@ Functions
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-\mathtt{enter} & = & \lambda\left\langle \_,\alpha,\_,\nu,\_,\_\right\rangle ,\left\langle P,\tau'\right\rangle ,n.\left\langle \left[\mathtt{param}\left(n\right)_{k}\mapsto P_{k}\right],\alpha,\tau',\nu,Void,Void\right\rangle \\
-\mathtt{leave} & = & \lambda\left\langle \sigma,\_,\tau,\_,\_,\_\right\rangle ,\left\langle \_,\alpha',\_,\nu',r,e\right\rangle .\left\langle \left\langle \sigma,\alpha',\tau,\nu',Void,e\right\rangle ,r\right\rangle 
+\mathtt{enter} & = & \lambda\left\langle \_,\alpha,\_,\nu,\_,\_\right\rangle ,\left\langle P,\tau'\right\rangle ,n.\left\langle \left[\mathtt{param}\left(n\right)_{k}\mapsto P_{k}\right],\alpha,\tau',\nu,\mathsf{Void},\mathsf{Void}\right\rangle \\
+\mathtt{leave} & = & \lambda\left\langle \sigma,\_,\tau,\_,\_,\_\right\rangle ,\left\langle \_,\alpha',\_,\nu',r,e\right\rangle .\left\langle \left\langle \sigma,\alpha',\tau,\nu',\mathsf{Void},e\right\rangle ,r\right\rangle 
 \end{eqnarray*}
 
 \end_inset
@@ -5451,13 +5628,13 @@ Functions
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-\mathtt{esc} & = & \Theta_{AReturn,AEx}\ \lambda R,E.\left(R=Void\right)\wedge\left(E=Void\right)\\
+\mathtt{esc} & = & \Theta_{AReturn,AEx}\ \lambda R,E.\left(R\neq\mathsf{Void}\right)\wedge\left(E\neq\mathsf{Void}\right)\\
 \mathtt{throw}\left(v\right) & = & \bar{\Upsilon}_{AEx}\ \lambda E.v\\
 \mathtt{catch}\left(id,s\right) & = & \Theta_{AEx}\ \lambda E.\begin{cases}
-I_{A}\bot & \mbox{if}\ E=Void\\
+I_{A}\bot & \mbox{if}\ E=\mathsf{Void}\\
 \lambda f\lambda\eta.s\ f\ \mathtt{exs}\left(\eta,id\right) & \mbox{otherwise}
 \end{cases}\\
-\mathtt{exs}\left(id\right) & = & \Upsilon_{AEnv,AEx}\ \lambda\sigma,E.\left\langle \sigma\left[id\mapsto E\right],Void\right\rangle 
+\mathtt{exs}\left(id\right) & = & \Upsilon_{AEnv,AEx}\ \lambda\sigma,E.\left\langle \sigma\left[id\mapsto E\right],\mathsf{Void}\right\rangle 
 \end{eqnarray*}
 
 \end_inset
@@ -5487,7 +5664,7 @@ reference "Concrete-interpretation-of"
 
 \begin_layout Itemize
 After lines 3-5, we have two possible states 
-\begin_inset Formula $\left\langle \left[\mathtt{x}\mapsto Num\right],\left\{ 0\mapsto\emptyset\right\} ,0,\emptyset,Void,Void\right\rangle $
+\begin_inset Formula $\left\langle \left[\mathtt{x}\mapsto Num\right],\left\{ 0\mapsto\emptyset\right\} ,0,\emptyset,\mathsf{Void},\mathsf{Void}\right\rangle $
 \end_inset
 
  and
@@ -5495,7 +5672,7 @@ After lines 3-5, we have two possible states
 \end_inset
 
  
-\begin_inset Formula $\left\langle \left[\mathtt{x}\mapsto Num\right],\left\{ 0\mapsto\emptyset\right\} ,0,\emptyset,Void,Num\right\rangle $
+\begin_inset Formula $\left\langle \left[\mathtt{x}\mapsto Num\right],\left\{ 0\mapsto\emptyset\right\} ,0,\emptyset,\mathsf{Void},Num\right\rangle $
 \end_inset
 
 
@@ -5522,7 +5699,7 @@ At line 8, the environment of exception throwing state is updated to be
 
 \begin_layout Itemize
 The final states are
-\begin_inset Formula $\left\langle \left[\mathtt{x}\mapsto Num,\mathtt{j}\mapsto Num\right],\left\{ 0\mapsto\emptyset\right\} ,0,\emptyset,Void,Void\right\rangle $
+\begin_inset Formula $\left\langle \left[\mathtt{x}\mapsto Num,\mathtt{j}\mapsto Num\right],\left\{ 0\mapsto\emptyset\right\} ,0,\emptyset,\mathsf{Void},\mathsf{Void}\right\rangle $
 \end_inset
 
  and
@@ -5530,7 +5707,7 @@ The final states are
 \end_inset
 
  
-\begin_inset Formula $\left\langle \left[\mathtt{x}\mapsto Num,\mathtt{e}\mapsto Num\right],\left\{ 0\mapsto\emptyset\right\} ,0,\emptyset,Void,Void\right\rangle $
+\begin_inset Formula $\left\langle \left[\mathtt{x}\mapsto Num,\mathtt{e}\mapsto Num\right],\left\{ 0\mapsto\emptyset\right\} ,0,\emptyset,\mathsf{Void},\mathsf{Void}\right\rangle $
 \end_inset
 
 
@@ -5546,8 +5723,7 @@ tions are ordered point-wise.
  Recall that the bind operation preserves the monotonicity when binding
  two monotonic functions.
  Observe that all of the primitive operations that yield a state transformer,
- or the value-returning operation lifted to yield one, such transformer
- is monotonic.
+ and the value-returning operations lifted to yield one, are monotonic.
  This follows from the fact that the domain of such transformers are ordered
  by identity.
  Then, it follows that 
@@ -5588,14 +5764,10 @@ Point-wise ordering of function approximation
 \end_inset
 
 Given 
-\begin_inset Formula $f\in F$
+\begin_inset Formula $f,f'\in F$
 \end_inset
 
- and 
-\begin_inset Formula $f'\in F$
-\end_inset
-
-, 
+, then 
 \begin_inset Formula $f\sqsubseteq f'$
 \end_inset
 
@@ -5614,17 +5786,17 @@ Given
 \end_layout
 
 \begin_layout Proof
-Observe that, it is self-evident that the 
+Clearly, the 
 \begin_inset Formula $\mathtt{call}$
 \end_inset
 
  auxiliary function is monotonic with regards to the function approximation.
- the 
+ The 
 \begin_inset Formula $\mathtt{call}$
 \end_inset
 
- function is the only function that the function approximation value is
- referenced.
+ function is the only function for which the function approximation value
+ is referenced.
  Recall the preservation of monotonicity of bind operation.
  Then, this theorem immediately follows.
 \end_layout
@@ -5685,7 +5857,7 @@ Abstraction of primitive values
 \end_inset
 
 , 
-\begin_inset Formula $Void\succ Void$
+\begin_inset Formula $\mathsf{Void}\succ\mathsf{Void}$
 \end_inset
 
 
@@ -5867,7 +6039,7 @@ If
 \begin_inset Formula $\left\langle G,G'\right\rangle $
 \end_inset
 
- are such pairs of functions that shows a morphism over 
+ are pairs of functions that show a morphism over 
 \begin_inset Formula $\succ$
 \end_inset
 
