@@ -1546,12 +1546,20 @@ When we have a record
 \end_inset
 
  that takes a record, projects its fields into an n-tuple corresponding
- to the selected fields, lets 
+ to the selected fields (
+\begin_inset Formula $P_{c_{i},\ldots,c_{j}}$
+\end_inset
+
+), lets 
 \begin_inset Formula $U$
 \end_inset
 
  update the tuple, and finally updates the whole record with the updated
- tuple.
+ tuple (
+\begin_inset Formula $J_{c_{i},\ldots,c_{j}}$
+\end_inset
+
+).
 \end_layout
 
 \begin_layout Definition
@@ -1641,7 +1649,7 @@ When
 \begin_layout Definition
 \begin_inset Formula 
 \begin{eqnarray*}
-\Upsilon & : & \left(c\rightarrow r\right)\rightarrow\left(r\rightarrow r\right)\\
+\Upsilon & : & \left(c\rightarrow c\right)\rightarrow\left(r\rightarrow r\right)\\
 \Psi & : & \left(c\rightarrow c\times a\right)\rightarrow\left(r\rightarrow r\times a\right)\\
 \Theta & : & \left(c\rightarrow a\right)\rightarrow\left(r\rightarrow a\right)
 \end{eqnarray*}
@@ -1651,22 +1659,88 @@ When
 
 \end_layout
 
-\begin_layout Definition
-\begin_inset Note Note
+\end_deeper
+\begin_layout Example
+\begin_inset Argument
 status open
 
 \begin_layout Plain Layout
-an example of P, J, and whatever that greek letter is would be good.
- The idea is simple enough, but the notation used to define them, particularly
- the relationship between the as and the cs is pretty unclear.
+Record updater example
 \end_layout
+
+\end_inset
+
+ Suppose we have a simple record structure for personal contacts.
+\end_layout
+
+\begin_layout Example
+\begin_inset Formula 
+\begin{eqnarray*}
+Name & = & String\\
+Address & = & String\\
+Age & = & \mathbb{N}\\
+Contact & = & Name\times Address\times Age
+\end{eqnarray*}
 
 \end_inset
 
 
 \end_layout
 
-\begin_deeper
+\begin_layout Itemize
+\begin_inset Formula $\mathtt{addAge}$
+\end_inset
+
+ updates age field of a contact record.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\mathtt{addAge}\left(n\right)=\Upsilon_{Age}\ \lambda a.\left(a+n\right)
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\mathtt{getAgeAndAdd}$
+\end_inset
+
+ returns the previous age field value while updating the age field.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\mathtt{getAgeAndAll}\left(n\right)=\Psi_{Age}\ \lambda a.\left\langle a+n,a\right\rangle 
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\mathtt{getAge}$
+\end_inset
+
+ extracts age information from a contact record.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\mathtt{getAge}=\Theta_{Age}\ \lambda a.a
+\]
+
+\end_inset
+
+
+\end_layout
+
 \begin_layout Definition
 \begin_inset Argument
 status open
@@ -1720,8 +1794,6 @@ reference "recup"
 
 \end_layout
 
-\end_deeper
-\end_deeper
 \begin_layout Standard
 We now have monadic constructs and auxiliary functions to describe the semantic
  functions of the model language.
@@ -3909,23 +3981,16 @@ AState & = & AEnv\times Curried\times AReturn
 \end_layout
 
 \begin_layout Standard
-The initial program state is 
+\begin_inset Formula $Curried$
+\end_inset
+
+ takes a function id, number of argument curried and the eid of a calling
+ site, and gives the list of curried values.
+ The initial program state is 
 \begin_inset Formula $\left\langle \emptyset,\emptyset,\mathsf{Void}\right\rangle $
 \end_inset
 
-
-\begin_inset Note Note
-status open
-
-\begin_layout Plain Layout
-Explain 
-\emph on
-Curried
-\end_layout
-
-\end_inset
-
-
+.
 \end_layout
 
 \begin_layout Paragraph
@@ -5623,6 +5688,7 @@ try {
 
 \end_layout
 
+\begin_deeper
 \begin_layout Itemize
 At line 3, we have 
 \begin_inset Formula $\left[\mathtt{x}\mapsto a\right]$
@@ -5690,13 +5756,155 @@ catch
 .
 \end_layout
 
+\end_deeper
 \begin_layout Standard
-\begin_inset Note Note
+It is important that this exception handling does not interfere with other
+ control flow.
+ The following example shows how it interacts with return state.
+\end_layout
+
+\begin_layout Example
+\begin_inset Argument
 status open
 
 \begin_layout Plain Layout
-give an example like that to show that catch doesn't mess up the behaviour
- of return.
+Function call, return and exception handling control flow
+\end_layout
+
+\end_inset
+
+ Consider the following example.
+\end_layout
+
+\begin_layout Example
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+function tryorerror(func, error, a) {
+\end_layout
+
+\begin_layout Plain Layout
+
+	try {
+\end_layout
+
+\begin_layout Plain Layout
+
+		return func(a);
+\end_layout
+
+\begin_layout Plain Layout
+
+	} catch(e) {
+\end_layout
+
+\begin_layout Plain Layout
+
+		return error;
+\end_layout
+
+\begin_layout Plain Layout
+
+	}
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+function positive(a) {
+\end_layout
+
+\begin_layout Plain Layout
+
+	if(a>0) { return a; }
+\end_layout
+
+\begin_layout Plain Layout
+
+	throw 0;
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+gracefulpositive = tryorerror(positive, -1);
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+function doandprint(func,a) {
+\end_layout
+
+\begin_layout Plain Layout
+
+	output func(a);
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+try {
+\end_layout
+
+\begin_layout Plain Layout
+
+	doandprint(positive,50);
+\end_layout
+
+\begin_layout Plain Layout
+
+	doandprint(gracefulpositive,-50);
+\end_layout
+
+\begin_layout Plain Layout
+
+	doandprint(positive,-50);
+\end_layout
+
+\begin_layout Plain Layout
+
+} catch (e) {
+\end_layout
+
+\begin_layout Plain Layout
+
+	output e;
+\end_layout
+
+\begin_layout Plain Layout
+
+}
 \end_layout
 
 \end_inset
@@ -5704,6 +5912,67 @@ give an example like that to show that catch doesn't mess up the behaviour
 
 \end_layout
 
+\begin_deeper
+\begin_layout Itemize
+At line 3, when 
+\begin_inset Formula $\mathtt{tryorerror}$
+\end_inset
+
+ is called from line 21, it will set a return state, following a standard
+ return state from 
+\begin_inset Formula $\mathtt{positive}$
+\end_inset
+
+ function.
+ As 
+\begin_inset Formula $Ex$
+\end_inset
+
+ is set to 
+\family sans
+Void
+\family default
+, 
+\begin_inset Formula $\mathtt{catch}$
+\end_inset
+
+ primitive operation does not interfere, and proceed to return the value
+ of 50.
+\end_layout
+
+\begin_layout Itemize
+When called from line 22, the call to 
+\begin_inset Formula $\mathtt{positive}$
+\end_inset
+
+ function sets an exception state.
+ Observe that, during the evaluation of return statement, if the exception
+ is set while evaluating returning expression, the control flow does not
+ proceed to setting a return state.
+ 
+\begin_inset Formula $\mathtt{catch}$
+\end_inset
+
+ primitive operation notices exception state being set, and proceeds to
+ evaluate the exception handling block, which returns -1.
+ The meaning of the whole try-catch block, then, is evaluated to be setting
+ a return state of -1.
+\end_layout
+
+\begin_layout Itemize
+Finally, when the exception throwing function 
+\begin_inset Formula $\mathtt{positive}$
+\end_inset
+
+ is directly called without graceful wrapper, at line 23, after the function
+ the exception state is set to be -50, and 
+\begin_inset Formula $\mathtt{catch}$
+\end_inset
+
+ primitive operation proceeds to line 25, to print 0 as an output.
+\end_layout
+
+\end_deeper
 \begin_layout Subsubsection
 Abstract interpretation
 \end_layout

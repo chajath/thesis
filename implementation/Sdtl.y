@@ -218,6 +218,7 @@ lexer1 (c:cs)
 	| c == '\n' = lexer1 cs
 	| isAlpha c = lexVar (c:cs)
 	| isDigit c = lexNum (c:cs)
+	| c == '-' = lexNegativeNum (cs)
 	| c == '#' = lexer1 (dropWhile (/= '\n') cs)
 
 lexer1 ('=':cs) = 
@@ -240,6 +241,9 @@ lexer1 ('<':cs) = TokenLessThan : lexer1 cs
 lexer1 (',':cs) = TokenComma : lexer1 cs
 
 lexNum cs = TokenNumber (read num) : lexer1 rest 
+	where (num,rest) = span isDigit cs
+
+lexNegativeNum cs = TokenNumber (-1 * (read num)) : lexer1 rest 
 	where (num,rest) = span isDigit cs
 
 lexVar cs =
