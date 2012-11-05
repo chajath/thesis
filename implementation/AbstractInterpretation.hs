@@ -136,7 +136,8 @@ putWorld :: RealWorld -> IO ()
 putWorld s' = IO (\_ -> (# toState s', () #))
 -}
 
-fun :: (Map Int AStmt) -> (Map (Int,AState) [(AState, Maybe ())]) -> Int -> (AStmt, (M AState AValue ()))
+fun :: (Map Int AStmt) -> (Map (Int,AState) [(AState, Maybe ())]) -> Int 
+    -> (AStmt, (M AState AValue ()))
 fun sidMap fapprox sid = trace ("call sid " ++ (show sid)) $ 
     let Just astmt = Data.Map.lookup sid sidMap
         (AStmt (Function _ _ fbody) _) = traceShow astmt $ astmt in

@@ -166,8 +166,84 @@ We present a novel approach to construction of a formal semantics for a
 \end_layout
 
 \begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+thispagestyle{empty}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage pagebreak
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+setcounter{page}{1}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+pagenumbering{roman}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
 \begin_inset CommandInset toc
 LatexCommand tableofcontents
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage pagebreak
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+setcounter{page}{1}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+pagenumbering{arabic}
+\end_layout
 
 \end_inset
 
@@ -180,8 +256,8 @@ Introduction
 
 \begin_layout Standard
 Programming language semantics is a sub-field within theoretical computer
- science where researchers develop a formal description for the meaning
- of a computer program.
+ science where researchers develop formal descriptions for the meaning of
+ computer programs.
  Over the years, we have seen the development of denotational semantics,
  where we mathematically model the effect of an execution of a language
  construct.
@@ -191,6 +267,23 @@ Programming language semantics is a sub-field within theoretical computer
  in both concrete and abstract manner, necessitates a semantics that bridges
  the gap between the two different semantics in order for such task to be
  feasible.
+\end_layout
+
+\begin_layout Standard
+Abstract interpretation is a unifying theory for program analysis and verificati
+on with which we ascertain run-time properties of a program by approximating
+ its semantics.
+ The properties of interest are almost always undecidable.
+ The task of abstraction interpretation can be thought of as over-approximating
+ a set of concrete states in a finite number of steps.
+ The usual semantic domain is replaced by an 
+\emph on
+abstract
+\emph default
+ domain whose elements describe a set of run-time states.
+ Mathematically, such an abstract domain is a partially ordered set (forming
+ a lattice), the ordering corresponding to subset ordering of the powerset
+ of concrete states.
 \end_layout
 
 \begin_layout Standard
@@ -291,8 +384,16 @@ ct causing, type-altering functions.
 \begin_layout Standard
 This work is inspired by Haskell's use of monads, and we assume the reader's
  familiarity with monadic style Haskell programming.
- We also assume the knowledge of denotational semantics, partial ordering
- and the fixed point combinator.
+ We also assume knowledge of lambda notation, denotational semantics, order
+ and fixed point theory at the level of the textbook of Nielson and Nielson's
+ 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Nielson:1992:SAF:129085"
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Standard
@@ -362,9 +463,9 @@ Related work
 \end_layout
 
 \begin_layout Standard
-Denotational semantics is the starting point of our development of a theoretical
- system.
- The idea of incorporating monads into the denotational semantics was developed
+Denotational semantics is the starting point of our development of a formal
+ framework.
+ The idea of incorporating monads into denotational definitions was developed
  by Liang and Hudak 
 \begin_inset CommandInset citation
 LatexCommand cite
@@ -396,7 +497,7 @@ key "Mosses1996TPA"
 
 \begin_layout Standard
 The idea of constructing formulae with parametric types can be found in
- Wadler's work
+ Wadler's work 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "Wadler:1989:TF:99370.99404"
@@ -424,7 +525,7 @@ key "Anderson:ECOOP2005,Anderson:ENTCS2005,Guha:ESOP2011,Wrigstad:POPL2010"
  feature of real world languages which allows functions to alter types through
  side-effect causing statements.
  We point out similarities and differences of this work compared to the
- cited works as we encounter them in this paper.
+ cited works as we encounter them in this thesis.
 \end_layout
 
 \begin_layout Standard
@@ -444,7 +545,7 @@ key "Dufour:2006"
 
 \end_inset
 
- design restricted versions of a scripting languages so that static inference
+ design restricted versions of scripting languages so that static inference
  of types can be performed.
  We adopt several techniques employed in those projects, such as the use
  of named memory allocation sites as static references.
@@ -470,14 +571,14 @@ key "Bracha:1990:MI:97946.97982"
  By passing arguments to a mixin function, objects can be extended with
  extra methods; that is, functionality can be added dynamically.
  There are model languages and formalisations of mixin functions, such as
- the works of Anderson et al
+ the works of Anderson et al 
 \begin_inset CommandInset citation
 LatexCommand citet
 key "Anderson:ECOOP2005"
 
 \end_inset
 
- and Mens et al
+ and Mens et al 
 \begin_inset CommandInset citation
 LatexCommand citet
 key "Mens:TR1996"
@@ -606,7 +707,8 @@ Parametric semantics
 \end_inset
 
  is the set of primitive operations of the semantics.
- We assume throughout that 
+ We assume throughout that different states are incomparable.
+ In other words, 
 \begin_inset Formula $State$
 \end_inset
 
@@ -745,16 +847,15 @@ reference "sec:The-language-under"
 \end_layout
 
 \begin_layout Standard
-Our model language, as it evolves along with the framework, has a set of
+Our model language, as we let it evolve through this thesis, has a set of
  features found commonly in scripting languages.
- Figure 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "fig:Example-sdtl"
-
-\end_inset
-
- is an example of a program written in the model language.
+ In the remainder of the thesis we provide the semantics for a language
+ with many different features.
+ We introduce the components of the language step by step.
+ The aim is to demonstrate that the semantic formalism enables such a stepwise
+ development, each step being incremental in the sense that it does not
+ require revision of the semantic equations developed in earlier steps.
+ 
 \end_layout
 
 \begin_layout Standard
@@ -1031,17 +1132,29 @@ sdtl
 \end_layout
 
 \begin_layout Standard
-In the remainder of the thesis we provide the semantics for a language with
- many different features.
- We introduce the components of the language step by step.
- The aim is to demonstrate that the semantic formalism enables such a stepwise
- development, each step being incremental in the sense that it does not
- require revision of the semantic equations developed in earlier steps.
- 
+Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Example-sdtl"
+
+\end_inset
+
+ is an example of a program written in the model language.
+ We call this model language Simple Duck-Typed Language(
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+sdtl
 \end_layout
 
-\begin_layout Standard
-A locally-scoped procedural language with support for higher order functions
+\end_inset
+
+).
+ A locally-scoped procedural language with support for higher order functions
  (lines 1 to 5) is introduced in Section 
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -1127,9 +1240,21 @@ Type constructor
 \begin_inset Formula $F$
 \end_inset
 
-, in this formulation, is an approximation of the meaning of all the functions
- in the program.
- This is necessary to determine the semantics of many of the program constructs.
+ is the set of program semantics.
+ It is necessary to have this as an input to the state transformation in
+ order to give the fixed point characterisation of semantics.
+ 
+\begin_inset Formula $F$
+\end_inset
+
+ is given a formal definition in section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:Semantic-functions"
+
+\end_inset
+
+.
  The 
 \begin_inset Formula $a$
 \end_inset
@@ -1141,7 +1266,7 @@ Type constructor
 \begin_layout Definition
 \begin_inset Formula 
 \[
-M\ a=F\rightarrow State\rightarrow\wp\left(State\times a\cup\left\{ \bot\right\} \right)
+M\ a=F\rightarrow State\rightarrow\wp\left(State\times a\cup\left\{ \mathsf{Null}\right\} \right)
 \]
 
 \end_inset
@@ -1221,7 +1346,6 @@ In such escaping cases, there is no appropriate value of the type
 \end_inset
 
  to be assigned to successor states of the escaping states.
- 
 \end_layout
 
 \begin_layout Definition
@@ -1245,7 +1369,7 @@ We define a bind operator
 \begin_inset Formula 
 \begin{eqnarray*}
 \left(\bind\right) & : & M\ a\rightarrow\left(a\rightarrow M\ b\right)\rightarrow M\ b\\
-T\ \bind\ U & = & \lambda f\lambda s.\:\mathbf{let}\ S=T\ f\ s\ \mathbf{in}\underset{\left\langle s',a\right\rangle \in S}{\bigcup}\left(\begin{gathered}\mbox{if}\ \mathtt{esc}\left(s'\right)\ \mbox{then}\ \left\{ \left\langle s',\bot\right\rangle \right\} \ \mbox{else}\ U\ a\ f\ s'\end{gathered}
+T\ \bind\ U & = & \lambda f\lambda s.\:\mathbf{let}\ S=T\ f\ s\ \mathbf{in}\underset{\left\langle s',a\right\rangle \in S}{\bigcup}\left(\begin{gathered}\mbox{if}\ \mathtt{esc}\left(s'\right)\ \mbox{then}\ \left\{ \left\langle s',\mathsf{Null}\right\rangle \right\} \ \mbox{else}\ U\ a\ f\ s'\end{gathered}
 \right)
 \end{eqnarray*}
 
@@ -1266,10 +1390,14 @@ Point-wise ordering of state transformations
 \end_inset
 
  Given 
-\begin_inset Formula $T,U\in State\rightarrow\wp\left(State\times a\cup\left\{ \bot\right\} \right)$
+\begin_inset Formula $T,U\in State\rightarrow\wp\left(State\times a\cup\left\{ \mathsf{Null}\right\} \right)$
 \end_inset
 
 ,
+\begin_inset Newline newline
+\end_inset
+
+
 \begin_inset Formula $T\sqsubseteq U$
 \end_inset
 
@@ -1399,7 +1527,7 @@ Having a monadic structure helps provide modularity.
  produces a value, it would be redundant to include a state as a part of
  returning type, to match the definition of monadic binding.
  In such a case, we take a function that returns only a value, then lift
- it to be used in the monadic binding.
+ it to be used in the monadic context.
 \end_layout
 
 \begin_layout Definition
@@ -1490,7 +1618,7 @@ We define the following auxiliary functions to incorporate non-monadic functions
 \end_layout
 
 \begin_layout Standard
-\begin_inset Formula $I_{S}\ T=\lambda f\lambda s.\left\{ \left\langle s',\bot\right\rangle \mid s'\in T\ s\right\} $
+\begin_inset Formula $I_{S}\ T=\lambda f\lambda s.\left\{ \left\langle s',\mathsf{Unit}\right\rangle \mid s'\in T\ s\right\} $
 \end_inset
 
 
@@ -1670,7 +1798,8 @@ Record updater example
 
 \end_inset
 
- Suppose we have a simple record structure for personal contacts.
+ To see these functions in use, suppose we have a simple record structure
+ for personal contacts.
 \end_layout
 
 \begin_layout Example
@@ -1918,9 +2047,9 @@ The analytic framework contains the following semantic functions:
 \begin_inset Formula 
 \begin{eqnarray*}
 F & = & Sid\rightarrow Stm\times\left(State\rightarrow\wp\left(State\right)\right)\\
-\mathcal{S} & : & Stm\rightarrow F\rightarrow State\rightarrow\wp\left(State\times\left\{ \bot\right\} \right)\\
-\mathcal{E} & : & Exp\rightarrow F\rightarrow State\rightarrow\wp\left(State\times Value\cup\left\{ \bot\right\} \right)\\
-\mathcal{L} & : & Lexp\rightarrow F\rightarrow State\rightarrow\wp\left(State\times Value\cup\left\{ \bot\right\} \right)
+\mathcal{S} & : & Stm\rightarrow F\rightarrow State\rightarrow\wp\left(State\times\left\{ \mathsf{Unit},\mathsf{Null}\right\} \right)\\
+\mathcal{E} & : & Exp\rightarrow F\rightarrow State\rightarrow\wp\left(State\times Value\cup\left\{ \mathsf{Null}\right\} \right)\\
+\mathcal{L} & : & Lexp\rightarrow F\rightarrow State\rightarrow\wp\left(State\times Value\cup\left\{ \mathsf{Null}\right\} \right)
 \end{eqnarray*}
 
 \end_inset
@@ -2446,17 +2575,17 @@ status open
 \begin_layout Plain Layout
 \begin_inset Formula 
 \begin{align*}
- & \mathcal{F} & = & Y\left(\lambda f.\lambda n.\mathcal{S}\ \dd{\mathtt{stm}\left(n\right)}\ f\right)\\
+ & \mathcal{F} & = & Y\left(\lambda f.\lambda n.\left\langle \mathtt{stm}\left(f,n\right),\mathcal{S}\ \dd{\mathtt{stm}\left(f,n\right)}\ f\right\rangle \right)\\
  & \mathcal{S}\dd{\epsilon} & = & I_{A}\bot\\
  & \mathcal{S}\dd{S_{1};S_{2}} & = & \begin{aligned}\mathcal{S}\ \dd{S_{1}}\bind\lambda\_.\mathcal{S}\ \dd{S_{2}}\end{aligned}
 \\
- & \mathcal{S}\dd{E} & = & \mathcal{E}\ \dd{E}\bind\lambda\_.I_{A}\bot\\
+ & \mathcal{S}\dd{E} & = & \mathcal{E}\ \dd{E}\bind\lambda\_.I_{A}\mathsf{Unit}\\
  & \mathcal{S}\dd{\mathtt{return}\ E} & = & \mathcal{E}\ \dd{E}\bind\lambda v.I_{S}\ \mathtt{ret}\left(V\right)\\
- & \mathcal{S}\dd{\mathtt{if}\left(E\right)\ S_{1}} & = & \mathcal{E}\ \dd{E}\bind\lambda v.\mathtt{cond}\left(v,\mathcal{S}\ \dd{S_{1}},I_{A}\bot\right)\\
+ & \mathcal{S}\dd{\mathtt{if}\left(E\right)\ S_{1}} & = & \mathcal{E}\ \dd{E}\bind\lambda v.\mathtt{cond}\left(v,\mathcal{S}\ \dd{S_{1}},I_{A}\mathsf{Unit}\right)\\
  & \mathcal{S}\dd{\mathtt{if}\left(E\right)\ S_{1}\ \mathtt{else}\ S_{2}} & = & \mathcal{E}\ \dd{E}\bind\lambda v.\mathtt{cond}\left(v,\mathcal{S}\ \dd{S_{1}},\mathcal{S}\ \dd{S_{2}}\right)\\
  & \mathcal{S}\dd{id=E} & = & \begin{aligned}\mathcal{E}\ \dd{E} & \bind\lambda v.I_{S}\ \mathtt{asg}\left(id,v\right)\end{aligned}
 \\
- & \mathcal{S}\dd{\mathtt{while}\left(E\right)\ S_{1}} & = & Y\lambda x.\lambda f\lambda r.\left(\begin{aligned}\mathcal{E}\ \dd{E}\bind\lambda v.\mathtt{cond}\left(\begin{gathered}v,\left(\mathcal{S}\ \dd{S_{1}}\right)\bind\lambda\_.x,I_{A}\bot\end{gathered}
+ & \mathcal{S}\dd{\mathtt{while}\left(E\right)\ S_{1}} & = & Y\lambda x.\lambda f\lambda r.\left(\begin{aligned}\mathcal{E}\ \dd{E}\bind\lambda v.\mathtt{cond}\left(\begin{gathered}v,\left(\mathcal{S}\ \dd{S_{1}}\right)\bind\lambda\_.x,I_{A}\mathsf{Unit}\end{gathered}
 \right)\end{aligned}
 \right)\\
  & \mathcal{S}\dd{\mathtt{output}\ E} & = & \mathcal{E}\ \dd{E}\bind\lambda v.I_{S}\ \mathtt{dooutput}\left(v\right)\\
@@ -2672,7 +2801,7 @@ At line 1,
 \begin_inset Formula $\left[\mathtt{fact}\mapsto\mathsf{Function}\ 1\right]$
 \end_inset
 
- assuming the function declaration has a unique ID of 1.
+ assuming the function declaration has a unique id of 1.
 \end_layout
 
 \begin_layout Itemize
@@ -2933,7 +3062,7 @@ At line 1,
 \begin_inset Formula $\left[\mathtt{fact}\mapsto\mathsf{Function}\ 1\right]$
 \end_inset
 
- assuming the function declaration has a unique ID of 1.
+ assuming the function declaration has a unique id of 1.
 \end_layout
 
 \begin_layout Itemize
@@ -3739,7 +3868,7 @@ Functions
 \begin_inset Formula 
 \begin{eqnarray*}
 \mathtt{apply}\left(\left\langle n,C\right\rangle ,p,\_\right) & =\lambda f. & \begin{cases}
-\mathtt{call}\left(n,C\smallfrown p\right)\ f & \mbox{if}\begin{gathered}\:\mathtt{length}\left(C\smallfrown p\right)=\mathtt{arity}\left(f,n\right)\end{gathered}
+\mathtt{call}\left(n,C\smallfrown p\right)\ f & \mbox{if}\begin{gathered}\:\left\Vert C\smallfrown p\right\Vert =\mathtt{arity}\left(f,n\right)\end{gathered}
 \\
 \lambda\rho.\left\{ \left\langle \rho,\left\langle n,C\smallfrown p\right\rangle \right\rangle \right\} \  & \mbox{otherwise}
 \end{cases}\\
@@ -3753,7 +3882,7 @@ Functions
 
 \begin_layout Standard
 Here, 
-\begin_inset Formula $N\left(s\right)$
+\begin_inset Formula $\left\Vert s\right\Vert $
 \end_inset
 
  is the length of a sequence 
@@ -3795,7 +3924,7 @@ At line 1, we are presented with a function declaration.
 \begin_inset Formula $add$
 \end_inset
 
- has given a unique ID of 
+ has given a unique id of 
 \begin_inset Formula $1$
 \end_inset
 
@@ -4032,8 +4161,8 @@ status open
 \begin_inset Formula 
 \begin{align*}
 \mathtt{apply}\left(\left\langle n,c,e\right\rangle ,p,e'\right) & =\begin{cases}
-\Theta_{{\scriptscriptstyle Curried}}\ \lambda\nu.\underset{C\in\nu\left(n,c,e\right)}{\bigcup}\mathtt{call}\left(n,C\smallfrown p\right)\ \mbox{if }c+\mathtt{length}\left(p\right)=\mathtt{{arity}\left(n\right)}\\
-\Psi_{{\scriptscriptstyle Curried}}\ \lambda\nu.\underset{C\in\nu\left(n,c,e\right)}{\bigcup}\left\langle \nu\left[\left\langle n,c+N\left(p\right),e'\right\rangle \mapsto\left(C\smallfrown p\right)\right],\left\langle n,c+N\left(p\right),e'\right\rangle \right\rangle \ {\scriptstyle \mbox{otherwise}}
+\Theta_{{\scriptscriptstyle Curried}}\ \lambda\nu.\underset{C\in\nu\left(n,c,e\right)}{\bigcup}\mathtt{call}\left(n,C\smallfrown p\right)\ \mbox{if }c+\left\Vert p\right\Vert =\mathtt{{arity}\left(n\right)}\\
+\Psi_{{\scriptscriptstyle Curried}}\ \lambda\nu.\underset{C\in\nu\left(n,c,e\right)}{\bigcup}\left\langle \nu\left[\left\langle n,c+\left\Vert p\right\Vert ,e'\right\rangle \mapsto\left(C\smallfrown p\right)\right],\left\langle n,c+\left\Vert p\right\Vert ,e'\right\rangle \right\rangle \ {\scriptstyle \mbox{otherwise}}
 \end{cases}\\
 \mathtt{fundecl}\left(id,n\right) & =\bar{\Upsilon}_{AEnv}\ \lambda\sigma.\sigma\left[id\mapsto\left\langle n,0,0\right\rangle \right]
 \end{align*}
@@ -4105,12 +4234,12 @@ At line 1,
 \begin_inset Formula $1$
 \end_inset
 
- is a unique ID given to the function.
+ is a unique id given to the function.
  
 \end_layout
 
 \begin_layout Itemize
-At line 7, assuming the partial application expression has a unique ID of
+At line 7, assuming the partial application expression has a unique id of
  7, 
 \begin_inset Formula $\mathtt{apply}\left(\left\langle 1,0,0\right\rangle ,\left[\mathsf{Num}\right],7\right)$
 \end_inset
@@ -4489,9 +4618,9 @@ key "Guha:ESOP2011"
 \end_inset
 
 .
- However, with languages like JavaScript, it is in the nature of such language
- that functions are side-effect causing, and much of the type operations
- are being done with by the side-effects.
+ However, with languages like JavaScript, it is in the nature of such a
+ language that functions are side-effect causing, and much of the type operation
+s are being done by the side-effects.
  Hence our deviation from a purely functional approach to devise a model
  language that resembles a real-life language.
 \end_layout
@@ -4560,8 +4689,8 @@ We redefine
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-\mathtt{enter} & = & \lambda\left\langle \_,OM,\_,\_\right\rangle ,n,P,T'.\left\langle \left[\mathtt{param}\left(n\right)_{k}\mapsto P_{k}\right],OM,T',\mathsf{Void}\right\rangle \\
-\mathtt{leave} & = & \lambda\left\langle V,\_,T,\_\right\rangle ,\left\langle \_,OM',\_,r\right\rangle .\left\langle \left\langle V,OM',T,\mathsf{Void}\right\rangle ,r\right\rangle 
+\mathtt{enter} & = & \lambda\left\langle \_,\Omega,\_,\_\right\rangle ,n,P,T'.\left\langle \left[\mathtt{param}\left(n\right)_{k}\mapsto P_{k}\right],\Omega,T',\mathsf{Void}\right\rangle \\
+\mathtt{leave} & = & \lambda\left\langle V,\_,T,\_\right\rangle ,\left\langle \_,\Omega',\_,r\right\rangle .\left\langle \left\langle V,\Omega',T,\mathsf{Void}\right\rangle ,r\right\rangle 
 \end{eqnarray*}
 
 \end_inset
@@ -4603,15 +4732,15 @@ status open
 \begin_layout Plain Layout
 \begin_inset Formula 
 \begin{eqnarray*}
-\mathtt{get}\left(n,id\right) & = & \bar{\Theta}_{ObjMem}\ \left(\lambda OM.OM\left(n\right)\left(id\right)\right)\\
-\mathtt{set}\left(n,id,v\right) & = & \bar{\Upsilon}_{ObjMem}\ \left(\lambda OM.OM\left[n\mapsto OM\left(n\right)\left[id\mapsto v\right]\right]\right)\\
-\mathtt{getglobal} & = & \bar{\Theta}_{ObjMem}\ \left(\lambda OM.OM\left(0\right)\right)\\
+\mathtt{get}\left(n,id\right) & = & \bar{\Theta}_{ObjMem}\ \left(\lambda\Omega.\Omega\left(n\right)\left(id\right)\right)\\
+\mathtt{set}\left(n,id,v\right) & = & \bar{\Upsilon}_{ObjMem}\ \left(\lambda\Omega.\Omega\left[n\mapsto\Omega\left(n\right)\left[id\mapsto v\right]\right]\right)\\
+\mathtt{getglobal} & = & \bar{\Theta}_{ObjMem}\ \left(\lambda\Omega.\Omega\left(0\right)\right)\\
 \mathtt{getthis} & = & \bar{\Theta}_{This}\ \left(\lambda T.T\right)\\
 \mathtt{apply}\left(\left\langle n,C\right\rangle ,p,t,\_\right) & = & \begin{cases}
-\mathtt{call}\left(n,C\smallfrown p,t\right) & \mbox{if}\ N\left(C\smallfrown p\right)=\mathtt{arity}\left(n\right)\\
+\mathtt{call}\left(n,C\smallfrown p,t\right) & \mbox{if}\ \left\Vert C\smallfrown p\right\Vert =\mathtt{arity}\left(n\right)\\
 \Gamma\ \left(\lambda\rho.\left\langle \rho,\left\langle n,C\smallfrown p\right\rangle \right\rangle \right) & \mbox{otherwise}
 \end{cases}\\
-\mathtt{newobj}\left(\_\right) & = & \bar{\Psi}_{ObjMem}\ \left(\lambda OM.\left\langle OM\left[n\mapsto\emptyset\right],n\right\rangle \right)\ \mbox{where}\ n=N\left(OM\right)
+\mathtt{newobj}\left(\_\right) & = & \bar{\Psi}_{ObjMem}\ \left(\lambda\Omega.\left\langle \Omega\left[n\mapsto\emptyset\right],n\right\rangle \right)\ \mbox{where}\ n=\left\Vert \Omega\right\Vert 
 \end{eqnarray*}
 
 \end_inset
@@ -4754,7 +4883,7 @@ Assume that
 \begin_inset Formula $\mathtt{Fruit}$
 \end_inset
 
- has an ID of 1, 
+ has an id of 1, 
 \begin_inset Formula $\mathtt{juicible}$
 \end_inset
 
@@ -4794,23 +4923,23 @@ value
 \family default
 .
  After the line, we have 
-\begin_inset Formula $Env=\left[\mathtt{Fruit}\mapsto\left\langle 1,\emptyset\right\rangle ,\mathtt{juicible}\mapsto\left\langle 2,\emptyset\right\rangle ,\mathtt{apple}\mapsto Obj\ 1\right]$
+\begin_inset Formula $Env=\left[\mathtt{Fruit}\mapsto\left\langle 1,\emptyset\right\rangle ,\mathtt{juicible}\mapsto\left\langle 2,\emptyset\right\rangle ,\mathtt{apple}\mapsto\mathsf{Obj}\ 1\right]$
 \end_inset
 
  and 
 \begin_inset Formula $ObjMem=\left[1\mapsto\left[\mathtt{value}\mapsto15\right]\right]$
 \end_inset
 
-
+.
 \end_layout
 
 \begin_layout Itemize
 At line 13, 
-\begin_inset Formula $\mathtt{apply}\left(\left\langle 2,\emptyset\right\rangle ,\left[Obj\ 1,20\right],global,\_\right)$
+\begin_inset Formula $\mathtt{apply}\left(\left\langle 2,\emptyset\right\rangle ,\left[\mathsf{Obj}\ 1,20\right],global,\_\right)$
 \end_inset
 
  gives 
-\begin_inset Formula $\mathtt{call}\left(2,\left[Obj\ 1,20\right],global\right)$
+\begin_inset Formula $\mathtt{call}\left(2,\left[\mathsf{Obj}\ 1,20\right],global\right)$
 \end_inset
 
 .
@@ -4822,12 +4951,12 @@ function, object memory is manipulated in line 9 to be
 \begin_inset Formula $\left[1\mapsto\left[\mathtt{value}\mapsto15,\mathtt{juice}\mapsto\left\langle 3,\left[20\right]\right\rangle \right]\right]$
 \end_inset
 
-
+.
 \end_layout
 
 \begin_layout Itemize
 At line 15, by the method call semantics, 
-\begin_inset Formula $\mathtt{apply}\left(\left\langle 3,\left[20\right]\right\rangle ,\left[10\right].Obj\ 1,\_\right)$
+\begin_inset Formula $\mathtt{apply}\left(\left\langle 3,\left[20\right]\right\rangle ,\left[10\right],\mathsf{Obj}\ 1,\_\right)$
 \end_inset
 
  is invoked, which gives 45 as a final result.
@@ -4853,7 +4982,7 @@ Domain
 \begin_inset Formula 
 \begin{eqnarray*}
 AObj & = & \left\{ 0\right\} \cup Eid\\
-AVal & = & \left\{ Num,Bool,\bot\right\} \cup AObj\cup FunPointer\\
+AVal & = & \left\{ \mathsf{Num},\mathsf{Bool}\right\} \cup AObj\cup FunPointer\\
 AObjMem & = & AObj\rightarrow AEnv\\
 AThis & = & AObj\\
 AState & = & AEnv\times AObjMem\times AThis\times Curried\times AReturn
@@ -4933,8 +5062,8 @@ status open
 \mathtt{getthis} & =\bar{\Theta}_{AThis}\ \lambda\tau.\tau\\
 \mathtt{newobj}\left(n\right) & =\bar{\Psi}_{AObjMem}\ \lambda\alpha.\left\langle \alpha\left[n\mapsto\emptyset\right],n\right\rangle \\
 \mathtt{apply}\left(\left\langle n,c,e\right\rangle ,p,t,e\right) & =\begin{cases}
-\Theta_{{\scriptscriptstyle Curried}}\ \lambda\nu.\underset{C\in\nu\left(n,c,e\right)}{\bigcup}\mathtt{call}\left(n,C\smallfrown p,t\right)\ \mbox{if}\ c+N\left(p\right)=\mathtt{arity}\left(n\right)\\
-\Psi_{{\scriptscriptstyle Curried}}\ \lambda\nu.\underset{C\in\nu\left(n,c,e\right)}{\bigcup}\left\langle \nu\left[\left\langle n,c+N\left(p\right),e\right\rangle \mapsto C\smallfrown p\right],\left\langle n,c+N\left(p\right),e\right\rangle \right\rangle  & \mbox{otherwise}
+\Theta_{{\scriptscriptstyle Curried}}\ \lambda\nu.\underset{C\in\nu\left(n,c,e\right)}{\bigcup}\mathtt{call}\left(n,C\smallfrown p,t\right)\ \mbox{if}\ c+\left\Vert p\right\Vert =\mathtt{arity}\left(n\right)\\
+\Psi_{{\scriptscriptstyle Curried}}\ \lambda\nu.\underset{C\in\nu\left(n,c,e\right)}{\bigcup}\left\langle \nu\left[\left\langle n,c+\left\Vert p\right\Vert ,e\right\rangle \mapsto C\smallfrown p\right],\left\langle n,c+\left\Vert p\right\Vert ,e\right\rangle \right\rangle  & \mbox{otherwise}
 \end{cases}
 \end{align*}
 
@@ -5043,7 +5172,7 @@ Curried
 \begin_inset Formula $\begin{aligned}\mathtt{Fruit} & \mapsto & \left\langle 1,0,0\right\rangle \\
 \mathtt{juicible} & \mapsto & \left\langle 2,0,0\right\rangle \\
 \mathtt{juiceMe} & \mapsto & \left\langle 3,0,0\right\rangle \\
-\mathtt{apple} & \mapsto & Obj\ 1
+\mathtt{apple} & \mapsto & \mathsf{Obj}\ 1
 \end{aligned}
 $
 \end_inset
@@ -5057,7 +5186,7 @@ $
 \begin_inset Text
 
 \begin_layout Plain Layout
-\begin_inset Formula $Obj\ 1\mapsto\left(\begin{aligned}\mathtt{value} & \mapsto & \mathsf{\mathsf{Num}}\\
+\begin_inset Formula $\mathsf{Obj}\ 1\mapsto\left(\begin{aligned}\mathtt{value} & \mapsto & \mathsf{\mathsf{Num}}\\
 \mathtt{juice} & \mapsto & \left\langle 3,1,9\right\rangle 
 \end{aligned}
 \right)$
@@ -5165,7 +5294,7 @@ At line 5, the meaning of the function call is calculated as follows.
 \end_inset
 
 .
- The rest components remain unchanged.
+ The rest of the components remain unchanged.
 \end_layout
 
 \begin_layout Standard
@@ -5456,7 +5585,7 @@ Note that we cannot use
 \begin_inset Formula $\bind$
 \end_inset
 
- operate to combine try code body and catch, since the 
+ to combine the try code body and catch, since the 
 \begin_inset Formula $\bind$
 \end_inset
 
@@ -5501,10 +5630,17 @@ Non-escaping bind operator
 \begin_layout Definition
 \begin_inset Formula 
 \begin{eqnarray*}
-\left(\bind_{noesc}\right) & : & M\ a\rightarrow\left(a\cup\bot\rightarrow M\ a\right)\rightarrow M\ a\\
+\left(\bind_{noesc}\right) & : & M\ a\rightarrow\left(a\cup\left\{ \mathsf{Null}\right\} \rightarrow M\ a\right)\rightarrow M\ a\\
 T\ \bind_{noesc}\ U & = & \lambda f\lambda s.\:\mathbf{let}\ S=T\ f\ s\ \mathbf{in}\underset{\left\langle s',a\right\rangle \in S}{\bigcup}\left(U\ a\ f\ s'\right)
 \end{eqnarray*}
 
+\end_inset
+
+
+\end_layout
+
+\begin_layout Definition
+\begin_inset Newpage pagebreak
 \end_inset
 
 
@@ -5555,8 +5691,8 @@ Functions
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-\mathtt{enter} & = & \lambda\left\langle \_,OM,\_,\_,\_\right\rangle ,\left\langle P,T'\right\rangle ,n.\left\langle \left[\mathtt{param}\left(n\right)_{k}\mapsto P_{k}\right],OM,T',\mathsf{Void},\mathsf{Void}\right\rangle \\
-\mathtt{leave} & = & \lambda\left\langle V,\_,T,\_,\_\right\rangle ,\left\langle \_,OM',\_,r,e\right\rangle .\left\langle \left\langle V,OM',T,\mathsf{Void},e\right\rangle ,r\right\rangle 
+\mathtt{enter} & = & \lambda\left\langle \_,\Omega,\_,\_,\_\right\rangle ,\left\langle P,T'\right\rangle ,n.\left\langle \left[\mathtt{param}\left(n\right)_{k}\mapsto P_{k}\right],\Omega,T',\mathsf{Void},\mathsf{Void}\right\rangle \\
+\mathtt{leave} & = & \lambda\left\langle V,\_,T,\_,\_\right\rangle ,\left\langle \_,\Omega',\_,r,e\right\rangle .\left\langle \left\langle V,\Omega',T,\mathsf{Void},e\right\rangle ,r\right\rangle 
 \end{eqnarray*}
 
 \end_inset
@@ -5570,7 +5706,7 @@ Functions
 \mathtt{esc} & = & \Theta_{Return,Ex}\ \lambda R,E.\left(R\neq\mathsf{Void}\right)\wedge\left(E\neq\mathsf{Void}\right)\\
 \mathtt{throw}\left(v\right) & = & \bar{\Upsilon}_{Ex}\ \lambda E.v\\
 \mathtt{catch}\left(id,s\right) & = & \Theta_{Ex}\ \lambda E.\begin{cases}
-I_{A}\bot & \mbox{if}\ E=\mathsf{Void}\\
+I_{A}\mathsf{Unit} & \mbox{if}\ E=\mathsf{Void}\\
 \lambda f,r.s\ f\ \mathtt{exs}\left(\rho,id\right) & \mbox{otherwise}
 \end{cases}\\
 \mathtt{exs}\left(id\right) & = & \Upsilon_{Env,Ex}\ \lambda V,E.\left\langle V\left[id\mapsto E\right],\mathsf{Void}\right\rangle 
@@ -5711,7 +5847,7 @@ if
 \begin_inset Formula $\mathtt{throw}\left(0\right)$
 \end_inset
 
- gives 
+ which gives 
 \begin_inset Formula $Ex:0$
 \end_inset
 
@@ -6028,7 +6164,7 @@ Functions
 \mathtt{esc} & = & \Theta_{AReturn,AEx}\ \lambda R,E.\left(R\neq\mathsf{Void}\right)\wedge\left(E\neq\mathsf{Void}\right)\\
 \mathtt{throw}\left(v\right) & = & \bar{\Upsilon}_{AEx}\ \lambda E.v\\
 \mathtt{catch}\left(id,s\right) & = & \Theta_{AEx}\ \lambda E.\begin{cases}
-I_{A}\bot & \mbox{if}\ E=\mathsf{Void}\\
+I_{A}\mathsf{Unit} & \mbox{if}\ E=\mathsf{Void}\\
 \lambda f\lambda\eta.s\ f\ \mathtt{exs}\left(\eta,id\right) & \mbox{otherwise}
 \end{cases}\\
 \mathtt{exs}\left(id\right) & = & \Upsilon_{AEnv,AEx}\ \lambda\sigma,E.\left\langle \sigma\left[id\mapsto E\right],\mathsf{Void}\right\rangle 
@@ -6091,11 +6227,11 @@ At line 8, the environment of exception throwing state is updated to be
 \begin_inset Formula $\left[\mathtt{x}\mapsto\mathsf{Num},\mathtt{e}\mapsto\mathsf{Num}\right]$
 \end_inset
 
-, then evaluate the catch clause, which does not cause any state update.
+, then the catch clause is evaluated, which does not cause any state update.
 \end_layout
 
 \begin_layout Itemize
-The final states are
+The final states are 
 \begin_inset Formula $\left\langle \left[\mathtt{x}\mapsto\mathsf{Num},\mathtt{j}\mapsto\mathsf{Num}\right],\left\{ 0\mapsto\emptyset\right\} ,0,\emptyset,\mathsf{Void},\mathsf{Void}\right\rangle $
 \end_inset
 
@@ -6205,8 +6341,8 @@ Clearly, the
 \end_layout
 
 \begin_layout Standard
-It follows from this theorem that there exists the fixed point of the meaning
- of function 
+It follows from this theorem that there exists a least fixed point of the
+ meaning of function 
 \begin_inset Formula $f\in F$
 \end_inset
 
@@ -6248,7 +6384,7 @@ First, we define an abstraction between values and other components of the
 \end_layout
 
 \begin_layout Definition
-\begin_inset Formula $\mathsf{Num}$
+\begin_inset Formula $\mathsf{Num}\succ\mathbb{Z}$
 \end_inset
 
 , 
@@ -6274,11 +6410,11 @@ Abstraction of objects and symbol maps
 \end_inset
 
 
-\begin_inset Formula $\alpha,OM\vdash n\succ m$
+\begin_inset Formula $\alpha,\Omega\vdash n\succ m$
 \end_inset
 
  if 
-\begin_inset Formula $\alpha\left(n\right)\succ OM\left(m\right)$
+\begin_inset Formula $\alpha\left(n\right)\succ\Omega\left(m\right)$
 \end_inset
 
 
@@ -6289,7 +6425,7 @@ Abstraction of objects and symbol maps
 \end_inset
 
  if 
-\begin_inset Formula $\forall id\in V,\sigma\left(id\right)\succ V\left(id\right)$
+\begin_inset Formula $\forall id\in dom\left(V\right),\sigma\left(id\right)\succ V\left(id\right)$
 \end_inset
 
 
@@ -6315,10 +6451,14 @@ Function pointers
 \end_inset
 
 , 
-\begin_inset Formula $c=N\left(P\right)$
+\begin_inset Formula $c=\left\Vert P\right\Vert $
 \end_inset
 
- and 
+ 
+\begin_inset Newline newline
+\end_inset
+
+and 
 \begin_inset Formula $\exists A\in C\left(n,c,e\right),A_{k}\succ P_{k}$
 \end_inset
 
@@ -6350,7 +6490,7 @@ Given
 \end_layout
 
 \begin_layout Definition
-\begin_inset Formula $\rho=\left(\begin{gathered}V:Env,OM:ObjMem,T:This,R:Return,E:Ex\end{gathered}
+\begin_inset Formula $\rho=\left(\begin{gathered}V:Env,\Omega:ObjMem,T:This,R:Return,E:Ex\end{gathered}
 \right)\in CState$
 \end_inset
 
@@ -6369,8 +6509,8 @@ Given
 \begin_inset Formula $\eta\succ\rho$
 \end_inset
 
- if
-\begin_inset Formula $\left(\sigma\succ V\right)\wedge\left(\forall m\in OM\exists n\in\alpha,\alpha\left(n\right)\succ OM\left(m\right)\right)\wedge\left(\tau\succ T\wedge r\succ R\wedge e\succ E\right)$
+ if 
+\begin_inset Formula $\left(\sigma\succ V\right)\wedge\left(\forall m\in dom\left(\Omega\right)\exists n\in dom\left(\alpha\right),\alpha\left(n\right)\succ\Omega\left(m\right)\right)\wedge\left(\tau\succ T\wedge r\succ R\wedge e\succ E\right)$
 \end_inset
 
 
@@ -6387,8 +6527,20 @@ Abstraction between powersets
 
 \end_inset
 
-Given 
-\begin_inset Formula $p\in\wp\left(AState\times a\right),q\in\wp\left(CState\times c\right),p\succ q$
+Given an abstract value 
+\begin_inset Formula $a$
+\end_inset
+
+, a concrete value 
+\begin_inset Formula $c$
+\end_inset
+
+,
+\begin_inset Newline newline
+\end_inset
+
+ 
+\begin_inset Formula $p\in\wp\left(AState\times a\right)\mbox{ and }q\in\wp\left(CState\times c\right),p\succ q$
 \end_inset
 
  if
@@ -6473,7 +6625,12 @@ If
 \begin_inset Formula $q'=F'\bind G'\left(\eta\right)$
 \end_inset
 
-, 
+.
+ 
+\begin_inset Newline newline
+\end_inset
+
+Then, 
 \begin_inset Formula $\forall p_{1}\in p,$
 \end_inset
 
@@ -6563,7 +6720,7 @@ As we have noted in the introduction, this work is a snapshot of an ongoing
  gradually move towards a better theorisation (and practical implementation)
  of the difficult task of analysing dynamic languages.
  We have sought to modularise the theoretical framework so that we can take
- an evolutionary approach.
+ an incremental approach.
  We anticipate that, as a result of having such a theory, adding new features
  to the current model language while maintaining formality and rigour will
  be considerably less laborious than to invent a new incarnation of a more
@@ -6598,7 +6755,7 @@ Syntax parser
 \end_layout
 
 \begin_layout Standard
-Creates an augmented syntax tree with unique ID numbers.
+Creates an augmented syntax tree with unique id numbers.
 \end_layout
 
 \begin_layout Standard
